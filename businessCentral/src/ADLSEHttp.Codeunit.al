@@ -19,6 +19,7 @@ codeunit 82563 "ADLSE Http"
         OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id';
         BearerTok: Label 'Bearer %1', Comment = '%1: access token';
         AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&client_info=1&grant_type=client_credentials', Comment = '%1: encoded url, %2: encoded user impersonation, %3: client ID, %4: client secret';
+        AcquireTokenFabricBodyTok: Label 'scope=%1&client_id=%2&client_secret=%3&client_info=1&grant_type=password&username=%4&password=%5&resource=%6', Comment = '%1: encoded url, %2: encoded user impersonation, %3: client ID, %4: client secret';
 
     procedure SetMethod(HttpMethodValue: Enum "ADLSE Http Method")
     begin
@@ -86,7 +87,7 @@ codeunit 82563 "ADLSE Http"
         Success := InvokeRestApi(Response, StatusCode);
     end;
 
-    [NonDebuggable]
+    //[NonDebuggable]
     procedure InvokeRestApi(var Response: Text; var StatusCode: Integer) Success: Boolean
     var
         Client: HttpClient;
@@ -96,16 +97,19 @@ codeunit 82563 "ADLSE Http"
         Content: HttpContent;
         HeaderKey: Text;
         HeaderValue: Text;
+        ADLSESetup: Record "ADLSE Setup";
     begin
         Client.SetBaseAddress(Url);
         if not AddAuthorization(Client, Response) then
             exit(false);
 
-        if AdditionalRequestHeaders.Count() > 0 then begin
-            Headers := Client.DefaultRequestHeaders();
-            foreach HeaderKey in AdditionalRequestHeaders.Keys do begin
-                AdditionalRequestHeaders.Get(HeaderKey, HeaderValue);
-                Headers.Add(HeaderKey, HeaderValue);
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then begin
+            if AdditionalRequestHeaders.Count() > 0 then begin
+                Headers := Client.DefaultRequestHeaders();
+                foreach HeaderKey in AdditionalRequestHeaders.Keys do begin
+                    AdditionalRequestHeaders.Get(HeaderKey, HeaderValue);
+                    Headers.Add(HeaderKey, HeaderValue);
+                end;
             end;
         end;
 
@@ -121,6 +125,14 @@ codeunit 82563 "ADLSE Http"
                 end;
             "ADLSE Http Method"::Delete:
                 Client.Delete(Url, ResponseMsg);
+            "ADLSE Http Method"::Patch:
+                begin
+                    RequestMsg.Method('PATCH');
+                    RequestMsg.SetRequestUri(Url);
+                    AddContent(Content);
+                    RequestMsg.Content(Content);
+                    Client.Send(RequestMsg, ResponseMsg);
+                end;
             else
                 Error(UnsupportedMethodErr, HttpMethod);
         end;
@@ -135,13 +147,21 @@ codeunit 82563 "ADLSE Http"
     local procedure AddContent(var Content: HttpContent)
     var
         Headers: HttpHeaders;
+        ADLSESetup: Record "ADLSE Setup";
     begin
         Content.WriteFrom(Body);
         Content.GetHeaders(Headers);
+
         if ContentTypeJson then begin
             Headers.Remove('Content-Type');
             Headers.Add('Content-Type', 'application/json');
+            Headers.Remove('Content-Length');
+            if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric" then
+                Headers.Add('Content-Length', '0');
         end;
+
+        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson) then
+            Headers.Remove('Content-Length');
     end;
 
     [NonDebuggable]
@@ -183,17 +203,35 @@ codeunit 82563 "ADLSE Http"
         RequestBody: Text;
         ResponseBody: Text;
         Json: JsonObject;
+        ADLSESetup: Record "ADLSE Setup";
     begin
+
         Uri := StrSubstNo(OAuthTok, Credentials.GetTenantID());
         RequestMessage.Method('POST');
         RequestMessage.SetRequestUri(Uri);
-        RequestBody :=
-            StrSubstNo(
-                AcquireTokenBodyTok,
-                'https%3A%2F%2Fstorage.azure.com%2F', // url encoded form of https://storage.azure.com/
-                'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation', // url encoded form of https://storage.azure.com/user_impersonation
-                Credentials.GetClientID(),
-                Credentials.GetClientSecret());
+
+        case ADLSESetup.GetStorageType() of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                RequestBody :=
+                    StrSubstNo(
+                        AcquireTokenBodyTok,
+                        'https%3A%2F%2Fstorage.azure.com%2F', // url encoded form of https://storage.azure.com/
+                        'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation', // url encoded form of https://storage.azure.com/user_impersonation
+                        Credentials.GetClientID(),
+                        Credentials.GetClientSecret());
+
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                RequestBody :=
+                    StrSubstNo(
+                        AcquireTokenFabricBodyTok,
+                        'https://storage.azure.com/.default', // url encoded form of https://storage.azure.com/user_impersonation
+                        Credentials.GetClientID(),
+                        Credentials.GetClientSecret(),
+                        Credentials.GetUserName(),
+                        Credentials.GetPassword(),
+                        'https%3A%2F%2Fstorage.azure.com%2F'); // url encoded form of https://storage.azure.com/;
+        end;
+
         Content.WriteFrom(RequestBody);
         Content.GetHeaders(Headers);
         Headers.Remove('Content-Type');
@@ -209,6 +247,7 @@ codeunit 82563 "ADLSE Http"
 
         Json.ReadFrom(ResponseBody);
         AccessToken := ADSEUtil.GetTextValueForKeyInJson(Json, 'access_token');
-        // TODO: Store access token in cache, and use it based on expiry date.
+        // TODO: Store access token in cache, and use it based on expiry date. 
+
     end;
 }

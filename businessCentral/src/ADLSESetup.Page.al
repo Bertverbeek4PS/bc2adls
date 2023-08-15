@@ -17,13 +17,18 @@ page 82560 "ADLSE Setup"
             group(Setup)
             {
                 Caption = 'Setup';
-                group(Account)
+                group(General)
                 {
                     Caption = 'Account';
-                    field(Container; Rec.Container)
+                    field(StorageType; Rec."Storage Type")
                     {
                         ApplicationArea = All;
-                        Tooltip = 'Specifies the name of the container where the data is going to be uploaded. Please refer to constraints on container names at https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata.';
+                        Tooltip = 'Specifies the type of storage type to use.';
+
+                        trigger OnValidate()
+                        begin
+                            CurrPage.Update(false);
+                        end;
                     }
                     field("Tenant ID"; StorageTenantID)
                     {
@@ -36,6 +41,17 @@ page 82560 "ADLSE Setup"
                             ADLSECredentials.SetTenantID(StorageTenantID);
                         end;
                     }
+                }
+
+                group(Account)
+                {
+                    Caption = 'Azure Data Lake';
+                    Editable = AzureDataLake;
+                    field(Container; Rec.Container)
+                    {
+                        ApplicationArea = All;
+                        Tooltip = 'Specifies the name of the container where the data is going to be uploaded. Please refer to constraints on container names at https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata.';
+                    }
                     field(AccountName; StorageAccount)
                     {
                         ApplicationArea = All;
@@ -45,6 +61,45 @@ page 82560 "ADLSE Setup"
                         trigger OnValidate()
                         begin
                             ADLSECredentials.SetStorageAccount(StorageAccount);
+                        end;
+                    }
+                }
+                group(MSFabric)
+                {
+                    Caption = 'Microsoft Fabric';
+                    Editable = not AzureDataLake;
+                    field(Workspace; Rec.Workspace)
+                    {
+                        ApplicationArea = All;
+                        Tooltip = 'Specifies the name of the Workspace where the data is going to be uploaded. This can be a name or a GUID.';
+                    }
+                    field(Lakehouse; Rec.Lakehouse)
+                    {
+                        ApplicationArea = All;
+                        Tooltip = 'Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID ';
+                    }
+                    field(UserName; UserName)
+                    {
+                        Caption = 'Username';
+                        ApplicationArea = All;
+                        ExtendedDatatype = Masked;
+                        Tooltip = 'Specifies the username for the connection with Microsoft Fabric.';
+
+                        trigger OnValidate()
+                        begin
+                            ADLSECredentials.SetUserName(UserName);
+                        end;
+                    }
+                    field(Password; Password)
+                    {
+                        Caption = 'Password';
+                        ApplicationArea = All;
+                        ExtendedDatatype = Masked;
+                        Tooltip = 'Specifies the password for the connection with Microsoft Fabric.';
+
+                        trigger OnValidate()
+                        begin
+                            ADLSECredentials.SetPassword(Password);
                         end;
                     }
                 }
@@ -227,8 +282,11 @@ page 82560 "ADLSE Setup"
         }
     }
     var
+        AzureDataLake: Boolean;
         ClientSecretLbl: Label 'Secret not shown';
         ClientIdLbl: Label 'ID not shown';
+        UserNameLbl: Label 'User name not shown';
+        PasswordLbl: Label 'Password not shown';
 
     trigger OnInit()
     begin
@@ -240,6 +298,10 @@ page 82560 "ADLSE Setup"
             ClientID := ClientIdLbl;
         if ADLSECredentials.IsClientSecretSet() then
             ClientSecret := ClientSecretLbl;
+        if ADLSECredentials.IsUserNameSet() then
+            UserName := UserNameLbl;
+        if ADLSECredentials.IsPasswordSet() then
+            Password := PasswordLbl;
     end;
 
     trigger OnAfterGetRecord()
@@ -252,6 +314,7 @@ page 82560 "ADLSE Setup"
         TrackedDeletedRecordsExist := not ADLSEDeletedRecord.IsEmpty();
         OldLogsExist := ADLSERun.OldRunsExist();
         UpdateNotificationIfAnyTableExportFailed();
+        AzureDataLake := Rec."Storage Type" = Rec."Storage Type"::"Azure Data Lake";
     end;
 
     var
@@ -266,6 +329,10 @@ page 82560 "ADLSE Setup"
         ClientID: Text;
         [NonDebuggable]
         ClientSecret: Text;
+        [NonDebuggable]
+        UserName: Text;
+        [NonDebuggable]
+        Password: Text;
         OldLogsExist: Boolean;
         FailureNotificationID: Guid;
         ExportFailureNotificationMsg: Label 'Data from one or more tables failed to export on the last run. Please check the tables below to see the error(s).';

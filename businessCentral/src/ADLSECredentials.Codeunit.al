@@ -18,6 +18,10 @@ codeunit 82565 "ADLSE Credentials"
 
         [NonDebuggable]
         StorageTenantID: Text;
+        [NonDebuggable]
+        Username: Text;
+        [NonDebuggable]
+        Password: Text;
 
         Initialized: Boolean;
         ValueNotFoundErr: Label 'No value found for %1.', Comment = '%1 = name of the key';
@@ -25,6 +29,8 @@ codeunit 82565 "ADLSE Credentials"
         StorageAccountKeyNameTok: Label 'adlse-storage-account', Locked = true;
         ClientIdKeyNameTok: Label 'adlse-client-id', Locked = true;
         ClientSecretKeyNameTok: Label 'adlse-client-secret', Locked = true;
+        UsernameKeyNameTok: Label 'adlse-username', Locked = true;
+        PasswordKeyNameTok: Label 'adlse-password', Locked = true;
 
     [NonDebuggable]
     procedure Init()
@@ -33,6 +39,8 @@ codeunit 82565 "ADLSE Credentials"
         StorageAccount := GetSecret(StorageAccountKeyNameTok);
         ClientID := GetSecret(ClientIdKeyNameTok);
         ClientSecret := GetSecret(ClientSecretKeyNameTok);
+        Username := GetSecret(UsernameKeyNameTok);
+        Password := GetSecret(PasswordKeyNameTok);
 
         Initialized := true;
     end;
@@ -49,6 +57,8 @@ codeunit 82565 "ADLSE Credentials"
         CheckValueExists(StorageAccountKeyNameTok, StorageAccount);
         CheckValueExists(ClientIdKeyNameTok, ClientID);
         CheckValueExists(ClientSecretKeyNameTok, ClientSecret);
+        CheckValueExists(UserNameKeyNameTok, Username);
+        CheckValueExists(PasswordKeyNameTok, Password);
     end;
 
     [NonDebuggable]
@@ -143,5 +153,43 @@ codeunit 82565 "ADLSE Credentials"
     local procedure IsolatedStorageDataScope(): DataScope
     begin
         exit(DataScope::Module); // so that all companies share the same settings
+    end;
+
+    [NonDebuggable]
+    procedure GetUserName(): Text
+    begin
+        exit(UserName);
+    end;
+
+    [NonDebuggable]
+    procedure SetUsername(NewUsernameValue: Text): Text
+    begin
+        UserName := NewUsernameValue;
+        SetSecret(UsernameKeyNameTok, NewUsernameValue);
+    end;
+
+    [NonDebuggable]
+    procedure IsUsernameSet(): Boolean
+    begin
+        exit(GetUserName() <> '');
+    end;
+
+    [NonDebuggable]
+    procedure IsPasswordSet(): Boolean
+    begin
+        exit(GetPassword() <> '');
+    end;
+
+    [NonDebuggable]
+    procedure GetPassword(): Text
+    begin
+        exit(Password);
+    end;
+
+    [NonDebuggable]
+    procedure SetPassword(NewPasswordValue: Text): Text
+    begin
+        Password := NewPasswordValue;
+        SetSecret(PasswordKeyNameTok, NewPasswordValue);
     end;
 }

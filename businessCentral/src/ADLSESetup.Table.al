@@ -81,6 +81,22 @@ table 82560 "ADLSE Setup"
             Caption = 'Skip row version sorting';
             InitValue = false;
         }
+
+        field(25; "Storage Type"; Enum "ADLSE Storage Type")
+        {
+            Caption = 'Storage type';
+        }
+
+        field(30; Workspace; Text[100])
+        {
+            Caption = 'Workspace';
+        }
+        field(31; Lakehouse; Text[100])
+        {
+            Caption = 'Lakehouse';
+        }
+
+
     }
 
     keys
@@ -139,4 +155,9 @@ table 82560 "ADLSE Setup"
         Evaluate(PKValue, PrimaryKeyValueLbl, 9);
     end;
 
+    procedure GetStorageType(): Enum "ADLSE Storage Type"
+    begin
+        Rec.GetSingleton();
+        exit(Rec."Storage Type");
+    end;
 }

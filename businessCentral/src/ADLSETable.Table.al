@@ -39,6 +39,12 @@ table 82561 "ADLSE Table"
             ObsoleteTag = '1.2.2.0';
             ObsoleteState = Removed;
         }
+        field(8; Reset; Boolean)
+        {
+            Editable = false;
+            Caption = 'Reset';
+            Description = 'This field is only for MS Fabric to remove the table.';
+        }
     }
 
     keys
@@ -163,6 +169,7 @@ table 82561 "ADLSE Table"
         if Rec.FindSet(true) then
             repeat
                 Rec.Enabled := true;
+                Rec.Reset := true;
                 Rec.Modify();
 
                 ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Rec."Table ID", 0);

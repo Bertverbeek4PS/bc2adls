@@ -85,9 +85,21 @@ codeunit 82568 "ADLSE Gen 2 Util"
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
+        ADLSESetup: Record "ADLSE Setup";
+        BlobPathOrg: Text;
     begin
         ADLSEHttp.SetMethod("ADLSE Http Method"::Put);
-        ADLSEHttp.SetUrl(BlobPath);
+
+        case ADLSESetup.GetStorageType() of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                ADLSEHttp.SetUrl(BlobPath);
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                begin
+                    BlobPathOrg := BlobPath;
+                    ADLSEHttp.SetUrl(BlobPath + '?resource=file');
+                end;
+        end;
+
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
         ADLSEHttp.AddHeader('x-ms-blob-type', 'BlockBlob');
         if IsJson then begin
@@ -100,6 +112,10 @@ codeunit 82568 "ADLSE Gen 2 Util"
             ADLSEHttp.AddHeader('x-ms-lease-id', LeaseID);
         if not ADLSEHttp.InvokeRestApi(Response) then
             Error(CouldNotCreateBlobErr, BlobPath, Response);
+
+        //Upload Json for Microsoft Fabric
+        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (IsJson) then
+            AddBlockToDataBlob(BlobPathOrg, Body, ADLSECredentials);
     end;
 
     procedure CreateDataBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
@@ -111,11 +127,23 @@ codeunit 82568 "ADLSE Gen 2 Util"
     var
         Base64Convert: Codeunit "Base64 Convert";
         ADLSEHttp: Codeunit "ADLSE Http";
+        ADLSESetup: Record "ADLSE Setup";
         Response: Text;
     begin
-        ADLSEHttp.SetMethod("ADLSE Http Method"::Put);
-        BlockID := Base64Convert.ToBase64(CreateGuid());
-        ADLSEHttp.SetUrl(BlobPath + StrSubstNo(PutBlockSuffixTxt, BlockID));
+        case ADLSESetup.GetStorageType() of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                begin
+                    ADLSEHttp.SetMethod("ADLSE Http Method"::Put);
+                    BlockID := Base64Convert.ToBase64(CreateGuid());
+                    ADLSEHttp.SetUrl(BlobPath + StrSubstNo(PutBlockSuffixTxt, BlockID));
+                end;
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                begin
+                    ADLSEHttp.SetMethod("ADLSE Http Method"::Patch);
+                    ADLSEHttp.SetUrl(BlobPath + '?position=0&action=append&flush=true');
+                end;
+        end;
+
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
         ADLSEHttp.SetBody(Body);
         if not ADLSEHttp.InvokeRestApi(Response) then
