@@ -87,7 +87,7 @@ codeunit 82563 "ADLSE Http"
         Success := InvokeRestApi(Response, StatusCode);
     end;
 
-    //[NonDebuggable]
+    [NonDebuggable]
     procedure InvokeRestApi(var Response: Text; var StatusCode: Integer) Success: Boolean
     var
         Client: HttpClient;
