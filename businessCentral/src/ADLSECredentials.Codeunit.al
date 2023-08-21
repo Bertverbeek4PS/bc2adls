@@ -23,7 +23,7 @@ codeunit 82565 "ADLSE Credentials"
         [NonDebuggable]
         Password: Text;
 
-        ADLSESetup: Record "ADLSE Setup"
+        ADLSESetup: Record "ADLSE Setup";
 
         Initialized: Boolean;
         ValueNotFoundErr: Label 'No value found for %1.', Comment = '%1 = name of the key';
