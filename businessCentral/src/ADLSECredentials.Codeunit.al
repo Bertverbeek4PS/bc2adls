@@ -23,6 +23,8 @@ codeunit 82565 "ADLSE Credentials"
         [NonDebuggable]
         Password: Text;
 
+        ADLSESetup: Record "ADLSE Setup"
+
         Initialized: Boolean;
         ValueNotFoundErr: Label 'No value found for %1.', Comment = '%1 = name of the key';
         TenantIdKeyNameTok: Label 'adlse-tenant-id', Locked = true;
@@ -36,11 +38,14 @@ codeunit 82565 "ADLSE Credentials"
     procedure Init()
     begin
         StorageTenantID := GetSecret(TenantIdKeyNameTok);
-        StorageAccount := GetSecret(StorageAccountKeyNameTok);
+        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Azure Data Lake" then
+            StorageAccount := GetSecret(StorageAccountKeyNameTok);
         ClientID := GetSecret(ClientIdKeyNameTok);
         ClientSecret := GetSecret(ClientSecretKeyNameTok);
-        Username := GetSecret(UsernameKeyNameTok);
-        Password := GetSecret(PasswordKeyNameTok);
+        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Microsoft Fabric" then begin
+            Username := GetSecret(UsernameKeyNameTok);
+            Password := GetSecret(PasswordKeyNameTok);
+        end;
 
         Initialized := true;
     end;
@@ -54,11 +59,14 @@ codeunit 82565 "ADLSE Credentials"
     begin
         Init();
         CheckValueExists(TenantIdKeyNameTok, StorageTenantID);
-        CheckValueExists(StorageAccountKeyNameTok, StorageAccount);
+        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Azure Data Lake" then
+            CheckValueExists(StorageAccountKeyNameTok, StorageAccount);
         CheckValueExists(ClientIdKeyNameTok, ClientID);
         CheckValueExists(ClientSecretKeyNameTok, ClientSecret);
-        CheckValueExists(UserNameKeyNameTok, Username);
-        CheckValueExists(PasswordKeyNameTok, Password);
+        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Microsoft Fabric" then begin
+            CheckValueExists(UserNameKeyNameTok, Username);
+            CheckValueExists(PasswordKeyNameTok, Password);
+        end;
     end;
 
     [NonDebuggable]
