@@ -293,15 +293,18 @@ page 82560 "ADLSE Setup"
         Rec.GetOrCreate();
         ADLSECredentials.Init();
         StorageTenantID := ADLSECredentials.GetTenantID();
-        StorageAccount := ADLSECredentials.GetStorageAccount();
+        if rec."Storage Type" = rec."Storage Type"::"Azure Data Lake" then
+            StorageAccount := ADLSECredentials.GetStorageAccount();
         if ADLSECredentials.IsClientIDSet() then
             ClientID := ClientIdLbl;
         if ADLSECredentials.IsClientSecretSet() then
             ClientSecret := ClientSecretLbl;
-        if ADLSECredentials.IsUserNameSet() then
-            UserName := UserNameLbl;
-        if ADLSECredentials.IsPasswordSet() then
-            Password := PasswordLbl;
+        if rec."Storage Type" = rec."Storage Type"::"Microsoft Fabric" then begin
+            if ADLSECredentials.IsUserNameSet() then
+                UserName := UserNameLbl;
+            if ADLSECredentials.IsPasswordSet() then
+                Password := PasswordLbl;
+        end;
     end;
 
     trigger OnAfterGetRecord()

@@ -38,6 +38,7 @@ codeunit 82565 "ADLSE Credentials"
     procedure Init()
     begin
         StorageTenantID := GetSecret(TenantIdKeyNameTok);
+        ADLSESetup.GetSingleton();
         if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Azure Data Lake" then
             StorageAccount := GetSecret(StorageAccountKeyNameTok);
         ClientID := GetSecret(ClientIdKeyNameTok);
@@ -59,6 +60,7 @@ codeunit 82565 "ADLSE Credentials"
     begin
         Init();
         CheckValueExists(TenantIdKeyNameTok, StorageTenantID);
+        ADLSESetup.GetSingleton();
         if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Azure Data Lake" then
             CheckValueExists(StorageAccountKeyNameTok, StorageAccount);
         CheckValueExists(ClientIdKeyNameTok, ClientID);
