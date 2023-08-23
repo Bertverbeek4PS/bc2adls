@@ -1,8 +1,10 @@
 ![](.assets/bc2adls_banner.png)
+# Starting update
+**The original repo of [bc2adls](https://github.com/microsoft/bc2adls) is in read-only mode. But since allot of partners are using this tool we want to develop it further as an open source. A special thanks to the creators of this tool: [Soumya Dutta](https://www.linkedin.com/in/soumya-dutta-07813a5/) and [Henri Schulte](https://www.linkedin.com/in/henrischulte/). Who put allot of effort in it.**
 
 # Project
 
-> **This tool is an <u>experiment</u> on Dynamics 365 Business Central with the sole purpose of discovering the possibilities of having data exported to an Azure Data Lake. To see the details of how this tool is supported, please visit [the Support page](./SUPPORT.md). In case you wish to use this tool for your next project and engage with us, you are welcome to write to bc2adls@microsoft.com. As we are a small team, please expect delays in getting back to you.**
+> **This tool is an <u>experiment</u> on Dynamics 365 Business Central with the sole purpose of discovering the possibilities of having data exported to an Azure Data Lake. To see the details of how this tool is supported, please visit [the Support page](./SUPPORT.md). In case you wish to use this tool for your next project and engage with us, you are welcome to create a issue or a pull request. As we are a small team, please expect delays in getting back to you.**
 
 ## Introduction
 
