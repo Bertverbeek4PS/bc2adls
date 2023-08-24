@@ -87,10 +87,7 @@ codeunit 82561 "ADLSE Execute"
         end;
 
         // update Jsons
-        if not ADLSECommunication.TryUpdateCdmJsons(EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate) then begin
-            SetStateFinished(Rec, TableCaption);
-            exit;
-        end;
+        ADLSECommunication.UpdateCdmJsons(EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
         if EmitTelemetry then
             ADLSEExecution.Log('ADLSE-007', 'Jsons have been updated', Verbosity::Normal, CustomDimensions);
 
