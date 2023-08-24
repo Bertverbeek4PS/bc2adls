@@ -250,13 +250,7 @@ codeunit 82562 "ADLSE Communication"
         end;
     end;
 
-    [TryFunction]
-    procedure TryUpdateCdmJsons(EntityJsonNeedsUpdate: Boolean; ManifestJsonsNeedsUpdate: Boolean)
-    begin
-        UpdateCdmJsons(EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
-    end;
-
-    local procedure UpdateCdmJsons(EntityJsonNeedsUpdate: Boolean; ManifestJsonsNeedsUpdate: Boolean)
+    procedure UpdateCdmJsons(EntityJsonNeedsUpdate: Boolean; ManifestJsonsNeedsUpdate: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
