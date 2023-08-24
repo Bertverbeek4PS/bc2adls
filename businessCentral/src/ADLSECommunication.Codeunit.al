@@ -26,7 +26,7 @@ codeunit 82562 "ADLSE Communication"
         CorpusJsonPathTxt: Label '/%1', Comment = '%1 = name of the blob', Locked = true;
         CannotAddedMoreBlocksErr: Label 'The number of blocks that can be added to the blob has reached its maximum limit.';
         SingleRecordTooLargeErr: Label 'A single record payload exceeded the max payload size. Please adjust the payload size or reduce the fields to be exported for the record.';
-        DeltasFileCsvTok: Label '/deltas/%1/%2%3.csv', Comment = '%1: Entity, %2: File identifier guid, %3: Reset parameter for MS Fabric';
+        DeltasFileCsvTok: Label '/deltas/%1/%2.csv', Comment = '%1: Entity, %2: File identifier guid';
         NotAllowedOnSimultaneousExportTxt: Label 'This is not allowed when exports are configured to occur simultaneously. Please uncheck Multi- company export, export the data at least once, and try again.';
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
@@ -156,26 +156,14 @@ codeunit 82562 "ADLSE Communication"
         FileIdentifer: Guid;
         ADLSETable: Record "ADLSE Table";
         ADLSESetup: Record "ADLSE Setup";
-        ResetTxt: Text;
     begin
         if DataBlobPath <> '' then
             // already created blob
             exit;
 
-        //If table is reset then create an extra parameter in the file name to pick up in the notebook in MS Fabric
-        ResetTxt := '';
-        ADLSESetup.GetSingleton();
-        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric" then
-            if ADLSETable.Get(TableID) then
-                if ADLSETable.Reset then begin
-                    ResetTxt := '-reset';
-                    ADLSETable.Reset := False;
-                    ADLSETable.Modify();
-                end;
-
         FileIdentifer := CreateGuid();
 
-        DataBlobPath := StrSubstNo(DeltasFileCsvTok, EntityName, ADLSEUtil.ToText(FileIdentifer), ResetTxt);
+        DataBlobPath := StrSubstNo(DeltasFileCsvTok, EntityName, ADLSEUtil.ToText(FileIdentifer));
         ADLSEGen2Util.CreateDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials);
         if EmitTelemetry then begin
             CustomDimension.Add('Entity', EntityName);
