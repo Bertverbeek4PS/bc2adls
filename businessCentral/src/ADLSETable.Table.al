@@ -215,4 +215,20 @@ table 82561 "ADLSE Table"
                 Verbosity::Warning, CustomDimensions);
         end;
     end;
+
+    procedure AddAllFields()
+    var
+        ADLSEFields: Record "ADLSE Field";
+    begin
+        ADLSEFields.InsertForTable(Rec);
+        ADLSEFields.SetRange("Table ID", Rec."Table ID");
+        if ADLSEFields.FindSet(true) then
+            repeat
+                if (ADLSEFields.CanFieldBeEnabled()) then begin
+                    ADLSEFields.Enabled := true;
+                    ADLSEFields.Modify();
+                end;
+            until ADLSEFields.Next() = 0;
+    end;
+
 }
