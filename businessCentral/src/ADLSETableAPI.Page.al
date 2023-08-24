@@ -82,6 +82,13 @@ page 82565 "ADLSE Table API"
         SetActionResponse(ActionContext, Rec.SystemId);
     end;
 
+    [ServiceEnabled]
+    procedure AddAllFields(var ActionContext: WebServiceActionContext)
+    begin
+        rec.AddAllFields();
+        SetActionResponse(ActionContext, Rec.SystemId);
+    end;
+
     local procedure SetActionResponse(var ActionContext: WebServiceActionContext; AdlsId: Guid)
     var
     begin
