@@ -27,7 +27,7 @@ page 82560 "ADLSE Setup"
 
                         trigger OnValidate()
                         begin
-                            CurrPage.Update(false);
+                            CurrPage.Update(true);
                         end;
                     }
                     field("Tenant ID"; StorageTenantID)
