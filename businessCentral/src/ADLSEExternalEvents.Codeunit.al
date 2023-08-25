@@ -12,7 +12,7 @@ codeunit 82574 "ADLSE External Events"
     end;
 
     [ExternalBusinessEvent('ExportOfEntityEnded', 'Entity export ended', 'The export of the entity was registered as ended.', EventCategory::ADLSE)]
-    local procedure TableExportRunEnded(RunId: Integer; State: Enum "ADLSE Run State"; ContainerName: Text[250]; EntityName: Text[250])
+    local procedure TableExportRunEnded(RunId: Integer; State: Enum "ADLSE Run State"; Container: Text[250]; EntityName: Text[250])
     begin
     end;
 }
