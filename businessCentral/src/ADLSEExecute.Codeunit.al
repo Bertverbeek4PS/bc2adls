@@ -151,6 +151,7 @@ codeunit 82561 "ADLSE Execute"
         ADLSESetup: Record "ADLSE Setup";
         ADLSESeekData: Report "ADLSE Seek Data";
         ADLSEExecution: Codeunit "ADLSE Execution";
+        ADLSEUtil: Codeunit "ADLSE Util";
         Rec: RecordRef;
         TimeStampField: FieldRef;
         Field: FieldRef;
@@ -159,7 +160,7 @@ codeunit 82561 "ADLSE Execute"
         EntityCount: Text;
         FlushedTimeStamp: BigInteger;
         FieldId: Integer;
-        SystemCreatedAt: DateTime;
+        SystemCreatedAt, UtcEpochZero : DateTime;
     begin
         ADLSESetup.GetSingleton();
         SetFilterForUpdates(TableID, UpdatedLastTimeStamp, ADLSESetup."Skip Timestamp Sorting On Recs", Rec, TimeStampField);
@@ -179,12 +180,15 @@ codeunit 82561 "ADLSE Execute"
                 ADLSEExecution.Log('ADLSE-021', 'Updated records found', Verbosity::Normal, CustomDimensions);
             end;
 
+            // This represent (Unix) Epoch with appending the Timezone Offset, so when converting this to UTC it wil be exactly 01 Jan 1900
+            UtcEpochZero := ADLSEUtil.GetUtcEpochWithTimezoneOffset();
+
             repeat
                 // Records created before SystemCreatedAt field was introduced, have null values. Initialize with 01 Jan 1900
                 Field := Rec.Field(Rec.SystemCreatedAtNo());
                 SystemCreatedAt := Field.Value();
                 if SystemCreatedAt = 0DT then
-                    Field.Value(CreateDateTime(DMY2Date(1, 1, 1900), 0T));
+                    Field.Value(UtcEpochZero);
 
                 if ADLSECommunication.TryCollectAndSendRecord(Rec, TimeStampField.Value(), FlushedTimeStamp) then begin
                     if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
