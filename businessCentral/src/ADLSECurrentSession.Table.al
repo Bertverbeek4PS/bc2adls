@@ -115,6 +115,7 @@ table 82565 "ADLSE Current Session"
     var
         ActiveSession: Record "Active Session";
     begin
+        ActiveSession.SetLoadFields("Session Unique ID");
         if ActiveSession.Get(ServiceInstanceId(), Rec."Session ID") then
             exit(ActiveSession."Session Unique ID" = Rec."Session Unique ID");
     end;
@@ -123,6 +124,7 @@ table 82565 "ADLSE Current Session"
     var
         ActiveSession: Record "Active Session";
     begin
+        ActiveSession.SetLoadFields("Session Unique ID");
         ActiveSession.Get(ServiceInstanceId(), SessId);
         exit(ActiveSession."Session Unique ID");
     end;
