@@ -91,6 +91,7 @@ table 82566 "ADLSE Run"
     procedure RegisterEnded(TableID: Integer; EmitTelemetry: Boolean; TableCaption: Text)
     var
         ADLSEExecution: Codeunit "ADLSE Execution";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         CustomDimensions: Dictionary of [Text, Text];
         LastErrorMessage: Text;
     begin
@@ -107,6 +108,8 @@ table 82566 "ADLSE Run"
             Rec.State := "ADLSE Run State"::Success
         else
             Rec.State := "ADLSE Run State"::Failed;
+
+        ADLSEExternalEvents.OnTableExportRunEnded(Rec.ID, Rec."Table ID", Rec.State);
 
         Rec.Ended := CurrentDateTime();
         if not Rec.Modify() then

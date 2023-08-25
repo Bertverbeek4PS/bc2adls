@@ -304,5 +304,9 @@ codeunit 82561 "ADLSE Execute"
         // exports being skipped. But they may become active in the next export 
         // batch. 
         ADLSESessionManager.StartExportFromPendingTables();
+
+        if not ADLSECurrentSession.AreAnySessionsActive() then begin
+            ADLSEExecution.Log('ADLSE-041', 'All exports are finished', Verbosity::Normal, CustomDimensions);
+        end;
     end;
 }
