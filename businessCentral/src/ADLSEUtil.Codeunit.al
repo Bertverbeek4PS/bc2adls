@@ -122,6 +122,15 @@ codeunit 82564 "ADLSE Util"
         end;
     end;
 
+    procedure GetUtcEpochWithTimezoneOffset(): DateTime
+    var
+        TypeHelper: Codeunit "Type Helper";
+        UtcOffset: Duration;
+    begin
+        TypeHelper.GetUserTimezoneOffset(UtcOffset);
+        exit(CreateDateTime(DMY2Date(1, 1, 1900), 0T) + UtcOffset);
+    end;
+
     procedure GetTableCaption(TableID: Integer): Text
     var
         RecRef: RecordRef;
