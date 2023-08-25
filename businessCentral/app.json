@@ -14,8 +14,8 @@
   "screenshots":  [
 
                   ],
-  "platform":  "21.0.0.0",
-  "application":  "21.0.0.0",
+  "platform":  "22.0.0.0",
+  "application":  "22.0.0.0",
   "resourceExposurePolicy": {
     "allowDebugging": true,
     "allowDownloadingSource": true,
@@ -28,5 +28,5 @@
     }
   ],
   "target": "Cloud",
-  "runtime": "10.0"
+  "runtime": "11.0"
 }

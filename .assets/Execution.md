@@ -17,6 +17,9 @@ In version 21, a new feature called `Report read-only data access` needs to [be 
 You may switch off the telemetry traces specified inside the code of this extension by turning the "Emit telemetry" flag to off on the main setup page. When switched on, operational telemetry is pushed to any Application Insights account specified on the extension by the publisher. [Read more](https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-overview).
 
 # Running the integration pipeline
+The pipeline execution can be managed as static trigger directly in Azure Synapse Analytics or with the use of Power Automate between Business Central and Azure Synapse as mediator. Power Automate can instantly trigger the pipeline when an export of a table is finished, which could makes pipelines scheduling easier.
+
+## Azure Synapse Analytics
 The **Consolidation_AllEntities** pipeline consolidates all the incremental updates made from BC into one view. It should be invoked after one or more export processes from BC has completed and it requires you to specify the following parameters,
 - **containerName**: the name of the data lake container to which the data has been exported
 - **deleteDeltas**: a flag to delete the deltas, if successful. In the general case, you might want to set this to true, as the deltas will not be deleted if the pipeline results in an error. Set it to false, in case you want to debug/troubleshoot.
@@ -26,6 +29,11 @@ Follow the instructions at [Pipeline execution and triggers in Azure Data Factor
 ![Trigger pipeline run](/.assets/synapseTriggerNow.png)
 
 > **<em>Note</em>** Ensure that the pipeline is not triggered for an Azure data lake container in which data is either being exported from BC or another pipeline is consolidating data.
+
+## Power Automate
+Will only execute The **Consolidation_OneEntity** pipeline without the use of the **Consolidation_OneEntity** and **Consolidation_CheckForDelta** pipelines.
+Follow the instructions at [Setup the Business Central to Azure Data Lake Storage Solution](/.assets/BusinessCentraltoAzureDataLakeStorageSolution.md) to trigger the pipeline with Power Automate.
+![Manual triggered pipeline runs](/.assets/synapseTriggerPowerAutomate.png)
 
 # Consuming the CDM data
 There are [multiple ways](https://learn.microsoft.com/en-us/power-query/connectors/data-lake-storage) of consuming the resulting CDM data, for example using Power BI. To do so, create a new Power BI report and select **Get data**, then select **Azure Data Lake Storage Gen2** and **Connect**.
