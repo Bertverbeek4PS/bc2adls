@@ -9,5 +9,7 @@ permissionset 82562 "ADLSE - Track Delete"
     Assignable = true;
     Caption = 'Azure Data Lake Storage - Track Delete';
 
-    Permissions = tabledata "ADLSE Deleted Record" = I;
+    Permissions = tabledata "ADLSE Deleted Record" = I,
+                      table "ADLSE Table Last Timestamp" = X,
+                  tabledata "ADLSE Table Last Timestamp" = R;
 }
