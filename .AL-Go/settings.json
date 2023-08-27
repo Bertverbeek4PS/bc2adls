@@ -1,6 +1,6 @@
 {
-  "country": "us",
-  "appFolders": [],
+  "country": "w1",
+  "appFolders": ["businessCentral"],
   "testFolders": [],
   "bcptTestFolders": []
 }
