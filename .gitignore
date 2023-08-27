@@ -351,4 +351,12 @@ MigrationBackup/
 
 # AL related
 **/*.app
-**/.vscode/*
+.vscode
+*.flf
+TestResults.xml
+BuildOutput.txt
+rad.json
+.output
+.alcache/
+.altemplates/
+cache_*
