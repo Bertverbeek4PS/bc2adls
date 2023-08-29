@@ -11,7 +11,7 @@ codeunit 82563 "ADLSE Http"
         Body: Text;
         ContentTypeJson: Boolean;
         AdditionalRequestHeaders: Dictionary of [Text, Text];
-        ResponseHeaders: HttpHeaders;
+        ResponseHeaders, ResponseContentHeaders : HttpHeaders;
         AzureStorageServiceVersionTok: Label '2020-10-02', Locked = true; // Latest version from https://docs.microsoft.com/en-us/rest/api/storageservices/versioning-for-the-azure-storage-services
         ContentTypeApplicationJsonTok: Label 'application/json', Locked = true;
         ContentTypePlainTextTok: Label 'text/plain; charset=utf-8', Locked = true;
@@ -80,6 +80,18 @@ codeunit 82563 "ADLSE Http"
             Result.Add(Values[Counter]);
     end;
 
+    procedure GetResponseContentHeaderValue(HeaderKey: Text) Result: List of [Text]
+    var
+        Values: array[10] of Text;  // max 10 values in each header
+        Counter: Integer;
+    begin
+        if not ResponseContentHeaders.Contains(HeaderKey) then
+            exit;
+        ResponseContentHeaders.GetValues(HeaderKey, Values);
+        for Counter := 1 to 10 do
+            Result.Add(Values[Counter]);
+    end;
+
     procedure InvokeRestApi(var Response: Text) Success: Boolean
     var
         StatusCode: Integer;
@@ -133,6 +145,12 @@ codeunit 82563 "ADLSE Http"
                     RequestMsg.Content(Content);
                     Client.Send(RequestMsg, ResponseMsg);
                 end;
+            "ADLSE Http Method"::Head:
+                begin
+                    RequestMsg.Method('HEAD');
+                    RequestMsg.SetRequestUri(Url);
+                    Client.Send(RequestMsg, ResponseMsg);
+                end;
             else
                 Error(UnsupportedMethodErr, HttpMethod);
         end;
@@ -140,6 +158,7 @@ codeunit 82563 "ADLSE Http"
         Content := ResponseMsg.Content();
         Content.ReadAs(Response);
         ResponseHeaders := ResponseMsg.Headers();
+        ResponseMsg.Content().GetHeaders(ResponseContentHeaders);
         Success := ResponseMsg.IsSuccessStatusCode();
         StatusCode := ResponseMsg.HttpStatusCode();
     end;
