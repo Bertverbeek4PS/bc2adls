@@ -211,21 +211,15 @@ page 82560 "ADLSE Setup"
             {
                 Caption = 'Process';
 
-                actionref(ExportNow_Promoted; ExportNow)
+                group(Export)
                 {
+                    ShowAs = SplitButton;
+                    actionref(ExportNow_Promoted; ExportNow) { }
+                    actionref(Schedule_Promoted; Schedule) { }
+                    actionref(StopExport_Promoted; StopExport) { }
                 }
-                actionref(StopExport_Promoted; StopExport)
-                {
-                }
-                actionref(Schedule_Promoted; Schedule)
-                {
-                }
-                actionref(ClearDeletedRecordsList_Promoted; ClearDeletedRecordsList)
-                {
-                }
-                actionref(DeleteOldRuns_Promoted; DeleteOldRuns)
-                {
-                }
+                actionref(ClearDeletedRecordsList_Promoted; ClearDeletedRecordsList) { }
+                actionref(DeleteOldRuns_Promoted; DeleteOldRuns) { }
             }
         }
     }
