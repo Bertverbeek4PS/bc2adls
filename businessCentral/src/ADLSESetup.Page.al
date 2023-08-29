@@ -130,10 +130,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Export';
                 Tooltip = 'Starts the export process by spawning different sessions for each table. The action is disabled in case there are export processes currently running, also in other companies.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = Start;
                 Enabled = not ExportInProgress;
 
@@ -151,10 +147,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Stop export';
                 Tooltip = 'Tries to stop all sessions that are exporting data, including those that are running in other companies.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = Stop;
 
                 trigger OnAction()
@@ -171,10 +163,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Schedule export';
                 Tooltip = 'Schedules the export process as a job queue entry.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = Timesheet;
 
                 trigger OnAction()
@@ -190,10 +178,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Clear tracked deleted records';
                 Tooltip = 'Removes the entries in the deleted record list that have already been exported. This should be done periodically to free up storage space. The codeunit ADLSE Clear Tracked Deletions may be invoked using a job queue entry for the same end.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = ClearLog;
                 Enabled = TrackedDeletedRecordsExist;
 
@@ -209,10 +193,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Clear execution log';
                 Tooltip = 'Removes the history of the export executions. This should be done periodically to free up storage space.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = History;
                 Enabled = OldLogsExist;
 
@@ -225,7 +205,25 @@ page 82560 "ADLSE Setup"
                 end;
             }
         }
+        area(Promoted)
+        {
+            group(Category_Process)
+            {
+                Caption = 'Process';
+
+                group(Export)
+                {
+                    ShowAs = SplitButton;
+                    actionref(ExportNow_Promoted; ExportNow) { }
+                    actionref(Schedule_Promoted; Schedule) { }
+                    actionref(StopExport_Promoted; StopExport) { }
+                }
+                actionref(ClearDeletedRecordsList_Promoted; ClearDeletedRecordsList) { }
+                actionref(DeleteOldRuns_Promoted; DeleteOldRuns) { }
+            }
+        }
     }
+
     var
         ClientSecretLbl: Label 'Secret not shown';
         ClientIdLbl: Label 'ID not shown';
