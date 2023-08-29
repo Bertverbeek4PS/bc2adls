@@ -9,4 +9,5 @@ enum 82561 "ADLSE Http Method"
     value(1; Put) { }
     value(2; Delete) { }
     value(3; Patch) { }
+    value(4; Head) { }
 }

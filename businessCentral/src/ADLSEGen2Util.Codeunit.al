@@ -23,6 +23,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         CouldNotCommitBlocksToDataBlobErr: Label 'Could not commit blocks to %1. %2', Comment = '%1: Blob path, %2: Http Response';
         CouldNotCreateBlobErr: Label 'Could not create blob %1. %2', Comment = '%1: blob path, %2: error text';
         CouldNotReadDataInBlobErr: Label 'Could not read data on %1. %2', Comment = '%1: blob path, %2: Http respomse';
+        CouldNotReadResponseHeaderErr: Label 'Could not read %1 from %2.', Comment = '%1: content header value , %2: blob path';
         LatestBlockTagTok: Label '<Latest>%1</Latest>', Comment = '%1: block ID';
 
     procedure ContainerExists(ContainerPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"): Boolean
@@ -71,6 +72,27 @@ codeunit 82568 "ADLSE Gen 2 Util"
 
         if BlobExists then // real error
             Error(CouldNotReadDataInBlobErr, BlobPath, Response);
+    end;
+
+    procedure GetBlobContentLength(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials") ContentLength: Integer
+    var
+        ADLSEHttp: Codeunit "ADLSE Http";
+        Response: Text;
+        StatusCode: Integer;
+        ContentLengthList: List of [Text];
+        ContentLengthTok: Label 'Content-Length', Locked = true;
+    begin
+        ADLSEHttp.SetMethod("ADLSE Http Method"::Head);
+        ADLSEHttp.SetUrl(BlobPath);
+        ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+        if not ADLSEHttp.InvokeRestApi(Response, StatusCode) then
+            Error(CouldNotReadDataInBlobErr, BlobPath, Response);
+
+        ContentLengthList := ADLSEHttp.GetResponseContentHeaderValue(ContentLengthTok);
+        if ContentLengthList.Count() < 1 then
+            Error(CouldNotReadResponseHeaderErr, ContentLengthTok, BlobPath);
+
+        Evaluate(ContentLength, ContentLengthList.Get(1));
     end;
 
     procedure CreateOrUpdateJsonBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; LeaseID: Text; Body: JsonObject)
@@ -129,6 +151,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         ADLSEHttp: Codeunit "ADLSE Http";
         ADLSESetup: Record "ADLSE Setup";
         Response: Text;
+        Position: Integer;
     begin
         case ADLSESetup.GetStorageType() of
             ADLSESetup."Storage Type"::"Azure Data Lake":
@@ -139,8 +162,9 @@ codeunit 82568 "ADLSE Gen 2 Util"
                 end;
             ADLSESetup."Storage Type"::"Microsoft Fabric":
                 begin
+                    Position := GetBlobContentLength(BlobPath, ADLSECredentials);
                     ADLSEHttp.SetMethod("ADLSE Http Method"::Patch);
-                    ADLSEHttp.SetUrl(BlobPath + '?position=0&action=append&flush=true');
+                    ADLSEHttp.SetUrl(BlobPath + '?position=' + Format(Position) + '&action=append&flush=true');
                 end;
         end;
 
