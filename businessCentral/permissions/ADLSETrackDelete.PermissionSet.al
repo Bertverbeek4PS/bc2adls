@@ -8,6 +8,9 @@ permissionset 82562 "ADLSE - Track Delete"
     Access = Public;
     Assignable = true;
     Caption = 'Azure Data Lake Storage - Track Delete';
+    ObsoleteState = Pending;
+    ObsoleteReason = 'With the InherentPermissions attribute set on the method this permissionset has become obsolete.';
+    ObsoleteTag = 'v1.5.0.0';
 
     Permissions = tabledata "ADLSE Deleted Record" = I,
                       table "ADLSE Table Last Timestamp" = X,
