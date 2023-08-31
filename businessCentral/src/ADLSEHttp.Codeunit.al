@@ -18,7 +18,7 @@ codeunit 82563 "ADLSE Http"
         UnsupportedMethodErr: Label 'Unsupported method: %1', Comment = '%1: http method name';
         OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id';
         BearerTok: Label 'Bearer %1', Comment = '%1: access token';
-        AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&client_info=1&grant_type=client_credentials', Comment = '%1: encoded url, %2: encoded user impersonation, %3: client ID, %4: client secret';
+        AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret';
 
     procedure SetMethod(HttpMethodValue: Enum "ADLSE Http Method")
     begin
