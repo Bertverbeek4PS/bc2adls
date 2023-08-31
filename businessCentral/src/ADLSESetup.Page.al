@@ -78,30 +78,6 @@ page 82560 "ADLSE Setup"
                         ApplicationArea = All;
                         Tooltip = 'Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID ';
                     }
-                    field(UserName; UserName)
-                    {
-                        Caption = 'Username';
-                        ApplicationArea = All;
-                        ExtendedDatatype = Masked;
-                        Tooltip = 'Specifies the username for the connection with Microsoft Fabric.';
-
-                        trigger OnValidate()
-                        begin
-                            ADLSECredentials.SetUserName(UserName);
-                        end;
-                    }
-                    field(Password; Password)
-                    {
-                        Caption = 'Password';
-                        ApplicationArea = All;
-                        ExtendedDatatype = Masked;
-                        Tooltip = 'Specifies the password for the connection with Microsoft Fabric.';
-
-                        trigger OnValidate()
-                        begin
-                            ADLSECredentials.SetPassword(Password);
-                        end;
-                    }
                 }
                 group(Access)
                 {
@@ -283,8 +259,6 @@ page 82560 "ADLSE Setup"
         AzureDataLake: Boolean;
         ClientSecretLbl: Label 'Secret not shown';
         ClientIdLbl: Label 'ID not shown';
-        UserNameLbl: Label 'User name not shown';
-        PasswordLbl: Label 'Password not shown';
 
     trigger OnInit()
     begin
@@ -297,12 +271,6 @@ page 82560 "ADLSE Setup"
             ClientID := ClientIdLbl;
         if ADLSECredentials.IsClientSecretSet() then
             ClientSecret := ClientSecretLbl;
-        if rec."Storage Type" = rec."Storage Type"::"Microsoft Fabric" then begin
-            if ADLSECredentials.IsUserNameSet() then
-                UserName := UserNameLbl;
-            if ADLSECredentials.IsPasswordSet() then
-                Password := PasswordLbl;
-        end;
     end;
 
     trigger OnAfterGetRecord()
@@ -330,10 +298,6 @@ page 82560 "ADLSE Setup"
         ClientID: Text;
         [NonDebuggable]
         ClientSecret: Text;
-        [NonDebuggable]
-        UserName: Text;
-        [NonDebuggable]
-        Password: Text;
         OldLogsExist: Boolean;
         FailureNotificationID: Guid;
         ExportFailureNotificationMsg: Label 'Data from one or more tables failed to export on the last run. Please check the tables below to see the error(s).';

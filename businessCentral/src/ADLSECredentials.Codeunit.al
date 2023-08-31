@@ -164,42 +164,4 @@ codeunit 82565 "ADLSE Credentials"
     begin
         exit(DataScope::Module); // so that all companies share the same settings
     end;
-
-    [NonDebuggable]
-    procedure GetUserName(): Text
-    begin
-        exit(UserName);
-    end;
-
-    [NonDebuggable]
-    procedure SetUsername(NewUsernameValue: Text): Text
-    begin
-        UserName := NewUsernameValue;
-        SetSecret(UsernameKeyNameTok, NewUsernameValue);
-    end;
-
-    [NonDebuggable]
-    procedure IsUsernameSet(): Boolean
-    begin
-        exit(GetUserName() <> '');
-    end;
-
-    [NonDebuggable]
-    procedure IsPasswordSet(): Boolean
-    begin
-        exit(GetPassword() <> '');
-    end;
-
-    [NonDebuggable]
-    procedure GetPassword(): Text
-    begin
-        exit(Password);
-    end;
-
-    [NonDebuggable]
-    procedure SetPassword(NewPasswordValue: Text): Text
-    begin
-        Password := NewPasswordValue;
-        SetSecret(PasswordKeyNameTok, NewPasswordValue);
-    end;
 }
