@@ -1,0 +1,96 @@
+name: ' Test Next Minor'
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: powershell
+
+env:
+  workflowDepth: 1
+  ALGoOrgSettings: ${{ vars.ALGoOrgSettings }}
+  ALGoRepoSettings: ${{ vars.ALGoRepoSettings }}
+
+jobs:
+  Initialization:
+    runs-on: [ windows-latest ]
+    outputs:
+      telemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
+      githubRunner: ${{ steps.ReadSettings.outputs.GitHubRunnerJson }}
+      githubRunnerShell: ${{ steps.ReadSettings.outputs.GitHubRunnerShell }}
+      projects: ${{ steps.determineProjectsToBuild.outputs.ProjectsJson }}
+      projectDependenciesJson: ${{ steps.determineProjectsToBuild.outputs.ProjectDependenciesJson }}
+      buildOrderJson: ${{ steps.determineProjectsToBuild.outputs.BuildOrderJson }}
+      workflowDepth: ${{ steps.DetermineWorkflowDepth.outputs.WorkflowDepth }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          lfs: true
+
+      - name: Initialize the workflow
+        id: init
+        uses: microsoft/AL-Go-Actions/WorkflowInitialize@v3.2
+        with:
+          shell: powershell
+          eventId: "DO0100"
+
+      - name: Read settings
+        id: ReadSettings
+        uses: microsoft/AL-Go-Actions/ReadSettings@v3.2
+        with:
+          shell: powershell
+          parentTelemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
+
+      - name: Determine Workflow Depth
+        id: DetermineWorkflowDepth
+        run: |
+          Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "WorkflowDepth=$($env:workflowDepth)"
+          
+      - name: Determine Projects To Build
+        id: determineProjectsToBuild
+        uses: microsoft/AL-Go-Actions/DetermineProjectsToBuild@v3.2
+        with:
+          shell: powershell
+          maxBuildDepth: ${{ env.workflowDepth }}
+
+  Build:
+    needs: [ Initialization ]
+    if: (!failure()) && (!cancelled()) && fromJson(needs.Initialization.outputs.buildOrderJson)[0].projectsCount > 0
+    strategy:
+      matrix:
+        include: ${{ fromJson(needs.Initialization.outputs.buildOrderJson)[0].buildDimensions }}
+      fail-fast: false
+    name: Build ${{ matrix.project }} - ${{ matrix.buildMode }}
+    uses: ./.github/workflows/_BuildALGoProject.yaml
+    secrets: inherit
+    with:
+      shell: ${{ needs.Initialization.outputs.githubRunnerShell }}
+      runsOn: ${{ needs.Initialization.outputs.githubRunner }}
+      parentTelemetryScopeJson: ${{ needs.Initialization.outputs.telemetryScopeJson }}
+      project: ${{ matrix.project }}
+      buildMode: ${{ matrix.buildMode }}
+      projectDependenciesJson: ${{ needs.Initialization.outputs.projectDependenciesJson }}
+      secrets: 'licenseFileUrl,insiderSasToken,codeSignCertificateUrl,codeSignCertificatePassword,keyVaultCertificateUrl,keyVaultCertificatePassword,keyVaultClientId,gitHubPackagesContext,applicationInsightsConnectionString'
+      publishThisBuildArtifacts: ${{ needs.Initialization.outputs.workflowDepth > 1 }}
+      artifactsNameSuffix: 'NextMinor'
+
+  PostProcess:
+    if: always()
+    runs-on: [ windows-latest ]
+    needs: [ Initialization, Build ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Finalize the workflow
+        id: PostProcess
+        uses: microsoft/AL-Go-Actions/WorkflowPostProcess@v3.2
+        with:
+          shell: powershell
+          eventId: "DO0100"
+          telemetryScopeJson: ${{ needs.Initialization.outputs.telemetryScopeJson }}
