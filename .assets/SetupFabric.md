@@ -19,7 +19,7 @@ In Microsoft Fabric you need to create a lakehouse. Go to the appropeate workspa
 **Lakehouse (preview)**. Give it a name and click on **Create**. This will create a lakehouse with a default configuration.
 ![Fabric Create New](/.assets/fabricCreateNew.png)
 
-### Step 3. creating a notebook
+### Step 3. Creating a notebook
 For moving the delta files to tables you need to create a notebook.
 Go to the appropeate workspace and click on **new** and select **Notebook (preview)**.
 The notebook will be created and you can rename it on the left corner.
@@ -28,6 +28,13 @@ The notebook will be created and you can rename it on the left corner.
 Copy and paste [the code](/fabric/CopyBusinessCentral.ipynb) in the link into the notebook.
 
 You can also schedule the notebook to run at a specific time. Click on **Schedule** in the ribbon and select the time and frequency.
+
+### Step 4. Adding service principle to the workspace
+The service principal that you have created in step 1 needs to be added to the workspace. Go to the workspace and click on **Manage access** and search for your service principal. Select the service principal and click on **Add**.
+![Access Management](/.assets/manageAccessFabric.png)
+
+*it is possible that you cannot see the service principal then go to the admin tenant settings and enable the setting "Allow service principals to use Power BI API's"*
+![Fabric Tenant Settings](/.assets/fabricTenantSettings.png)
 
 ## Configuring the Dynamics 365 Business Central
 Install the extension into BC using the code given in the [businessCentral](/businessCentral) folder using the general guidance for [developing extensions in Visual Studio code](https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-dev-overview#developing-extensions-in-visual-studio-code). 
@@ -39,14 +46,12 @@ The app exposes [3 permission sets](/businessCentral/permissions/) for different
 
 Once you have the `Azure Data Lake Storage Export` extension deployed, open the `Page 82560 - Export to Azure data lake Storage`. In order to export the data from inside BC to the data lake, you will need to add a configuration to make BC aware of the location in the data lake.
 
-### Step 4. Enter the BC settings
+### Step 5. Enter the BC settings
 Let us take a look at the settings show in the sample screenshot below,
 - **Storage Type** choose here the storage type. Choose "Microsoft Fabric"
 - **Tenant ID** The tenant id at which the app registration created above resides (refer to **b)** in the picture at [Step 1](/.assets/Setup.md#step-1-create-an-azure-service-principal))
 - **Workspace** The workspace in your Microsoft Fabric environment where the lakehouse is located. This can also be a GUID.
 - **Lakehouse** The name or GUID of the lakehouse inside the workspace.
-- **Username** The username for the connection with Microsoft Fabric
-- **Password** The password for the connection with Microsoft Fabric
 - **Max payload size (MiBs)** The size of the individual data payload that constitutes a single REST Api upload operation to the data lake. A bigger size will surely mean less number of uploads but might consume too much memory on the BC side. Note that each upload creates a new block within the blob in the data lake. The size of such blocks are constrained as described at [Put Block (REST API) - Azure Storage | Microsoft Docs](https://docs.microsoft.com/en-us/rest/api/storageservices/put-block#remarks).
 - **Multi- company export** The flag to allow exporting data from multiple companies at the same time. You should enable this only after the export schema is finalized- in other words, ensure that at least one export for a company has been successful with all the desired tables and the desired fields in those tables. We recommend that the json files are manually checked in the outbound container before enabling this flag. Changes to the export schema (adding or removing tables as well as changing the field set to be exported) are not allowed as long as this flag is checked.
 - **Skip row version sorting** Allows the records to be exported as they are fetched through SQL. This can be useful to avoid query timeouts when there is a large amount of records to be exported to the lake from a table, say, during the first export. The records are usually sorted ascending on their row version so that in case of a failure, the next export can re-start by exporting only those records that have a row version higher than that of the last exported one. This helps incremental updates to reach the lake in the same order that the updates were made. Enabling this check, however, may thus cause a subsequent export job to re-send records that had been exported to the lake already, thus leading to performance degradation on the next run. It is recommended to use this cautiously for only a few tables (while disabling export for all other tables), and disabling this check once all the data has been transferred to the lake.
