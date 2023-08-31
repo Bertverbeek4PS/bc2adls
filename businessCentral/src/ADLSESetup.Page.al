@@ -78,30 +78,6 @@ page 82560 "ADLSE Setup"
                         ApplicationArea = All;
                         Tooltip = 'Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID ';
                     }
-                    field(UserName; UserName)
-                    {
-                        Caption = 'Username';
-                        ApplicationArea = All;
-                        ExtendedDatatype = Masked;
-                        Tooltip = 'Specifies the username for the connection with Microsoft Fabric.';
-
-                        trigger OnValidate()
-                        begin
-                            ADLSECredentials.SetUserName(UserName);
-                        end;
-                    }
-                    field(Password; Password)
-                    {
-                        Caption = 'Password';
-                        ApplicationArea = All;
-                        ExtendedDatatype = Masked;
-                        Tooltip = 'Specifies the password for the connection with Microsoft Fabric.';
-
-                        trigger OnValidate()
-                        begin
-                            ADLSECredentials.SetPassword(Password);
-                        end;
-                    }
                 }
                 group(Access)
                 {
@@ -185,10 +161,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Export';
                 Tooltip = 'Starts the export process by spawning different sessions for each table. The action is disabled in case there are export processes currently running, also in other companies.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = Start;
                 Enabled = not ExportInProgress;
 
@@ -206,10 +178,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Stop export';
                 Tooltip = 'Tries to stop all sessions that are exporting data, including those that are running in other companies.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = Stop;
 
                 trigger OnAction()
@@ -226,10 +194,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Schedule export';
                 Tooltip = 'Schedules the export process as a job queue entry.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = Timesheet;
 
                 trigger OnAction()
@@ -245,10 +209,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Clear tracked deleted records';
                 Tooltip = 'Removes the entries in the deleted record list that have already been exported. This should be done periodically to free up storage space. The codeunit ADLSE Clear Tracked Deletions may be invoked using a job queue entry for the same end.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = ClearLog;
                 Enabled = TrackedDeletedRecordsExist;
 
@@ -264,10 +224,6 @@ page 82560 "ADLSE Setup"
                 ApplicationArea = All;
                 Caption = 'Clear execution log';
                 Tooltip = 'Removes the history of the export executions. This should be done periodically to free up storage space.';
-                Promoted = true;
-                PromotedIsBig = true;
-                PromotedCategory = Process;
-                PromotedOnly = true;
                 Image = History;
                 Enabled = OldLogsExist;
 
@@ -280,13 +236,29 @@ page 82560 "ADLSE Setup"
                 end;
             }
         }
+        area(Promoted)
+        {
+            group(Category_Process)
+            {
+                Caption = 'Process';
+
+                group(Export)
+                {
+                    ShowAs = SplitButton;
+                    actionref(ExportNow_Promoted; ExportNow) { }
+                    actionref(Schedule_Promoted; Schedule) { }
+                    actionref(StopExport_Promoted; StopExport) { }
+                }
+                actionref(ClearDeletedRecordsList_Promoted; ClearDeletedRecordsList) { }
+                actionref(DeleteOldRuns_Promoted; DeleteOldRuns) { }
+            }
+        }
     }
+
     var
         AzureDataLake: Boolean;
         ClientSecretLbl: Label 'Secret not shown';
         ClientIdLbl: Label 'ID not shown';
-        UserNameLbl: Label 'User name not shown';
-        PasswordLbl: Label 'Password not shown';
 
     trigger OnInit()
     begin
@@ -299,12 +271,6 @@ page 82560 "ADLSE Setup"
             ClientID := ClientIdLbl;
         if ADLSECredentials.IsClientSecretSet() then
             ClientSecret := ClientSecretLbl;
-        if rec."Storage Type" = rec."Storage Type"::"Microsoft Fabric" then begin
-            if ADLSECredentials.IsUserNameSet() then
-                UserName := UserNameLbl;
-            if ADLSECredentials.IsPasswordSet() then
-                Password := PasswordLbl;
-        end;
     end;
 
     trigger OnAfterGetRecord()
@@ -332,10 +298,6 @@ page 82560 "ADLSE Setup"
         ClientID: Text;
         [NonDebuggable]
         ClientSecret: Text;
-        [NonDebuggable]
-        UserName: Text;
-        [NonDebuggable]
-        Password: Text;
         OldLogsExist: Boolean;
         FailureNotificationID: Guid;
         ExportFailureNotificationMsg: Label 'Data from one or more tables failed to export on the last run. Please check the tables below to see the error(s).';

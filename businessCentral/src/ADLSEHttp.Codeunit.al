@@ -18,8 +18,7 @@ codeunit 82563 "ADLSE Http"
         UnsupportedMethodErr: Label 'Unsupported method: %1', Comment = '%1: http method name';
         OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id';
         BearerTok: Label 'Bearer %1', Comment = '%1: access token';
-        AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&client_info=1&grant_type=client_credentials', Comment = '%1: encoded url, %2: encoded user impersonation, %3: client ID, %4: client secret';
-        AcquireTokenFabricBodyTok: Label 'scope=%1&client_id=%2&client_secret=%3&client_info=1&grant_type=password&username=%4&password=%5&resource=%6', Comment = '%1: encoded url, %2: encoded user impersonation, %3: client ID, %4: client secret';
+        AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret';
 
     procedure SetMethod(HttpMethodValue: Enum "ADLSE Http Method")
     begin
@@ -223,34 +222,26 @@ codeunit 82563 "ADLSE Http"
         ResponseBody: Text;
         Json: JsonObject;
         ADLSESetup: Record "ADLSE Setup";
+        ScopeUrlEncoded: Text;
     begin
+        // Microsoft Fabric doesn't support user_impersonation at this point in time
+        case ADLSESetup.GetStorageType() of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation'; // url encoded form of https://storage.azure.com/user_impersonation
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2F.default'; // url encoded form of https://storage.azure.com/.default                
+        end;
 
         Uri := StrSubstNo(OAuthTok, Credentials.GetTenantID());
         RequestMessage.Method('POST');
         RequestMessage.SetRequestUri(Uri);
-
-        case ADLSESetup.GetStorageType() of
-            ADLSESetup."Storage Type"::"Azure Data Lake":
-                RequestBody :=
-                    StrSubstNo(
-                        AcquireTokenBodyTok,
-                        'https%3A%2F%2Fstorage.azure.com%2F', // url encoded form of https://storage.azure.com/
-                        'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation', // url encoded form of https://storage.azure.com/user_impersonation
-                        Credentials.GetClientID(),
-                        Credentials.GetClientSecret());
-
-            ADLSESetup."Storage Type"::"Microsoft Fabric":
-                RequestBody :=
-                    StrSubstNo(
-                        AcquireTokenFabricBodyTok,
-                        'https://storage.azure.com/.default', // url encoded form of https://storage.azure.com/user_impersonation
-                        Credentials.GetClientID(),
-                        Credentials.GetClientSecret(),
-                        Credentials.GetUserName(),
-                        Credentials.GetPassword(),
-                        'https%3A%2F%2Fstorage.azure.com%2F'); // url encoded form of https://storage.azure.com/;
-        end;
-
+        RequestBody :=
+        StrSubstNo(
+                    AcquireTokenBodyTok,
+                    'https%3A%2F%2Fstorage.azure.com%2F', // url encoded form of https://storage.azure.com/
+                    ScopeUrlEncoded,
+                    Credentials.GetClientID(),
+                    Credentials.GetClientSecret());
         Content.WriteFrom(RequestBody);
         Content.GetHeaders(Headers);
         Headers.Remove('Content-Type');
@@ -267,6 +258,5 @@ codeunit 82563 "ADLSE Http"
         Json.ReadFrom(ResponseBody);
         AccessToken := ADSEUtil.GetTextValueForKeyInJson(Json, 'access_token');
         // TODO: Store access token in cache, and use it based on expiry date. 
-
     end;
 }
