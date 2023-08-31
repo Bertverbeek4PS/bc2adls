@@ -137,7 +137,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
 
         //Upload Json for Microsoft Fabric
         if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (IsJson) then
-            AddBlockToDataBlob(BlobPathOrg, Body, ADLSECredentials);
+            AddBlockToDataBlob(BlobPathOrg, Body, 0, ADLSECredentials);
     end;
 
     procedure CreateDataBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
@@ -145,29 +145,30 @@ codeunit 82568 "ADLSE Gen 2 Util"
         CreateBlockBlob(BlobPath, ADLSECredentials, '', '', false);
     end;
 
+    // Storage Type - Azure Data Lake
     procedure AddBlockToDataBlob(BlobPath: Text; Body: Text; ADLSECredentials: Codeunit "ADLSE Credentials") BlockID: Text
     var
         Base64Convert: Codeunit "Base64 Convert";
         ADLSEHttp: Codeunit "ADLSE Http";
-        ADLSESetup: Record "ADLSE Setup";
         Response: Text;
-        Position: Integer;
     begin
-        case ADLSESetup.GetStorageType() of
-            ADLSESetup."Storage Type"::"Azure Data Lake":
-                begin
-                    ADLSEHttp.SetMethod("ADLSE Http Method"::Put);
-                    BlockID := Base64Convert.ToBase64(CreateGuid());
-                    ADLSEHttp.SetUrl(BlobPath + StrSubstNo(PutBlockSuffixTxt, BlockID));
-                end;
-            ADLSESetup."Storage Type"::"Microsoft Fabric":
-                begin
-                    Position := GetBlobContentLength(BlobPath, ADLSECredentials);
-                    ADLSEHttp.SetMethod("ADLSE Http Method"::Patch);
-                    ADLSEHttp.SetUrl(BlobPath + '?position=' + Format(Position) + '&action=append&flush=true');
-                end;
-        end;
+        ADLSEHttp.SetMethod("ADLSE Http Method"::Put);
+        BlockID := Base64Convert.ToBase64(CreateGuid());
+        ADLSEHttp.SetUrl(BlobPath + StrSubstNo(PutBlockSuffixTxt, BlockID));
+        ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+        ADLSEHttp.SetBody(Body);
+        if not ADLSEHttp.InvokeRestApi(Response) then
+            Error(CouldNotAppendDataToBlobErr, BlobPath, Response);
+    end;
 
+    // Storage Type - Microsoft Fabric
+    procedure AddBlockToDataBlob(BlobPath: Text; Body: Text; Position: Integer; ADLSECredentials: Codeunit "ADLSE Credentials")
+    var
+        ADLSEHttp: Codeunit "ADLSE Http";
+        Response: Text;
+    begin
+        ADLSEHttp.SetMethod("ADLSE Http Method"::Patch);
+        ADLSEHttp.SetUrl(BlobPath + '?position=' + Format(Position) + '&action=append&flush=true');
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
         ADLSEHttp.SetBody(Body);
         if not ADLSEHttp.InvokeRestApi(Response) then
@@ -246,4 +247,22 @@ codeunit 82568 "ADLSE Gen 2 Util"
             Error(CouldNotReleaseLockOnBlobErr, BlobPath, Response);
     end;
 
+    procedure IsMaxBlobFileSize(DataBlobPath: Text; BlobContentLength: Integer; PayloadLength: Integer): Boolean
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        BlobTotalContentSize: BigInteger;
+    begin
+        if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Microsoft Fabric" then
+            exit(false);
+
+        // To prevent a overflow, use a BigInterger to calculate the total value
+        BlobTotalContentSize := BlobContentLength;
+        BlobTotalContentSize += PayloadLength;
+
+        // Microsoft Fabric has a limit of 2 GB (2147483647) for a blob.
+        if BlobTotalContentSize < 2147483647 then
+            exit(false);
+
+        exit(true);
+    end;
 }
