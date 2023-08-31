@@ -222,18 +222,26 @@ codeunit 82563 "ADLSE Http"
         ResponseBody: Text;
         Json: JsonObject;
         ADLSESetup: Record "ADLSE Setup";
+        ScopeUrlEncoded: Text;
     begin
+        // Microsoft Fabric doesn't support user_impersonation at this point in time
+        case ADLSESetup.GetStorageType() of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation'; // url encoded form of https://storage.azure.com/user_impersonation
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2F.default'; // url encoded form of https://storage.azure.com/.default                
+        end;
 
         Uri := StrSubstNo(OAuthTok, Credentials.GetTenantID());
         RequestMessage.Method('POST');
         RequestMessage.SetRequestUri(Uri);
         RequestBody :=
-            StrSubstNo(
-                AcquireTokenBodyTok,
-                'https%3A%2F%2Fstorage.azure.com%2F', // url encoded form of https://storage.azure.com/
-                'https%3A%2F%2Fstorage.azure.com%2F.default', // url encoded form of https://storage.azure.com/.default
-                Credentials.GetClientID(),
-                Credentials.GetClientSecret());
+        StrSubstNo(
+                    AcquireTokenBodyTok,
+                    'https%3A%2F%2Fstorage.azure.com%2F', // url encoded form of https://storage.azure.com/
+                    ScopeUrlEncoded,
+                    Credentials.GetClientID(),
+                    Credentials.GetClientSecret());
         Content.WriteFrom(RequestBody);
         Content.GetHeaders(Headers);
         Headers.Remove('Content-Type');
