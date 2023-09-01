@@ -18,10 +18,6 @@ codeunit 82565 "ADLSE Credentials"
 
         [NonDebuggable]
         StorageTenantID: Text;
-        [NonDebuggable]
-        Username: Text;
-        [NonDebuggable]
-        Password: Text;
 
         ADLSESetup: Record "ADLSE Setup";
 
@@ -31,8 +27,6 @@ codeunit 82565 "ADLSE Credentials"
         StorageAccountKeyNameTok: Label 'adlse-storage-account', Locked = true;
         ClientIdKeyNameTok: Label 'adlse-client-id', Locked = true;
         ClientSecretKeyNameTok: Label 'adlse-client-secret', Locked = true;
-        UsernameKeyNameTok: Label 'adlse-username', Locked = true;
-        PasswordKeyNameTok: Label 'adlse-password', Locked = true;
 
     [NonDebuggable]
     procedure Init()
@@ -43,11 +37,6 @@ codeunit 82565 "ADLSE Credentials"
             StorageAccount := GetSecret(StorageAccountKeyNameTok);
         ClientID := GetSecret(ClientIdKeyNameTok);
         ClientSecret := GetSecret(ClientSecretKeyNameTok);
-        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Microsoft Fabric" then begin
-            Username := GetSecret(UsernameKeyNameTok);
-            Password := GetSecret(PasswordKeyNameTok);
-        end;
-
         Initialized := true;
     end;
 
@@ -65,10 +54,6 @@ codeunit 82565 "ADLSE Credentials"
             CheckValueExists(StorageAccountKeyNameTok, StorageAccount);
         CheckValueExists(ClientIdKeyNameTok, ClientID);
         CheckValueExists(ClientSecretKeyNameTok, ClientSecret);
-        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Microsoft Fabric" then begin
-            CheckValueExists(UserNameKeyNameTok, Username);
-            CheckValueExists(PasswordKeyNameTok, Password);
-        end;
     end;
 
     [NonDebuggable]
