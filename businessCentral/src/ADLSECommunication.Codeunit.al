@@ -10,6 +10,7 @@ codeunit 82562 "ADLSE Communication"
         FieldIdList: List of [Integer];
         DataBlobPath: Text;
         DataBlobBlockIDs: List of [Text];
+        BlobContentLength: Integer;
         LastRecordOnPayloadTimeStamp: BigInteger;
         Payload: TextBuilder;
         LastFlushedTimeStamp: BigInteger;
@@ -155,17 +156,29 @@ codeunit 82562 "ADLSE Communication"
         CustomDimension: Dictionary of [Text, Text];
         FileIdentifer: Guid;
         ADLSETable: Record "ADLSE Table";
-        ADLSESetup: Record "ADLSE Setup";
     begin
         if DataBlobPath <> '' then
-            // already created blob
-            exit;
+            // Microsoft Fabric has a limit on the blob size. Create a new blob before reaching this limit
+            if not ADLSEGen2Util.IsMaxBlobFileSize(DataBlobPath, BlobContentLength, Payload.Length()) then
+                exit // no need to create a new blob
+            else begin
+                if EmitTelemetry then begin
+                    Clear(CustomDimension);
+                    CustomDimension.Add('Entity', EntityName);
+                    CustomDimension.Add('DataBlobPath', DataBlobPath);
+                    CustomDimension.Add('BlobContentLength', Format(BlobContentLength));
+                    CustomDimension.Add('PayloadContentLength', Format(Payload.Length()));
+                    ADLSEExecution.Log('ADLSE-030', 'Maximum blob size reached.', Verbosity::Normal, CustomDimension);
+                end;
+                BlobContentLength := 0;
+            end;
 
         FileIdentifer := CreateGuid();
 
         DataBlobPath := StrSubstNo(DeltasFileCsvTok, EntityName, ADLSEUtil.ToText(FileIdentifer));
         ADLSEGen2Util.CreateDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials);
         if EmitTelemetry then begin
+            Clear(CustomDimension);
             CustomDimension.Add('Entity', EntityName);
             CustomDimension.Add('DataBlobPath', DataBlobPath);
             ADLSEExecution.Log('ADLSE-012', 'Created new blob to hold the data to be exported', Verbosity::Normal, CustomDimension);
@@ -245,19 +258,26 @@ codeunit 82562 "ADLSE Communication"
             ADLSEExecution.Log('ADLSE-013', 'Flushing the payload', Verbosity::Normal, CustomDimensions);
         end;
 
-        BlockID := ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), ADLSECredentials);
+        case ADLSESetup.GetStorageType() of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                begin
+                    BlockID := ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), ADLSECredentials);
+                    if EmitTelemetry then begin
+                        Clear(CustomDimensions);
+                        CustomDimensions.Add('Block ID', BlockID);
+                        ADLSEExecution.Log('ADLSE-014', 'Block added to blob', Verbosity::Normal, CustomDimensions);
+                    end;
+                    DataBlobBlockIDs.Add(BlockID);
+                    ADLSEGen2Util.CommitAllBlocksOnDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials, DataBlobBlockIDs);
 
-        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then begin
-            if EmitTelemetry then begin
-                Clear(CustomDimensions);
-                CustomDimensions.Add('Block ID', BlockID);
-                ADLSEExecution.Log('ADLSE-014', 'Block added to blob', Verbosity::Normal, CustomDimensions);
-            end;
-            DataBlobBlockIDs.Add(BlockID);
-            ADLSEGen2Util.CommitAllBlocksOnDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials, DataBlobBlockIDs);
-
-            if EmitTelemetry then
-                ADLSEExecution.Log('ADLSE-015', 'Block committed', Verbosity::Normal);
+                    if EmitTelemetry then
+                        ADLSEExecution.Log('ADLSE-015', 'Block committed', Verbosity::Normal);
+                end;
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                begin
+                    ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), BlobContentLength, ADLSECredentials);
+                    BlobContentLength := ADLSEGen2Util.GetBlobContentLength(GetBaseUrl() + DataBlobPath, ADLSECredentials);
+                end;
         end;
 
         LastFlushedTimeStamp := LastRecordOnPayloadTimeStamp;
