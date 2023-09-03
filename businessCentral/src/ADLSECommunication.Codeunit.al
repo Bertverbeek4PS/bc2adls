@@ -148,7 +148,7 @@ codeunit 82562 "ADLSE Communication"
         end;
     end;
 
-    local procedure CreateDataBlob()
+    local procedure CreateDataBlob() Created: Boolean
     var
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
@@ -170,6 +170,7 @@ codeunit 82562 "ADLSE Communication"
                     CustomDimension.Add('PayloadContentLength', Format(Payload.Length()));
                     ADLSEExecution.Log('ADLSE-030', 'Maximum blob size reached.', Verbosity::Normal, CustomDimension);
                 end;
+                Created := true;
                 BlobContentLength := 0;
             end;
 
@@ -177,6 +178,7 @@ codeunit 82562 "ADLSE Communication"
 
         DataBlobPath := StrSubstNo(DeltasFileCsvTok, EntityName, ADLSEUtil.ToText(FileIdentifer));
         ADLSEGen2Util.CreateDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials);
+        Created := true;
         if EmitTelemetry then begin
             Clear(CustomDimension);
             CustomDimension.Add('Entity', EntityName);
@@ -187,19 +189,25 @@ codeunit 82562 "ADLSE Communication"
 
     [TryFunction]
     procedure TryCollectAndSendRecord(Rec: RecordRef; RecordTimeStamp: BigInteger; var LastTimestampExported: BigInteger)
+    var
+        DataBlobCreated: Boolean;
     begin
         ClearLastError();
-        CreateDataBlob();
-        LastTimestampExported := CollectAndSendRecord(Rec, RecordTimeStamp);
+        DataBlobCreated := CreateDataBlob();
+        LastTimestampExported := CollectAndSendRecord(Rec, RecordTimeStamp, DataBlobCreated);
     end;
 
-    local procedure CollectAndSendRecord(Rec: RecordRef; RecordTimeStamp: BigInteger) LastTimestampExported: BigInteger
+    local procedure CollectAndSendRecord(Rec: RecordRef; RecordTimeStamp: BigInteger; DataBlobCreated: Boolean) LastTimestampExported: BigInteger
     var
         ADLSEUtil: Codeunit "ADLSE Util";
         RecordPayLoad: Text;
     begin
         if NumberOfFlushes = 50000 then // https://docs.microsoft.com/en-us/rest/api/storageservices/put-block#remarks
             Error(CannotAddedMoreBlocksErr);
+
+        // Add headers into the existing Payload
+        if (DataBlobCreated) and (Payload.Length() <> 0) then
+            Payload.Insert(1, ADLSEUtil.CreateCsvHeader(Rec, FieldIdList));
 
         RecordPayLoad := ADLSEUtil.CreateCsvPayload(Rec, FieldIdList, Payload.Length() = 0);
         // check if payload exceeds the limit
@@ -348,5 +356,4 @@ codeunit 82562 "ADLSE Communication"
         if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
             ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
     end;
-
 }
