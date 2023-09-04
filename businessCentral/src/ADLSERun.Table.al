@@ -78,6 +78,13 @@ table 82566 "ADLSE Run"
         ErrorIfAny := '';
     end;
 
+    procedure Duration(): Duration
+    begin
+        if (Started = 0DT) or (Ended = 0DT) then
+            exit(0);
+        exit(Round(Ended - Started, 100));
+    end;
+
     procedure RegisterStarted(TableID: Integer)
     begin
         Rec.Init();
