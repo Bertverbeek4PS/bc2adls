@@ -332,7 +332,7 @@ codeunit 82564 "ADLSE Util"
         Payload: TextBuilder;
     begin
         if AddHeaders then
-            Payload.AppendLine(CreateCsvHeader(Rec, FieldIdList));
+            Payload.Append(CreateCsvHeader(Rec, FieldIdList));
 
         FieldsAdded := 0;
         foreach FieldID in FieldIdList do begin
