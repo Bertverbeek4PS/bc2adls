@@ -36,16 +36,11 @@ page 82560 "ADLSE Setup"
                             ADLSECredentials.SetTenantID(StorageTenantID);
                         end;
                     }
-                    field(AccountName; StorageAccount)
+                    field(AccountName; Rec."Account Name")
                     {
                         ApplicationArea = All;
                         Caption = 'Account name';
                         Tooltip = 'Specifies the name of the storage account.';
-
-                        trigger OnValidate()
-                        begin
-                            ADLSECredentials.SetStorageAccount(StorageAccount);
-                        end;
                     }
                 }
                 group(Access)
@@ -215,8 +210,8 @@ page 82560 "ADLSE Setup"
                 {
                     ShowAs = SplitButton;
                     actionref(ExportNow_Promoted; ExportNow) { }
-                    actionref(Schedule_Promoted; Schedule) { }
                     actionref(StopExport_Promoted; StopExport) { }
+                    actionref(Schedule_Promoted; Schedule) { }
                 }
                 actionref(ClearDeletedRecordsList_Promoted; ClearDeletedRecordsList) { }
                 actionref(DeleteOldRuns_Promoted; DeleteOldRuns) { }
@@ -233,7 +228,6 @@ page 82560 "ADLSE Setup"
         Rec.GetOrCreate();
         ADLSECredentials.Init();
         StorageTenantID := ADLSECredentials.GetTenantID();
-        StorageAccount := ADLSECredentials.GetStorageAccount();
         if ADLSECredentials.IsClientIDSet() then
             ClientID := ClientIdLbl;
         if ADLSECredentials.IsClientSecretSet() then
@@ -258,8 +252,6 @@ page 82560 "ADLSE Setup"
         ExportInProgress: Boolean;
         [NonDebuggable]
         StorageTenantID: Text;
-        [NonDebuggable]
-        StorageAccount: Text;
         [NonDebuggable]
         ClientID: Text;
         [NonDebuggable]
