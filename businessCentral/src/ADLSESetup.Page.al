@@ -39,7 +39,6 @@ page 82560 "ADLSE Setup"
                     field(AccountName; Rec."Account Name")
                     {
                         ApplicationArea = All;
-                        Caption = 'Account name';
                         Tooltip = 'Specifies the name of the storage account.';
                     }
                 }
