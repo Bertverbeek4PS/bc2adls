@@ -4,6 +4,7 @@ report 82560 "ADLSE Seek Data"
 {
     ProcessingOnly = true;
     DataAccessIntent = ReadOnly;
+    UsageCategory = None;
 
     dataset
     {

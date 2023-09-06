@@ -62,9 +62,9 @@ codeunit 82572 "ADLSE Upgrade"
 
     local procedure DoContainerFieldFromIsolatedStorageToSetupField()
     var
-        StorageAccountKeyNameTok: Label 'adlse-storage-account', Locked = true;
-        AccountName: Text;
         ADLSESetup: Record "ADLSE Setup";
+        AccountName: Text;
+        StorageAccountKeyNameTok: Label 'adlse-storage-account', Locked = true;
     begin
         if not IsolatedStorage.Contains(StorageAccountKeyNameTok, DataScope::Module) then
             exit;
@@ -76,7 +76,7 @@ codeunit 82572 "ADLSE Upgrade"
 
         if ADLSESetup."Account Name" <> '' then
             exit;
-        ADLSESetup."Account Name" := AccountName;
+        ADLSESetup."Account Name" := CopyStr(AccountName, 1, MaxStrLen(ADLSESetup."Account Name"));
         ADLSESetup.Modify(true);
 
         IsolatedStorage.Delete(StorageAccountKeyNameTok, DataScope::Module);
