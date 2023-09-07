@@ -6,45 +6,36 @@ codeunit 82574 "ADLSE External Events"
     SingleInstance = true;
 
     var
-        Environment, Resource : Text[250];
+        StorageType, Instance, Resource : Text[250];
 
     procedure OnTableExportRunEnded(RunId: Integer; Started: DateTime; Ended: DateTime; TableId: Integer; State: Enum "ADLSE Run State")
     var
         ADLSEUtil: Codeunit "ADLSE Util";
     begin
-        SetEnvironmentAndResource();
+        GetSetup();
 
-        ExportEntityEnded(RunId, Started, Ended, State, Environment, Resource, CopyStr(ADLSEUtil.GetDataLakeCompliantTableName(TableId), 1, 250));
+        ExportEntityEnded(RunId, Started, Ended, State, StorageType, Instance, Resource, CopyStr(ADLSEUtil.GetDataLakeCompliantTableName(TableId), 1, 250));
 #pragma warning disable AL0432
-        TableExportRunEnded(RunId, State, Environment, CopyStr(ADLSEUtil.GetDataLakeCompliantTableName(TableId), 1, 250));
+        TableExportRunEnded(RunId, State, Instance, CopyStr(ADLSEUtil.GetDataLakeCompliantTableName(TableId), 1, 250));
 #pragma warning restore AL0432
     end;
 
-    procedure OnExportRunEnded(Ended: DateTime)
-    begin
-        SetEnvironmentAndResource();
-        ExportEnded(Ended, Environment, Resource);
-    end;
-
-    local procedure SetEnvironmentAndResource()
+    local procedure GetSetup()
     var
         ADLSESetup: Record "ADLSE Setup";
     begin
-        if (Environment <> '') and (Resource <> '') then
+        if (StorageType <> '') and (Instance <> '') and (Resource <> '') then
             exit;
 
         ADLSESetup.GetSingleton();
-        Environment := ADLSESetup."Account Name";
+        // TODO: Change to ADLSESetup."Storage Type" field and include a case-statement on release of Microsoft Fabric integration
+        StorageType := 'Azure Data Lake';
+        Instance := ADLSESetup."Account Name";
         Resource := ADLSESetup.Container;
     end;
 
-    [ExternalBusinessEvent('ExportEnded', 'Export ended', 'The export of all the entities was registered as ended.', EventCategory::ADLSE)]
-    local procedure ExportEnded(Ended: DateTime; Environment: Text[250]; Resource: Text[250])
-    begin
-    end;
-
     [ExternalBusinessEvent('ExportEntityEnded', 'Export entity ended', 'The export of the entity was registered as ended.', EventCategory::ADLSE)]
-    local procedure ExportEntityEnded(RunId: Integer; Started: DateTime; Ended: DateTime; State: Enum "ADLSE Run State"; Environment: Text[250]; Resource: Text[250]; Entity: Text[250])
+    local procedure ExportEntityEnded(RunId: Integer; Started: DateTime; Ended: DateTime; State: Enum "ADLSE Run State"; StorageType: Text[250]; Instance: Text[250]; Resource: Text[250]; Entity: Text[250])
     begin
     end;
 

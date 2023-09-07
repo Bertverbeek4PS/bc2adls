@@ -308,10 +308,8 @@ codeunit 82561 "ADLSE Execute"
         // batch. 
         ADLSESessionManager.StartExportFromPendingTables();
 
-        if not ADLSECurrentSession.AreAnySessionsActive() then begin
-            ADLSEExternalEvents.OnExportRunEnded(CurrentDateTime());
+        if not ADLSECurrentSession.AreAnySessionsActive() then
             if EmitTelemetry then
                 ADLSEExecution.Log('ADLSE-041', 'All exports are finished', Verbosity::Normal);
-        end;
     end;
 }
