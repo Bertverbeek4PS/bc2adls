@@ -49,7 +49,7 @@ codeunit 82562 "ADLSE Communication"
             ADLSESetup.GetSingleton();
             DefaultContainerName := ADLSESetup.Container;
         end;
-        exit(StrSubstNo(ContainerUrlTxt, ADLSECredentials.GetStorageAccount(), DefaultContainerName));
+        exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
     end;
 
     procedure Init(TableIDValue: Integer; FieldIdListValue: List of [Integer]; LastFlushedTimeStampValue: BigInteger; EmitTelemetryValue: Boolean)
@@ -294,5 +294,4 @@ codeunit 82562 "ADLSE Communication"
         ADLSEGen2Util.CreateOrUpdateJsonBlob(BlobPath, ADLSECredentials, LeaseID, ManifestJson);
         ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
     end;
-
 }

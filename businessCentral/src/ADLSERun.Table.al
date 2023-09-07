@@ -116,9 +116,8 @@ table 82566 "ADLSE Run"
         else
             Rec.State := "ADLSE Run State"::Failed;
 
-        ADLSEExternalEvents.OnTableExportRunEnded(Rec.ID, Rec."Table ID", Rec.State);
-
         Rec.Ended := CurrentDateTime();
+        ADLSEExternalEvents.OnTableExportRunEnded(Rec.ID, Rec.Started, Rec.Ended, Rec."Table ID", Rec.State);
         if not Rec.Modify() then
             ADLSEExecution.Log('ADLSE-035', StrSubstNo(CouldNotUpdateExportRunStatusErr, Rec.State), Verbosity::Error, CustomDimensions)
         else

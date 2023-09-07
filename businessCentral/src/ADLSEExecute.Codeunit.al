@@ -285,12 +285,15 @@ codeunit 82561 "ADLSE Execute"
         ADLSECurrentSession: Record "ADLSE Current Session";
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
         ADLSEExecution: Codeunit "ADLSE Execution";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         CustomDimensions: Dictionary of [Text, Text];
     begin
         ADLSERun.RegisterEnded(ADLSETable."Table ID", EmitTelemetry, TableCaption);
         ADLSECurrentSession.Stop(ADLSETable."Table ID", EmitTelemetry, TableCaption);
-        CustomDimensions.Add('Entity', TableCaption);
-        ADLSEExecution.Log('ADLSE-037', 'Finished the export process', Verbosity::Normal, CustomDimensions);
+        if EmitTelemetry then begin
+            CustomDimensions.Add('Entity', TableCaption);
+            ADLSEExecution.Log('ADLSE-037', 'Finished the export process', Verbosity::Normal, CustomDimensions);
+        end;
         Commit();
 
         // This export session is soon going to end. Start up a new one from 
@@ -305,8 +308,8 @@ codeunit 82561 "ADLSE Execute"
         // batch. 
         ADLSESessionManager.StartExportFromPendingTables();
 
-        if not ADLSECurrentSession.AreAnySessionsActive() then begin
-            ADLSEExecution.Log('ADLSE-041', 'All exports are finished', Verbosity::Normal, CustomDimensions);
-        end;
+        if not ADLSECurrentSession.AreAnySessionsActive() then
+            if EmitTelemetry then
+                ADLSEExecution.Log('ADLSE-041', 'All exports are finished', Verbosity::Normal);
     end;
 }
