@@ -45,7 +45,12 @@ page 82563 "ADLSE Run"
                     ApplicationArea = All;
                     ToolTip = 'Specifies when the export was started.';
                 }
-
+                field(Duration; Rec.Duration())
+                {
+                    ApplicationArea = All;
+                    Caption = 'Duration';
+                    ToolTip = 'Specifies how long export has run.';
+                }
                 field(Error; Rec.Error)
                 {
                     ApplicationArea = All;

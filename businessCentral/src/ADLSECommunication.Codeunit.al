@@ -54,7 +54,7 @@ codeunit 82562 "ADLSE Communication"
                     if DefaultContainerName = '' then begin
                         DefaultContainerName := ADLSESetup.Container;
                     end;
-                    exit(StrSubstNo(ContainerUrlTxt, ADLSECredentials.GetStorageAccount(), DefaultContainerName));
+                    exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
                 end;
             ADLSESetup."Storage Type"::"Microsoft Fabric":
                 begin

@@ -21,6 +21,16 @@ codeunit 82572 "ADLSE Upgrade"
     end;
 
     trigger OnUpgradePerCompany()
+    begin
+        RetenPolLogEntryAdded();
+        ContainerFieldFromIsolatedStorageToSetupField();
+    end;
+
+    var
+        TableFieldsTok: Label '[%1]: %2', Comment = '%1: table caption, %2: list of field captions', Locked = true;
+        InvalidFieldsBeingExportedErr: Label 'The following table fields cannot be exported. Please disable them. %1', Comment = '%1 = List of table - field pairs';
+
+    local procedure RetenPolLogEntryAdded()
     var
         ADLSEInstaller: Codeunit "ADLSE Installer";
         UpgradeTag: Codeunit "Upgrade Tag";
@@ -31,8 +41,15 @@ codeunit 82572 "ADLSE Upgrade"
         UpgradeTag.SetUpgradeTag(GetRetenPolLogEntryAddedUpgradeTag());
     end;
 
+    local procedure ContainerFieldFromIsolatedStorageToSetupField()
     var
-        TableFieldsTok: Label '[%1]: %2', Comment = '%1: table caption, %2: list of field captions', Locked = true;
+        UpgradeTag: Codeunit "Upgrade Tag";
+    begin
+        if UpgradeTag.HasUpgradeTag(GetContainerFieldFromIsolatedStorageToSetupFieldUpgradeTag()) then
+            exit;
+        DoContainerFieldFromIsolatedStorageToSetupField();
+        UpgradeTag.SetUpgradeTag(GetContainerFieldFromIsolatedStorageToSetupFieldUpgradeTag());
+    end;
 
     local procedure ConcatenateTableFieldPairs(TableIDFieldNameList: Dictionary of [Integer, List of [Text]]) Result: Text
     var
@@ -43,11 +60,35 @@ codeunit 82572 "ADLSE Upgrade"
             Result += StrSubstNo(TableFieldsTok, ADLSEUtil.GetTableCaption(TableID), ADLSEUtil.Concatenate(TableIDFieldNameList.Get(TableID)));
     end;
 
+    local procedure DoContainerFieldFromIsolatedStorageToSetupField()
     var
-        InvalidFieldsBeingExportedErr: Label 'The following table fields cannot be exported. Please disable them. %1', Comment = '%1 = List of table - field pairs';
+        ADLSESetup: Record "ADLSE Setup";
+        AccountName: Text;
+        StorageAccountKeyNameTok: Label 'adlse-storage-account', Locked = true;
+    begin
+        if not IsolatedStorage.Contains(StorageAccountKeyNameTok, DataScope::Module) then
+            exit;
+        IsolatedStorage.Get(StorageAccountKeyNameTok, DataScope::Module, AccountName);
 
-    local procedure GetRetenPolLogEntryAddedUpgradeTag(): Code[250]
+        if not ADLSESetup.Exists() then
+            exit;
+        ADLSESetup.GetSingleton();
+
+        if ADLSESetup."Account Name" <> '' then
+            exit;
+        ADLSESetup."Account Name" := CopyStr(AccountName, 1, MaxStrLen(ADLSESetup."Account Name"));
+        ADLSESetup.Modify(true);
+
+        IsolatedStorage.Delete(StorageAccountKeyNameTok, DataScope::Module);
+    end;
+
+    procedure GetRetenPolLogEntryAddedUpgradeTag(): Code[250]
     begin
         exit('MS-334067-ADLSERetenPolLogEntryAdded-20221028');
+    end;
+
+    procedure GetContainerFieldFromIsolatedStorageToSetupFieldUpgradeTag(): Code[250]
+    begin
+        exit('GITHUB-22-ADLSEContainerFieldFromIsolatedStorageToSetupField-20230906');
     end;
 }

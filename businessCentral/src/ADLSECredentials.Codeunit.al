@@ -8,9 +8,6 @@ codeunit 82565 "ADLSE Credentials"
 
     var
         [NonDebuggable]
-        StorageAccount: Text;
-
-        [NonDebuggable]
         ClientID: Text;
 
         [NonDebuggable]
@@ -24,7 +21,6 @@ codeunit 82565 "ADLSE Credentials"
         Initialized: Boolean;
         ValueNotFoundErr: Label 'No value found for %1.', Comment = '%1 = name of the key';
         TenantIdKeyNameTok: Label 'adlse-tenant-id', Locked = true;
-        StorageAccountKeyNameTok: Label 'adlse-storage-account', Locked = true;
         ClientIdKeyNameTok: Label 'adlse-client-id', Locked = true;
         ClientSecretKeyNameTok: Label 'adlse-client-secret', Locked = true;
 
@@ -32,9 +28,6 @@ codeunit 82565 "ADLSE Credentials"
     procedure Init()
     begin
         StorageTenantID := GetSecret(TenantIdKeyNameTok);
-        ADLSESetup.GetSingleton();
-        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Azure Data Lake" then
-            StorageAccount := GetSecret(StorageAccountKeyNameTok);
         ClientID := GetSecret(ClientIdKeyNameTok);
         ClientSecret := GetSecret(ClientSecretKeyNameTok);
         Initialized := true;
@@ -49,9 +42,6 @@ codeunit 82565 "ADLSE Credentials"
     begin
         Init();
         CheckValueExists(TenantIdKeyNameTok, StorageTenantID);
-        ADLSESetup.GetSingleton();
-        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Azure Data Lake" then
-            CheckValueExists(StorageAccountKeyNameTok, StorageAccount);
         CheckValueExists(ClientIdKeyNameTok, ClientID);
         CheckValueExists(ClientSecretKeyNameTok, ClientSecret);
     end;
@@ -67,19 +57,6 @@ codeunit 82565 "ADLSE Credentials"
     begin
         StorageTenantID := NewTenantIdValue;
         SetSecret(TenantIdKeyNameTok, NewTenantIdValue);
-    end;
-
-    [NonDebuggable]
-    procedure GetStorageAccount(): Text
-    begin
-        exit(StorageAccount);
-    end;
-
-    [NonDebuggable]
-    procedure SetStorageAccount(NewStorageAccountValue: Text): Text
-    begin
-        StorageAccount := NewStorageAccountValue;
-        SetSecret(StorageAccountKeyNameTok, NewStorageAccountValue);
     end;
 
     [NonDebuggable]
