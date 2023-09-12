@@ -45,8 +45,8 @@ codeunit 82562 "ADLSE Communication"
     var
         ADLSESetup: Record "ADLSE Setup";
     begin
-        if DefaultContainerName = '' then begin
-            ADLSESetup.GetSingleton();
+        ADLSESetup.GetSingleton();
+        if DefaultContainerName = '' then begin         
             DefaultContainerName := ADLSESetup.Container;
         end;
         exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
