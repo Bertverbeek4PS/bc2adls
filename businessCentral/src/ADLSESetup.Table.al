@@ -23,7 +23,7 @@ table 82560 "ADLSE Setup"
             begin
                 // Name constraints based on https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-name
                 if (StrLen(Rec."Account Name") < 3) or (StrLen(Rec."Account Name") > 24) // between 3 and 24 characters long
-                    or TextCharactersOtherThan(Container, 'abcdefghijklmnopqrstuvwxyz1234567890') // only made of lower case letters and numerals
+                    or TextCharactersOtherThan(Rec."Account Name", 'abcdefghijklmnopqrstuvwxyz1234567890') // only made of lower case letters and numerals
                 then
                     Error(AccountNameIncorrectFormatErr);
             end;
@@ -169,11 +169,5 @@ table 82560 "ADLSE Setup"
     local procedure GetPrimaryKeyValue() PKValue: Integer
     begin
         Evaluate(PKValue, PrimaryKeyValueLbl, 9);
-    end;
-
-    procedure GetStorageType(): Enum "ADLSE Storage Type"
-    begin
-        Rec.GetSingleton();
-        exit(Rec."Storage Type");
     end;
 }

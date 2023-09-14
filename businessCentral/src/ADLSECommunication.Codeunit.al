@@ -46,25 +46,12 @@ codeunit 82562 "ADLSE Communication"
     local procedure GetBaseUrl(): Text
     var
         ADLSESetup: Record "ADLSE Setup";
-        LakeHouseVariant: Variant;
     begin
-        case ADLSESetup.GetStorageType of
-            ADLSESetup."Storage Type"::"Azure Data Lake":
-                begin
-                    if DefaultContainerName = '' then begin
-                        DefaultContainerName := ADLSESetup.Container;
-                    end;
-                    exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
-                end;
-            ADLSESetup."Storage Type"::"Microsoft Fabric":
-                begin
-                    LakeHouseVariant := ADLSESetup.Lakehouse;
-                    if LakeHouseVariant.IsGuid then
-                        exit(StrSubstNo(MSFabricUrlTxt, ADLSESetup.Workspace, ADLSESetup.Lakehouse))
-                    else
-                        exit(StrSubstNo(MSFabricUrlTxt, ADLSESetup.Workspace, ADLSESetup.Lakehouse + '.Lakehouse'));
-                end;
+        ADLSESetup.GetSingleton();
+        if DefaultContainerName = '' then begin
+            DefaultContainerName := ADLSESetup.Container;
         end;
+        exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
     end;
 
     procedure Init(TableIDValue: Integer; FieldIdListValue: List of [Integer]; LastFlushedTimeStampValue: BigInteger; EmitTelemetryValue: Boolean)
