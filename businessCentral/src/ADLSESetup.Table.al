@@ -170,4 +170,10 @@ table 82560 "ADLSE Setup"
     begin
         Evaluate(PKValue, PrimaryKeyValueLbl, 9);
     end;
+
+    procedure GetStorageType(): Enum "ADLSE Storage Type"
+    begin
+        Rec.GetSingleton();
+        exit(Rec."Storage Type");
+    end;
 }
