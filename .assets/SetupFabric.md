@@ -21,11 +21,12 @@ In Microsoft Fabric you need to create a lakehouse. Go to the appropeate workspa
 
 ### Step 3. Creating a notebook
 For moving the delta files to tables you need to create a notebook.
-Go to the appropeate workspace and click on **new** and select **Notebook (preview)**.
-The notebook will be created and you can rename it on the left corner.
-![Rename Notebook](/.assets/renameNotebook.png)
+Go to the appropeate workspace and choose **Home**. Click on **New** and select 
+**import notebook**.
+Upload the [notebook](/fabric/CopyBusinessCentral.ipynb) from the [fabric](/fabric) folder.
 
-Copy and paste [the code](/fabric/CopyBusinessCentral.ipynb) in the link into the notebook.
+Read more at:
+[How to use notebooks - Microsoft Fabric | Microsoft Learn](https://learn.microsoft.com/en-us/fabric/data-engineering/how-to-use-notebook#import-existing-notebooks)
 
 You can also schedule the notebook to run at a specific time. Click on **Schedule** in the ribbon and select the time and frequency.
 
@@ -42,7 +43,6 @@ Install the extension into BC using the code given in the [businessCentral](/bus
 The app exposes [3 permission sets](/businessCentral/permissions/) for different user roles that work with this app. Remember to assign the right permission set to the user, based on the scope of their tasks:
 1. `ADLSE - Setup`- The permission set to be used when administering the Azure Data Lake Storage export tool.
 1. `ADLSE - Execute`- The permission set to be used when running the Azure Data Lake Storage export tool.
-1. `ADLSE - Track Delete`- The permission set used to register the deletion of any record, so that the information of it being deleted can be conveyed to the Azure data lake. A user who deleting a table that is configured for export by `bc2adls` should have this permission.
 
 Once you have the `Azure Data Lake Storage Export` extension deployed, open the `Page 82560 - Export to Azure data lake Storage`. In order to export the data from inside BC to the data lake, you will need to add a configuration to make BC aware of the location in the data lake.
 
