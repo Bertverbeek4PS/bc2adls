@@ -16,6 +16,8 @@ codeunit 82565 "ADLSE Credentials"
         [NonDebuggable]
         StorageTenantID: Text;
 
+        ADLSESetup: Record "ADLSE Setup";
+
         Initialized: Boolean;
         ValueNotFoundErr: Label 'No value found for %1.', Comment = '%1 = name of the key';
         TenantIdKeyNameTok: Label 'adlse-tenant-id', Locked = true;
@@ -28,7 +30,6 @@ codeunit 82565 "ADLSE Credentials"
         StorageTenantID := GetSecret(TenantIdKeyNameTok);
         ClientID := GetSecret(ClientIdKeyNameTok);
         ClientSecret := GetSecret(ClientSecretKeyNameTok);
-
         Initialized := true;
     end;
 

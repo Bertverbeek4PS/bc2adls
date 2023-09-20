@@ -32,7 +32,8 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup.CheckSetup(ADLSESetupRec);
         EmitTelemetry := ADLSESetupRec."Emit telemetry";
         ADLSECurrentSession.CleanupSessions();
-        ADLSECommunication.SetupBlobStorage();
+        if ADLSESetupRec.GetStorageType() = ADLSESetupRec."Storage Type"::"Azure Data Lake" then //Because Fabric doesn't have do create a container
+            ADLSECommunication.SetupBlobStorage();
         ADLSESessionManager.Init();
 
         if EmitTelemetry then

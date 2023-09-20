@@ -296,7 +296,7 @@ codeunit 82564 "ADLSE Util"
         FieldIdList.Add(RecRef.SystemModifiedByNo());
     end;
 
-    procedure CreateCsvPayload(Rec: RecordRef; FieldIdList: List of [Integer]; AddHeaders: Boolean) RecordPayload: Text
+    procedure CreateCsvHeader(Rec: RecordRef; FieldIdList: List of [Integer]) RecordPayload: Text
     var
         ADLSECDMUtil: Codeunit "ADLSE CDM Util";
         Field: FieldRef;
@@ -306,21 +306,33 @@ codeunit 82564 "ADLSE Util"
         Payload: TextBuilder;
     begin
         FieldsAdded := 0;
-        if AddHeaders then begin
-            foreach FieldID in FieldIdList do begin
-                Field := Rec.Field(FieldID);
+        foreach FieldID in FieldIdList do begin
+            Field := Rec.Field(FieldID);
 
-                FieldTextValue := GetDataLakeCompliantFieldName(Field.Name, Field.Number);
-                if FieldsAdded = 0 then
-                    Payload.Append(FieldTextValue)
-                else
-                    Payload.Append(StrSubstNo(CommaPrefixedTok, FieldTextValue));
-                FieldsAdded += 1;
-            end;
-            if IsTablePerCompany(Rec.Number) then
-                Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetCompanyFieldName()));
-            Payload.AppendLine();
+            FieldTextValue := GetDataLakeCompliantFieldName(Field.Name, Field.Number);
+            if FieldsAdded = 0 then
+                Payload.Append(FieldTextValue)
+            else
+                Payload.Append(StrSubstNo(CommaPrefixedTok, FieldTextValue));
+            FieldsAdded += 1;
         end;
+        if IsTablePerCompany(Rec.Number) then
+            Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetCompanyFieldName()));
+        Payload.AppendLine();
+        RecordPayload := Payload.ToText();
+    end;
+
+    procedure CreateCsvPayload(Rec: RecordRef; FieldIdList: List of [Integer]; AddHeaders: Boolean) RecordPayload: Text
+    var
+        ADLSECDMUtil: Codeunit "ADLSE CDM Util";
+        Field: FieldRef;
+        FieldID: Integer;
+        FieldsAdded: Integer;
+        FieldTextValue: Text;
+        Payload: TextBuilder;
+    begin
+        if AddHeaders then
+            Payload.Append(CreateCsvHeader(Rec, FieldIdList));
 
         FieldsAdded := 0;
         foreach FieldID in FieldIdList do begin

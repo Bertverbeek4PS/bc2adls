@@ -17,13 +17,18 @@ page 82560 "ADLSE Setup"
             group(Setup)
             {
                 Caption = 'Setup';
-                group(Account)
+                group(General)
                 {
                     Caption = 'Account';
-                    field(Container; Rec.Container)
+                    field(StorageType; Rec."Storage Type")
                     {
                         ApplicationArea = All;
-                        Tooltip = 'Specifies the name of the container where the data is going to be uploaded. Please refer to constraints on container names at https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata.';
+                        Tooltip = 'Specifies the type of storage type to use.';
+
+                        trigger OnValidate()
+                        begin
+                            CurrPage.Update(true);
+                        end;
                     }
                     field("Tenant ID"; StorageTenantID)
                     {
@@ -36,10 +41,36 @@ page 82560 "ADLSE Setup"
                             ADLSECredentials.SetTenantID(StorageTenantID);
                         end;
                     }
+                }
+
+                group(Account)
+                {
+                    Caption = 'Azure Data Lake';
+                    Editable = AzureDataLake;
+                    field(Container; Rec.Container)
+                    {
+                        ApplicationArea = All;
+                        Tooltip = 'Specifies the name of the container where the data is going to be uploaded. Please refer to constraints on container names at https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata.';
+                    }
                     field(AccountName; Rec."Account Name")
                     {
                         ApplicationArea = All;
                         Tooltip = 'Specifies the name of the storage account.';
+                    }
+                }
+                group(MSFabric)
+                {
+                    Caption = 'Microsoft Fabric';
+                    Editable = not AzureDataLake;
+                    field(Workspace; Rec.Workspace)
+                    {
+                        ApplicationArea = All;
+                        Tooltip = 'Specifies the name of the Workspace where the data is going to be uploaded. This can be a name or a GUID.';
+                    }
+                    field(Lakehouse; Rec.Lakehouse)
+                    {
+                        ApplicationArea = All;
+                        Tooltip = 'Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID ';
                     }
                 }
                 group(Access)
@@ -76,6 +107,7 @@ page 82560 "ADLSE Setup"
                     field(MaxPayloadSize; Rec.MaxPayloadSizeMiB)
                     {
                         ApplicationArea = All;
+                        Editable = not AzureDataLake;
                         Tooltip = 'Specifies the maximum size of the upload for each block of data in MiBs. A large value will reduce the number of iterations to upload the data but may interfear with the performance of other processes running on this environment.';
                     }
 
@@ -219,6 +251,7 @@ page 82560 "ADLSE Setup"
     }
 
     var
+        AzureDataLake: Boolean;
         ClientSecretLbl: Label 'Secret not shown';
         ClientIdLbl: Label 'ID not shown';
 
@@ -243,6 +276,7 @@ page 82560 "ADLSE Setup"
         TrackedDeletedRecordsExist := not ADLSEDeletedRecord.IsEmpty();
         OldLogsExist := ADLSERun.OldRunsExist();
         UpdateNotificationIfAnyTableExportFailed();
+        AzureDataLake := Rec."Storage Type" = Rec."Storage Type"::"Azure Data Lake";
     end;
 
     var

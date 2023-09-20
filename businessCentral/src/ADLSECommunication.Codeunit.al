@@ -10,6 +10,7 @@ codeunit 82562 "ADLSE Communication"
         FieldIdList: List of [Integer];
         DataBlobPath: Text;
         DataBlobBlockIDs: List of [Text];
+        BlobContentLength: Integer;
         LastRecordOnPayloadTimeStamp: BigInteger;
         Payload: TextBuilder;
         LastFlushedTimeStamp: BigInteger;
@@ -30,6 +31,7 @@ codeunit 82562 "ADLSE Communication"
         NotAllowedOnSimultaneousExportTxt: Label 'This is not allowed when exports are configured to occur simultaneously. Please uncheck Multi- company export, export the data at least once, and try again.';
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
+        MSFabricUrlTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
 
     procedure SetupBlobStorage()
     var
@@ -46,7 +48,7 @@ codeunit 82562 "ADLSE Communication"
         ADLSESetup: Record "ADLSE Setup";
     begin
         ADLSESetup.GetSingleton();
-        if DefaultContainerName = '' then begin         
+        if DefaultContainerName = '' then begin
             DefaultContainerName := ADLSESetup.Container;
         end;
         exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
@@ -133,21 +135,39 @@ codeunit 82562 "ADLSE Communication"
         end;
     end;
 
-    local procedure CreateDataBlob()
+    local procedure CreateDataBlob() Created: Boolean
     var
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
         CustomDimension: Dictionary of [Text, Text];
         FileIdentifer: Guid;
+        ADLSETable: Record "ADLSE Table";
     begin
         if DataBlobPath <> '' then
-            // already created blob
-            exit;
+            // Microsoft Fabric has a limit on the blob size. Create a new blob before reaching this limit
+            if not ADLSEGen2Util.IsMaxBlobFileSize(DataBlobPath, BlobContentLength, Payload.Length()) then
+                exit // no need to create a new blob
+            else begin
+                if EmitTelemetry then begin
+                    Clear(CustomDimension);
+                    CustomDimension.Add('Entity', EntityName);
+                    CustomDimension.Add('DataBlobPath', DataBlobPath);
+                    CustomDimension.Add('BlobContentLength', Format(BlobContentLength));
+                    CustomDimension.Add('PayloadContentLength', Format(Payload.Length()));
+                    ADLSEExecution.Log('ADLSE-030', 'Maximum blob size reached.', Verbosity::Normal, CustomDimension);
+                end;
+                Created := true;
+                BlobContentLength := 0;
+            end;
+
         FileIdentifer := CreateGuid();
+
         DataBlobPath := StrSubstNo(DeltasFileCsvTok, EntityName, ADLSEUtil.ToText(FileIdentifer));
         ADLSEGen2Util.CreateDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials);
+        Created := true;
         if EmitTelemetry then begin
+            Clear(CustomDimension);
             CustomDimension.Add('Entity', EntityName);
             CustomDimension.Add('DataBlobPath', DataBlobPath);
             ADLSEExecution.Log('ADLSE-012', 'Created new blob to hold the data to be exported', Verbosity::Normal, CustomDimension);
@@ -156,19 +176,25 @@ codeunit 82562 "ADLSE Communication"
 
     [TryFunction]
     procedure TryCollectAndSendRecord(Rec: RecordRef; RecordTimeStamp: BigInteger; var LastTimestampExported: BigInteger)
+    var
+        DataBlobCreated: Boolean;
     begin
         ClearLastError();
-        CreateDataBlob();
-        LastTimestampExported := CollectAndSendRecord(Rec, RecordTimeStamp);
+        DataBlobCreated := CreateDataBlob();
+        LastTimestampExported := CollectAndSendRecord(Rec, RecordTimeStamp, DataBlobCreated);
     end;
 
-    local procedure CollectAndSendRecord(Rec: RecordRef; RecordTimeStamp: BigInteger) LastTimestampExported: BigInteger
+    local procedure CollectAndSendRecord(Rec: RecordRef; RecordTimeStamp: BigInteger; DataBlobCreated: Boolean) LastTimestampExported: BigInteger
     var
         ADLSEUtil: Codeunit "ADLSE Util";
         RecordPayLoad: Text;
     begin
         if NumberOfFlushes = 50000 then // https://docs.microsoft.com/en-us/rest/api/storageservices/put-block#remarks
             Error(CannotAddedMoreBlocksErr);
+
+        // Add headers into the existing Payload
+        if (DataBlobCreated) and (Payload.Length() <> 0) then
+            Payload.Insert(1, ADLSEUtil.CreateCsvHeader(Rec, FieldIdList));
 
         RecordPayLoad := ADLSEUtil.CreateCsvPayload(Rec, FieldIdList, Payload.Length() = 0);
         // check if payload exceeds the limit
@@ -217,6 +243,7 @@ codeunit 82562 "ADLSE Communication"
         ADLSE: Codeunit ADLSE;
         CustomDimensions: Dictionary of [Text, Text];
         BlockID: Text;
+        ADLSESetup: Record "ADLSE Setup";
     begin
         if Payload.Length() = 0 then
             exit;
@@ -226,16 +253,27 @@ codeunit 82562 "ADLSE Communication"
             ADLSEExecution.Log('ADLSE-013', 'Flushing the payload', Verbosity::Normal, CustomDimensions);
         end;
 
-        BlockID := ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), ADLSECredentials);
-        if EmitTelemetry then begin
-            Clear(CustomDimensions);
-            CustomDimensions.Add('Block ID', BlockID);
-            ADLSEExecution.Log('ADLSE-014', 'Block added to blob', Verbosity::Normal, CustomDimensions);
+        case ADLSESetup.GetStorageType() of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                begin
+                    BlockID := ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), ADLSECredentials);
+                    if EmitTelemetry then begin
+                        Clear(CustomDimensions);
+                        CustomDimensions.Add('Block ID', BlockID);
+                        ADLSEExecution.Log('ADLSE-014', 'Block added to blob', Verbosity::Normal, CustomDimensions);
+                    end;
+                    DataBlobBlockIDs.Add(BlockID);
+                    ADLSEGen2Util.CommitAllBlocksOnDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials, DataBlobBlockIDs);
+
+                    if EmitTelemetry then
+                        ADLSEExecution.Log('ADLSE-015', 'Block committed', Verbosity::Normal);
+                end;
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                begin
+                    ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), BlobContentLength, ADLSECredentials);
+                    BlobContentLength := ADLSEGen2Util.GetBlobContentLength(GetBaseUrl() + DataBlobPath, ADLSECredentials);
+                end;
         end;
-        DataBlobBlockIDs.Add(BlockID);
-        ADLSEGen2Util.CommitAllBlocksOnDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials, DataBlobBlockIDs);
-        if EmitTelemetry then
-            ADLSEExecution.Log('ADLSE-015', 'Block committed', Verbosity::Normal);
 
         LastFlushedTimeStamp := LastRecordOnPayloadTimeStamp;
         Payload.Clear();
@@ -261,9 +299,11 @@ codeunit 82562 "ADLSE Communication"
         // update entity json
         if EntityJsonNeedsUpdate then begin
             BlobPath := GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, StrSubstNo(EntityManifestNameTemplateTxt, EntityName));
-            LeaseID := ADLSEGen2Util.AcquireLease(BlobPath, ADLSECredentials, BlobExists);
+            if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
+                LeaseID := ADLSEGen2Util.AcquireLease(BlobPath, ADLSECredentials, BlobExists);
             ADLSEGen2Util.CreateOrUpdateJsonBlob(BlobPath, ADLSECredentials, LeaseID, EntityJson);
-            ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
+            if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
+                ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
         end;
 
         // update manifest
@@ -273,7 +313,10 @@ codeunit 82562 "ADLSE Communication"
             ADLSESetup.LockTable(true);
             ADLSESetup.GetSingleton();
 
+            //In MS Fabric there is no folder data. Everything goes into the tables
+            //if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
             UpdateManifest(GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, DataCdmManifestNameTxt), 'data', ADLSESetup.DataFormat);
+
             UpdateManifest(GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, DeltaCdmManifestNameTxt), 'deltas', "ADLSE CDM Format"::Csv);
             Commit(); // to release the lock above
         end;
@@ -281,17 +324,23 @@ codeunit 82562 "ADLSE Communication"
 
     local procedure UpdateManifest(BlobPath: Text; Folder: Text; ADLSECdmFormat: Enum "ADLSE CDM Format")
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSECdmUtil: Codeunit "ADLSE CDM Util";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ManifestJson: JsonObject;
         LeaseID: Text;
         BlobExists: Boolean;
     begin
-        LeaseID := ADLSEGen2Util.AcquireLease(BlobPath, ADLSECredentials, BlobExists);
-        if BlobExists then
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
+            LeaseID := ADLSEGen2Util.AcquireLease(BlobPath, ADLSECredentials, BlobExists);
+        if BlobExists and (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake") then
+            ManifestJson := ADLSEGen2Util.GetBlobContent(BlobPath, ADLSECredentials, BlobExists)
+        else
             ManifestJson := ADLSEGen2Util.GetBlobContent(BlobPath, ADLSECredentials, BlobExists);
+
         ManifestJson := ADLSECdmUtil.UpdateDefaultManifestContent(ManifestJson, TableID, Folder, ADLSECdmFormat);
         ADLSEGen2Util.CreateOrUpdateJsonBlob(BlobPath, ADLSECredentials, LeaseID, ManifestJson);
-        ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
+            ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
     end;
 }

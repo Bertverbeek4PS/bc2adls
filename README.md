@@ -23,9 +23,10 @@ The following diagram illustrates the flow of data through a usage scenario- the
 ![Architecture](/.assets/architecture.png "Flow of data")
 
 More details:
-- [Installation and configuration](/.assets/Setup.md)
+- [Installation and configuration of the connection with Azure Data Lake](/.assets/Setup.md)
 - [Executing the export and pipeline](/.assets/Execution.md)
 - [Creating shared metadata tables](/.assets/SharedMetadataTables.md)
+- [Installation and configuration of the connection with Microsoft Fabric](/.assets/SetupFabric.md)
 - [Frequently asked questions](/.assets/FAQs.md)
 - Webinars
     - [[Jan 2022] Webinar introducing bc2adls](https://www.microsoft.com/en-us/videoplayer/embed/RWSHHG)
