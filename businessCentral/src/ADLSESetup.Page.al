@@ -107,6 +107,7 @@ page 82560 "ADLSE Setup"
                     field(MaxPayloadSize; Rec.MaxPayloadSizeMiB)
                     {
                         ApplicationArea = All;
+                        Editable = not AzureDataLake;
                         Tooltip = 'Specifies the maximum size of the upload for each block of data in MiBs. A large value will reduce the number of iterations to upload the data but may interfear with the performance of other processes running on this environment.';
                     }
 
