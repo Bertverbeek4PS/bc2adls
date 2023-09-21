@@ -73,6 +73,33 @@ codeunit 82569 "ADLSE Execution"
             Log('ADLSE-019', 'Stopped export sessions', Verbosity::Normal);
     end;
 
+    procedure SchemaExport()
+    var
+        ADLSECommunication: Codeunit "ADLSE Communication";
+        ADLSEExecute: Codeunit "ADLSE Execute";
+        ADLSETable: Record "ADLSE Table";
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+        UpdatedLastTimestamp: BigInteger;
+        FieldIdList: List of [Integer];
+    begin
+        ADLSETable.Reset;
+        ADLSETable.SetRange(Enabled, true);
+        if ADLSETable.FindSet(false) then
+            repeat
+                ADLSESetup.GetSingleton();
+                EmitTelemetry := ADLSESetup."Emit telemetry";
+                UpdatedLastTimestamp := ADLSETableLastTimestamp.GetUpdatedLastTimestamp(ADLSETable."Table ID");
+                FieldIdList := ADLSEExecute.CreateFieldListForTable(ADLSETable."Table ID");
+
+                ADLSECommunication.Init(ADLSETable."Table ID", FieldIdList, UpdatedLastTimestamp, EmitTelemetry);
+                ADLSECommunication.CreateEntityContent();
+                ADLSECommunication.UpdateCdmJsons(true, false);
+            until ADLSETable.Next() = 0;
+
+        ADLSECommunication.UpdateCdmJsons(false, true);
+    end;
+
     procedure ScheduleExport()
     var
         JobQueueEntry: Record "Job Queue Entry";

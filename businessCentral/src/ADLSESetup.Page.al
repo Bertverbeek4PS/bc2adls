@@ -184,6 +184,22 @@ page 82560 "ADLSE Setup"
                 end;
             }
 
+            action(SchemaExport)
+            {
+                ApplicationArea = All;
+                Caption = 'Schema export';
+                Tooltip = 'This will export the schema of the tables selected in the setup to the lake. This is a one-time operation and should be done before the first export of data.';
+                Image = Start;
+
+                trigger OnAction()
+                var
+                    ADLSEExecution: Codeunit "ADLSE Execution";
+                begin
+                    ADLSEExecution.SchemaExport();
+                    CurrPage.Update();
+                end;
+            }
+
             action(Schedule)
             {
                 ApplicationArea = All;
@@ -242,6 +258,7 @@ page 82560 "ADLSE Setup"
                     ShowAs = SplitButton;
                     actionref(ExportNow_Promoted; ExportNow) { }
                     actionref(StopExport_Promoted; StopExport) { }
+                    actionref(SchemaExport_Promoted; SchemaExport) { }
                     actionref(Schedule_Promoted; Schedule) { }
                 }
                 actionref(ClearDeletedRecordsList_Promoted; ClearDeletedRecordsList) { }

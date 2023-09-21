@@ -268,7 +268,7 @@ codeunit 82561 "ADLSE Execute"
             ADLSEExecution.Log('ADLSE-011', 'Deleted records exported', Verbosity::Normal, CustomDimensions);
     end;
 
-    local procedure CreateFieldListForTable(TableID: Integer) FieldIdList: List of [Integer]
+    procedure CreateFieldListForTable(TableID: Integer) FieldIdList: List of [Integer]
     var
         ADLSEField: Record "ADLSE Field";
         ADLSEUtil: Codeunit "ADLSE Util";

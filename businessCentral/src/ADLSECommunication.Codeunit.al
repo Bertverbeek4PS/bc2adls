@@ -31,7 +31,7 @@ codeunit 82562 "ADLSE Communication"
         NotAllowedOnSimultaneousExportTxt: Label 'This is not allowed when exports are configured to occur simultaneously. Please uncheck Multi- company export, export the data at least once, and try again.';
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
-        MSFabricUrlTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
+        MSFabricUrlTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2.Lakehouse/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
 
     procedure SetupBlobStorage()
     var
@@ -48,10 +48,19 @@ codeunit 82562 "ADLSE Communication"
         ADLSESetup: Record "ADLSE Setup";
     begin
         ADLSESetup.GetSingleton();
-        if DefaultContainerName = '' then begin
-            DefaultContainerName := ADLSESetup.Container;
+        case ADLSESetup.GetStorageType() of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                begin
+                    if DefaultContainerName = '' then
+                        DefaultContainerName := ADLSESetup.Container;
+
+                    exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
+                end;
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                begin
+                    exit(StrSubstNo(MSFabricUrlTxt, ADLSESetup.Workspace, ADLSESetup.Lakehouse));
+                end;
         end;
-        exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
     end;
 
     procedure Init(TableIDValue: Integer; FieldIdListValue: List of [Integer]; LastFlushedTimeStampValue: BigInteger; EmitTelemetryValue: Boolean)
@@ -116,6 +125,13 @@ codeunit 82562 "ADLSE Communication"
             if ManifestJsonsNeedsUpdate then
                 Error(CdmSchemaChangedErr, NotAllowedOnSimultaneousExportTxt);
         end;
+    end;
+
+    procedure CreateEntityContent()
+    var
+        ADLSECdmUtil: Codeunit "ADLSE CDM Util";
+    begin
+        EntityJson := ADLSECdmUtil.CreateEntityContent(TableID, FieldIdList);
     end;
 
     local procedure JsonsDifferent(Json1: JsonObject; Json2: JsonObject) Result: Boolean
@@ -313,8 +329,6 @@ codeunit 82562 "ADLSE Communication"
             ADLSESetup.LockTable(true);
             ADLSESetup.GetSingleton();
 
-            //In MS Fabric there is no folder data. Everything goes into the tables
-            //if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
             UpdateManifest(GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, DataCdmManifestNameTxt), 'data', ADLSESetup.DataFormat);
 
             UpdateManifest(GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, DeltaCdmManifestNameTxt), 'deltas', "ADLSE CDM Format"::Csv);
