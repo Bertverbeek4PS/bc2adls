@@ -94,10 +94,8 @@ codeunit 82569 "ADLSE Execution"
 
                 ADLSECommunication.Init(ADLSETable."Table ID", FieldIdList, UpdatedLastTimestamp, EmitTelemetry);
                 ADLSECommunication.CreateEntityContent();
-                ADLSECommunication.UpdateCdmJsons(true, false);
+                ADLSECommunication.UpdateCdmJsons(true, true);
             until ADLSETable.Next() = 0;
-
-        ADLSECommunication.UpdateCdmJsons(false, true);
     end;
 
     procedure ScheduleExport()
