@@ -80,8 +80,11 @@ codeunit 82569 "ADLSE Execution"
         ADLSETable: Record "ADLSE Table";
         ADLSESetup: Record "ADLSE Setup";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+        CDMDataFormat: Enum "ADLSE CDM Format";
         UpdatedLastTimestamp: BigInteger;
         FieldIdList: List of [Integer];
+        EntityJsonNeedsUpdate: Boolean;
+        ManifestJsonsNeedsUpdate: Boolean;
     begin
         ADLSETable.Reset;
         ADLSETable.SetRange(Enabled, true);
@@ -89,12 +92,16 @@ codeunit 82569 "ADLSE Execution"
             repeat
                 ADLSESetup.GetSingleton();
                 EmitTelemetry := ADLSESetup."Emit telemetry";
+                CDMDataFormat := ADLSESetup.DataFormat;
                 UpdatedLastTimestamp := ADLSETableLastTimestamp.GetUpdatedLastTimestamp(ADLSETable."Table ID");
                 FieldIdList := ADLSEExecute.CreateFieldListForTable(ADLSETable."Table ID");
 
                 ADLSECommunication.Init(ADLSETable."Table ID", FieldIdList, UpdatedLastTimestamp, EmitTelemetry);
+
+                ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
+
                 ADLSECommunication.CreateEntityContent();
-                ADLSECommunication.UpdateCdmJsons(true, true);
+                ADLSECommunication.UpdateCdmJsons(EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
             until ADLSETable.Next() = 0;
     end;
 
