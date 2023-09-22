@@ -78,6 +78,8 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Multi- company export';
             InitValue = false;
+            ObsoleteState = Pending;
+            ObsoleteReason = 'Schema update and export of data is now seperated.';
 
             trigger OnValidate()
             var
@@ -109,6 +111,10 @@ table 82560 "ADLSE Setup"
         field(31; Lakehouse; Text[100])
         {
             Caption = 'Lakehouse';
+        }
+        field(35; "Schema Exported On"; DateTime)
+        {
+            Caption = 'Schema exported on';
         }
 
 
@@ -160,12 +166,6 @@ table 82560 "ADLSE Setup"
         exit(Rec.Get(GetPrimaryKeyValue()));
     end;
 
-    procedure CheckNoSimultaneousExportsAllowed()
-    begin
-        Rec.GetSingleton();
-        Rec.TestField("Multi- Company Export", false, ErrorInfo.Create(NoChangesAllowedErr));
-    end;
-
     local procedure GetPrimaryKeyValue() PKValue: Integer
     begin
         Evaluate(PKValue, PrimaryKeyValueLbl, 9);
@@ -175,5 +175,14 @@ table 82560 "ADLSE Setup"
     begin
         Rec.GetSingleton();
         exit(Rec."Storage Type");
+    end;
+
+    procedure SchemaExported()
+    var
+        NoSchemaExportedErr: Label 'No schema has been exported yet. Please export schema first before exporting the data.';
+    begin
+        Rec.GetSingleton();
+        if Rec."Schema Exported On" = 0DT then
+            Message(NoSchemaExportedErr);
     end;
 }

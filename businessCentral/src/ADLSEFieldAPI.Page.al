@@ -5,7 +5,7 @@ page 82567 "ADLSE Field API"
     PageType = API;
     APIPublisher = 'bc2adlsTeamMicrosoft';
     APIGroup = 'bc2adls';
-    APIVersion = 'v1.0';
+    APIVersion = 'v1.0', 'v1.1';
     EntityName = 'adlseField';
     EntitySetName = 'adlseFields';
     SourceTable = "ADLSE Field";

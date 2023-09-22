@@ -24,6 +24,7 @@ codeunit 82572 "ADLSE Upgrade"
     begin
         RetenPolLogEntryAdded();
         ContainerFieldFromIsolatedStorageToSetupField();
+        SeperateSchemaAndData();
     end;
 
     var
@@ -82,6 +83,31 @@ codeunit 82572 "ADLSE Upgrade"
         IsolatedStorage.Delete(StorageAccountKeyNameTok, DataScope::Module);
     end;
 
+    local procedure SeperateSchemaAndData()
+    var
+        UpgradeTag: Codeunit "Upgrade Tag";
+    begin
+        if UpgradeTag.HasUpgradeTag(GetSeperateSchemaAndDataUpgradeTag()) then
+            exit;
+        DoGetSeperateSchemaAndData();
+        UpgradeTag.SetUpgradeTag(GetSeperateSchemaAndDataUpgradeTag());
+    end;
+
+    local procedure DoGetSeperateSchemaAndData()
+    var
+        ADLSESetup: Record "ADLSE Setup";
+    begin
+        if not ADLSESetup.Exists() then
+            exit;
+        ADLSESetup.GetSingleton();
+
+        if ADLSESetup."Multi- Company Export" then begin
+            ADLSESetup."Schema Exported On" := CurrentDateTime();
+            ADLSESetup.Modify();
+        end;
+    end;
+
+
     procedure GetRetenPolLogEntryAddedUpgradeTag(): Code[250]
     begin
         exit('MS-334067-ADLSERetenPolLogEntryAdded-20221028');
@@ -90,5 +116,10 @@ codeunit 82572 "ADLSE Upgrade"
     procedure GetContainerFieldFromIsolatedStorageToSetupFieldUpgradeTag(): Code[250]
     begin
         exit('GITHUB-22-ADLSEContainerFieldFromIsolatedStorageToSetupField-20230906');
+    end;
+
+    procedure GetSeperateSchemaAndDataUpgradeTag(): Code[250]
+    begin
+        exit('GITHUB-35-ADLSESeperateSchemaAndData-20230922');
     end;
 }

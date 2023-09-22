@@ -117,13 +117,6 @@ page 82560 "ADLSE Setup"
                         ToolTip = 'Specifies the format in which to store the exported data in the ''data'' CDM folder. The Parquet format is recommended for storing the data with the best fidelity.';
                     }
 
-                    field("Multi- Company Export"; Rec."Multi- Company Export")
-                    {
-                        ApplicationArea = All;
-                        Enabled = not ExportInProgress;
-                        ToolTip = 'Specifies if simultaneous exports of data from different companies in Business Central to the lake are allowed. Beware that setting this checkmark will prevent you from making any changes to the export schema. It is recommended that you set this checkmark only after the last changes to the CDM schema have been exported to the lake successfully. Enabling this field does not export data from other companies in the environment- to do that the export process needs to be started from within those companies.';
-                    }
-
                     field("Skip Timestamp Sorting On Recs"; Rec."Skip Timestamp Sorting On Recs")
                     {
                         ApplicationArea = All;

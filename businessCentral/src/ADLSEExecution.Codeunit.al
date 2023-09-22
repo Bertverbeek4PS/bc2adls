@@ -75,33 +75,24 @@ codeunit 82569 "ADLSE Execution"
 
     procedure SchemaExport()
     var
-        ADLSECommunication: Codeunit "ADLSE Communication";
-        ADLSEExecute: Codeunit "ADLSE Execute";
-        ADLSETable: Record "ADLSE Table";
         ADLSESetup: Record "ADLSE Setup";
-        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
-        CDMDataFormat: Enum "ADLSE CDM Format";
-        UpdatedLastTimestamp: BigInteger;
-        FieldIdList: List of [Integer];
-        EntityJsonNeedsUpdate: Boolean;
-        ManifestJsonsNeedsUpdate: Boolean;
+        ADLSETable: Record "ADLSE Table";
+        ADLSECurrentSession: Record "ADLSE Current Session";
+        ADLSEExecute: Codeunit "ADLSE Execute";
     begin
+        // ensure that no current export sessions running
+        ADLSECurrentSession.CheckForNoActiveSessions();
+
         ADLSETable.Reset;
         ADLSETable.SetRange(Enabled, true);
         if ADLSETable.FindSet(false) then
             repeat
-                ADLSESetup.GetSingleton();
-                EmitTelemetry := ADLSESetup."Emit telemetry";
-                CDMDataFormat := ADLSESetup.DataFormat;
-                UpdatedLastTimestamp := ADLSETableLastTimestamp.GetUpdatedLastTimestamp(ADLSETable."Table ID");
-                FieldIdList := ADLSEExecute.CreateFieldListForTable(ADLSETable."Table ID");
-
-                ADLSECommunication.Init(ADLSETable."Table ID", FieldIdList, UpdatedLastTimestamp, EmitTelemetry);
-                ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
-
-                ADLSECommunication.CreateEntityContent();
-                ADLSECommunication.UpdateCdmJsons(EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
+                ADLSEExecute.ExportSchema(ADLSETable."Table ID");
             until ADLSETable.Next() = 0;
+
+        ADLSESetup.GetSingleton();
+        ADLSESetup."Schema Exported On" := CurrentDateTime();
+        ADLSESetup.Modify();
     end;
 
     procedure ScheduleExport()

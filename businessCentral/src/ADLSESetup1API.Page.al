@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-page 82564 "ADLSE Setup API"
+page 82568 "ADLSE Setup API v11"
 {
     PageType = API;
     APIPublisher = 'bc2adlsTeamMicrosoft';
     APIGroup = 'bc2adls';
-    APIVersion = 'v1.0';
+    APIVersion = 'v1.1';
     EntityName = 'adlseSetup';
     EntitySetName = 'adlseSetup';
     SourceTable = "ADLSE Setup";
@@ -13,8 +13,6 @@ page 82564 "ADLSE Setup API"
     DeleteAllowed = false;
     ModifyAllowed = false;
     ODataKeyFields = SystemId;
-    ObsoleteState = Pending;
-    ObsoleteReason = 'This API is obsolete because of multi- company export. Use the API v1.1 instead.';
 
     layout
     {
@@ -27,7 +25,10 @@ page 82564 "ADLSE Setup API"
                 field(emitTelemetry; Rec."Emit telemetry") { }
                 field(dataFormat; Rec.DataFormat) { }
                 field(maxPayloadSizeMiB; Rec.MaxPayloadSizeMiB) { }
-                field(multiCompanyExport; Rec."Multi- Company Export") { }
+                field(multiCompanyExport; Rec."Schema Exported On")
+                {
+                    Editable = false;
+                }
                 field(systemId; Rec.SystemId)
                 {
                     Editable = false;

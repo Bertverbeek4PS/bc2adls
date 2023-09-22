@@ -5,7 +5,7 @@ page 82565 "ADLSE Table API"
     PageType = API;
     APIPublisher = 'bc2adlsTeamMicrosoft';
     APIGroup = 'bc2adls';
-    APIVersion = 'v1.0';
+    APIVersion = 'v1.0', 'v1.1';
     EntityName = 'adlseTable';
     EntitySetName = 'adlseTables';
     SourceTable = "ADLSE Table";

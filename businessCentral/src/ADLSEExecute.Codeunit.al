@@ -62,8 +62,6 @@ codeunit 82561 "ADLSE Execute"
             CustomDimensions.Add('Entity', TableCaption);
             CustomDimensions.Add('Updated Last time stamp', Format(UpdatedLastTimestamp));
             CustomDimensions.Add('Deleted Last entry no.', Format(DeletedLastEntryNo));
-            CustomDimensions.Add('Entity Json needs update', Format(EntityJsonNeedsUpdate));
-            CustomDimensions.Add('Manifest Json needs update', Format(ManifestJsonsNeedsUpdate));
             ADLSEExecution.Log('ADLSE-020', 'Exported to deltas CDM folder', Verbosity::Normal, CustomDimensions);
         end;
 
@@ -85,11 +83,6 @@ codeunit 82561 "ADLSE Execute"
             end;
             Commit(); // to save the last time stamps into the database.
         end;
-
-        // update Jsons
-        ADLSECommunication.UpdateCdmJsons(EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
-        if EmitTelemetry then
-            ADLSEExecution.Log('ADLSE-007', 'Jsons have been updated', Verbosity::Normal, CustomDimensions);
 
         // Finalize
         SetStateFinished(Rec, TableCaption);
@@ -315,4 +308,43 @@ codeunit 82561 "ADLSE Execute"
             if EmitTelemetry then
                 ADLSEExecution.Log('ADLSE-041', 'All exports are finished', Verbosity::Normal);
     end;
+
+    procedure ExportSchema(tableId: Integer)
+    var
+        ADLSECommunication: Codeunit "ADLSE Communication";
+        ADLSEExecution: Codeunit "ADLSE Execution";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+        CDMDataFormat: Enum "ADLSE CDM Format";
+        TableCaption: Text;
+        UpdatedLastTimestamp: BigInteger;
+        CustomDimensions: Dictionary of [Text, Text];
+        FieldIdList: List of [Integer];
+        EntityJsonNeedsUpdate: Boolean;
+        ManifestJsonsNeedsUpdate: Boolean;
+    begin
+        ADLSESetup.GetSingleton();
+        EmitTelemetry := ADLSESetup."Emit telemetry";
+        CDMDataFormat := ADLSESetup.DataFormat;
+        UpdatedLastTimestamp := ADLSETableLastTimestamp.GetUpdatedLastTimestamp(tableId);
+        FieldIdList := CreateFieldListForTable(tableId);
+
+        ADLSECommunication.Init(tableId, FieldIdList, UpdatedLastTimestamp, EmitTelemetry);
+        ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
+
+        if EmitTelemetry then begin
+            Clear(CustomDimensions);
+            TableCaption := ADLSEUtil.GetTableCaption(tableId);
+            CustomDimensions.Add('Entity', TableCaption);
+            CustomDimensions.Add('Updated Last time stamp', Format(UpdatedLastTimestamp));
+            CustomDimensions.Add('Entity Json needs update', Format(EntityJsonNeedsUpdate));
+            CustomDimensions.Add('Manifest Json needs update', Format(ManifestJsonsNeedsUpdate));
+            ADLSEExecution.Log('ADLSE-038', 'Schema exported', Verbosity::Normal, CustomDimensions);
+        end;
+
+        ADLSECommunication.CreateEntityContent();
+        ADLSECommunication.UpdateCdmJsons(EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
+    end;
+
 }

@@ -28,7 +28,7 @@ codeunit 82562 "ADLSE Communication"
         CannotAddedMoreBlocksErr: Label 'The number of blocks that can be added to the blob has reached its maximum limit.';
         SingleRecordTooLargeErr: Label 'A single record payload exceeded the max payload size. Please adjust the payload size or reduce the fields to be exported for the record.';
         DeltasFileCsvTok: Label '/deltas/%1/%2.csv', Comment = '%1: Entity, %2: File identifier guid';
-        NotAllowedOnSimultaneousExportTxt: Label 'This is not allowed when exports are configured to occur simultaneously. Please uncheck Multi- company export, export the data at least once, and try again.';
+        ExportOfSchemaNotPerformendTxt: Label 'Please export the schema first before trying to export the data.';
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
         MSFabricUrlTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2.Lakehouse/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
@@ -118,13 +118,10 @@ codeunit 82562 "ADLSE Communication"
         NewJson := ADLSECdmUtil.UpdateDefaultManifestContent(OldJson, TableID, 'data', CdmDataFormat);
         ManifestJsonsNeedsUpdate := JsonsDifferent(OldJson, NewJson);
 
-        ADLSESetup.GetSingleton();
-        if ADLSESetup."Multi- Company Export" then begin
-            if EntityJsonNeedsUpdate then
-                Error(EntitySchemaChangedErr, EntityName, NotAllowedOnSimultaneousExportTxt);
-            if ManifestJsonsNeedsUpdate then
-                Error(CdmSchemaChangedErr, NotAllowedOnSimultaneousExportTxt);
-        end;
+        if EntityJsonNeedsUpdate then
+            Error(EntitySchemaChangedErr, EntityName, ExportOfSchemaNotPerformendTxt);
+        if ManifestJsonsNeedsUpdate then
+            Error(CdmSchemaChangedErr, ExportOfSchemaNotPerformendTxt);
     end;
 
     procedure CreateEntityContent()
