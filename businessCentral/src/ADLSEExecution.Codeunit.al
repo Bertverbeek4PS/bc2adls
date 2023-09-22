@@ -97,7 +97,6 @@ codeunit 82569 "ADLSE Execution"
                 FieldIdList := ADLSEExecute.CreateFieldListForTable(ADLSETable."Table ID");
 
                 ADLSECommunication.Init(ADLSETable."Table ID", FieldIdList, UpdatedLastTimestamp, EmitTelemetry);
-
                 ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
 
                 ADLSECommunication.CreateEntityContent();
