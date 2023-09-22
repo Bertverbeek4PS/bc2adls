@@ -56,6 +56,15 @@ page 82564 "ADLSE Setup API"
         SetActionResponse(ActionContext, Rec."SystemId");
     end;
 
+    [ServiceEnabled]
+    procedure SchemaExport(var ActionContext: WebServiceActionContext)
+    var
+        ADLSEExecution: Codeunit "ADLSE Execution";
+    begin
+        ADLSEExecution.SchemaExport();
+        SetActionResponse(ActionContext, Rec."SystemId");
+    end;
+
     local procedure SetActionResponse(var ActionContext: WebServiceActionContext; AdlsId: Guid)
     var
     begin
