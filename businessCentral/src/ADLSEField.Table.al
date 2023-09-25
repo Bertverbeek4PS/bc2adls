@@ -58,7 +58,7 @@ table 82562 "ADLSE Field"
     var
         ADLSESetup: Record "ADLSE Setup";
     begin
-        ADLSESetup.CheckNoSimultaneousExportsAllowed();
+        ADLSESetup.SchemaExported();
     end;
 
     trigger OnModify()
@@ -66,7 +66,7 @@ table 82562 "ADLSE Field"
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
     begin
-        ADLSESetup.CheckNoSimultaneousExportsAllowed();
+        ADLSESetup.SchemaExported();
 
         ADLSETable.Get(Rec."Table ID");
         ADLSETable.CheckNotExporting();
@@ -76,7 +76,7 @@ table 82562 "ADLSE Field"
     var
         ADLSESetup: Record "ADLSE Setup";
     begin
-        ADLSESetup.CheckNoSimultaneousExportsAllowed();
+        ADLSESetup.SchemaExported();
     end;
 
     var

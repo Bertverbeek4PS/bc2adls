@@ -84,9 +84,11 @@ codeunit 82560 "ADLSE Setup"
             ADLSESetup.TestField(Container)
         else
             ADLSESetup.TestField(Workspace);
-        if not ADLSESetup."Multi- Company Export" then
-            if ADLSECurrentSession.AreAnySessionsActive() then
-                ADLSECurrentSession.CheckForNoActiveSessions();
+
+        ADLSESetup.CheckSchemaExported;
+
+        if ADLSECurrentSession.AreAnySessionsActive() then
+            ADLSECurrentSession.CheckForNoActiveSessions();
 
         ADLSECredentials.Check();
     end;

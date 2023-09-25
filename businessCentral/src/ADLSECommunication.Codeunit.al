@@ -28,10 +28,10 @@ codeunit 82562 "ADLSE Communication"
         CannotAddedMoreBlocksErr: Label 'The number of blocks that can be added to the blob has reached its maximum limit.';
         SingleRecordTooLargeErr: Label 'A single record payload exceeded the max payload size. Please adjust the payload size or reduce the fields to be exported for the record.';
         DeltasFileCsvTok: Label '/deltas/%1/%2.csv', Comment = '%1: Entity, %2: File identifier guid';
-        NotAllowedOnSimultaneousExportTxt: Label 'This is not allowed when exports are configured to occur simultaneously. Please uncheck Multi- company export, export the data at least once, and try again.';
+        ExportOfSchemaNotPerformendTxt: Label 'Please export the schema first before trying to export the data.';
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
-        MSFabricUrlTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
+        MSFabricUrlTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2.Lakehouse/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
 
     procedure SetupBlobStorage()
     var
@@ -48,10 +48,19 @@ codeunit 82562 "ADLSE Communication"
         ADLSESetup: Record "ADLSE Setup";
     begin
         ADLSESetup.GetSingleton();
-        if DefaultContainerName = '' then begin
-            DefaultContainerName := ADLSESetup.Container;
+        case ADLSESetup.GetStorageType() of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                begin
+                    if DefaultContainerName = '' then
+                        DefaultContainerName := ADLSESetup.Container;
+
+                    exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
+                end;
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                begin
+                    exit(StrSubstNo(MSFabricUrlTxt, ADLSESetup.Workspace, ADLSESetup.Lakehouse));
+                end;
         end;
-        exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
     end;
 
     procedure Init(TableIDValue: Integer; FieldIdListValue: List of [Integer]; LastFlushedTimeStampValue: BigInteger; EmitTelemetryValue: Boolean)
@@ -78,7 +87,7 @@ codeunit 82562 "ADLSE Communication"
         end;
     end;
 
-    procedure CheckEntity(CdmDataFormat: Enum "ADLSE CDM Format"; var EntityJsonNeedsUpdate: Boolean; var ManifestJsonsNeedsUpdate: Boolean)
+    procedure CheckEntity(CdmDataFormat: Enum "ADLSE CDM Format"; var EntityJsonNeedsUpdate: Boolean; var ManifestJsonsNeedsUpdate: Boolean; SchemaUpdate: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSECdmUtil: Codeunit "ADLSE CDM Util";
@@ -109,13 +118,19 @@ codeunit 82562 "ADLSE Communication"
         NewJson := ADLSECdmUtil.UpdateDefaultManifestContent(OldJson, TableID, 'data', CdmDataFormat);
         ManifestJsonsNeedsUpdate := JsonsDifferent(OldJson, NewJson);
 
-        ADLSESetup.GetSingleton();
-        if ADLSESetup."Multi- Company Export" then begin
+        if not SchemaUpdate then begin
             if EntityJsonNeedsUpdate then
-                Error(EntitySchemaChangedErr, EntityName, NotAllowedOnSimultaneousExportTxt);
+                Error(EntitySchemaChangedErr, EntityName, ExportOfSchemaNotPerformendTxt);
             if ManifestJsonsNeedsUpdate then
-                Error(CdmSchemaChangedErr, NotAllowedOnSimultaneousExportTxt);
+                Error(CdmSchemaChangedErr, ExportOfSchemaNotPerformendTxt);
         end;
+    end;
+
+    procedure CreateEntityContent()
+    var
+        ADLSECdmUtil: Codeunit "ADLSE CDM Util";
+    begin
+        EntityJson := ADLSECdmUtil.CreateEntityContent(TableID, FieldIdList);
     end;
 
     local procedure JsonsDifferent(Json1: JsonObject; Json2: JsonObject) Result: Boolean
@@ -313,8 +328,6 @@ codeunit 82562 "ADLSE Communication"
             ADLSESetup.LockTable(true);
             ADLSESetup.GetSingleton();
 
-            //In MS Fabric there is no folder data. Everything goes into the tables
-            //if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
             UpdateManifest(GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, DataCdmManifestNameTxt), 'data', ADLSESetup.DataFormat);
 
             UpdateManifest(GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, DeltaCdmManifestNameTxt), 'deltas', "ADLSE CDM Format"::Csv);
