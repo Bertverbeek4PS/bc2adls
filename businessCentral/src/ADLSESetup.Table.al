@@ -179,6 +179,15 @@ table 82560 "ADLSE Setup"
 
     procedure SchemaExported()
     var
+        NoSchemaExportedErr: Label 'Schema already exported. Please export schema first before exporting the data.';
+    begin
+        Rec.GetSingleton();
+        if Rec."Schema Exported On" <> 0DT then
+            Message(NoSchemaExportedErr);
+    end;
+
+    procedure CheckSchemaExported()
+    var
         NoSchemaExportedErr: Label 'No schema has been exported yet. Please export schema first before exporting the data.';
     begin
         Rec.GetSingleton();
