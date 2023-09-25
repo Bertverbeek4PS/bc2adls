@@ -78,7 +78,12 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
         ADLSECurrentSession: Record "ADLSE Current Session";
+        AllObjWithCaption: Record AllObjWithCaption;
         ADLSEExecute: Codeunit "ADLSE Execute";
+        ProgressWindow: Dialog;
+        ProgressMsg1: Label 'Current Table:           #1##########\';
+        ProgressMsg2: Label 'Total %1 tables. Processed:           #2##########\';
+        i: Integer;
     begin
         // ensure that no current export sessions running
         ADLSECurrentSession.CheckForNoActiveSessions();
@@ -86,9 +91,24 @@ codeunit 82569 "ADLSE Execution"
         ADLSETable.Reset;
         ADLSETable.SetRange(Enabled, true);
         if ADLSETable.FindSet(false) then
-            repeat
-                ADLSEExecute.ExportSchema(ADLSETable."Table ID");
-            until ADLSETable.Next() = 0;
+            if GuiAllowed then
+                ProgressWindow.Open(ProgressMsg1 + StrSubstNo(ProgressMsg2, ADLSETable.Count));
+        repeat
+            if GuiAllowed then begin
+                AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
+                AllObjWithCaption.SetRange("Object ID", ADLSETable."Table ID");
+                if AllObjWithCaption.FindFirst() then begin
+                    i := i + 1;
+                    ProgressWindow.Update(1, AllObjWithCaption."Object Caption");
+                    ProgressWindow.Update(2, i);
+                end;
+            end;
+
+            ADLSEExecute.ExportSchema(ADLSETable."Table ID");
+        until ADLSETable.Next() = 0;
+
+        if GuiAllowed then
+            ProgressWindow.Close();
 
         ADLSESetup.GetSingleton();
         ADLSESetup."Schema Exported On" := CurrentDateTime();

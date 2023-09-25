@@ -87,7 +87,7 @@ codeunit 82562 "ADLSE Communication"
         end;
     end;
 
-    procedure CheckEntity(CdmDataFormat: Enum "ADLSE CDM Format"; var EntityJsonNeedsUpdate: Boolean; var ManifestJsonsNeedsUpdate: Boolean)
+    procedure CheckEntity(CdmDataFormat: Enum "ADLSE CDM Format"; var EntityJsonNeedsUpdate: Boolean; var ManifestJsonsNeedsUpdate: Boolean; SchemaUpdate: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSECdmUtil: Codeunit "ADLSE CDM Util";
@@ -118,10 +118,12 @@ codeunit 82562 "ADLSE Communication"
         NewJson := ADLSECdmUtil.UpdateDefaultManifestContent(OldJson, TableID, 'data', CdmDataFormat);
         ManifestJsonsNeedsUpdate := JsonsDifferent(OldJson, NewJson);
 
-        if EntityJsonNeedsUpdate then
-            Error(EntitySchemaChangedErr, EntityName, ExportOfSchemaNotPerformendTxt);
-        if ManifestJsonsNeedsUpdate then
-            Error(CdmSchemaChangedErr, ExportOfSchemaNotPerformendTxt);
+        if not SchemaUpdate then begin
+            if EntityJsonNeedsUpdate then
+                Error(EntitySchemaChangedErr, EntityName, ExportOfSchemaNotPerformendTxt);
+            if ManifestJsonsNeedsUpdate then
+                Error(CdmSchemaChangedErr, ExportOfSchemaNotPerformendTxt);
+        end;
     end;
 
     procedure CreateEntityContent()

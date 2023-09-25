@@ -113,7 +113,7 @@ codeunit 82561 "ADLSE Execute"
         // first export the upserts
         ADLSECommunication.Init(TableID, FieldIdList, UpdatedLastTimeStamp, EmitTelemetry);
 
-        ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
+        ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate, false);
 
         ExportTableUpdates(TableID, FieldIdList, ADLSECommunication, UpdatedLastTimeStamp);
 
@@ -331,7 +331,7 @@ codeunit 82561 "ADLSE Execute"
         FieldIdList := CreateFieldListForTable(tableId);
 
         ADLSECommunication.Init(tableId, FieldIdList, UpdatedLastTimestamp, EmitTelemetry);
-        ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
+        ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate, true);
 
         if EmitTelemetry then begin
             Clear(CustomDimensions);
