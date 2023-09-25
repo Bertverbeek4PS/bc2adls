@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": ".\\app"
+		},
+		{
+			"path": ".\\test"
+		}
+	],
+	"settings": {
+		"al.enableCodeAnalysis": true,
+		"al.codeAnalyzers": [
+			"${CodeCop}"
+		]
+	},
+	"extensions": {
+		"recommendations": [
+			"ms-dynamics-smb.al"
+		]
+	}
+}
