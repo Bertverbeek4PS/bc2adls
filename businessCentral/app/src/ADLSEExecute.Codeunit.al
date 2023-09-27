@@ -162,7 +162,7 @@ codeunit 82561 "ADLSE Execute"
         SetFilterForUpdates(TableID, UpdatedLastTimeStamp, ADLSESetup."Skip Timestamp Sorting On Recs", Rec, TimeStampField);
 
         foreach FieldId in FieldIdList do
-            Rec.AddLoadFields(FieldID);
+            if Rec.AddLoadFields(FieldID) then;
 
         if not Rec.ReadPermission() then
             Error(InsufficientReadPermErr);
