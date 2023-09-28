@@ -18,13 +18,13 @@ codeunit 85562 "ADLSE Test bc2adls Install"
         AddTestsToTestSuite(Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Disabled", Codeunit::"ADLSE Test Field API");
     end;
 
-    procedure AddTestsToTestSuite(TestSuite4PS: Enum "ADLSE Test Suite"; TestCodeunitId: Integer)
+    procedure AddTestsToTestSuite(TestSuite: Enum "ADLSE Test Suite"; TestCodeunitId: Integer)
     var
         ALTestSuite: Record "AL Test Suite";
         SuiteName: Code[10];
         TestRunnerCodeunitId: Integer;
     begin
-        TestRunnerCodeunitId := GetDefaultTestRunnerCodeunitId(TestSuite4PS);
+        TestRunnerCodeunitId := GetDefaultTestRunnerCodeunitId(TestSuite);
         SuiteName := Format(TestRunnerCodeunitId);
 
         if TestRunnerCodeunitId = 0 then
@@ -41,14 +41,14 @@ codeunit 85562 "ADLSE Test bc2adls Install"
         end;
     end;
 
-    procedure GetDefaultTestRunnerCodeunitId(TestSuite4PS: Enum "ADLSE Test Suite") TestRunnerCodeunitId: Integer;
+    procedure GetDefaultTestRunnerCodeunitId(TestSuite: Enum "ADLSE Test Suite") TestRunnerCodeunitId: Integer;
     var
         TestRunnerMgt: Codeunit "Test Runner - Mgt";
     begin
-        case TestSuite4PS of
-            TestSuite4PS::"Test Suite With Runner - Isol. Codeunit":
+        case TestSuite of
+            TestSuite::"Test Suite With Runner - Isol. Codeunit":
                 TestRunnerCodeunitId := TestRunnerMgt.GetCodeIsolationTestRunner();
-            TestSuite4PS::"Test Suite With Runner - Isol. Disabled":
+            TestSuite::"Test Suite With Runner - Isol. Disabled":
                 TestRunnerCodeunitId := TestRunnerMgt.GetIsolationDisabledTestRunner();
         end;
 
@@ -57,29 +57,29 @@ codeunit 85562 "ADLSE Test bc2adls Install"
 
     procedure GetDefaultTestRunnerCodeunitDescription(TestRunnerCodeunitId: Integer) TestRunnerCodeunitDescription: Text[30];
     var
-        TestSuite4PS: Enum "ADLSE Test Suite";
+        TestSuite: Enum "ADLSE Test Suite";
     begin
-        if (GetDefaultTestSuite4PS(TestSuite4PS, TestRunnerCodeunitId)) then
-            exit(CopyStr(DelStr(Format(TestSuite4PS), 1, StrLen('Test Suite With ')), 1, MaxStrLen(TestRunnerCodeunitDescription)));
+        if (GetDefaultTestSuite(TestSuite, TestRunnerCodeunitId)) then
+            exit(CopyStr(DelStr(Format(TestSuite), 1, StrLen('Test Suite With ')), 1, MaxStrLen(TestRunnerCodeunitDescription)));
     end;
 
-    procedure GetDefault4PSTestSuiteCaption(TestRunnerCodeunitId: Integer) TestRunnerCodeunitName: Text;
+    procedure GetDefaultTestSuiteCaption(TestRunnerCodeunitId: Integer) TestRunnerCodeunitName: Text;
     var
-        TestSuite4PS: Enum "ADLSE Test Suite";
+        TestSuite: Enum "ADLSE Test Suite";
     begin
-        if (GetDefaultTestSuite4PS(TestSuite4PS, TestRunnerCodeunitId)) then
-            exit(CopyStr(Format(TestSuite4PS), 1, MaxStrLen(TestRunnerCodeunitName)));
+        if (GetDefaultTestSuite(TestSuite, TestRunnerCodeunitId)) then
+            exit(CopyStr(Format(TestSuite), 1, MaxStrLen(TestRunnerCodeunitName)));
     end;
 
-    procedure GetDefaultTestSuite4PS(var TestSuite4PS: Enum "ADLSE Test Suite"; TestRunnerCodeunitId: Integer): Boolean
+    procedure GetDefaultTestSuite(var TestSuite: Enum "ADLSE Test Suite"; TestRunnerCodeunitId: Integer): Boolean
     var
         TestRunnerMgt: Codeunit "Test Runner - Mgt";
     begin
         case TestRunnerCodeunitId of
             TestRunnerMgt.GetCodeIsolationTestRunner():
-                TestSuite4PS := Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Codeunit";
+                TestSuite := Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Codeunit";
             TestRunnerMgt.GetIsolationDisabledTestRunner():
-                TestSuite4PS := Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Disabled";
+                TestSuite := Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Disabled";
             else
                 exit(false);
         end;
