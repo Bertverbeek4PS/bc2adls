@@ -8,11 +8,11 @@ codeunit 85563 "ADLSE Test bc2adls"
     end;
 
     var
+        ADLSESetup: Record "ADLSE Setup";
         LibraryUtility: Codeunit "Library - Utility";
         LibraryRandom: Codeunit "Library - Random";
         LibraryBc2adls: Codeunit "ADLSE Library - bc2adls";
         Assert: Codeunit Assert;
-        ADLSESetup: Record "ADLSE Setup";
         "Storage Type": Enum "ADLSE Storage Type";
         IsInitialized: Boolean;
 
@@ -25,7 +25,7 @@ codeunit 85563 "ADLSE Test bc2adls"
         // [GIVEN] Initialized test environment
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        if not ADLSESetup.Get then
+        if not ADLSESetup.Get() then
             LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
         // [GIVEN]
         ContainerName := LibraryUtility.GenerateRandomNumericText(LibraryRandom.RandIntInRange(3, 63));
@@ -46,7 +46,7 @@ codeunit 85563 "ADLSE Test bc2adls"
         // [GIVEN] Initialized test environment
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        if not ADLSESetup.Get then
+        if not ADLSESetup.Get() then
             LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
@@ -65,7 +65,7 @@ codeunit 85563 "ADLSE Test bc2adls"
         // [GIVEN] Initialized test environment
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        if not ADLSESetup.Get then
+        if not ADLSESetup.Get() then
             LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
@@ -77,14 +77,12 @@ codeunit 85563 "ADLSE Test bc2adls"
 
     [Test]
     procedure TestCorrectNameContainerWithToLong()
-    var
-        ContainerNameIncorrectFormatErr: Label 'The container name is in an incorrect format.';
     begin
         // [SCENARIO 102] Test Field Container with to long name
         // [GIVEN] Initialized test environment
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        if not ADLSESetup.Get then
+        if not ADLSESetup.Get() then
             LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
@@ -103,7 +101,7 @@ codeunit 85563 "ADLSE Test bc2adls"
         // [GIVEN] Initialized test environment
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        if not ADLSESetup.Get then
+        if not ADLSESetup.Get() then
             LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"

@@ -8,6 +8,7 @@ codeunit 85562 "ADLSE Test bc2adls Install"
     trigger OnInstallAppPerCompany()
     begin
         SetupTestSuite();
+        SetWebServicesKeyforUser();
     end;
 
     local procedure SetupTestSuite()
@@ -128,5 +129,13 @@ codeunit 85562 "ADLSE Test bc2adls Install"
         TestMethodLine.SetRange("Line Type", TestMethodLine."Line Type"::Codeunit);
         if TestMethodLine.FindFirst() then
             TestSuiteMgt.UpdateTestMethods(TestMethodLine);
+    end;
+
+    local procedure SetWebServicesKeyforUser()
+    var
+        IdentityManagement: Codeunit "Identity Management";
+    begin
+        if IdentityManagement.GetWebServicesKey(UserSecurityId()) = '' then
+            IdentityManagement.CreateWebServicesKeyNoExpiry(UserSecurityId());
     end;
 }

@@ -8,47 +8,47 @@ codeunit 85560 "ADLSE Test Field API"
     end;
 
     var
-        LibraryGraphMgt: Codeunit "Library - Graph Mgt";
-        LibraryRandom: Codeunit "Library - Random";
-        LibraryBc2adls: Codeunit "ADLSE Library - bc2adls";
-        Assert: Codeunit Assert;
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
         ADLSEField: Record "ADLSE Field";
+        LibraryGraphMgt: Codeunit "Library - Graph Mgt";
+        ADLSLibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
+        Assert: Codeunit Assert;
         "Storage Type": Enum "ADLSE Storage Type";
         IsInitialized: Boolean;
 
-    // [Test]
-    // procedure GetListofAllFields()
-    // var
-    //     RequestBody: Text;
-    //     Response: Text;
-    //     FieldId: Integer;
-    // begin
-    //     // [SCENARIO 001] Get list of all fields
-    //     // [GIVEN] Initialized test environment
-    //     Initialize();
-    //     // [GIVEN] Setup bc2adls table for Azure Blob Storage
-    //     if not ADLSESetup.Get() then
-    //         LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
-    //     // [GIVEN] Insert number of tables
-    //     LibraryBc2adls.InsertTables(1);
-    //     //GIVEN Insert all the fields of the tables
-    //     ADLSETable := LibraryBc2adls.GetRandomTable();
-    //     FieldId := LibraryBc2adls.GetRandomField(ADLSETable);
-    //     // [GIVEN] Table Field with type company JSON object
-    //     RequestBody := CreateFieldJSONObject(format(ADLSETable."Table ID"), format(FieldId));
+    [Test]
+    procedure GetListofAllFields()
+    var
+        RequestBody: Text;
+        Response: Text;
+        FieldId: Integer;
+    begin
+        // [SCENARIO 001] Get list of all fields
+        // [GIVEN] Initialized test environment
+        Initialize();
+        // [GIVEN] Setup bc2adls table for Azure Blob Storage
+        if not ADLSESetup.Get() then
+            ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        // [GIVEN] Insert number of tables
+        ADLSLibrarybc2adls.InsertTables(1);
+        //GIVEN Insert all the fields of the tables
+        ADLSETable := ADLSLibrarybc2adls.GetRandomTable();
+        FieldId := ADLSLibrarybc2adls.GetRandomField(ADLSETable);
+        // [GIVEN] Table Field with type company JSON object
+        RequestBody := CreateFieldJSONObject(format(ADLSETable."Table ID"), format(FieldId));
 
-    //     // [WHEN] Send POST request for contact with type company
-    //     Response := SendPostRequestForField(RequestBody);
+        // [WHEN] Send POST request for contact with type company
+        Response := SendPostRequestForField(RequestBody);
 
-    //     // [THEN] Contact with type company and company number series exists in database
-    //     VerifyFieldIdOfTableIdExistsInDatabase(Response);
-    // end;
+        // [THEN] Contact with type company and company number series exists in database
+        VerifyFieldIdOfTableIdExistsInDatabase(Response);
+    end;
 
     local procedure Initialize()
     var
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
+
     begin
         LibraryTestInitialize.OnTestInitialize(Codeunit::"ADLSE Test Field API");
 
@@ -76,7 +76,8 @@ codeunit 85560 "ADLSE Test Field API"
         TargetUrl: Text;
     begin
         TargetUrl := LibraryGraphMgt.CreateTargetURL('', Page::"ADLSE Field API", 'adlseFields');
-        LibraryGraphMgt.PostToWebService(TargetUrl, RequestBody, Response);
+        //LibraryGraphMgt.PostToWebService(TargetUrl, RequestBody, Response);
+        LibraryGraphMgt.GetFromWebService(Response, TargetUrl);
     end;
 
     local procedure VerifyFieldIdOfTableIdExistsInDatabase(JSON: Text)

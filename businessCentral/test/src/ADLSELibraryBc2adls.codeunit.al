@@ -6,10 +6,10 @@ codeunit 85561 "ADLSE Library - bc2adls"
     end;
 
     var
-        LibraryRandom: Codeunit "Library - Random";
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
         ADLSEField: Record "ADLSE Field";
+        LibraryRandom: Codeunit "Library - Random";
 
     procedure CreateAdlseSetup("Storage Type": Enum "ADLSE Storage Type")
     begin
