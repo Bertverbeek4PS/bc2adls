@@ -69,4 +69,9 @@ codeunit 85561 "ADLSE Library - bc2adls"
             until ADLSETable.Next() = 0;
     end;
 
+    procedure CleanUp();
+    begin
+        ADLSETable.DeleteAll(true);
+        ADLSESetup.DeleteAll(true);
+    end;
 }
