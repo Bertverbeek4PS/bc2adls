@@ -82,4 +82,14 @@ codeunit 85561 "ADLSE Library - bc2adls"
         ADLSETable.DeleteAll(true);
         ADLSESetup.DeleteAll(true);
     end;
+
+    procedure MockCreateExport(TableId: Integer);
+    var
+        ADLSERun: Record "ADLSE Run";
+        AllObjWithCaption: Record AllObjWithCaption;
+    begin
+        ADLSERun.RegisterStarted(TableId);
+        AllObjWithCaption.Get(AllObjWithCaption."Object Type"::Table, TableId);
+        ADLSERun.RegisterEnded(TableId, false, AllObjWithCaption.TableCaption);
+    end;
 }
