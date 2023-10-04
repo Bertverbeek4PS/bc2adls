@@ -15,8 +15,8 @@ codeunit 85565 "ADLSE Setup Tests"
         LibraryUtility: Codeunit "Library - Utility";
         LibraryRandom: Codeunit "Library - Random";
         LibraryAssert: Codeunit "Library Assert";
-        "Storage Type": Enum "ADLSE Storage Type";
         LibraryDialogHandler: Codeunit "Library - Dialog Handler";
+        "Storage Type": Enum "ADLSE Storage Type";
         IsInitialized: Boolean;
 
     [Test]
