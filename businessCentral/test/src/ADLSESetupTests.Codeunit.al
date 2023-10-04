@@ -14,8 +14,9 @@ codeunit 85565 "ADLSE Setup Tests"
         ADLSLibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
         LibraryUtility: Codeunit "Library - Utility";
         LibraryRandom: Codeunit "Library - Random";
-        Assert: Codeunit Assert;
+        LibraryAssert: Codeunit "Library Assert";
         "Storage Type": Enum "ADLSE Storage Type";
+        LibraryDialogHandler: Codeunit "Library - Dialog Handler";
         IsInitialized: Boolean;
 
     [Test]
@@ -36,7 +37,7 @@ codeunit 85565 "ADLSE Setup Tests"
         ADLSESetup.Validate("Container", ContainerName);
 
         // [THEN] An error is thrown
-        Assert.AreEqual(ADLSESetup.Container, ContainerName, 'Container names are not equal.');
+        LibraryAssert.AreEqual(ADLSESetup.Container, ContainerName, 'Container names are not equal.');
     end;
 
     [Test]
@@ -55,7 +56,7 @@ codeunit 85565 "ADLSE Setup Tests"
         asserterror ADLSESetup.Validate("Container", 'TestContainer');
 
         // [THEN] An error is thrown
-        Assert.ExpectedError(ContainerNameIncorrectFormatErr);
+        LibraryAssert.ExpectedError(ContainerNameIncorrectFormatErr);
     end;
 
     [Test]
@@ -74,7 +75,7 @@ codeunit 85565 "ADLSE Setup Tests"
         asserterror ADLSESetup.Validate("Container", 'Test--Container');
 
         // [THEN] An error is thrown
-        Assert.ExpectedError(ContainerNameIncorrectFormatErr);
+        LibraryAssert.ExpectedError(ContainerNameIncorrectFormatErr);
     end;
 
     [Test]
@@ -91,7 +92,7 @@ codeunit 85565 "ADLSE Setup Tests"
         asserterror ADLSESetup.Validate("Container", LibraryUtility.GenerateRandomNumericText(70));
 
         // [THEN] An error is thrown
-        Assert.ExpectedError('The length of the string is 70, but it must be less than or equal to 63 characters.');
+        LibraryAssert.ExpectedError('The length of the string is 70, but it must be less than or equal to 63 characters.');
     end;
 
     [Test]
@@ -110,7 +111,7 @@ codeunit 85565 "ADLSE Setup Tests"
         asserterror ADLSESetup.Validate("Container", LibraryUtility.GenerateRandomNumericText(2));
 
         // [THEN] An error is thrown
-        Assert.ExpectedError(ContainerNameIncorrectFormatErr);
+        LibraryAssert.ExpectedError(ContainerNameIncorrectFormatErr);
     end;
 
     [Test]
@@ -130,7 +131,7 @@ codeunit 85565 "ADLSE Setup Tests"
         ADLSETable := ADLSLibrarybc2adls.GetRandomTable();
 
         // [THEN] Check if the table is inserted
-        Assert.AreEqual(ADLSETable."Table ID", InsertedTable, 'Tables are not equal');
+        LibraryAssert.AreEqual(ADLSETable."Table ID", InsertedTable, 'Tables are not equal');
     end;
 
     [Test]
@@ -156,8 +157,8 @@ codeunit 85565 "ADLSE Setup Tests"
 
         // [THEN] Check if the field is enabled
         ADLSEField.Get(InsertedTable, FieldId);
-        Assert.AreEqual(ADLSETable."Table ID", InsertedTable, 'Tables are not equal');
-        Assert.AreEqual(ADLSEField."Field ID", FieldId, 'Fields are not equal');
+        LibraryAssert.AreEqual(ADLSETable."Table ID", InsertedTable, 'Tables are not equal');
+        LibraryAssert.AreEqual(ADLSEField."Field ID", FieldId, 'Fields are not equal');
     end;
 
     [Test]
@@ -172,6 +173,8 @@ codeunit 85565 "ADLSE Setup Tests"
         // [GIVEN] Initialized test environment
         Initialize();
         ADLSLibrarybc2adls.CleanUp();
+        LibraryDialogHandler.SetExpectedMessage(JobScheduledTxt);
+
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
         ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
@@ -179,8 +182,9 @@ codeunit 85565 "ADLSE Setup Tests"
         ADLSEExecution.ScheduleExport();
 
         // [THEN] Check if the export is scheduled
-        if JobQueueEntry.FindJobQueueEntry(JobQueueEntry."Object Type to Run"::Codeunit, Codeunit::"ADLSE Execution") then
-            Assert.IsTrue(JobQueueEntry."Object Type to Run" = Codeunit::"ADLSE Execution", 'Job Queue Entry is not created');
+        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Codeunit);
+        JobQueueEntry.SetRange("Object ID to Run", Codeunit::"ADLSE Execution");
+        LibraryAssert.RecordCount(JobQueueEntry, 1);
     end;
 
     local procedure Initialize()
@@ -201,16 +205,28 @@ codeunit 85565 "ADLSE Setup Tests"
         LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"ADLSE Field API Tests");
     end;
 
-    [ModalPageHandler]
-    procedure ModalPageHandlerScheduleaJob(var ScheduleaJob: Page "Schedule a Job"; var Response: Action)
+
+    [ConfirmHandler]
+    procedure ConfirmHandler(Question: Text[1024]; var Reply: Boolean);
     begin
-        Response := Response::OK;
+        LibraryDialogHandler.HandleConfirm(Question, Reply);
     end;
 
     [MessageHandler]
-    procedure MessageHandler(Message: Text[1024])
+    procedure MessageHandler(Message: Text[1024]);
     begin
-
+        LibraryDialogHandler.HandleMessage(Message);
     end;
 
+    [StrMenuHandler]
+    procedure StrMenuHandler(Options: Text[1024]; var Choice: Integer; Instruction: Text[1024]);
+    begin
+        LibraryDialogHandler.HandleStrMenu(Options, Choice, Instruction);
+    end;
+
+    [ModalPageHandler]
+    procedure ModalPageHandlerScheduleaJob(var ScheduleaJob: Page "Schedule a Job"; var Response: Action)
+    begin
+        Response := Response::OK
+    end;
 }
