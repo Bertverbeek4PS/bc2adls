@@ -225,8 +225,8 @@ codeunit 85565 "ADLSE Setup Tests"
     end;
 
     [ModalPageHandler]
-    procedure ModalPageHandlerScheduleaJob(var ScheduleaJob: Page "Schedule a Job"; var Response: Action)
+    procedure ModalPageHandlerScheduleaJob(var ScheduleaJob: TestPage "Schedule a Job")
     begin
-        Response := Response::OK
+        ScheduleaJob.OK().Invoke();
     end;
 }
