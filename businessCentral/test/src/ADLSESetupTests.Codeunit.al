@@ -206,22 +206,10 @@ codeunit 85565 "ADLSE Setup Tests"
     end;
 
 
-    [ConfirmHandler]
-    procedure ConfirmHandler(Question: Text[1024]; var Reply: Boolean);
-    begin
-        LibraryDialogHandler.HandleConfirm(Question, Reply);
-    end;
-
     [MessageHandler]
     procedure MessageHandler(Message: Text[1024]);
     begin
         LibraryDialogHandler.HandleMessage(Message);
-    end;
-
-    [StrMenuHandler]
-    procedure StrMenuHandler(Options: Text[1024]; var Choice: Integer; Instruction: Text[1024]);
-    begin
-        LibraryDialogHandler.HandleStrMenu(Options, Choice, Instruction);
     end;
 
     [ModalPageHandler]
