@@ -1,20 +1,23 @@
-codeunit 85563 "ADLSE Test bc2adls"
+codeunit 85565 "ADLSE Setup Tests"
 {
     Subtype = Test;
     TestPermissions = Disabled;
     trigger OnRun()
     begin
-        // [FEATURE] bc2adls functionality
+        // [FEATURE] bc2adls Setup
     end;
 
     var
         ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
+        ADLSEField: Record "ADLSE Field";
+        ADLSLibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
         LibraryUtility: Codeunit "Library - Utility";
         LibraryRandom: Codeunit "Library - Random";
-        LibraryBc2adls: Codeunit "ADLSE Library - bc2adls";
         Assert: Codeunit Assert;
         "Storage Type": Enum "ADLSE Storage Type";
         IsInitialized: Boolean;
+        InsertedTable: Integer;
 
     [Test]
     procedure TestCorrectNameContainer()
@@ -26,7 +29,7 @@ codeunit 85563 "ADLSE Test bc2adls"
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
         if not ADLSESetup.Get() then
-            LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+            ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
         // [GIVEN]
         ContainerName := LibraryUtility.GenerateRandomNumericText(LibraryRandom.RandIntInRange(3, 63));
 
@@ -47,7 +50,7 @@ codeunit 85563 "ADLSE Test bc2adls"
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
         if not ADLSESetup.Get() then
-            LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+            ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
         asserterror ADLSESetup.Validate("Container", 'TestContainer');
@@ -66,7 +69,7 @@ codeunit 85563 "ADLSE Test bc2adls"
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
         if not ADLSESetup.Get() then
-            LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+            ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
         asserterror ADLSESetup.Validate("Container", 'Test--Container');
@@ -83,7 +86,7 @@ codeunit 85563 "ADLSE Test bc2adls"
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
         if not ADLSESetup.Get() then
-            LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+            ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
         asserterror ADLSESetup.Validate("Container", LibraryUtility.GenerateRandomNumericText(70));
@@ -102,7 +105,7 @@ codeunit 85563 "ADLSE Test bc2adls"
         Initialize();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
         if not ADLSESetup.Get() then
-            LibraryBc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+            ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
         asserterror ADLSESetup.Validate("Container", LibraryUtility.GenerateRandomNumericText(2));
@@ -111,20 +114,39 @@ codeunit 85563 "ADLSE Test bc2adls"
         Assert.ExpectedError(ContainerNameIncorrectFormatErr);
     end;
 
+    [Test]
+    procedure InsertTableForExport()
+    begin
+        // [SCENARIO 001] Add a table for export
+        // [GIVEN] Initialized test environment
+        Initialize();
+        // [GIVEN] Setup bc2adls table for Azure Blob Storage
+        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+
+        // [WHEN] Insert a table for export
+        InsertedTable := ADLSLibrarybc2adls.InsertTable();
+        ADLSETable := ADLSLibrarybc2adls.GetRandomTable();
+
+        // [THEN] Check if the table is inserted
+        Assert.AreEqual(ADLSETable."Table ID", InsertedTable, 'Tables are equal');
+
+    end;
+
     local procedure Initialize()
     var
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
+
     begin
-        LibraryTestInitialize.OnTestInitialize(Codeunit::"ADLSE Test bc2adls");
+        LibraryTestInitialize.OnTestInitialize(Codeunit::"ADLSE Field API Tests");
 
         if IsInitialized then
             exit;
 
-        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"ADLSE Test bc2adls");
+        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"ADLSE Field API Tests");
 
         IsInitialized := true;
         Commit();
 
-        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"ADLSE Test bc2adls");
+        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"ADLSE Field API Tests");
     end;
 }

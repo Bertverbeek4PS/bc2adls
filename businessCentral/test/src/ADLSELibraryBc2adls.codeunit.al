@@ -27,18 +27,16 @@ codeunit 85561 "ADLSE Library - bc2adls"
         ADLSESetup.Insert();
     end;
 
-    procedure InsertTables(NoOfTables: Integer)
+    procedure InsertTable(): Integer
     var
         AllObjWithCaption: Record AllObjWithCaption;
         RandonInt: Integer;
-        i: Integer;
     begin
-        for i := 1 to NoOfTables do begin
-            AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
-            RandonInt := LibraryRandom.RandIntInRange(1, AllObjWithCaption.Count());
-            AllObjWithCaption.next(RandonInt);
-            ADLSETable.Add(AllObjWithCaption."Object ID");
-        end;
+        AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
+        RandonInt := LibraryRandom.RandIntInRange(1, AllObjWithCaption.Count());
+        AllObjWithCaption.next(RandonInt);
+        ADLSETable.Add(AllObjWithCaption."Object ID");
+        exit(AllObjWithCaption."Object ID");
     end;
 
     procedure GetRandomTable(): Record "ADLSE Table"
@@ -67,6 +65,16 @@ codeunit 85561 "ADLSE Library - bc2adls"
             repeat
                 ADLSEField.InsertForTable(ADLSETable);
             until ADLSETable.Next() = 0;
+    end;
+
+    procedure EnableField(TableId: Integer; FieldId: Integer)
+    begin
+        ADLSEField.SetRange("Table ID", TableId);
+        ADLSEField.SetRange("Field ID", FieldId);
+        If ADLSEField.FindFirst() then begin
+            ADLSEField."Enabled" := true;
+            ADLSEField.Modify();
+        end;
     end;
 
     procedure CleanUp();

@@ -14,9 +14,9 @@ codeunit 85562 "ADLSE Test bc2adls Install"
     local procedure SetupTestSuite()
     begin
         // Add test codeunits to 'Test Suite With Runner - Isol. Codeunit'
-        AddTestsToTestSuite(Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Codeunit", Codeunit::"ADLSE Test bc2adls");
+        AddTestsToTestSuite(Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Codeunit", Codeunit::"ADLSE Setup Tests");
         // Add test codeunits to 'Test Suite With Runner - Isol. Disabled'
-        AddTestsToTestSuite(Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Disabled", Codeunit::"ADLSE Test Field API");
+        AddTestsToTestSuite(Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Disabled", Codeunit::"ADLSE Field API Tests");
     end;
 
     procedure AddTestsToTestSuite(TestSuite: Enum "ADLSE Test Suite"; TestCodeunitId: Integer)

@@ -1,4 +1,4 @@
-codeunit 85560 "ADLSE Test Field API"
+codeunit 85560 "ADLSE Field API Tests"
 {
     Subtype = Test;
     TestPermissions = Disabled;
@@ -32,38 +32,68 @@ codeunit 85560 "ADLSE Test Field API"
         if not ADLSESetup.Get() then
             ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
         // [GIVEN] Insert one table and fields
-        ADLSLibrarybc2adls.InsertTables(1);
+        ADLSLibrarybc2adls.InsertTable();
         Commit();
-        //GIVEN Insert all the fields of the tables
+        //GIVEN Get a random table and field
         ADLSETable := ADLSLibrarybc2adls.GetRandomTable();
         FieldId := ADLSLibrarybc2adls.GetRandomField(ADLSETable);
         // [GIVEN] Table Field with type company JSON object
         RequestBody := CreateFieldJSONObject(format(ADLSETable."Table ID"), format(FieldId));
 
-        // [WHEN] Send POST request for contact with type company
+        // [WHEN] Send POST request for with table and field
         Response := SendPostRequestForField(RequestBody);
         Commit();
 
-        // [THEN] Contact with type company and company number series exists in database
+        // [THEN] Table and field exists in database
         VerifyFieldIdOfTableIdExistsInDatabase(Response);
     end;
+
+    //Get a list of all fields of an instered table
+    [Test]
+    procedure GetListOfFieldsOfTable()
+    var
+        RequestBody: Text;
+        Response: Text;
+        FieldId: Integer;
+    begin
+        // [SCENARIO 002] Get a list of all fields of an instered table
+        // [GIVEN] Initialized test environment and clean up
+        Initialize();
+        ADLSLibrarybc2adls.CleanUp();
+        // [GIVEN] Setup bc2adls table for Azure Blob Storage
+        if not ADLSESetup.Get() then
+            ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        // [GIVEN] Insert one table and fields
+        ADLSLibrarybc2adls.InsertTable();
+        Commit();
+        ADLSLibrarybc2adls.InsertFields();
+        Commit();
+        // [GIVEN] Enable a random field
+        ADLSETable := ADLSLibrarybc2adls.GetRandomTable();
+        FieldId := ADLSLibrarybc2adls.GetRandomField(ADLSETable);
+        ADLSLibrarybc2adls.EnableField(ADLSETable."Table ID", FieldId);
+        //GIVEN Get a random table and field
+
+
+    end;
+
 
     local procedure Initialize()
     var
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
 
     begin
-        LibraryTestInitialize.OnTestInitialize(Codeunit::"ADLSE Test Field API");
+        LibraryTestInitialize.OnTestInitialize(Codeunit::"ADLSE Field API Tests");
 
         if IsInitialized then
             exit;
 
-        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"ADLSE Test Field API");
+        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"ADLSE Field API Tests");
 
         IsInitialized := true;
         Commit();
 
-        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"ADLSE Test Field API");
+        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"ADLSE Field API Tests");
     end;
 
     local procedure CreateFieldJSONObject(TableId: Text; FieldId: text) RequestBody: Text
@@ -91,7 +121,7 @@ codeunit 85560 "ADLSE Test Field API"
         LibraryGraphMgt.GetPropertyValueFromJSON(JSON, 'fieldId', FieldId);
         ADLSEField.Get(tableId, FieldId);
 
-        Assert.AreEqual(tableId, format(ADLSEField."Table ID"), StrSubstNo('Field: %1', ADLSEField.FieldCaption("Table ID")));
+        Assert.AreEqual(tableId, format(ADLSEField."Table ID"), StrSubstNo('Table: %1', ADLSEField.FieldCaption("Table ID")));
         Assert.AreEqual(FieldId, format(ADLSEField."Field ID"), StrSubstNo('Field: %1', ADLSEField.FieldCaption("Field ID")));
     end;
 }
