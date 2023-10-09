@@ -16,6 +16,8 @@ codeunit 82569 "ADLSE Execution"
         JobCategoryCodeTxt: Label 'ADLSE';
         JobCategoryDescriptionTxt: Label 'Export to Azure Data Lake';
         JobScheduledTxt: Label 'The job has been scheduled. Please go to the Job Queue Entries page to locate it and make further changes.';
+        ClearSchemaExportedOnMsg: Label 'The schema export date has been cleared.';
+
 
     procedure StartExport()
     var
@@ -113,6 +115,17 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup.GetSingleton();
         ADLSESetup."Schema Exported On" := CurrentDateTime();
         ADLSESetup.Modify();
+    end;
+
+    procedure ClearSchemaExportedOn()
+    var
+        ADLSESetup: Record "ADLSE Setup";
+    begin
+        ADLSESetup.GetSingleton();
+        ADLSESetup."Schema Exported On" := 0DT;
+        ADLSESetup.Modify();
+        if GuiAllowed then
+            Message(ClearSchemaExportedOnMsg);
     end;
 
     procedure ScheduleExport()

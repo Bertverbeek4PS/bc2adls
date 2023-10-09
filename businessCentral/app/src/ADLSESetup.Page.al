@@ -176,7 +176,6 @@ page 82560 "ADLSE Setup"
                     CurrPage.Update();
                 end;
             }
-
             action(SchemaExport)
             {
                 ApplicationArea = All;
@@ -189,6 +188,21 @@ page 82560 "ADLSE Setup"
                     ADLSEExecution: Codeunit "ADLSE Execution";
                 begin
                     ADLSEExecution.SchemaExport();
+                    CurrPage.Update();
+                end;
+            }
+            action(ClearSchemaExported)
+            {
+                ApplicationArea = All;
+                Caption = 'Clear schema export date';
+                Tooltip = 'This will clear the schema exported on field. If this is cleared you can change the schema and export it again.';
+                Image = ClearLog;
+
+                trigger OnAction()
+                var
+                    ADLSEExecution: Codeunit "ADLSE Execution";
+                begin
+                    ADLSEExecution.ClearSchemaExportedOn();
                     CurrPage.Update();
                 end;
             }
@@ -253,6 +267,7 @@ page 82560 "ADLSE Setup"
                     actionref(StopExport_Promoted; StopExport) { }
                     actionref(SchemaExport_Promoted; SchemaExport) { }
                     actionref(Schedule_Promoted; Schedule) { }
+                    actionref(ClearSchemaExported_Promoted; ClearSchemaExported) { }
                 }
                 actionref(ClearDeletedRecordsList_Promoted; ClearDeletedRecordsList) { }
                 actionref(DeleteOldRuns_Promoted; DeleteOldRuns) { }
