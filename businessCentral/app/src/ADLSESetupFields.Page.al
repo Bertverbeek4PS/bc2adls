@@ -111,14 +111,14 @@ page 82562 "ADLSE Setup Fields"
 
     trigger OnAfterGetRecord()
     var
-        Fld: Record Field;
+        Field: Record Field;
         ADLSEUtil: Codeunit "ADLSE Util";
     begin
-        Fld.Get(Rec."Table ID", Rec."Field ID");
-        ADLSFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(Fld.FieldName, Fld."No.");
-        FieldClassName := Fld.Class;
-        FieldTypeName := Fld."Type Name";
-        FieldObsoleteState := Fld.ObsoleteState;
+        Field.Get(Rec."Table ID", Rec."Field ID");
+        ADLSFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(Field.FieldName, Field."No.");
+        FieldClassName := Field.Class;
+        FieldTypeName := Field."Type Name";
+        FieldObsoleteState := Field.ObsoleteState;
     end;
 
     var

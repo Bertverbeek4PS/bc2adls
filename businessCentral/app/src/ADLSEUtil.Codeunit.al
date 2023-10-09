@@ -133,10 +133,10 @@ codeunit 82564 "ADLSE Util"
 
     procedure GetTableCaption(TableID: Integer): Text
     var
-        RecRef: RecordRef;
+        RecordRef: RecordRef;
     begin
-        RecRef.Open(TableID);
-        exit(RecRef.Caption());
+        RecordRef.Open(TableID);
+        exit(RecordRef.Caption());
     end;
 
     procedure GetDataLakeCompliantTableName(TableID: Integer) TableName: Text
@@ -155,10 +155,10 @@ codeunit 82564 "ADLSE Util"
 
     procedure GetTableName(TableID: Integer) TableName: Text
     var
-        RecRef: RecordRef;
+        RecordRef: RecordRef;
     begin
-        RecRef.Open(TableID);
-        TableName := RecRef.Name;
+        RecordRef.Open(TableID);
+        TableName := RecordRef.Name;
     end;
 
     procedure GetDataLakeCompliantName(Name: Text) Result: Text
@@ -181,57 +181,57 @@ codeunit 82564 "ADLSE Util"
         Result := ResultBuilder.ToText();
     end;
 
-    procedure CheckFieldTypeForExport(Fld: Record Field)
+    procedure CheckFieldTypeForExport(Field: Record Field)
     begin
-        case Fld.Type of
-            Fld.Type::BigInteger,
-            Fld.Type::Boolean,
-            Fld.Type::Code,
-            Fld.Type::Date,
-            Fld.Type::DateFormula,
-            Fld.Type::DateTime,
-            Fld.Type::Decimal,
-            Fld.Type::Duration,
-            Fld.Type::Guid,
-            Fld.Type::Integer,
-            Fld.Type::Option,
-            Fld.Type::Text,
-            Fld.Type::Time:
+        case Field.Type of
+            Field.Type::BigInteger,
+            Field.Type::Boolean,
+            Field.Type::Code,
+            Field.Type::Date,
+            Field.Type::DateFormula,
+            Field.Type::DateTime,
+            Field.Type::Decimal,
+            Field.Type::Duration,
+            Field.Type::Guid,
+            Field.Type::Integer,
+            Field.Type::Option,
+            Field.Type::Text,
+            Field.Type::Time:
                 exit;
         end;
-        Error(FieldTypeNotSupportedErr, Fld."Field Caption", Fld.Type);
+        Error(FieldTypeNotSupportedErr, Field."Field Caption", Field.Type);
     end;
 
-    procedure ConvertFieldToText(Fld: FieldRef): Text
+    procedure ConvertFieldToText(FieldRef: FieldRef): Text
     var
         DateTimeValue: DateTime;
     begin
-        case Fld.Type of
-            Fld.Type::BigInteger,
-            Fld.Type::Date,
-            Fld.Type::DateFormula,
-            Fld.Type::Decimal,
-            Fld.Type::Duration,
-            Fld.Type::Integer,
-            Fld.Type::Time:
-                exit(ConvertNumberToText(Fld.Value()));
-            Fld.Type::DateTime:
+        case FieldRef.Type of
+            FieldRef.Type::BigInteger,
+            FieldRef.Type::Date,
+            FieldRef.Type::DateFormula,
+            FieldRef.Type::Decimal,
+            FieldRef.Type::Duration,
+            FieldRef.Type::Integer,
+            FieldRef.Type::Time:
+                exit(ConvertNumberToText(FieldRef.Value()));
+            FieldRef.Type::DateTime:
                 begin
-                    DateTimeValue := Fld.Value();
+                    DateTimeValue := FieldRef.Value();
                     if DateTimeValue = 0DT then
                         exit('');
                     exit(ConvertDateTimeToText(DateTimeValue));
                 end;
-            Fld.Type::Option:
-                exit(Fld.GetEnumValueNameFromOrdinalValue(Fld.Value()));
-            Fld.Type::Boolean:
-                exit(Format(Fld.Value(), 0, 9));
-            Fld.Type::Code,
-            Fld.Type::Guid,
-            Fld.Type::Text:
-                exit(ConvertStringToText(Fld.Value()));
+            FieldRef.Type::Option:
+                exit(FieldRef.GetEnumValueNameFromOrdinalValue(FieldRef.Value()));
+            FieldRef.Type::Boolean:
+                exit(Format(FieldRef.Value(), 0, 9));
+            FieldRef.Type::Code,
+            FieldRef.Type::Guid,
+            FieldRef.Type::Text:
+                exit(ConvertStringToText(FieldRef.Value()));
             else
-                Error(FieldTypeNotSupportedErr, Fld.Name(), Fld.Type);
+                Error(FieldTypeNotSupportedErr, FieldRef.Name(), FieldRef.Type);
         end;
     end;
 
@@ -254,9 +254,9 @@ codeunit 82564 "ADLSE Util"
         exit(Format(Val, 0, 9));
     end;
 
-    local procedure ConvertNumberToText(Val: Variant): Text
+    local procedure ConvertNumberToText(Variant: Variant): Text
     begin
-        exit(Format(Val, 0, 9));
+        exit(Format(Variant, 0, 9));
     end;
 
     local procedure ConvertDateTimeToText(Val: DateTime) Result: Text
@@ -286,20 +286,20 @@ codeunit 82564 "ADLSE Util"
 
     procedure AddSystemFields(var FieldIdList: List of [Integer])
     var
-        RecRef: RecordRef;
+        RecordRef: RecordRef;
     begin
         FieldIdList.Add(0); // Timestamp field
-        FieldIdList.Add(RecRef.SystemIdNo());
-        FieldIdList.Add(RecRef.SystemCreatedAtNo());
-        FieldIdList.Add(RecRef.SystemCreatedByNo());
-        FieldIdList.Add(RecRef.SystemModifiedAtNo());
-        FieldIdList.Add(RecRef.SystemModifiedByNo());
+        FieldIdList.Add(RecordRef.SystemIdNo());
+        FieldIdList.Add(RecordRef.SystemCreatedAtNo());
+        FieldIdList.Add(RecordRef.SystemCreatedByNo());
+        FieldIdList.Add(RecordRef.SystemModifiedAtNo());
+        FieldIdList.Add(RecordRef.SystemModifiedByNo());
     end;
 
-    procedure CreateCsvHeader(Rec: RecordRef; FieldIdList: List of [Integer]) RecordPayload: Text
+    procedure CreateCsvHeader(RecordRef: RecordRef; FieldIdList: List of [Integer]) RecordPayload: Text
     var
         ADLSECDMUtil: Codeunit "ADLSE CDM Util";
-        Field: FieldRef;
+        FieldRef: FieldRef;
         FieldID: Integer;
         FieldsAdded: Integer;
         FieldTextValue: Text;
@@ -307,45 +307,44 @@ codeunit 82564 "ADLSE Util"
     begin
         FieldsAdded := 0;
         foreach FieldID in FieldIdList do begin
-            Field := Rec.Field(FieldID);
+            FieldRef := RecordRef.Field(FieldID);
 
-            FieldTextValue := GetDataLakeCompliantFieldName(Field.Name, Field.Number);
+            FieldTextValue := GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number);
             if FieldsAdded = 0 then
                 Payload.Append(FieldTextValue)
             else
                 Payload.Append(StrSubstNo(CommaPrefixedTok, FieldTextValue));
             FieldsAdded += 1;
         end;
-        if IsTablePerCompany(Rec.Number) then
+        if IsTablePerCompany(RecordRef.Number) then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetCompanyFieldName()));
         Payload.AppendLine();
         RecordPayload := Payload.ToText();
     end;
 
-    procedure CreateCsvPayload(Rec: RecordRef; FieldIdList: List of [Integer]; AddHeaders: Boolean) RecordPayload: Text
+    procedure CreateCsvPayload(RecordRef: RecordRef; FieldIdList: List of [Integer]; AddHeaders: Boolean) RecordPayload: Text
     var
-        ADLSECDMUtil: Codeunit "ADLSE CDM Util";
-        Field: FieldRef;
+        FieldRef: FieldRef;
         FieldID: Integer;
         FieldsAdded: Integer;
         FieldTextValue: Text;
         Payload: TextBuilder;
     begin
         if AddHeaders then
-            Payload.Append(CreateCsvHeader(Rec, FieldIdList));
+            Payload.Append(CreateCsvHeader(RecordRef, FieldIdList));
 
         FieldsAdded := 0;
         foreach FieldID in FieldIdList do begin
-            Field := Rec.Field(FieldID);
+            FieldRef := RecordRef.Field(FieldID);
 
-            FieldTextValue := ConvertFieldToText(Field);
+            FieldTextValue := ConvertFieldToText(FieldRef);
             if FieldsAdded = 0 then
                 Payload.Append(FieldTextValue)
             else
                 Payload.Append(StrSubstNo(CommaPrefixedTok, FieldTextValue));
             FieldsAdded += 1;
         end;
-        if IsTablePerCompany(Rec.Number) then
+        if IsTablePerCompany(RecordRef.Number) then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertStringToText(CompanyName())));
         Payload.AppendLine();
 
@@ -361,21 +360,21 @@ codeunit 82564 "ADLSE Util"
         exit(TableMetadata.DataPerCompany);
     end;
 
-    procedure CreateFakeRecordForDeletedAction(ADLSEDeletedRecord: Record "ADLSE Deleted Record"; var Rec: RecordRef)
+    procedure CreateFakeRecordForDeletedAction(ADLSEDeletedRecord: Record "ADLSE Deleted Record"; var RecordRef: RecordRef)
     var
-        TimestampField: FieldRef;
-        SystemIdField: FieldRef;
-        SystemDateField: FieldRef;
+        TimestampFieldRef: FieldRef;
+        SystemIdFieldRef: FieldRef;
+        SystemDateFieldRef: FieldRef;
     begin
-        TimestampField := Rec.Field(0);
-        TimestampField.Value(ADLSEDeletedRecord."Deletion Timestamp");
-        SystemIdField := Rec.Field(Rec.SystemIdNo());
-        SystemIdField.Value(ADLSEDeletedRecord."System ID");
+        TimestampFieldRef := RecordRef.Field(0);
+        TimestampFieldRef.Value(ADLSEDeletedRecord."Deletion Timestamp");
+        SystemIdFieldRef := RecordRef.Field(RecordRef.SystemIdNo());
+        SystemIdFieldRef.Value(ADLSEDeletedRecord."System ID");
 
-        SystemDateField := Rec.Field(Rec.SystemCreatedAtNo());
-        SystemDateField.Value(0DT);
-        SystemDateField := Rec.Field(Rec.SystemModifiedAtNo());
-        SystemDateField.Value(0DT);
+        SystemDateFieldRef := RecordRef.Field(RecordRef.SystemCreatedAtNo());
+        SystemDateFieldRef.Value(0DT);
+        SystemDateFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
+        SystemDateFieldRef.Value(0DT);
     end;
 
     procedure GetTextValueForKeyInJson(Object: JsonObject; "Key": Text): Text

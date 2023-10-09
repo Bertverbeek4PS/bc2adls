@@ -105,9 +105,9 @@ codeunit 82568 "ADLSE Gen 2 Util"
 
     local procedure CreateBlockBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; LeaseID: Text; Body: Text; IsJson: Boolean)
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
-        ADLSESetup: Record "ADLSE Setup";
         BlobPathOrg: Text;
     begin
         ADLSEHttp.SetMethod("ADLSE Http Method"::Put);

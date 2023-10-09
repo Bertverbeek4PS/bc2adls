@@ -57,9 +57,8 @@ codeunit 82562 "ADLSE Communication"
                     exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
                 end;
             ADLSESetup."Storage Type"::"Microsoft Fabric":
-                begin
-                    exit(StrSubstNo(MSFabricUrlTxt, ADLSESetup.Workspace, ADLSESetup.Lakehouse));
-                end;
+                exit(StrSubstNo(MSFabricUrlTxt, ADLSESetup.Workspace, ADLSESetup.Lakehouse));
+
         end;
     end;
 
@@ -89,7 +88,6 @@ codeunit 82562 "ADLSE Communication"
 
     procedure CheckEntity(CdmDataFormat: Enum "ADLSE CDM Format"; var EntityJsonNeedsUpdate: Boolean; var ManifestJsonsNeedsUpdate: Boolean; SchemaUpdate: Boolean)
     var
-        ADLSESetup: Record "ADLSE Setup";
         ADLSECdmUtil: Codeunit "ADLSE CDM Util";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
@@ -157,7 +155,6 @@ codeunit 82562 "ADLSE Communication"
         ADLSEExecution: Codeunit "ADLSE Execution";
         CustomDimension: Dictionary of [Text, Text];
         FileIdentifer: Guid;
-        ADLSETable: Record "ADLSE Table";
     begin
         if DataBlobPath <> '' then
             // Microsoft Fabric has a limit on the blob size. Create a new blob before reaching this limit
@@ -190,16 +187,16 @@ codeunit 82562 "ADLSE Communication"
     end;
 
     [TryFunction]
-    procedure TryCollectAndSendRecord(Rec: RecordRef; RecordTimeStamp: BigInteger; var LastTimestampExported: BigInteger)
+    procedure TryCollectAndSendRecord(RecordRef: RecordRef; RecordTimeStamp: BigInteger; var LastTimestampExported: BigInteger)
     var
         DataBlobCreated: Boolean;
     begin
         ClearLastError();
         DataBlobCreated := CreateDataBlob();
-        LastTimestampExported := CollectAndSendRecord(Rec, RecordTimeStamp, DataBlobCreated);
+        LastTimestampExported := CollectAndSendRecord(RecordRef, RecordTimeStamp, DataBlobCreated);
     end;
 
-    local procedure CollectAndSendRecord(Rec: RecordRef; RecordTimeStamp: BigInteger; DataBlobCreated: Boolean) LastTimestampExported: BigInteger
+    local procedure CollectAndSendRecord(RecordRef: RecordRef; RecordTimeStamp: BigInteger; DataBlobCreated: Boolean) LastTimestampExported: BigInteger
     var
         ADLSEUtil: Codeunit "ADLSE Util";
         RecordPayLoad: Text;
@@ -209,9 +206,9 @@ codeunit 82562 "ADLSE Communication"
 
         // Add headers into the existing Payload
         if (DataBlobCreated) and (Payload.Length() <> 0) then
-            Payload.Insert(1, ADLSEUtil.CreateCsvHeader(Rec, FieldIdList));
+            Payload.Insert(1, ADLSEUtil.CreateCsvHeader(RecordRef, FieldIdList));
 
-        RecordPayLoad := ADLSEUtil.CreateCsvPayload(Rec, FieldIdList, Payload.Length() = 0);
+        RecordPayLoad := ADLSEUtil.CreateCsvPayload(RecordRef, FieldIdList, Payload.Length() = 0);
         // check if payload exceeds the limit
         if Payload.Length() + StrLen(RecordPayLoad) + 2 > MaxPayloadSize() then begin // the 2 is to account for new line characters
             if Payload.Length() = 0 then
@@ -253,12 +250,12 @@ codeunit 82562 "ADLSE Communication"
 
     local procedure FlushPayload()
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSE: Codeunit ADLSE;
         CustomDimensions: Dictionary of [Text, Text];
         BlockID: Text;
-        ADLSESetup: Record "ADLSE Setup";
     begin
         if Payload.Length() = 0 then
             exit;

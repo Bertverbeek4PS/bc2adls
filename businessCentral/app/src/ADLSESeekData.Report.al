@@ -13,9 +13,9 @@ report 82560 "ADLSE Seek Data"
             trigger OnAfterGetRecord()
             begin
                 if OnlyCheckForExists then
-                    Found := not CurrRecRef.IsEmpty()
+                    Found := not CurrRecordRef.IsEmpty()
                 else
-                    Found := CurrRecRef.FindSet(false);
+                    Found := CurrRecordRef.FindSet(false);
 
                 CurrReport.Break();
             end;
@@ -23,42 +23,42 @@ report 82560 "ADLSE Seek Data"
     }
 
     var
-        CurrRecRef: RecordRef;
+        CurrRecordRef: RecordRef;
         Found: Boolean;
         OnlyCheckForExists: Boolean;
 
-    local procedure GetResult(RecRef: RecordRef): Boolean
+    local procedure GetResult(RecordRef: RecordRef): Boolean
     begin
         UseRequestPage(false);
-        CurrRecRef := RecRef;
+        CurrRecordRef := RecordRef;
         RunModal();
         exit(Found);
     end;
 
-    internal procedure RecordsExist(RecRef: RecordRef): Boolean
+    internal procedure RecordsExist(RecordRef: RecordRef): Boolean
     begin
         OnlyCheckForExists := true;
-        exit(GetResult(RecRef));
+        exit(GetResult(RecordRef));
     end;
 
-    internal procedure FindRecords(RecRef: RecordRef): Boolean
+    internal procedure FindRecords(RecordRef: RecordRef): Boolean
     begin
         OnlyCheckForExists := false;
-        exit(GetResult(RecRef));
+        exit(GetResult(RecordRef));
     end;
 
     internal procedure RecordsExist(var ADLSEDeletedRecord: Record "ADLSE Deleted Record") Result: Boolean
     begin
-        CurrRecRef.GetTable(ADLSEDeletedRecord);
-        Result := RecordsExist(CurrRecRef);
-        CurrRecRef.SetTable(ADLSEDeletedRecord);
+        CurrRecordRef.GetTable(ADLSEDeletedRecord);
+        Result := RecordsExist(CurrRecordRef);
+        CurrRecordRef.SetTable(ADLSEDeletedRecord);
     end;
 
     internal procedure FindRecords(var ADLSEDeletedRecord: Record "ADLSE Deleted Record") Result: Boolean
     begin
-        CurrRecRef.GetTable(ADLSEDeletedRecord);
-        Result := FindRecords(CurrRecRef);
-        CurrRecRef.SetTable(ADLSEDeletedRecord);
+        CurrRecordRef.GetTable(ADLSEDeletedRecord);
+        Result := FindRecords(CurrRecordRef);
+        CurrRecordRef.SetTable(ADLSEDeletedRecord);
     end;
 
 }

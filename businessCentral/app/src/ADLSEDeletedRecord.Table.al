@@ -41,16 +41,16 @@ table 82563 "ADLSE Deleted Record"
         }
     }
 
-    procedure TrackDeletedRecord(RecRef: RecordRef)
+    procedure TrackDeletedRecord(RecordRef: RecordRef)
     var
-        SystemIdField: FieldRef;
-        TimestampField: FieldRef;
+        SystemIdFieldRef: FieldRef;
+        TimestampFieldRef: FieldRef;
     begin
-        if RecRef.IsTemporary() then
+        if RecordRef.IsTemporary() then
             exit;
 
-        SystemIdField := RecRef.Field(RecRef.SystemIdNo());
-        if IsNullGuid(SystemIdField.Value()) then
+        SystemIdFieldRef := RecordRef.Field(RecordRef.SystemIdNo());
+        if IsNullGuid(SystemIdFieldRef.Value()) then
             exit;
 
         // Do not log a deletion if its for a record that is created after the last sync
@@ -61,10 +61,10 @@ table 82563 "ADLSE Deleted Record"
         // in the next run.   
 
         Init();
-        "Table ID" := RecRef.Number;
-        "System ID" := SystemIdField.Value();
-        TimestampField := RecRef.Field(0);
-        "Deletion Timestamp" := TimestampField.Value();
+        "Table ID" := RecordRef.Number;
+        "System ID" := SystemIdFieldRef.Value();
+        TimestampFieldRef := RecordRef.Field(0);
+        "Deletion Timestamp" := TimestampFieldRef.Value();
         "Deletion Timestamp" += 1; // to mark an update that is greater than the last time stamp on this record
         Insert();
     end;

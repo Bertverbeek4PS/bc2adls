@@ -9,7 +9,7 @@ codeunit 85563 "ADLSE Delete Tests"
 
     var
         ADLSETable: Record "ADLSE Table";
-        ADLSLibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
+        ADLSELibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
         LibraryUtility: Codeunit "Library - Utility";
         LibraryAssert: Codeunit "Library Assert";
         "Storage Type": Enum "ADLSE Storage Type";
@@ -25,18 +25,18 @@ codeunit 85563 "ADLSE Delete Tests"
         // [SCENARIO 201] Delete a record, where this action is tracked in the "ADSLE Deleted Record" table
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
         // [GIVEN] Insert a record
         InsertPaymentTerms(PaymentTerms);
         // [GIVEN] Insert a table for export
         ADLSETable.Add(PaymentTerms.RecordId.TableNo);
         // [GIVEN] Enable a field for export
-        ADLSLibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Code));
-        ADLSLibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Description));
+        ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Code));
+        ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Description));
         // [GIVEN] Perform an export
-        ADLSLibrarybc2adls.MockCreateExport(PaymentTerms.RecordId.TableNo);
+        ADLSELibrarybc2adls.MockCreateExport(PaymentTerms.RecordId.TableNo);
 
         // [WHEN] a record is deleted   
         DeletePaymentTerms(PaymentTerms, PaymentTermGuid);
@@ -59,18 +59,18 @@ codeunit 85563 "ADLSE Delete Tests"
         // [SCENARIO 202] Perform an export of a table and reset the table
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
         // [GIVEN] Insert a record
         InsertPaymentTerms(PaymentTerms);
         // [GIVEN] Insert a table for export
         ADLSETable.Add(PaymentTerms.RecordId.TableNo);
         // [GIVEN] Enable a field for export
-        ADLSLibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Code));
-        ADLSLibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Description));
+        ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Code));
+        ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Description));
         // [GIVEN] Perform an export
-        ADLSLibrarybc2adls.MockCreateExport(PaymentTerms.RecordId.TableNo);
+        ADLSELibrarybc2adls.MockCreateExport(PaymentTerms.RecordId.TableNo);
 
         // [WHEN] a record is deleted
         ADLSETable.Get(PaymentTerms.RecordId.TableNo);
@@ -95,18 +95,18 @@ codeunit 85563 "ADLSE Delete Tests"
         // [SCENARIO 203] User can Clear tracked deleted records
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
         // [GIVEN] Insert a record
         InsertPaymentTerms(PaymentTerms);
         // [GIVEN] Insert a table for export
         ADLSETable.Add(PaymentTerms.RecordId.TableNo);
         // [GIVEN] Enable a field for export
-        ADLSLibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Code));
-        ADLSLibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Description));
+        ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Code));
+        ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Description));
         // [GIVEN] Perform an export
-        ADLSLibrarybc2adls.MockCreateExport(PaymentTerms.RecordId.TableNo);
+        ADLSELibrarybc2adls.MockCreateExport(PaymentTerms.RecordId.TableNo);
         // [GIVEN] a record is deleted   
         DeletePaymentTerms(PaymentTerms, PaymentTermGuid);
 

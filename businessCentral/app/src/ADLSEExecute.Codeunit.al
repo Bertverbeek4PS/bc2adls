@@ -106,7 +106,6 @@ codeunit 82561 "ADLSE Execute"
     var
         ADLSECommunicationDeletions: Codeunit "ADLSE Communication";
         FieldIdList: List of [Integer];
-        ADLSESetup: Record "ADLSE Setup";
     begin
         FieldIdList := CreateFieldListForTable(TableID);
 
@@ -126,20 +125,20 @@ codeunit 82561 "ADLSE Execute"
     procedure UpdatedRecordsExist(TableID: Integer; UpdatedLastTimeStamp: BigInteger): Boolean
     var
         ADLSESeekData: Report "ADLSE Seek Data";
-        Rec: RecordRef;
-        TimeStampField: FieldRef;
+        RecordRef: RecordRef;
+        TimeStampFieldRef: FieldRef;
     begin
-        SetFilterForUpdates(TableID, UpdatedLastTimeStamp, false, Rec, TimeStampField);
-        exit(ADLSESeekData.RecordsExist(Rec));
+        SetFilterForUpdates(TableID, UpdatedLastTimeStamp, false, RecordRef, TimeStampFieldRef);
+        exit(ADLSESeekData.RecordsExist(RecordRef));
     end;
 
-    local procedure SetFilterForUpdates(TableID: Integer; UpdatedLastTimeStamp: BigInteger; SkipTimestampSorting: Boolean; var Rec: RecordRef; var TimeStampField: FieldRef)
+    local procedure SetFilterForUpdates(TableID: Integer; UpdatedLastTimeStamp: BigInteger; SkipTimestampSorting: Boolean; var RecordRef: RecordRef; var TimeStampFieldRef: FieldRef)
     begin
-        Rec.Open(TableID);
+        RecordRef.Open(TableID);
         if not SkipTimestampSorting then
-            Rec.SetView(TimestampAscendingSortViewTxt);
-        TimeStampField := Rec.Field(0); // 0 is the TimeStamp field
-        TimeStampField.SetFilter('>%1', UpdatedLastTimestamp);
+            RecordRef.SetView(TimestampAscendingSortViewTxt);
+        TimeStampFieldRef := RecordRef.Field(0); // 0 is the TimeStamp field
+        TimeStampFieldRef.SetFilter('>%1', UpdatedLastTimestamp);
     end;
 
     local procedure ExportTableUpdates(TableID: Integer; FieldIdList: List of [Integer]; ADLSECommunication: Codeunit "ADLSE Communication"; var UpdatedLastTimeStamp: BigInteger)
@@ -148,9 +147,9 @@ codeunit 82561 "ADLSE Execute"
         ADLSESeekData: Report "ADLSE Seek Data";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEUtil: Codeunit "ADLSE Util";
-        Rec: RecordRef;
-        TimeStampField: FieldRef;
-        Field: FieldRef;
+        RecordRef: RecordRef;
+        TimeStampFieldRef: FieldRef;
+        FieldRef: FieldRef;
         CustomDimensions: Dictionary of [Text, Text];
         TableCaption: Text;
         EntityCount: Text;
@@ -159,18 +158,18 @@ codeunit 82561 "ADLSE Execute"
         SystemCreatedAt, UtcEpochZero : DateTime;
     begin
         ADLSESetup.GetSingleton();
-        SetFilterForUpdates(TableID, UpdatedLastTimeStamp, ADLSESetup."Skip Timestamp Sorting On Recs", Rec, TimeStampField);
+        SetFilterForUpdates(TableID, UpdatedLastTimeStamp, ADLSESetup."Skip Timestamp Sorting On Recs", RecordRef, TimeStampFieldRef);
 
         foreach FieldId in FieldIdList do
-            if Rec.AddLoadFields(FieldID) then;
+            if RecordRef.AddLoadFields(FieldID) then;
 
-        if not Rec.ReadPermission() then
+        if not RecordRef.ReadPermission() then
             Error(InsufficientReadPermErr);
 
-        if ADLSESeekData.FindRecords(Rec) then begin
+        if ADLSESeekData.FindRecords(RecordRef) then begin
             if EmitTelemetry then begin
-                TableCaption := Rec.Caption();
-                EntityCount := Format(Rec.Count());
+                TableCaption := RecordRef.Caption();
+                EntityCount := Format(RecordRef.Count());
                 CustomDimensions.Add('Entity', TableCaption);
                 CustomDimensions.Add('Entity Count', EntityCount);
                 ADLSEExecution.Log('ADLSE-021', 'Updated records found', Verbosity::Normal, CustomDimensions);
@@ -181,17 +180,17 @@ codeunit 82561 "ADLSE Execute"
 
             repeat
                 // Records created before SystemCreatedAt field was introduced, have null values. Initialize with 01 Jan 1900
-                Field := Rec.Field(Rec.SystemCreatedAtNo());
-                SystemCreatedAt := Field.Value();
+                FieldRef := RecordRef.Field(RecordRef.SystemCreatedAtNo());
+                SystemCreatedAt := FieldRef.Value();
                 if SystemCreatedAt = 0DT then
-                    Field.Value(UtcEpochZero);
+                    FieldRef.Value(UtcEpochZero);
 
-                if ADLSECommunication.TryCollectAndSendRecord(Rec, TimeStampField.Value(), FlushedTimeStamp) then begin
+                if ADLSECommunication.TryCollectAndSendRecord(RecordRef, TimeStampFieldRef.Value(), FlushedTimeStamp) then begin
                     if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
                         UpdatedLastTimeStamp := FlushedTimeStamp;
                 end else
                     Error('%1%2', GetLastErrorText(), GetLastErrorCallStack());
-            until Rec.Next() = 0;
+            until RecordRef.Next() = 0;
 
             if ADLSECommunication.TryFinish(FlushedTimeStamp) then begin
                 if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
@@ -225,7 +224,7 @@ codeunit 82561 "ADLSE Execute"
         ADLSESeekData: Report "ADLSE Seek Data";
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
-        Rec: RecordRef;
+        RecordRef: RecordRef;
         CustomDimensions: Dictionary of [Text, Text];
         TableCaption: Text;
         EntityCount: Text;
@@ -234,10 +233,10 @@ codeunit 82561 "ADLSE Execute"
         SetFilterForDeletes(TableID, DeletedLastEntryNo, ADLSEDeletedRecord);
 
         if ADLSESeekData.FindRecords(ADLSEDeletedRecord) then begin
-            Rec.Open(ADLSEDeletedRecord."Table ID");
+            RecordRef.Open(ADLSEDeletedRecord."Table ID");
 
             if EmitTelemetry then begin
-                TableCaption := Rec.Caption();
+                TableCaption := RecordRef.Caption();
                 EntityCount := Format(ADLSEDeletedRecord.Count());
                 CustomDimensions.Add('Entity', TableCaption);
                 CustomDimensions.Add('Entity Count', EntityCount);
@@ -245,8 +244,8 @@ codeunit 82561 "ADLSE Execute"
             end;
 
             repeat
-                ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, Rec);
-                if ADLSECommunication.TryCollectAndSendRecord(Rec, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp) then
+                ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, RecordRef);
+                if ADLSECommunication.TryCollectAndSendRecord(RecordRef, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp) then
                     DeletedLastEntryNo := FlushedTimeStamp
                 else
                     Error('%1%2', GetLastErrorText(), GetLastErrorCallStack());
@@ -281,7 +280,6 @@ codeunit 82561 "ADLSE Execute"
         ADLSECurrentSession: Record "ADLSE Current Session";
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
         ADLSEExecution: Codeunit "ADLSE Execution";
-        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         CustomDimensions: Dictionary of [Text, Text];
     begin
         ADLSERun.RegisterEnded(ADLSETable."Table ID", EmitTelemetry, TableCaption);
@@ -311,12 +309,11 @@ codeunit 82561 "ADLSE Execute"
 
     procedure ExportSchema(tableId: Integer)
     var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSECommunication: Codeunit "ADLSE Communication";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEUtil: Codeunit "ADLSE Util";
-        ADLSESetup: Record "ADLSE Setup";
-        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
-        CDMDataFormat: Enum "ADLSE CDM Format";
         TableCaption: Text;
         UpdatedLastTimestamp: BigInteger;
         CustomDimensions: Dictionary of [Text, Text];

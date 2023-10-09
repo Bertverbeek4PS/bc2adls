@@ -12,7 +12,7 @@ codeunit 85560 "ADLSE Field API Tests"
         ADLSETable: Record "ADLSE Table";
         ADLSEField: Record "ADLSE Field";
         LibraryGraphMgt: Codeunit "Library - Graph Mgt";
-        ADLSLibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
+        ADLSELibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
         Assert: Codeunit Assert;
         "Storage Type": Enum "ADLSE Storage Type";
         IsInitialized: Boolean;
@@ -27,16 +27,16 @@ codeunit 85560 "ADLSE Field API Tests"
         // [SCENARIO 001] Add a field to an excisting table
         // [GIVEN] Initialized test environment and clean up
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
         if not ADLSESetup.Get() then
-            ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+            ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
         // [GIVEN] Insert one table and fields
-        ADLSLibrarybc2adls.InsertTable();
+        ADLSELibrarybc2adls.InsertTable();
         Commit();
         //GIVEN Get a random table and field
-        ADLSETable := ADLSLibrarybc2adls.GetRandomTable();
-        FieldId := ADLSLibrarybc2adls.GetRandomField(ADLSETable);
+        ADLSETable := ADLSELibrarybc2adls.GetRandomTable();
+        FieldId := ADLSELibrarybc2adls.GetRandomField(ADLSETable);
         // [GIVEN] Table Field with type company JSON object
         RequestBody := CreateFieldJSONObject(format(ADLSETable."Table ID"), format(FieldId));
 
@@ -51,8 +51,6 @@ codeunit 85560 "ADLSE Field API Tests"
     //Get a list of all fields of an instered table
     [Test]
     procedure GetListOfFieldsOfTable()
-    var
-        FieldId: Integer;
     begin
         // [SCENARIO 002] Get a list of all fields of an instered table
         // [GIVEN] Initialized test environment and clean up
