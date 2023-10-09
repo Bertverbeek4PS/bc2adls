@@ -132,7 +132,12 @@ codeunit 82569 "ADLSE Execution"
     var
         JobQueueEntry: Record "Job Queue Entry";
         ScheduleAJob: Page "Schedule a Job";
+        Handled: Boolean;
     begin
+        OnBeforeScheduleExport(Handled);
+        if Handled then
+            exit;
+
         CreateJobQueueEntry(JobQueueEntry);
         ScheduleAJob.SetJob(JobQueueEntry);
         Commit(); // above changes go into the DB before RunModal
@@ -202,5 +207,11 @@ codeunit 82569 "ADLSE Execution"
             exit;
 
         ADLSEDeletedRecord.TrackDeletedRecord(RecRef);
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeScheduleExport(var Handled: Boolean)
+    begin
+
     end;
 }

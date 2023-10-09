@@ -170,6 +170,9 @@ table 82561 "ADLSE Table"
 
                 ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");
                 ADLSEDeletedRecord.DeleteAll();
+
+                OnAfterResetSelected(Rec);
+
                 Counter += 1;
             until Rec.Next() = 0;
         Message(TablesResetTxt, Counter);
@@ -231,4 +234,9 @@ table 82561 "ADLSE Table"
             until ADLSEFields.Next() = 0;
     end;
 
+    [IntegrationEvent(false, false)]
+    local procedure OnAfterResetSelected(ADLSETable: record "ADLSE Table")
+    begin
+
+    end;
 }
