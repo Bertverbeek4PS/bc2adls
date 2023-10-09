@@ -1,9 +1,11 @@
 {
   "country": "w1",
   "appFolders": [
-    "businessCentral"
+    "businessCentral\\app"
   ],
-  "testFolders": [],
+  "testFolders": [
+    "businessCentral\\test"
+  ],
   "bcptTestFolders": [],
   "repoVersion": "2.12"
 }

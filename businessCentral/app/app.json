@@ -10,7 +10,7 @@
   "help": "https://go.microsoft.com/fwlink/?LinkId=724011",
   "url": "https://go.microsoft.com/fwlink/?LinkId=724011",
   "contextSensitiveHelpUrl": "https://docs.microsoft.com/dynamics365/business-central/",
-  "logo": "../.assets/bc2adls_logo.png",
+  "logo": "../../.assets/bc2adls_logo.png",
   "screenshots": [],
   "platform": "22.0.0.0",
   "application": "22.0.0.0",
@@ -23,6 +23,18 @@
     {
       "from": 82560,
       "to": 82575
+    }
+  ],
+  "internalsVisibleTo": [
+    {
+      "publisher": "Microsoft",
+      "name": "Tests-TestLibraries",
+      "id": "5d86850b-0d76-4eca-bd7b-951ad998e997"
+    },
+    {
+      "publisher": "The bc2adls team",
+      "name": "Tests for Azure Data Lake Storage Export",
+      "id": "03486619-1622-4261-ae0e-b366b3c96e3c"
     }
   ],
   "target": "Cloud",
