@@ -132,7 +132,6 @@ table 82560 "ADLSE Setup"
         ContainerNameIncorrectFormatErr: Label 'The container name is in an incorrect format.';
         AccountNameIncorrectFormatErr: Label 'The account name is in an incorrect format.';
         RecordDoesNotExistErr: Label 'No record on this table exists.';
-        NoChangesAllowedErr: Label 'No changes allowed when exports have been configured to be allowed simultaneously.';
         PrimaryKeyValueLbl: Label '0', Locked = true;
 
     local procedure TextCharactersOtherThan(String: Text; CharString: Text): Boolean
@@ -179,11 +178,11 @@ table 82560 "ADLSE Setup"
 
     procedure SchemaExported()
     var
-        NoSchemaExportedErr: Label 'Schema already exported. Please export schema first before exporting the data.';
+        NoSchemaExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
     begin
         Rec.GetSingleton();
         if Rec."Schema Exported On" <> 0DT then
-            Message(NoSchemaExportedErr);
+            Error(ErrorInfo.Create(NoSchemaExportedErr, true));
     end;
 
     procedure CheckSchemaExported()
@@ -192,6 +191,6 @@ table 82560 "ADLSE Setup"
     begin
         Rec.GetSingleton();
         if Rec."Schema Exported On" = 0DT then
-            Message(NoSchemaExportedErr);
+            Error(NoSchemaExportedErr);
     end;
 }

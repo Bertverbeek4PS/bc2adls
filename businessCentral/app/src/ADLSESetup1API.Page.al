@@ -68,10 +68,19 @@ page 82568 "ADLSE Setup API v11"
         SetActionResponse(ActionContext, Rec."SystemId");
     end;
 
+    [ServiceEnabled]
+    procedure ClearSchemaExportedOn(var ActionContext: WebServiceActionContext)
+    var
+        ADLSEExecution: Codeunit "ADLSE Execution";
+    begin
+        ADLSEExecution.ClearSchemaExportedOn();
+        SetActionResponse(ActionContext, Rec."SystemId");
+    end;
+
     local procedure SetActionResponse(var ActionContext: WebServiceActionContext; AdlsId: Guid)
     var
     begin
-        SetActionResponse(ActionContext, Page::"ADLSE Setup API", AdlsId);
+        SetActionResponse(ActionContext, Page::"ADLSE Setup API v11", AdlsId);
     end;
 
     local procedure SetActionResponse(var ActionContext: WebServiceActionContext; PageId: Integer; DocumentId: Guid)
