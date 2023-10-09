@@ -84,32 +84,32 @@ table 82562 "ADLSE Field"
 
     procedure InsertForTable(ADLSETable: Record "ADLSE Table")
     var
-        Fld: Record Field;
+        Field: Record Field;
         ADLSEField: Record "ADLSE Field";
     begin
-        Fld.SetRange(TableNo, ADLSETable."Table ID");
-        Fld.SetFilter("No.", '<%1', 2000000000); // no system fields
+        Field.SetRange(TableNo, ADLSETable."Table ID");
+        Field.SetFilter("No.", '<%1', 2000000000); // no system fields
 
-        if Fld.FindSet() then
+        if Field.FindSet() then
             repeat
-                if not ADLSEField.Get(ADLSETable."Table ID", Fld."No.") then begin
-                    Rec."Table ID" := Fld.TableNo;
-                    Rec."Field ID" := Fld."No.";
+                if not ADLSEField.Get(ADLSETable."Table ID", Field."No.") then begin
+                    Rec."Table ID" := Field.TableNo;
+                    Rec."Field ID" := Field."No.";
                     Rec.Enabled := false;
                     Rec.Insert();
                 end;
-            until Fld.Next() = 0;
+            until Field.Next() = 0;
     end;
 
     procedure CheckFieldToBeEnabled()
     var
-        Fld: Record Field;
+        Field: Record Field;
         ADLSESetup: Codeunit "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
     begin
-        Fld.Get(Rec."Table ID", Rec."Field ID");
-        ADLSEUtil.CheckFieldTypeForExport(Fld);
-        ADLSESetup.CheckFieldCanBeExported(Fld);
+        Field.Get(Rec."Table ID", Rec."Field ID");
+        ADLSEUtil.CheckFieldTypeForExport(Field);
+        ADLSESetup.CheckFieldCanBeExported(Field);
     end;
 
     [TryFunction]

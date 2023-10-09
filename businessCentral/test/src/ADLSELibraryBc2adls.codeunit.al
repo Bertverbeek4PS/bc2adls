@@ -49,12 +49,12 @@ codeunit 85561 "ADLSE Library - bc2adls"
 
     procedure GetRandomField(ADLSETable: Record "ADLSE Table"): Integer
     var
-        Fld: Record Field;
+        Field: Record Field;
     begin
-        Fld.SetRange(TableNo, ADLSETable."Table ID");
-        Fld.SetFilter("No.", '<%1', 2000000000); // no system fields
-        Fld.next(LibraryRandom.RandIntInRange(1, Fld.Count()));
-        exit(Fld."No.");
+        Field.SetRange(TableNo, ADLSETable."Table ID");
+        Field.SetFilter("No.", '<%1', 2000000000); // no system fields
+        Field.next(LibraryRandom.RandIntInRange(1, Field.Count()));
+        exit(Field."No.");
     end;
 
     procedure InsertFields()

@@ -113,21 +113,21 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
     local procedure CreateAttributes(TableID: Integer; FieldIdList: List of [Integer]) Result: JsonArray;
     var
         ADLSEUtil: Codeunit "ADLSE Util";
-        RecRef: RecordRef;
-        FldRef: FieldRef;
+        RecordRef: RecordRef;
+        FieldRef: FieldRef;
         FieldId: Integer;
         DataFormat: Text;
         AppliedTraits: JsonArray;
     begin
-        RecRef.Open(TableID);
+        RecordRef.Open(TableID);
         foreach FieldId in FieldIdList do begin
-            FldRef := RecRef.Field(FieldId);
-            GetCDMAttributeDetails(FldRef.Type, DataFormat, AppliedTraits);
+            FieldRef := RecordRef.Field(FieldId);
+            GetCDMAttributeDetails(FieldRef.Type, DataFormat, AppliedTraits);
             Result.Add(
                 CreateAttributeJson(
-                    ADLSEUtil.GetDataLakeCompliantFieldName(FldRef.Name, FldRef.Number),
+                    ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number),
                     DataFormat,
-                    FldRef.Name,
+                    FieldRef.Name,
                     AppliedTraits));
         end;
         if ADLSEUtil.IsTablePerCompany(TableID) then begin
@@ -220,20 +220,20 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         end;
     end;
 
-    local procedure GetCDMAttributeDetails(Type: FieldType; var DataFormat: Text; var AppliedTraits: JsonArray)
+    local procedure GetCDMAttributeDetails(FieldType: FieldType; var DataFormat: Text; var AppliedTraits: JsonArray)
     begin
         DataFormat := '';
         Clear(AppliedTraits);
-        AppliedTraits := GetAppliedTraits(Type);
-        DataFormat := GetCDMDataFormat(Type);
+        AppliedTraits := GetAppliedTraits(FieldType);
+        DataFormat := GetCDMDataFormat(FieldType);
     end;
 
-    local procedure GetAppliedTraits(Type: FieldType) AppliedTraits: JsonArray
+    local procedure GetAppliedTraits(FieldType: FieldType) AppliedTraits: JsonArray
     var
         JsonTrait: JsonObject;
         TraitArgs: JsonArray;
     begin
-        case Type of
+        case FieldType of
             FieldType::Decimal:
                 begin
                     JsonTrait.Add('traitReference', 'is.dataFormat.numeric.shaped');
@@ -253,11 +253,11 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         TraitArgs.Add(JsonNameValue);
     end;
 
-    local procedure GetCDMDataFormat(Type: FieldType): Text
+    local procedure GetCDMDataFormat(FieldType: FieldType): Text
     begin
         // Refer https://docs.microsoft.com/en-us/common-data-model/sdk/list-of-datatypes
         // Refer https://docs.microsoft.com/en-us/common-data-model/1.0om/api-reference/cdm/dataformat
-        case Type of
+        case FieldType of
             FieldType::BigInteger:
                 exit('Int64');
             FieldType::Date:

@@ -82,27 +82,27 @@ codeunit 82569 "ADLSE Execution"
         ADLSECurrentSession: Record "ADLSE Current Session";
         AllObjWithCaption: Record AllObjWithCaption;
         ADLSEExecute: Codeunit "ADLSE Execute";
-        ProgressWindow: Dialog;
-        ProgressMsg1: Label 'Current Table:           #1##########\';
-        ProgressMsg2: Label 'Total %1 tables. Processed:           #2##########\';
+        ProgressWindowDialog: Dialog;
+        Progress1Msg: Label 'Current Table:           #1##########\', Comment = '#1: table caption';
+        Progress2Msg: Label 'Total %1 tables. Processed:           #2##########\', Comment = '%1: total tables, #2: total of tables processed';
         i: Integer;
     begin
         // ensure that no current export sessions running
         ADLSECurrentSession.CheckForNoActiveSessions();
 
-        ADLSETable.Reset;
+        ADLSETable.Reset();
         ADLSETable.SetRange(Enabled, true);
         if ADLSETable.FindSet(false) then
             if GuiAllowed then
-                ProgressWindow.Open(ProgressMsg1 + StrSubstNo(ProgressMsg2, ADLSETable.Count));
+                ProgressWindowDialog.Open(Progress1Msg + StrSubstNo(Progress2Msg, ADLSETable.Count, 0));
         repeat
             if GuiAllowed then begin
                 AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
                 AllObjWithCaption.SetRange("Object ID", ADLSETable."Table ID");
                 if AllObjWithCaption.FindFirst() then begin
                     i := i + 1;
-                    ProgressWindow.Update(1, AllObjWithCaption."Object Caption");
-                    ProgressWindow.Update(2, i);
+                    ProgressWindowDialog.Update(1, AllObjWithCaption."Object Caption");
+                    ProgressWindowDialog.Update(2, i);
                 end;
             end;
 
@@ -110,7 +110,7 @@ codeunit 82569 "ADLSE Execution"
         until ADLSETable.Next() = 0;
 
         if GuiAllowed then
-            ProgressWindow.Close();
+            ProgressWindowDialog.Close();
 
         ADLSESetup.GetSingleton();
         ADLSESetup."Schema Exported On" := CurrentDateTime();

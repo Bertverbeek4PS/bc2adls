@@ -85,7 +85,7 @@ codeunit 82560 "ADLSE Setup"
         else
             ADLSESetup.TestField(Workspace);
 
-        ADLSESetup.CheckSchemaExported;
+        ADLSESetup.CheckSchemaExported();
 
         if ADLSECurrentSession.AreAnySessionsActive() then
             ADLSECurrentSession.CheckForNoActiveSessions();

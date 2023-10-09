@@ -11,7 +11,7 @@ codeunit 85565 "ADLSE Setup Tests"
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
         ADLSEField: Record "ADLSE Field";
-        ADLSLibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
+        ADLSELibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
         LibraryUtility: Codeunit "Library - Utility";
         LibraryRandom: Codeunit "Library - Random";
         LibraryAssert: Codeunit "Library Assert";
@@ -27,9 +27,9 @@ codeunit 85565 "ADLSE Setup Tests"
         // [SCENARIO 101] Test Field Container with to short name
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
         // [GIVEN]
         ContainerName := LibraryUtility.GenerateRandomNumericText(LibraryRandom.RandIntInRange(3, 63));
 
@@ -48,9 +48,9 @@ codeunit 85565 "ADLSE Setup Tests"
         // [SCENARIO 102] Test Field Container with capitals
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
         asserterror ADLSESetup.Validate("Container", 'TestContainer');
@@ -67,9 +67,9 @@ codeunit 85565 "ADLSE Setup Tests"
         // [SCENARIO 103] Test Field Container with multiple dashes together
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
         asserterror ADLSESetup.Validate("Container", 'Test--Container');
@@ -84,9 +84,9 @@ codeunit 85565 "ADLSE Setup Tests"
         // [SCENARIO 104] Test Field Container with to long name
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
         asserterror ADLSESetup.Validate("Container", LibraryUtility.GenerateRandomNumericText(70));
@@ -103,9 +103,9 @@ codeunit 85565 "ADLSE Setup Tests"
         // [SCENARIO 105] Test Field Container with to short name
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Container name is set to "TestContainer"
         asserterror ADLSESetup.Validate("Container", LibraryUtility.GenerateRandomNumericText(2));
@@ -122,13 +122,13 @@ codeunit 85565 "ADLSE Setup Tests"
         // [SCENARIO 106] Add a table for export
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Insert a table for export
-        InsertedTable := ADLSLibrarybc2adls.InsertTable();
-        ADLSETable := ADLSLibrarybc2adls.GetRandomTable();
+        InsertedTable := ADLSELibrarybc2adls.InsertTable();
+        ADLSETable := ADLSELibrarybc2adls.GetRandomTable();
 
         // [THEN] Check if the table is inserted
         LibraryAssert.AreEqual(ADLSETable."Table ID", InsertedTable, 'Tables are not equal');
@@ -143,17 +143,17 @@ codeunit 85565 "ADLSE Setup Tests"
         // [SCENARIO 107] Add a field for export of an excisting table
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
         // [GIVEN] Insert a table for export
-        InsertedTable := ADLSLibrarybc2adls.InsertTable();
+        InsertedTable := ADLSELibrarybc2adls.InsertTable();
         ADLSETable.Get(InsertedTable);
-        ADLSLibrarybc2adls.InsertFields();
-        FieldId := ADLSLibrarybc2adls.GetRandomField(ADLSETable);
+        ADLSELibrarybc2adls.InsertFields();
+        FieldId := ADLSELibrarybc2adls.GetRandomField(ADLSETable);
 
         // [WHEN] A field is enabled for export
-        ADLSLibrarybc2adls.EnableField(InsertedTable, FieldId);
+        ADLSELibrarybc2adls.EnableField(InsertedTable, FieldId);
 
         // [THEN] Check if the field is enabled
         ADLSEField.Get(InsertedTable, FieldId);
@@ -172,11 +172,11 @@ codeunit 85565 "ADLSE Setup Tests"
         // [SCENARIO 108] Schedule an export for the Job Queue
         // [GIVEN] Initialized test environment
         Initialize();
-        ADLSLibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CleanUp();
         LibraryDialogHandler.SetExpectedMessage(JobScheduledTxt);
 
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
-        ADLSLibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
         // [WHEN] Schedule an export for the Job Queue is triggerd
         ADLSEExecution.ScheduleExport();

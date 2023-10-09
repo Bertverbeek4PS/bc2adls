@@ -101,74 +101,73 @@ codeunit 82563 "ADLSE Http"
     [NonDebuggable]
     procedure InvokeRestApi(var Response: Text; var StatusCode: Integer) Success: Boolean
     var
-        Client: HttpClient;
+        ADLSESetup: Record "ADLSE Setup";
+        HttpClient: HttpClient;
         Headers: HttpHeaders;
-        RequestMsg: HttpRequestMessage;
-        ResponseMsg: HttpResponseMessage;
-        Content: HttpContent;
+        HttpRequestMessage: HttpRequestMessage;
+        HttpResponseMessage: HttpResponseMessage;
+        HttpContent: HttpContent;
         HeaderKey: Text;
         HeaderValue: Text;
-        ADLSESetup: Record "ADLSE Setup";
     begin
-        Client.SetBaseAddress(Url);
-        if not AddAuthorization(Client, Response) then
+        HttpClient.SetBaseAddress(Url);
+        if not AddAuthorization(HttpClient, Response) then
             exit(false);
 
-        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then begin
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
             if AdditionalRequestHeaders.Count() > 0 then begin
-                Headers := Client.DefaultRequestHeaders();
+                Headers := HttpClient.DefaultRequestHeaders();
                 foreach HeaderKey in AdditionalRequestHeaders.Keys do begin
                     AdditionalRequestHeaders.Get(HeaderKey, HeaderValue);
                     Headers.Add(HeaderKey, HeaderValue);
                 end;
             end;
-        end;
 
         case HttpMethod of
             "ADLSE Http Method"::Get:
-                Client.Get(Url, ResponseMsg);
+                HttpClient.Get(Url, HttpResponseMessage);
             "ADLSE Http Method"::Put:
                 begin
-                    RequestMsg.Method('PUT');
-                    RequestMsg.SetRequestUri(Url);
-                    AddContent(Content);
-                    Client.Put(Url, Content, ResponseMsg);
+                    HttpRequestMessage.Method('PUT');
+                    HttpRequestMessage.SetRequestUri(Url);
+                    AddContent(HttpContent);
+                    HttpClient.Put(Url, HttpContent, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Delete:
-                Client.Delete(Url, ResponseMsg);
+                HttpClient.Delete(Url, HttpResponseMessage);
             "ADLSE Http Method"::Patch:
                 begin
-                    RequestMsg.Method('PATCH');
-                    RequestMsg.SetRequestUri(Url);
-                    AddContent(Content);
-                    RequestMsg.Content(Content);
-                    Client.Send(RequestMsg, ResponseMsg);
+                    HttpRequestMessage.Method('PATCH');
+                    HttpRequestMessage.SetRequestUri(Url);
+                    AddContent(HttpContent);
+                    HttpRequestMessage.Content(HttpContent);
+                    HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Head:
                 begin
-                    RequestMsg.Method('HEAD');
-                    RequestMsg.SetRequestUri(Url);
-                    Client.Send(RequestMsg, ResponseMsg);
+                    HttpRequestMessage.Method('HEAD');
+                    HttpRequestMessage.SetRequestUri(Url);
+                    HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
             else
                 Error(UnsupportedMethodErr, HttpMethod);
         end;
 
-        Content := ResponseMsg.Content();
-        Content.ReadAs(Response);
-        ResponseHeaders := ResponseMsg.Headers();
-        ResponseMsg.Content().GetHeaders(ResponseContentHeaders);
-        Success := ResponseMsg.IsSuccessStatusCode();
-        StatusCode := ResponseMsg.HttpStatusCode();
+        HttpContent := HttpResponseMessage.Content();
+        HttpContent.ReadAs(Response);
+        ResponseHeaders := HttpResponseMessage.Headers();
+        HttpResponseMessage.Content().GetHeaders(ResponseContentHeaders);
+        Success := HttpResponseMessage.IsSuccessStatusCode();
+        StatusCode := HttpResponseMessage.HttpStatusCode();
     end;
 
-    local procedure AddContent(var Content: HttpContent)
+    local procedure AddContent(var HttpContent: HttpContent)
     var
-        Headers: HttpHeaders;
         ADLSESetup: Record "ADLSE Setup";
+        Headers: HttpHeaders;
     begin
-        Content.WriteFrom(Body);
-        Content.GetHeaders(Headers);
+        HttpContent.WriteFrom(Body);
+        HttpContent.GetHeaders(Headers);
 
         if ContentTypeJson then begin
             Headers.Remove('Content-Type');
@@ -183,7 +182,7 @@ codeunit 82563 "ADLSE Http"
     end;
 
     [NonDebuggable]
-    local procedure AddAuthorization(Client: HttpClient; var Response: Text) Success: Boolean
+    local procedure AddAuthorization(HttpClient: HttpClient; var Response: Text) Success: Boolean
     var
         ADLSEUtil: Codeunit "ADLSE Util";
         Headers: HttpHeaders;
@@ -201,7 +200,7 @@ codeunit 82563 "ADLSE Http"
             Success := false;
             exit;
         end;
-        Headers := Client.DefaultRequestHeaders();
+        Headers := HttpClient.DefaultRequestHeaders();
         Headers.Add('Authorization', StrSubstNo(BearerTok, AccessToken));
         Headers.Add('x-ms-version', AzureStorageServiceVersionTok);
         Headers.Add('x-ms-date', ADLSEUtil.GetCurrentDateTimeInGMTFormat());
@@ -211,17 +210,17 @@ codeunit 82563 "ADLSE Http"
     [NonDebuggable]
     local procedure AcquireTokenOAuth2(var AuthError: Text) AccessToken: Text
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADSEUtil: Codeunit "ADLSE Util";
-        Client: HttpClient;
-        RequestMessage: HttpRequestMessage;
-        Content: HttpContent;
+        HttpClient: HttpClient;
+        HttpRequestMessage: HttpRequestMessage;
+        HttpContent: HttpContent;
         Headers: HttpHeaders;
-        ResponseMessage: HttpResponseMessage;
+        HttpResponseMessage: HttpResponseMessage;
         Uri: Text;
         RequestBody: Text;
         ResponseBody: Text;
         Json: JsonObject;
-        ADLSESetup: Record "ADLSE Setup";
         ScopeUrlEncoded: Text;
     begin
         case ADLSESetup.GetStorageType() of
@@ -232,8 +231,8 @@ codeunit 82563 "ADLSE Http"
         end;
 
         Uri := StrSubstNo(OAuthTok, Credentials.GetTenantID());
-        RequestMessage.Method('POST');
-        RequestMessage.SetRequestUri(Uri);
+        HttpRequestMessage.Method('POST');
+        HttpRequestMessage.SetRequestUri(Uri);
         RequestBody :=
         StrSubstNo(
                     AcquireTokenBodyTok,
@@ -241,15 +240,15 @@ codeunit 82563 "ADLSE Http"
                     ScopeUrlEncoded,
                     Credentials.GetClientID(),
                     Credentials.GetClientSecret());
-        Content.WriteFrom(RequestBody);
-        Content.GetHeaders(Headers);
+        HttpContent.WriteFrom(RequestBody);
+        HttpContent.GetHeaders(Headers);
         Headers.Remove('Content-Type');
         Headers.Add('Content-Type', 'application/x-www-form-urlencoded');
 
-        Client.Post(Uri, Content, ResponseMessage);
-        Content := ResponseMessage.Content();
-        Content.ReadAs(ResponseBody);
-        if not ResponseMessage.IsSuccessStatusCode() then begin
+        HttpClient.Post(Uri, HttpContent, HttpResponseMessage);
+        HttpContent := HttpResponseMessage.Content();
+        HttpContent.ReadAs(ResponseBody);
+        if not HttpResponseMessage.IsSuccessStatusCode() then begin
             AuthError := ResponseBody;
             exit;
         end;
