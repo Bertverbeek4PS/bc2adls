@@ -4,7 +4,8 @@
     "businessCentral\\app"
   ],
   "testFolders": [
-    "businessCentral\\test"
+    "businessCentral\\test",
+    "bc2adls.Test"
   ],
   "bcptTestFolders": [],
   "repoVersion": "2.13"
