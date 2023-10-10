@@ -137,17 +137,17 @@ codeunit 85563 "ADLSE Delete Tests"
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
 
     begin
-        LibraryTestInitialize.OnTestInitialize(Codeunit::"ADLSE Field API Tests");
+        LibraryTestInitialize.OnTestInitialize(Codeunit::"ADLSE Delete Tests");
 
         if IsInitialized then
             exit;
 
-        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"ADLSE Field API Tests");
+        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"ADLSE Delete Tests");
 
         IsInitialized := true;
         Commit();
 
-        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"ADLSE Field API Tests");
+        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"ADLSE Delete Tests");
     end;
 
     [MessageHandler]
