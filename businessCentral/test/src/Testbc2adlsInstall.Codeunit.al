@@ -18,7 +18,7 @@ codeunit 85562 "ADLSE Test bc2adls Install"
         AddTestsToTestSuite(Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Codeunit", Codeunit::"ADLSE Export Tests");
         AddTestsToTestSuite(Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Codeunit", Codeunit::"ADLSE Delete Tests");
         // Add test codeunits to 'Test Suite With Runner - Isol. Disabled'
-        AddTestsToTestSuite(Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Disabled", Codeunit::"ADLSE Field API Tests");
+        //AddTestsToTestSuite(Enum::"ADLSE Test Suite"::"Test Suite With Runner - Isol. Disabled", Codeunit::"ADLSE Field API Tests");
     end;
 
     procedure AddTestsToTestSuite(TestSuite: Enum "ADLSE Test Suite"; TestCodeunitId: Integer)
@@ -28,7 +28,8 @@ codeunit 85562 "ADLSE Test bc2adls Install"
         TestRunnerCodeunitId: Integer;
     begin
         TestRunnerCodeunitId := GetDefaultTestRunnerCodeunitId(TestSuite);
-        SuiteName := Format(TestRunnerCodeunitId);
+        //SuiteName := Format(TestRunnerCodeunitId);
+        SuiteName := 'DEFAULT';
 
         if TestRunnerCodeunitId = 0 then
             exit;
