@@ -67,14 +67,25 @@ codeunit 85561 "ADLSE Library - bc2adls"
             until ADLSETable.Next() = 0;
     end;
 
+    procedure EnableFields()
+    begin
+        ADLSETable.Reset();
+        ADLSETable.SetRange(Enabled, true);
+        if ADLSETable.FindSet() then
+            repeat
+                ADLSEField.SetRange("Table ID", ADLSETable."Table ID");
+                if ADLSEField.FindSet() then
+                    repeat
+                        EnableField(ADLSEField."Table ID", ADLSEField."Field ID");
+                    until ADLSEField.Next() = 0;
+            until ADLSETable.Next() = 0;
+    end;
+
     procedure EnableField(TableId: Integer; FieldId: Integer)
     begin
-        ADLSEField.SetRange("Table ID", TableId);
-        ADLSEField.SetRange("Field ID", FieldId);
-        If ADLSEField.FindFirst() then begin
-            ADLSEField."Enabled" := true;
-            ADLSEField.Modify();
-        end;
+        ADLSEField.Get(TableId, FieldId);
+        ADLSEField."Enabled" := true;
+        ADLSEField.Modify();
     end;
 
     procedure CleanUp();
@@ -91,5 +102,36 @@ codeunit 85561 "ADLSE Library - bc2adls"
         ADLSERun.RegisterStarted(TableId);
         AllObjWithCaption.Get(AllObjWithCaption."Object Type"::Table, TableId);
         ADLSERun.RegisterEnded(TableId, false, AllObjWithCaption.TableCaption);
+    end;
+
+
+    procedure GetExpectedManifestBlobPath(): Text
+    var
+        ExpectedManifestBlobPathTok: Label 'https://bc2adls.blob.core.windows.net/bc2adls/data.manifest.cdm.json', Locked = true;
+    begin
+        exit(ExpectedManifestBlobPathTok);
+    end;
+
+    procedure GetExpectedEntityJson(TableId: Integer) EntityJson: Text;
+    var
+        ADLSECDMUtil: Codeunit "ADLSE CDM Util";
+        ADLSEExecute: Codeunit "ADLSE Execute";
+        EntityContent: JsonObject;
+        FieldIdList: List of [Integer];
+    begin
+        FieldIdList := ADLSEExecute.CreateFieldListForTable(TableId);
+        EntityContent := ADLSECdmUtil.CreateEntityContent(TableID, FieldIdList);
+        EntityContent.WriteTo(EntityJson);
+    end;
+
+
+    procedure GetExpectedManifestJson(TableId: Integer) ManifestJson: Text;
+    var
+        ADLSECDMUtil: Codeunit "ADLSE CDM Util";
+        ManifestContent, EmptyJsonObject : JsonObject;
+    begin
+        ADLSESetup.GetSingleton();
+        ManifestContent := ADLSECDMUtil.UpdateDefaultManifestContent(EmptyJsonObject, TableId, '', ADLSESetup.DataFormat);
+        ManifestContent.WriteTo(ManifestJson);
     end;
 }

@@ -37,7 +37,7 @@ table 82562 "ADLSE Field"
                     Rec.CheckFieldToBeEnabled();
             end;
         }
-        field(100; FieldCaption; Text[80])
+        field(100; "FieldCaption"; Text[80])
         {
             Caption = 'Field';
             Editable = false;

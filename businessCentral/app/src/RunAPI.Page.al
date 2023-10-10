@@ -24,7 +24,7 @@ page 82566 "ADLSE Run API"
                 field(tableId; Rec."Table ID") { }
                 field(companyName; Rec."Company Name") { }
                 field(state; Rec.State) { }
-                field(error; Rec.Error) { }
+                field("error"; Rec.Error) { }
                 field(started; Rec.Started) { }
                 field(ended; Rec.Ended) { }
                 field(systemId; Rec.SystemId)
