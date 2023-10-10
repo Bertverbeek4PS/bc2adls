@@ -67,11 +67,11 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             Entity.Add('entityPath', StrSubstNo(EntityPathTok, EntityName));
 
             DataPartitionPattern.Add('name', EntityName);
-            DataPartitionPattern.Add('rootLocation', Folder + '/' + EntityName + '/');
+            DataPartitionPattern.Add('rootLocation', Folder + '/' + EntityName);
             case ADLSECdmFormat of
                 "ADLSE CDM Format"::Csv:
                     begin
-                        DataPartitionPattern.Add('globPattern', '*.csv');
+                        DataPartitionPattern.Add('globPattern', '/*.csv');
                         ExhibitsTrait.Add('traitReference', 'is.partition.format.CSV');
                         AddNameValue(ExhibitsTraitArgs, 'columnHeaders', 'true');
                         AddNameValue(ExhibitsTraitArgs, 'delimiter', ',');
@@ -84,7 +84,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                     end;
                 ADLSECdmFormat::Parquet:
                     begin
-                        DataPartitionPattern.Add('globPattern', '*.parquet');
+                        DataPartitionPattern.Add('globPattern', '/*.parquet');
                         ExhibitsTrait.Add('traitReference', 'is.partition.format.parquet');
                         ExhibitsTraits.Add(ExhibitsTrait);
                         DataPartitionPattern.Add('exhibitsTraits', ExhibitsTraits);
