@@ -20,7 +20,7 @@ page 82563 "ADLSE Run"
             {
                 ShowCaption = false;
 
-                field(TableCaption; NameOfTable)
+                field("TableCaption"; NameOfTable)
                 {
                     ApplicationArea = All;
                     Caption = 'Table';
@@ -45,13 +45,13 @@ page 82563 "ADLSE Run"
                     ApplicationArea = All;
                     ToolTip = 'Specifies when the export was started.';
                 }
-                field(Duration; Rec.Duration())
+                field("Duration"; Rec.Duration())
                 {
                     ApplicationArea = All;
                     Caption = 'Duration';
                     ToolTip = 'Specifies how long export has run.';
                 }
-                field(Error; Rec.Error)
+                field("Error"; Rec.Error)
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the error if the execution had any.';
@@ -64,7 +64,7 @@ page 82563 "ADLSE Run"
     {
         area(Processing)
         {
-            action(Clear)
+            action("Clear")
             {
                 ApplicationArea = All;
                 Caption = 'Clear execution log';

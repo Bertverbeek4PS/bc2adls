@@ -17,7 +17,7 @@ page 82562 "ADLSE Setup Fields"
         {
             repeater(GroupName)
             {
-                field(FieldCaption; Rec.FieldCaption)
+                field("FieldCaption"; Rec.FieldCaption)
                 {
                     ApplicationArea = All;
                     Tooltip = 'Specifies the name of the field to be exported';

@@ -29,7 +29,7 @@ table 82566 "ADLSE Run"
             Editable = false;
             Caption = 'State';
         }
-        field(5; Error; Text[2048])
+        field(5; "Error"; Text[2048])
         {
             Editable = false;
             Caption = 'Error';

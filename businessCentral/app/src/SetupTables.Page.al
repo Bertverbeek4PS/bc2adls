@@ -17,7 +17,7 @@ page 82561 "ADLSE Setup Tables"
             {
                 ShowCaption = false;
 
-                field(TableCaption; TableCaptionValue)
+                field("TableCaption"; TableCaptionValue)
                 {
                     ApplicationArea = All;
                     Editable = false;
@@ -139,7 +139,7 @@ page 82561 "ADLSE Setup Tables"
                 end;
             }
 
-            action(Reset)
+            action("Reset")
             {
                 ApplicationArea = All;
                 Caption = 'Reset';

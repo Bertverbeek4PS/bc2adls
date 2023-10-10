@@ -1,0 +1,36 @@
+{
+    "name": "Custom ruleset",
+    "description": "These are changes from the default rules of the linter cop.",
+    "rules": [
+        {
+            "id": "LC0018",
+            "action": "Warning",
+            "justification": "Events in internal codeunits are not accessible to extensions and should therefore be avoided."
+        },
+        {
+            "id": "LC0019",
+            "action": "Warning",
+            "justification": "If Data Classification is set on the Table. Fields do not need the same classification."
+        },
+        {
+            "id": "LC0020",
+            "action": "Warning",
+            "justification": "If Application Area is set on the TablePage. Controls do not need the same classification."
+        },
+        {
+            "id": "LC0021",
+            "action": "Warning",
+            "justification": "Confirm() must be implemented through the Confirm Management codeunit from the System Application."
+        },
+        {
+            "id": "LC0022",
+            "action": "Warning",
+            "justification": "GlobalLanguage() must be implemented through the Translation Helper codeunit from the Base Application."
+        },
+        {
+            "id": "LC0023",
+            "action": "Warning",
+            "justification": "Always provide fieldsgroups DropDown and Brick on tables."
+        }
+    ]
+}

@@ -1,21 +1,20 @@
 {
-	"folders": [
-		{
-			"path": ".\\app"
-		},
-		{
-			"path": ".\\test"
-		}
-	],
-	"settings": {
-		"al.enableCodeAnalysis": true,
-		"al.codeAnalyzers": [
-			"${CodeCop}"
-		]
-	},
-	"extensions": {
-		"recommendations": [
-			"ms-dynamics-smb.al"
-		]
-	}
+    "folders": [
+        {
+            "path": ".\\app"
+        },
+        {
+            "path": ".\\test"
+        }
+    ],
+    "settings": {
+        "al.enableCodeAnalysis": true
+    },
+    "extensions": {
+        "recommendations": [
+            "ms-dynamics-smb.al",
+            "waldo.crs-al-language-extension",
+            "StefanMaron.businesscentral-lintercop"
+        ]
+    }
 }

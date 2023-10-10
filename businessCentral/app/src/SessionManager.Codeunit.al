@@ -174,7 +174,7 @@ codeunit 82570 "ADLSE Session Manager"
                 Values.Add(ValueInt);
     end;
 
-    local procedure SavePendingTables(Value: Text)
+    internal procedure SavePendingTables(Value: Text)
     begin
         if IsolatedStorage.Set(PendingTablesKeyTxt, Value, DataScope::Company) then
             Commit(); // changing isolated storage triggers a write transaction            

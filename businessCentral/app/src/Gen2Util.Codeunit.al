@@ -53,9 +53,14 @@ codeunit 82568 "ADLSE Gen 2 Util"
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         ContentToken: JsonToken;
+        IsHandled: Boolean;
         Response: Text;
         StatusCode: Integer;
     begin
+        OnBeforeGetBlobContent(BlobPath, ADLSECredentials, BlobExists, Content, IsHandled);
+        if IsHandled then
+            exit(Content);
+
         ADLSEHttp.SetMethod("ADLSE Http Method"::Get);
         ADLSEHttp.SetUrl(BlobPath);
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
@@ -80,8 +85,13 @@ codeunit 82568 "ADLSE Gen 2 Util"
         Response: Text;
         StatusCode: Integer;
         ContentLengthList: List of [Text];
+        IsHandled: Boolean;
         ContentLengthTok: Label 'Content-Length', Locked = true;
     begin
+        OnBeforeGetBlobContentLength(BlobPath, ContentLength, IsHandled);
+        If IsHandled then
+            exit;
+
         ADLSEHttp.SetMethod("ADLSE Http Method"::Head);
         ADLSEHttp.SetUrl(BlobPath);
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
@@ -109,7 +119,12 @@ codeunit 82568 "ADLSE Gen 2 Util"
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
         BlobPathOrg: Text;
+        IsHandled: Boolean;
     begin
+        OnBeforeCreateBlockBlob(BlobPath, LeaseID, Body, IsJson, IsHandled);
+        if IsHandled then
+            exit;
+
         ADLSEHttp.SetMethod("ADLSE Http Method"::Put);
 
         case ADLSESetup.GetStorageType() of
@@ -145,13 +160,18 @@ codeunit 82568 "ADLSE Gen 2 Util"
         CreateBlockBlob(BlobPath, ADLSECredentials, '', '', false);
     end;
 
-    // Storage Type - Azure Data Lake
+    // Storage Type - Azure Data Lake Storage
     procedure AddBlockToDataBlob(BlobPath: Text; Body: Text; ADLSECredentials: Codeunit "ADLSE Credentials") BlockID: Text
     var
         Base64Convert: Codeunit "Base64 Convert";
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
+        IsHandled: Boolean;
     begin
+        OnBeforeAddBlockToDataBlob(BlobPath, Body, BlockID, IsHandled);
+        if IsHandled then
+            exit;
+
         ADLSEHttp.SetMethod("ADLSE Http Method"::Put);
         BlockID := Base64Convert.ToBase64(CreateGuid());
         ADLSEHttp.SetUrl(BlobPath + StrSubstNo(PutBlockSuffixTxt, BlockID));
@@ -166,7 +186,12 @@ codeunit 82568 "ADLSE Gen 2 Util"
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
+        IsHandled: Boolean;
     begin
+        OnBeforeAddBlockToDataBlob(BlobPath, Body, Format(Position), IsHandled);
+        if IsHandled then
+            exit;
+
         ADLSEHttp.SetMethod("ADLSE Http Method"::Patch);
         ADLSEHttp.SetUrl(BlobPath + '?position=' + Format(Position) + '&action=append&flush=true');
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
@@ -181,7 +206,12 @@ codeunit 82568 "ADLSE Gen 2 Util"
         Response: Text;
         Body: TextBuilder;
         BlockID: Text;
+        IsHandled: Boolean;
     begin
+        OnBeforeCommitAllBlocksOnDataBlob(BlobPath, BlockIDList, IsHandled);
+        if IsHandled then
+            exit;
+
         ADLSEHttp.SetMethod("ADLSE Http Method"::Put);
         ADLSEHttp.SetUrl(BlobPath + PutLockListSuffixTxt);
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
@@ -264,5 +294,30 @@ codeunit 82568 "ADLSE Gen 2 Util"
             exit(false);
 
         exit(true);
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeGetBlobContent(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; var BlobExists: Boolean; var Content: JsonObject; var IsHandled: Boolean)
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCreateBlockBlob(BlobPath: Text; LeaseID: Text; Body: Text; IsJson: Boolean; var IsHandled: Boolean)
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeGetBlobContentLength(BlobPath: Text; var ContentLength: Integer; var IsHandled: Boolean)
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeAddBlockToDataBlob(BlobPath: Text; Body: Text; BlockIDorPosition: Text; var IsHandled: Boolean)
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeCommitAllBlocksOnDataBlob(BlobPath: Text; BlockIDList: List of [Text]; var IsHandled: Boolean)
+    begin
     end;
 }
