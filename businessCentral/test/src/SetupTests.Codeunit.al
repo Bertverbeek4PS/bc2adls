@@ -192,17 +192,17 @@ codeunit 85565 "ADLSE Setup Tests"
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
 
     begin
-        LibraryTestInitialize.OnTestInitialize(Codeunit::"ADLSE Field API Tests");
+        LibraryTestInitialize.OnTestInitialize(Codeunit::"ADLSE Setup Tests");
 
         if IsInitialized then
             exit;
 
-        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"ADLSE Field API Tests");
+        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"ADLSE Setup Tests");
 
         IsInitialized := true;
         Commit();
 
-        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"ADLSE Field API Tests");
+        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"ADLSE Setup Tests");
     end;
 
 
