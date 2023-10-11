@@ -131,7 +131,7 @@ codeunit 85561 "ADLSE Library - bc2adls"
         ManifestContent, EmptyJsonObject : JsonObject;
     begin
         ADLSESetup.GetSingleton();
-        ManifestContent := ADLSECDMUtil.UpdateDefaultManifestContent(EmptyJsonObject, TableId, '', ADLSESetup.DataFormat);
+        ManifestContent := ADLSECDMUtil.UpdateDefaultManifestContent(EmptyJsonObject, TableId, 'data', ADLSESetup.DataFormat);
         ManifestContent.WriteTo(ManifestJson);
     end;
 }
