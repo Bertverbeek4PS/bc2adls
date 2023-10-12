@@ -3,8 +3,12 @@
     "description": "These are changes from the default rules of the linter cop.",
     "rules": [
         {
+            "id": "LC0010",
+            "action":"Hidden"
+        },
+        {
             "id": "LC0018",
-            "action": "Warning",
+            "action": "Hidden",
             "justification": "Events in internal codeunits are not accessible to extensions and should therefore be avoided."
         },
         {

@@ -35,4 +35,33 @@ page 82567 "ADLSE Field API"
             }
         }
     }
+
+    [ServiceEnabled]
+    procedure Disable(var ActionContext: WebServiceActionContext)
+    var
+        SelectedADLSEField: Record "ADLSE Field";
+    begin
+        CurrPage.SetSelectionFilter(SelectedADLSEField);
+        if SelectedADLSEField.FindSet(true) then
+            repeat
+                SelectedADLSEField.Validate(Enabled, false);
+                SelectedADLSEField.Modify(true);
+            until SelectedADLSEField.Next() = 0;
+        SetActionResponse(ActionContext, Rec.SystemId);
+    end;
+
+    local procedure SetActionResponse(var ActionContext: WebServiceActionContext; AdlsId: Guid)
+    var
+    begin
+        SetActionResponse(ActionContext, Page::"ADLSE Field API", AdlsId);
+    end;
+
+    local procedure SetActionResponse(var ActionContext: WebServiceActionContext; PageId: Integer; DocumentId: Guid)
+    var
+    begin
+        ActionContext.SetObjectType(ObjectType::Page);
+        ActionContext.SetObjectId(PageId);
+        ActionContext.AddEntityKey(Rec.FieldNo(SystemId), DocumentId);
+        ActionContext.SetResultCode(WebServiceActionResultCode::Updated);
+    end;
 }

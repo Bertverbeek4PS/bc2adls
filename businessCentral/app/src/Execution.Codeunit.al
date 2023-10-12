@@ -28,6 +28,7 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup: Codeunit "ADLSE Setup";
         ADLSECommunication: Codeunit "ADLSE Communication";
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         Counter: Integer;
         Started: Integer;
     begin
@@ -54,6 +55,8 @@ codeunit 82569 "ADLSE Execution"
         Message(ExportStartedTxt, Started, Counter);
         if EmitTelemetry then
             Log('ADLSE-001', StrSubstNo(ExportStartedTxt, Started, Counter), Verbosity::Normal);
+
+        ADLSEExternalEvents.OnExport(ADLSESetupRec);
     end;
 
     procedure StopExport()
@@ -82,6 +85,7 @@ codeunit 82569 "ADLSE Execution"
         ADLSECurrentSession: Record "ADLSE Current Session";
         AllObjWithCaption: Record AllObjWithCaption;
         ADLSEExecute: Codeunit "ADLSE Execute";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         ProgressWindowDialog: Dialog;
         Progress1Msg: Label 'Current Table:           #1##########\', Comment = '#1: table caption';
     begin
@@ -111,17 +115,22 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup.GetSingleton();
         ADLSESetup."Schema Exported On" := CurrentDateTime();
         ADLSESetup.Modify();
+
+        ADLSEExternalEvents.OnExportSchema(ADLSESetup);
     end;
 
     procedure ClearSchemaExportedOn()
     var
         ADLSESetup: Record "ADLSE Setup";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
     begin
         ADLSESetup.GetSingleton();
         ADLSESetup."Schema Exported On" := 0DT;
         ADLSESetup.Modify();
         if GuiAllowed then
             Message(ClearSchemaExportedOnMsg);
+
+        ADLSEExternalEvents.OnClearSchemaExportedOn(ADLSESetup);
     end;
 
     procedure ScheduleExport()
