@@ -89,6 +89,13 @@ page 82565 "ADLSE Table API"
         SetActionResponse(ActionContext, Rec.SystemId);
     end;
 
+    [ServiceEnabled]
+    procedure Delete(var ActionContext: WebServiceActionContext)
+    begin
+        Rec.Delete(true);
+        SetActionResponse(ActionContext, Rec.SystemId);
+    end;
+
     local procedure SetActionResponse(var ActionContext: WebServiceActionContext; AdlsId: Guid)
     var
     begin

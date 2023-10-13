@@ -2,8 +2,6 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 codeunit 82569 "ADLSE Execution"
 {
-    Access = Internal;
-
     trigger OnRun()
     begin
         StartExport();
@@ -19,7 +17,7 @@ codeunit 82569 "ADLSE Execution"
         ClearSchemaExportedOnMsg: Label 'The schema export date has been cleared.';
 
 
-    procedure StartExport()
+    internal procedure StartExport()
     var
         ADLSESetupRec: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
@@ -28,6 +26,7 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup: Codeunit "ADLSE Setup";
         ADLSECommunication: Codeunit "ADLSE Communication";
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         Counter: Integer;
         Started: Integer;
     begin
@@ -37,6 +36,8 @@ codeunit 82569 "ADLSE Execution"
         if ADLSESetupRec.GetStorageType() = ADLSESetupRec."Storage Type"::"Azure Data Lake" then //Because Fabric doesn't have do create a container
             ADLSECommunication.SetupBlobStorage();
         ADLSESessionManager.Init();
+
+        ADLSEExternalEvents.OnExport(ADLSESetupRec);
 
         if EmitTelemetry then
             Log('ADLSE-022', 'Starting export for all tables', Verbosity::Normal);
@@ -56,7 +57,7 @@ codeunit 82569 "ADLSE Execution"
             Log('ADLSE-001', StrSubstNo(ExportStartedTxt, Started, Counter), Verbosity::Normal);
     end;
 
-    procedure StopExport()
+    internal procedure StopExport()
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSERun: Record "ADLSE Run";
@@ -75,13 +76,14 @@ codeunit 82569 "ADLSE Execution"
             Log('ADLSE-019', 'Stopped export sessions', Verbosity::Normal);
     end;
 
-    procedure SchemaExport()
+    internal procedure SchemaExport()
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
         ADLSECurrentSession: Record "ADLSE Current Session";
         AllObjWithCaption: Record AllObjWithCaption;
         ADLSEExecute: Codeunit "ADLSE Execute";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         ProgressWindowDialog: Dialog;
         Progress1Msg: Label 'Current Table:           #1##########\', Comment = '#1: table caption';
     begin
@@ -111,20 +113,25 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup.GetSingleton();
         ADLSESetup."Schema Exported On" := CurrentDateTime();
         ADLSESetup.Modify();
+
+        ADLSEExternalEvents.OnExportSchema(ADLSESetup);
     end;
 
-    procedure ClearSchemaExportedOn()
+    internal procedure ClearSchemaExportedOn()
     var
         ADLSESetup: Record "ADLSE Setup";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
     begin
         ADLSESetup.GetSingleton();
         ADLSESetup."Schema Exported On" := 0DT;
         ADLSESetup.Modify();
         if GuiAllowed then
             Message(ClearSchemaExportedOnMsg);
+
+        ADLSEExternalEvents.OnClearSchemaExportedOn(ADLSESetup);
     end;
 
-    procedure ScheduleExport()
+    internal procedure ScheduleExport()
     var
         JobQueueEntry: Record "Job Queue Entry";
         ScheduleAJob: Page "Schedule a Job";

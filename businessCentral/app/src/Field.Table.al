@@ -32,9 +32,13 @@ table 82562 "ADLSE Field"
             Caption = 'Enabled';
 
             trigger OnValidate()
+            var
+                ADLSEExternalEvents: Codeunit "ADLSE External Events";
             begin
                 if Rec.Enabled then
                     Rec.CheckFieldToBeEnabled();
+
+                ADLSEExternalEvents.OnEnableFieldChanged(Rec);
             end;
         }
         field(100; "FieldCaption"; Text[80])

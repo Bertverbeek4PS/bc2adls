@@ -26,9 +26,13 @@ table 82561 "ADLSE Table"
             Caption = 'Enabled';
 
             trigger OnValidate()
+            var
+                ADLSEExternalEvents: Codeunit "ADLSE External Events";
             begin
                 if Rec.Enabled then
                     CheckExportingOnlyValidFields();
+
+                ADLSEExternalEvents.OnEnableTableChanged(Rec);
             end;
         }
         field(5; LastError; Text[2048])
@@ -64,6 +68,7 @@ table 82561 "ADLSE Table"
         ADLSETableField: Record "ADLSE Field";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
     begin
         ADLSESetup.SchemaExported();
 
@@ -75,6 +80,8 @@ table 82561 "ADLSE Table"
 
         ADLSETableLastTimestamp.SetRange("Table ID", Rec."Table ID");
         ADLSETableLastTimestamp.DeleteAll();
+
+        ADLSEExternalEvents.OnDeleteTable(Rec);
     end;
 
     trigger OnModify()
@@ -102,6 +109,8 @@ table 82561 "ADLSE Table"
     end;
 
     procedure Add(TableID: Integer)
+    var
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
     begin
         if not CheckTableCanBeExportedFrom(TableID) then
             Error(TableCannotBeExportedErr, TableID, GetLastErrorText());
@@ -109,6 +118,8 @@ table 82561 "ADLSE Table"
         Rec."Table ID" := TableID;
         Rec.Enabled := true;
         Rec.Insert(true);
+
+        ADLSEExternalEvents.OnAddTable(Rec);
     end;
 
     [TryFunction]
