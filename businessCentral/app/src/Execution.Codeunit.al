@@ -37,6 +37,8 @@ codeunit 82569 "ADLSE Execution"
             ADLSECommunication.SetupBlobStorage();
         ADLSESessionManager.Init();
 
+        ADLSEExternalEvents.OnExport(ADLSESetupRec);
+
         if EmitTelemetry then
             Log('ADLSE-022', 'Starting export for all tables', Verbosity::Normal);
         ADLSETable.SetRange(Enabled, true);
@@ -53,8 +55,6 @@ codeunit 82569 "ADLSE Execution"
         Message(ExportStartedTxt, Started, Counter);
         if EmitTelemetry then
             Log('ADLSE-001', StrSubstNo(ExportStartedTxt, Started, Counter), Verbosity::Normal);
-
-        ADLSEExternalEvents.OnExport(ADLSESetupRec);
     end;
 
     internal procedure StopExport()
