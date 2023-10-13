@@ -2,8 +2,6 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 codeunit 82569 "ADLSE Execution"
 {
-    Access = Internal;
-
     trigger OnRun()
     begin
         StartExport();
@@ -19,7 +17,7 @@ codeunit 82569 "ADLSE Execution"
         ClearSchemaExportedOnMsg: Label 'The schema export date has been cleared.';
 
 
-    procedure StartExport()
+    internal procedure StartExport()
     var
         ADLSESetupRec: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
@@ -59,7 +57,7 @@ codeunit 82569 "ADLSE Execution"
         ADLSEExternalEvents.OnExport(ADLSESetupRec);
     end;
 
-    procedure StopExport()
+    internal procedure StopExport()
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSERun: Record "ADLSE Run";
@@ -78,7 +76,7 @@ codeunit 82569 "ADLSE Execution"
             Log('ADLSE-019', 'Stopped export sessions', Verbosity::Normal);
     end;
 
-    procedure SchemaExport()
+    internal procedure SchemaExport()
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
@@ -119,7 +117,7 @@ codeunit 82569 "ADLSE Execution"
         ADLSEExternalEvents.OnExportSchema(ADLSESetup);
     end;
 
-    procedure ClearSchemaExportedOn()
+    internal procedure ClearSchemaExportedOn()
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSEExternalEvents: Codeunit "ADLSE External Events";
@@ -133,7 +131,7 @@ codeunit 82569 "ADLSE Execution"
         ADLSEExternalEvents.OnClearSchemaExportedOn(ADLSESetup);
     end;
 
-    procedure ScheduleExport()
+    internal procedure ScheduleExport()
     var
         JobQueueEntry: Record "Job Queue Entry";
         ScheduleAJob: Page "Schedule a Job";
