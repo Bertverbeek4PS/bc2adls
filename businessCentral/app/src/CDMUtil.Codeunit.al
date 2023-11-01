@@ -8,6 +8,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         BlankArray: JsonArray;
         CompanyFieldNameLbl: Label '$Company';
         DeliveredDateTimeFieldNameLbl: Label '$DeliveredDateTime';
+        EnvironmentFieldNameLbl: Label '$Environment';
         ExistingFieldCannotBeRemovedErr: Label 'The field %1 in the entity %2 is already present in the data lake and cannot be removed.', Comment = '%1: field name, %2: entity name';
         FieldDataTypeCannotBeChangedErr: Label 'The data type for the field %1 in the entity %2 cannot be changed.', Comment = '%1: field name, %2: entity name';
         RepresentsTableTxt: Label 'Represents the table %1', Comment = '%1: table caption';
@@ -139,16 +140,26 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             Result.Add(
                 CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetDeliveredDateTimeFieldName(), AppliedTraits, FieldRef.Length));
         end;
+
         if ADLSEUtil.IsTablePerCompany(TableID) then begin
             GetCDMAttributeDetails(FieldType::Text, DataFormat, AppliedTraits);
             Result.Add(
                 CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, FieldRef.Length));
         end;
+
+        GetCDMAttributeDetails(FieldType::Text, DataFormat, AppliedTraits);
+        Result.Add(
+            CreateAttributeJson(GetEnvironmentFieldName(), DataFormat, GetEnvironmentFieldName(), AppliedTraits, FieldRef.Length));
     end;
 
     procedure GetCompanyFieldName(): Text
     begin
         exit(CompanyFieldNameLbl);
+    end;
+
+    procedure GetEnvironmentFieldName(): Text
+    begin
+        exit(EnvironmentFieldNameLbl);
     end;
 
     procedure GetDeliveredDateTimeFieldName(): Text
