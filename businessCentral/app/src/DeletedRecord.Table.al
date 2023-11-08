@@ -53,6 +53,9 @@ table 82563 "ADLSE Deleted Record"
         if IsNullGuid(SystemIdFieldRef.Value()) then
             exit;
 
+        if RecordRef.GetBySystemId(SystemIdFieldRef.Value()) then
+            exit;
+
         // Do not log a deletion if its for a record that is created after the last sync
         // TODO: This requires tracking the SystemModifiedAt of the last time stamp 
         // and those records being deleted that have a SystemCreatedAt equal to or 
