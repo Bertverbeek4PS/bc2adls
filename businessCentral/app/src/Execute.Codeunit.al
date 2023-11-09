@@ -232,8 +232,11 @@ codeunit 82561 "ADLSE Execute"
     begin
         SetFilterForDeletes(TableID, DeletedLastEntryNo, ADLSEDeletedRecord);
 
+
         if ADLSESeekData.FindRecords(ADLSEDeletedRecord) then begin
             RecordRef.Open(ADLSEDeletedRecord."Table ID");
+
+            FixDeletedRecordThatAreInTable(ADLSEDeletedRecord);
 
             if EmitTelemetry then begin
                 TableCaption := RecordRef.Caption();
@@ -258,6 +261,24 @@ codeunit 82561 "ADLSE Execute"
         end;
         if EmitTelemetry then
             ADLSEExecution.Log('ADLSE-011', 'Deleted records exported', Verbosity::Normal, CustomDimensions);
+    end;
+
+    procedure FixDeletedRecordThatAreInTable(var ADLSEDeletedRecord: Record "ADLSE Deleted Record")
+    var
+        RecordRef: RecordRef;
+    begin
+        //Because of the merge function of Contact, Vendor and customer
+        case ADLSEDeletedRecord."Table ID" of
+            18, 23, 5050:
+                begin
+                    RecordRef.Open(ADLSEDeletedRecord."Table ID");
+                    if ADLSEDeletedRecord.FindSet() then
+                        repeat
+                            if RecordRef.GetBySystemId(ADLSEDeletedRecord."System ID") then
+                                ADLSEDeletedRecord.Delete();
+                        until ADLSEDeletedRecord.Next() = 0;
+                end;
+        end;
     end;
 
     procedure CreateFieldListForTable(TableID: Integer) FieldIdList: List of [Integer]
