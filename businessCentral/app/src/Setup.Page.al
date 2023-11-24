@@ -254,6 +254,17 @@ page 82560 "ADLSE Setup"
                 end;
             }
         }
+        area(Navigation)
+        {
+            action(EnumTranslations)
+            {
+                ApplicationArea = All;
+                Caption = 'Enum translations';
+                Tooltip = 'Show the translations for the enums used in the selected tables.';
+                Image = Translations;
+                RunObject = page "ADLSE Enum Translations";
+            }
+        }
         area(Promoted)
         {
             group(Category_Process)
