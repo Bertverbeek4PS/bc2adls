@@ -92,4 +92,31 @@ codeunit 82560 "ADLSE Setup"
 
         ADLSECredentials.Check();
     end;
+
+    procedure FixIncorrectData()
+    var
+        ADLSEField: Record "ADLSE Field";
+        ADLSESetupRec: Record "ADLSE Setup";
+        ADLSESetup: Codeunit "ADLSE Setup";
+        ShowMessage: Boolean;
+        ShowMessageLbl: Label 'Incorrect data has been removed from the table. Please export the schema again and reset all tables.';
+    begin
+        ShowMessage := false;
+
+        if ADLSEField.FindSet() then
+            repeat
+                if not ADLSESetup.CanFieldBeExported(ADLSEField."Table ID", ADLSEField."Field ID") then begin
+                    ADLSEField.Delete();
+
+                    if ShowMessage = false then
+                        ShowMessage := true;
+                end;
+            until ADLSEField.Next() = 0;
+
+        if ShowMessage then begin
+            ADLSESetupRec."Schema Exported On" := 0DT;
+            ADLSESetupRec.Modify(true);
+            Message(StrSubstNo(ShowMessageLbl));
+        end;
+    end;
 }
