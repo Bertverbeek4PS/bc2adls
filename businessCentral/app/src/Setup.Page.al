@@ -253,6 +253,21 @@ page 82560 "ADLSE Setup"
                     CurrPage.Update();
                 end;
             }
+
+            action(FixIncorrectData)
+            {
+                ApplicationArea = All;
+                Caption = 'Fix incorrect data';
+                Tooltip = 'Fixes incorrect fields in the setup. This should be done if you have deleted some fields and you cannot disable them.';
+                Image = Error;
+
+                trigger OnAction()
+                var
+                    ADLSESetup: Codeunit "ADLSE Setup";
+                begin
+                    ADLSESetup.FixIncorrectData();
+                end;
+            }
         }
         area(Promoted)
         {
