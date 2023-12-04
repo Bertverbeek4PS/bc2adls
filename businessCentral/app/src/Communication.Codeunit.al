@@ -100,7 +100,7 @@ codeunit 82562 "ADLSE Communication"
         EntityJson := ADLSECdmUtil.CreateEntityContent(TableID, FieldIdList);
         BlobEntityPath := StrSubstNo(CorpusJsonPathTxt, StrSubstNo(EntityManifestNameTemplateTxt, EntityName));
         OldJson := ADLSEGen2Util.GetBlobContent(GetBaseUrl() + BlobEntityPath, ADLSECredentials, BlobExists);
-        if BlobExists then
+        if BlobExists and not SchemaUpdate then
             ADLSECdmUtil.CheckChangeInEntities(OldJson, EntityJson, EntityName);
         if not ADLSECdmUtil.CompareEntityJsons(OldJson, EntityJson) then begin
             if EmitTelemetry then

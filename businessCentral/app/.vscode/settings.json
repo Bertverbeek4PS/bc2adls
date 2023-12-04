@@ -10,7 +10,5 @@
   "CRS.FileNamePattern": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
   "CRS.FileNamePatternExtensions": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
   "CRS.FileNamePatternPageCustomizations": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
-  "CRS.ObjectNamePrefix": "ADLSE",
-  "CRS.OnSaveAlFileAction": "Rename",
   "CRS.RemovePrefixFromFilename": true
 }
