@@ -16,7 +16,7 @@ codeunit 82572 "ADLSE Upgrade"
             ADLSEExecution.Log('ADLSE-30',
                 'Upgrade preconditions not met as there are invalid fields enabled for export. Please see previous telemetry.', Verbosity::Error);
             // raise error on encountering invalid fields so user can react to these errors and fix the export configuration
-            Error(InvalidFieldsBeingExportedErr, ConcatenateTableFieldPairs(InvalidFieldsMap));
+            Message(InvalidFieldsBeingExportedErr, ConcatenateTableFieldPairs(InvalidFieldsMap));
         end;
     end;
 
