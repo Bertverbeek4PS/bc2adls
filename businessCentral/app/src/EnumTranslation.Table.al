@@ -26,27 +26,17 @@ table 82567 "ADLSE Enum Translation"
             DataClassification = SystemMetadata;
             Caption = 'Compliant Object Name';
         }
-        field(5; "Enum Value Id"; Integer)
-        {
-            DataClassification = SystemMetadata;
-            Caption = 'Enum Index';
-        }
-        field(6; "Enum Value Caption"; Text[100])
-        {
-            DataClassification = SystemMetadata;
-            Caption = 'Enum Caption';
-        }
     }
 
     keys
     {
-        key(Key1; "Table Id", "Field Id", "Enum Value Id")
+        key(Key1; "Table Id", "Field Id")
         {
             Clustered = true;
         }
     }
 
-    local procedure InsertEnum(TableId: Integer; FieldNo: Integer; FieldName: Text[30]; EnumValueOrdinal: Integer; EnumValueName: Text)
+    local procedure InsertEnum(TableId: Integer; FieldNo: Integer; FieldName: Text[30])
     var
         ADLSEUtil: Codeunit "ADLSE Util";
     begin
@@ -55,8 +45,6 @@ table 82567 "ADLSE Enum Translation"
         Rec."Compliant Table Name" := CopyStr(ADLSEUtil.GetDataLakeCompliantTableName(TableId), 1, MaxStrLen((Rec."Compliant Table Name")));
         Rec."Field Id" := FieldNo;
         Rec."Compliant Field Name" := CopyStr(ADLSEUtil.GetDataLakeCompliantFieldName(FieldName, FieldNo), 1, MaxStrLen((Rec."Compliant Field Name")));
-        Rec."Enum Value Id" := EnumValueOrdinal;
-        Rec."Enum Value Caption" := CopyStr(EnumValueName, 1, MaxStrLen(Rec."Enum Value Caption"));
         Rec.Insert();
     end;
 
@@ -64,10 +52,12 @@ table 82567 "ADLSE Enum Translation"
     var
         ADLSETable: Record "ADLSE Table";
         ADLSEEnumTranslation: Record "ADLSE Enum Translation";
+        ADLSEEnumTranslationLang: Record "ADLSE Enum Translation Lang";
         RecordField: Record Field;
         ADLSERecordRef: RecordRef;
     begin
         ADLSEEnumTranslation.DeleteAll();
+        ADLSEEnumTranslationLang.DeleteAll();
 
         if ADLSETable.FindSet() then
             repeat
@@ -86,15 +76,34 @@ table 82567 "ADLSE Enum Translation"
             ADLSETable.Add(Rec.RecordId.TableNo);
             ADLSETable.AddAllFields();
         end;
+        if not ADLSETable.Get(ADLSEEnumTranslationLang.RecordId.TableNo) then begin
+            ADLSETable.Add(ADLSEEnumTranslationLang.RecordId.TableNo);
+            ADLSETable.AddAllFields();
+        end;
     end;
 
     local procedure InsertEnums(ADLSERecordRef: RecordRef; FieldRec: Record Field)
     var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSEEnumTranslationLang: Record "ADLSE Enum Translation Lang";
+        TranslationHelper: Codeunit "Translation Helper";
         FieldRef: FieldRef;
         i: Integer;
+        x: Integer;
+        Translations: List of [Text];
     begin
+        ADLSESetup.GetSingleton();
         FieldRef := ADLSERecordRef.Field(FieldRec."No.");
-        for i := 1 to FieldRef.EnumValueCount() do
-            InsertEnum(FieldRec.TableNo, FieldRec."No.", FieldRec.FieldName, FieldRef.GetEnumValueOrdinal(i), FieldRef.GetEnumValueName(i));
+        InsertEnum(FieldRec.TableNo, FieldRec."No.", FieldRec.FieldName);
+        for i := 1 to FieldRef.EnumValueCount() do begin
+            //Insert language captions
+            Translations := ADLSESetup.Translations.Split(';');
+            Translations.Remove('');
+            for x := 1 to Translations.Count() do begin
+                TranslationHelper.SetGlobalLanguageByCode(Translations.Get(x));
+                ADLSEEnumTranslationLang.InsertEnumLanguage(Translations.Get(x), FieldRec.TableNo, FieldRec."No.", FieldRec.FieldName, FieldRef.GetEnumValueOrdinal(i), FieldRef.GetEnumValueCaption(i));
+            end;
+        end;
+        TranslationHelper.RestoreGlobalLanguage();
     end;
 }

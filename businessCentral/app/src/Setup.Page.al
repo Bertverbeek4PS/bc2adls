@@ -22,7 +22,6 @@ page 82560 "ADLSE Setup"
                     Caption = 'Account';
                     field(StorageType; Rec."Storage Type")
                     {
-                        ApplicationArea = All;
                         Tooltip = 'Specifies the type of storage type to use.';
 
                         trigger OnValidate()
@@ -32,7 +31,6 @@ page 82560 "ADLSE Setup"
                     }
                     field("Tenant ID"; StorageTenantID)
                     {
-                        ApplicationArea = All;
                         Caption = 'Tenant ID';
                         Tooltip = 'Specifies the tenant ID which holds the app registration as well as the storage account. Note that they have to be on the same tenant.';
 
@@ -49,12 +47,10 @@ page 82560 "ADLSE Setup"
                     Editable = AzureDataLake;
                     field(Container; Rec.Container)
                     {
-                        ApplicationArea = All;
                         Tooltip = 'Specifies the name of the container where the data is going to be uploaded. Please refer to constraints on container names at https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata.';
                     }
                     field(AccountName; Rec."Account Name")
                     {
-                        ApplicationArea = All;
                         Tooltip = 'Specifies the name of the storage account.';
                     }
                 }
@@ -64,13 +60,11 @@ page 82560 "ADLSE Setup"
                     Editable = not AzureDataLake;
                     field(Workspace; Rec.Workspace)
                     {
-                        ApplicationArea = All;
                         Tooltip = 'Specifies the name of the Workspace where the data is going to be uploaded. This can be a name or a GUID.';
                     }
                     field(Lakehouse; Rec.Lakehouse)
                     {
-                        ApplicationArea = All;
-                        Tooltip = 'Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID ';
+                        Tooltip = 'Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID.';
                     }
                 }
                 group(Access)
@@ -79,7 +73,6 @@ page 82560 "ADLSE Setup"
                     field("Client ID"; ClientID)
                     {
                         Caption = 'Client ID';
-                        ApplicationArea = All;
                         ExtendedDatatype = Masked;
                         Tooltip = 'Specifies the application client ID for the Azure App Registration that accesses the storage account.';
 
@@ -91,7 +84,6 @@ page 82560 "ADLSE Setup"
                     field("Client secret"; ClientSecret)
                     {
                         Caption = 'Client secret';
-                        ApplicationArea = All;
                         ExtendedDatatype = Masked;
                         Tooltip = 'Specifies the client secret for the Azure App Registration that accesses the storage account.';
 
@@ -106,35 +98,56 @@ page 82560 "ADLSE Setup"
                     Caption = 'Execution';
                     field(MaxPayloadSize; Rec.MaxPayloadSizeMiB)
                     {
-                        ApplicationArea = All;
                         Editable = not AzureDataLake;
                         Tooltip = 'Specifies the maximum size of the upload for each block of data in MiBs. A large value will reduce the number of iterations to upload the data but may interfear with the performance of other processes running on this environment.';
                     }
 
                     field("CDM data format"; Rec.DataFormat)
                     {
-                        ApplicationArea = All;
                         ToolTip = 'Specifies the format in which to store the exported data in the ''data'' CDM folder. The Parquet format is recommended for storing the data with the best fidelity.';
                     }
 
                     field("Skip Timestamp Sorting On Recs"; Rec."Skip Timestamp Sorting On Recs")
                     {
-                        ApplicationArea = All;
                         Enabled = not ExportInProgress;
                         ToolTip = 'Specifies that the records are not sorted as per their row version before exporting them to the lake. Enabling this may interfear with how incremental data is pushed to the lake in subsequent export runs- please refer to the documentation.';
                     }
 
                     field("Emit telemetry"; Rec."Emit telemetry")
                     {
-                        ApplicationArea = All;
                         Tooltip = 'Specifies if operational telemetry will be emitted to this extension publisher''s telemetry pipeline. You will have to configure a telemetry account for this extension first.';
                     }
+                    field("Translations"; Rec.Translations)
+                    {
+                        ToolTip = 'Specifies the translations for the enums used in the selected tables.';
 
+                        trigger OnAssistEdit()
+                        var
+                            Language: Record Language;
+                            Languages: Page "Languages";
+                            RecRef: RecordRef;
+                        begin
+                            Languages.LookupMode(true);
+                            if Languages.RunModal() = Action::LookupOK then begin
+                                Rec.Translations := '';
+                                Languages.SetSelectionFilter(Language);
+                                RecRef.GetTable(Language);
+
+                                if Language.FindSet() then
+                                    repeat
+                                        if Language.Code <> '' then
+                                            Rec.Translations += Language.Code + ';';
+                                    until Language.Next() = 0;
+                                //Remove last semicolon
+                                Rec.Translations := CopyStr(Rec.Translations, 1, StrLen(Rec.Translations) - 1);
+                                CurrPage.Update();
+                            end;
+                        end;
+                    }
                 }
             }
             part(Tables; "ADLSE Setup Tables")
             {
-                ApplicationArea = All;
                 UpdatePropagation = Both;
             }
         }

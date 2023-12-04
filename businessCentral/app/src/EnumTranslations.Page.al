@@ -23,11 +23,6 @@ page 82569 "ADLSE Enum Translations"
                     Editable = false;
                     ToolTip = 'The name of the field that is compliant with Data Lake standards.';
                 }
-                field(EnumValueCaption; Rec."Enum Value Caption")
-                {
-                    Editable = false;
-                    ToolTip = 'The caption of the enum value.';
-                }
             }
         }
     }
@@ -46,6 +41,27 @@ page 82569 "ADLSE Enum Translations"
                 trigger OnAction();
                 begin
                     Rec.RefreshOptions();
+                end;
+            }
+        }
+        area(Navigation)
+        {
+            action(Translations)
+            {
+                ApplicationArea = All;
+                Caption = 'Translations';
+                ToolTip = 'View the translations of the enum fields.';
+                Image = Language;
+
+                trigger OnAction();
+                var
+                    ADLSEEnumTranslationLang: Record "ADLSE Enum Translation Lang";
+                    ADLSEEnumTranslationsLang: Page "ADLSE Enum Translations Lang";
+                begin
+                    ADLSEEnumTranslationLang.SetRange("Table Id", Rec."Table Id");
+                    ADLSEEnumTranslationLang.SetRange("Field Id", Rec."Field Id");
+                    ADLSEEnumTranslationsLang.SetSelectionFilter(ADLSEEnumTranslationLang);
+                    ADLSEEnumTranslationsLang.RunModal();
                 end;
             }
         }
