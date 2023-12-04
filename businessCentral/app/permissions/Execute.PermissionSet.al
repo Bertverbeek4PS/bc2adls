@@ -15,5 +15,7 @@ permissionset 82561 "ADLSE - Execute"
                   tabledata "ADLSE Deleted Record" = R,
                   tabledata "ADLSE Current Session" = RIMD,
                   tabledata "ADLSE Table Last Timestamp" = RIMD,
-                  tabledata "ADLSE Run" = RIMD;
+                  tabledata "ADLSE Run" = RIMD,
+                  tabledata "ADLSE Enum Translation" = RIMD,
+                  tabledata "ADLSE Enum Translation Lang" = RIMD;
 }

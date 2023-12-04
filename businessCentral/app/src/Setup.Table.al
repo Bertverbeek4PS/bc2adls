@@ -116,8 +116,10 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Schema exported on';
         }
-
-
+        field(40; "Translations"; Text[250])
+        {
+            Caption = 'Translations';
+        }
     }
 
     keys
