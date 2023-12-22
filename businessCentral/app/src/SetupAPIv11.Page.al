@@ -29,6 +29,7 @@ page 82568 "ADLSE Setup API v11"
                 {
                     Editable = false;
                 }
+                field(exportEnumasInteger; Rec."Export Enum as Integer") { }
                 field(systemId; Rec.SystemId)
                 {
                     Editable = false;

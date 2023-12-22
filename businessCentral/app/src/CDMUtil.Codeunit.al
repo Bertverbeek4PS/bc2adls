@@ -254,6 +254,8 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
     end;
 
     local procedure GetCDMDataFormat(FieldType: FieldType): Text
+    var
+        ADLSESetup: Record "ADLSE Setup";
     begin
         // Refer https://docs.microsoft.com/en-us/common-data-model/sdk/list-of-datatypes
         // Refer https://docs.microsoft.com/en-us/common-data-model/1.0om/api-reference/cdm/dataformat
@@ -273,7 +275,13 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             FieldType::Integer:
                 exit('Int32');
             FieldType::Option:
-                exit(GetCDMDataFormat_String());
+                begin
+                    ADLSESetup.GetSingleton();
+                    if ADLSESetup."Export Enum as Integer" then
+                        exit('Int32')
+                    else
+                        exit(GetCDMDataFormat_String());
+                end;
             FieldType::Time:
                 exit('Time');
             FieldType::Boolean:
