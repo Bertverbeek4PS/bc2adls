@@ -299,8 +299,10 @@ codeunit 82561 "ADLSE Execute"
     var
         ADLSERun: Record "ADLSE Run";
         ADLSECurrentSession: Record "ADLSE Current Session";
+        ADLSESetupRec: Record "ADLSE Setup";
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
         ADLSEExecution: Codeunit "ADLSE Execution";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         CustomDimensions: Dictionary of [Text, Text];
     begin
         ADLSERun.RegisterEnded(ADLSETable."Table ID", EmitTelemetry, TableCaption);
@@ -322,6 +324,9 @@ codeunit 82561 "ADLSE Execute"
         // exports being skipped. But they may become active in the next export 
         // batch. 
         ADLSESessionManager.StartExportFromPendingTables();
+
+        ADLSESetupRec.GetSingleton();
+        ADLSEExternalEvents.OnExport(ADLSESetupRec);
 
         if not ADLSECurrentSession.AreAnySessionsActive() then
             if EmitTelemetry then
