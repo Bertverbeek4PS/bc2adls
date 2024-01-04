@@ -120,6 +120,15 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Translations';
         }
+        field(45; "Export Enum as Integer"; Boolean)
+        {
+            Caption = 'Export Enum as Integer';
+            trigger OnValidate()
+            begin
+                if Rec."Schema Exported On" <> 0DT then
+                    Error(ErrorInfo.Create(NoSchemaExportedErr, true));
+            end;
+        }
     }
 
     keys
@@ -135,6 +144,7 @@ table 82560 "ADLSE Setup"
         AccountNameIncorrectFormatErr: Label 'The account name is in an incorrect format.';
         RecordDoesNotExistErr: Label 'No record on this table exists.';
         PrimaryKeyValueLbl: Label '0', Locked = true;
+        NoSchemaExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
 
     local procedure TextCharactersOtherThan(String: Text; CharString: Text): Boolean
     var
@@ -179,8 +189,6 @@ table 82560 "ADLSE Setup"
     end;
 
     procedure SchemaExported()
-    var
-        NoSchemaExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
     begin
         Rec.GetSingleton();
         if Rec."Schema Exported On" <> 0DT then

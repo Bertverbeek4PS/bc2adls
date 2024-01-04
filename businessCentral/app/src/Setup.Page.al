@@ -144,6 +144,10 @@ page 82560 "ADLSE Setup"
                             end;
                         end;
                     }
+                    field("Export Enum as Integer"; Rec."Export Enum as Integer")
+                    {
+                        ToolTip = 'Specifies if the enums will be exported as integers instead of strings. This is useful if you want to use the enums in Power BI.';
+                    }
                 }
             }
             part(Tables; "ADLSE Setup Tables")

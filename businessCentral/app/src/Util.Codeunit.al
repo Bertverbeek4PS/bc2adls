@@ -204,6 +204,7 @@ codeunit 82564 "ADLSE Util"
 
     procedure ConvertFieldToText(FieldRef: FieldRef): Text
     var
+        ADLSESetup: Record "ADLSE Setup";
         DateTimeValue: DateTime;
     begin
         case FieldRef.Type of
@@ -223,7 +224,13 @@ codeunit 82564 "ADLSE Util"
                     exit(ConvertDateTimeToText(DateTimeValue));
                 end;
             FieldRef.Type::Option:
-                exit(FieldRef.GetEnumValueNameFromOrdinalValue(FieldRef.Value()));
+                begin
+                    ADLSESetup.GetSingleton();
+                    if ADLSESetup."Export Enum as Integer" then
+                        exit(ConvertOptionFieldToValueText(FieldRef))
+                    else
+                        exit(FieldRef.GetEnumValueNameFromOrdinalValue(FieldRef.Value()));
+                end;
             FieldRef.Type::Boolean:
                 exit(Format(FieldRef.Value(), 0, 9));
             FieldRef.Type::Code,
@@ -232,6 +239,14 @@ codeunit 82564 "ADLSE Util"
                 exit(ConvertStringToText(FieldRef.Value()));
             else
                 Error(FieldTypeNotSupportedErr, FieldRef.Name(), FieldRef.Type);
+        end;
+    end;
+
+    procedure ConvertOptionFieldToValueText(FieldRef: FieldRef): Text
+    begin
+        case FieldRef.Type of
+            FieldRef.Type::Option:
+                exit(ConvertNumberToText(FieldRef.Value()));
         end;
     end;
 
