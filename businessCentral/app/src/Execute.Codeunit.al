@@ -326,7 +326,7 @@ codeunit 82561 "ADLSE Execute"
         ADLSESessionManager.StartExportFromPendingTables();
 
         ADLSESetupRec.GetSingleton();
-        ADLSEExternalEvents.OnExport(ADLSESetupRec);
+        ADLSEExternalEvents.OnExportFinished(ADLSESetupRec);
 
         if not ADLSECurrentSession.AreAnySessionsActive() then
             if EmitTelemetry then
