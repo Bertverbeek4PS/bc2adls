@@ -2,14 +2,13 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 codeunit 82574 "ADLSE External Events"
 {
-    Access = Internal;
     SingleInstance = true;
 
     var
         ADLSEExternalEventsHelper: Codeunit "ADLSE External Events Helper";
         StorageType, Instance, Resource : Text[250];
 
-    procedure OnTableExportRunEnded(RunId: Integer; Started: DateTime; Ended: DateTime; TableId: Integer; State: Enum "ADLSE Run State")
+    internal procedure OnTableExportRunEnded(RunId: Integer; Started: DateTime; Ended: DateTime; TableId: Integer; State: Enum "ADLSE Run State")
     var
         ADLSEUtil: Codeunit "ADLSE Util";
     begin
@@ -21,7 +20,7 @@ codeunit 82574 "ADLSE External Events"
 #pragma warning restore AL0432
     end;
 
-    procedure OnEnableFieldChanged(ADLSEField: Record "ADLSE Field")
+    internal procedure OnEnableFieldChanged(ADLSEField: Record "ADLSE Field")
     var
         ADLSESetup: Record "ADLSE Setup";
         Url: Text[250];
@@ -34,7 +33,7 @@ codeunit 82574 "ADLSE External Events"
         MyBusinessEventEnableFieldChanged(ADLSEField.SystemId, ADLSEField."Table ID", ADLSEField."Field ID", ADLSEField.Enabled, Url, WebClientUrl);
     end;
 
-    procedure OnEnableTableChanged(ADLSEtable: Record "ADLSE Table")
+    internal procedure OnEnableTableChanged(ADLSEtable: Record "ADLSE Table")
     var
         ADLSESetup: Record "ADLSE Setup";
         Url: Text[250];
@@ -47,7 +46,7 @@ codeunit 82574 "ADLSE External Events"
         MyBusinessEventEnableTableChanged(ADLSEtable.SystemId, ADLSEtable."Table ID", ADLSEtable.Enabled, Url, WebClientUrl);
     end;
 
-    procedure OnAddTable(ADLSETable: Record "ADLSE Table")
+    internal procedure OnAddTable(ADLSETable: Record "ADLSE Table")
     var
         ADLSESetup: Record "ADLSE Setup";
         Url: Text[250];
@@ -60,7 +59,7 @@ codeunit 82574 "ADLSE External Events"
         MyBusinessEventOnAddTable(ADLSETable.SystemId, ADLSETable."Table ID", ADLSETable.Enabled, Url, WebClientUrl);
     end;
 
-    procedure OnDeleteTable(ADLSETable: Record "ADLSE Table")
+    internal procedure OnDeleteTable(ADLSETable: Record "ADLSE Table")
     var
         ADLSESetup: Record "ADLSE Setup";
         Url: Text[250];
@@ -73,7 +72,7 @@ codeunit 82574 "ADLSE External Events"
         MyBusinessEventOnDeleteTable(ADLSETable.SystemId, ADLSETable."Table ID", ADLSETable.Enabled, Url, WebClientUrl);
     end;
 
-    procedure OnExportSchema(ADLSESetup: Record "ADLSE Setup")
+    internal procedure OnExportSchema(ADLSESetup: Record "ADLSE Setup")
     var
         Url: Text[250];
         WebClientUrl: Text[250];
@@ -84,7 +83,7 @@ codeunit 82574 "ADLSE External Events"
         MyBusinessOnExportSchema(ADLSESetup.SystemId, ADLSESetup."Storage Type", Url, WebClientUrl);
     end;
 
-    procedure OnClearSchemaExportedOn(ADLSESetup: Record "ADLSE Setup")
+    internal procedure OnClearSchemaExportedOn(ADLSESetup: Record "ADLSE Setup")
     var
         Url: Text[250];
         WebClientUrl: Text[250];
@@ -95,7 +94,7 @@ codeunit 82574 "ADLSE External Events"
         MyBusinessOnClearSchemaExportedOn(ADLSESetup.SystemId, ADLSESetup."Storage Type", Url, WebClientUrl);
     end;
 
-    procedure OnExport(ADLSESetup: Record "ADLSE Setup")
+    internal procedure OnExport(ADLSESetup: Record "ADLSE Setup")
     var
         Url: Text[250];
         WebClientUrl: Text[250];
@@ -106,7 +105,7 @@ codeunit 82574 "ADLSE External Events"
         MyBusinessOnExport(ADLSESetup.SystemId, ADLSESetup."Storage Type", Url, WebClientUrl);
     end;
 
-    procedure OnExportFinished(ADLSESetup: Record "ADLSE Setup")
+    internal procedure OnExportFinished(ADLSESetup: Record "ADLSE Setup")
     var
         Url: Text[250];
         WebClientUrl: Text[250];
