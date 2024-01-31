@@ -30,7 +30,9 @@ More details:
 - [Frequently asked questions](/.assets/FAQs.md)
 - Webinars
     - [[Jan 2022] Webinar introducing bc2adls](https://www.microsoft.com/en-us/videoplayer/embed/RWSHHG)
+	- [[Apr 2022] Areopa Webinar bc2adls](https://www.youtube.com/watch?v=Fjz9LgviV2Q)
     - [[Mar 2023] Enhancements to bc2adls - CloudChampion](https://www.cloudchampion.dk/c/dynamics-365-business-central-azure-data-lake/)
+	- [[Jan 2024] Areopa Webinar MS Fabric](https://www.youtube.com/watch?v=sXZkrFtN5oc)
 
 
 ## Changelog
