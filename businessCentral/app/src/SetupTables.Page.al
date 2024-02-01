@@ -173,6 +173,36 @@ page 82561 "ADLSE Setup Tables"
                 end;
 
             }
+            action(ImportBC2ADLS)
+            {
+                ApplicationArea = All;
+                Caption = 'Import';
+                Image = Import;
+                ToolTip = 'Import a file with BC2ADLS tables and fields.';
+
+                trigger OnAction()
+                var
+                    ADLSETable: Record "ADLSE Table";
+                begin
+                    XMLPORT.Run(XmlPort::"BC2ADLS Import/Export", false, true, ADLSETable);
+                    CurrPage.Update(false);
+                end;
+            }
+            action(ExportBC2ADLS)
+            {
+                ApplicationArea = All;
+                Caption = 'Export';
+                Image = Export;
+                ToolTip = 'Exports a file with BC2ADLS tables and fields.';
+
+                trigger OnAction()
+                var
+                    ADLSETable: Record "ADLSE Table";
+                begin
+                    XMLPORT.Run(XmlPort::"BC2ADLS Import/Export", false, false, ADLSETable);
+                    CurrPage.Update(false);
+                end;
+            }
         }
     }
 
