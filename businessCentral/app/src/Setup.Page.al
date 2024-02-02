@@ -275,7 +275,7 @@ page 82560 "ADLSE Setup"
             {
                 ApplicationArea = All;
                 Caption = 'Fix incorrect data';
-                Tooltip = 'Fixes incorrect fields in the setup. This should be done if you have deleted some fields and you cannot disable them.';
+                Tooltip = 'Fixes incorrect tables and fields in the setup. This should be done if you have deleted some tables and fields and you cannot disable them.';
                 Image = Error;
 
                 trigger OnAction()

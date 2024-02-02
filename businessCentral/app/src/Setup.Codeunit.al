@@ -96,27 +96,52 @@ codeunit 82560 "ADLSE Setup"
     procedure FixIncorrectData()
     var
         ADLSEField: Record "ADLSE Field";
+        ADLSETable: Record "ADLSE Table";
         ADLSESetupRec: Record "ADLSE Setup";
+        TableMetadata: Record "Table Metadata";
         ADLSESetup: Codeunit "ADLSE Setup";
+        ConfirmManagement: Codeunit "Confirm Management";
         ShowMessage: Boolean;
         ShowMessageLbl: Label 'Incorrect data has been removed from the table. Please export the schema again and reset all tables.';
+        ConfirmQuestionMsg: Label 'With this action you will remove all fields that cannot be exported and all obsolete tables (pending / removed). Do you want to continue?';
     begin
         ShowMessage := false;
 
-        if ADLSEField.FindSet() then
-            repeat
-                if not ADLSESetup.CanFieldBeExported(ADLSEField."Table ID", ADLSEField."Field ID") then begin
-                    ADLSEField.Delete();
+        if ConfirmManagement.GetResponse(ConfirmQuestionMsg, true) then begin
+            if ADLSEField.FindSet() then
+                repeat
+                    if not ADLSESetup.CanFieldBeExported(ADLSEField."Table ID", ADLSEField."Field ID") then begin
+                        ADLSEField.Delete(false);
 
-                    if ShowMessage = false then
-                        ShowMessage := true;
-                end;
-            until ADLSEField.Next() = 0;
+                        if ShowMessage = false then
+                            ShowMessage := true;
+                    end;
+                until ADLSEField.Next() = 0;
 
-        if ShowMessage then begin
-            ADLSESetupRec."Schema Exported On" := 0DT;
-            ADLSESetupRec.Modify(true);
-            Message(StrSubstNo(ShowMessageLbl));
+            ADLSETable.SetRange(Enabled, true);
+            if ADLSETable.FindSet() then
+                repeat
+                    TableMetadata.SetRange(ID, ADLSETable."Table ID");
+                    if TableMetadata.FindFirst() then begin
+                        if TableMetadata.ObsoleteState <> TableMetadata.ObsoleteState::No then begin
+                            ADLSETable.Delete(true);
+
+                            if ShowMessage = false then
+                                ShowMessage := true;
+                        end;
+                    end else begin
+                        ADLSETable.Delete(true);
+
+                        if ShowMessage = false then
+                            ShowMessage := true;
+                    end;
+                until ADLSETable.Next() = 0;
+
+            if ShowMessage then begin
+                ADLSESetupRec."Schema Exported On" := 0DT;
+                ADLSESetupRec.Modify(true);
+                Message(StrSubstNo(ShowMessageLbl));
+            end;
         end;
     end;
 }
