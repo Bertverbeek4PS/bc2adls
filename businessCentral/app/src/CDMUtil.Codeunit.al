@@ -128,12 +128,13 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                     ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number),
                     DataFormat,
                     FieldRef.Name,
-                    AppliedTraits));
+                    AppliedTraits,
+                    FieldRef.Length));
         end;
         if ADLSEUtil.IsTablePerCompany(TableID) then begin
             GetCDMAttributeDetails(FieldType::Text, DataFormat, AppliedTraits);
             Result.Add(
-                CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits));
+                CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, FieldRef.Length));
         end;
     end;
 
@@ -142,12 +143,13 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         exit(CompanyFieldNameLbl);
     end;
 
-    local procedure CreateAttributeJson(Name: Text; DataFormat: Text; DisplayName: Text; AppliedTraits: JsonArray) Attribute: JsonObject
+    local procedure CreateAttributeJson(Name: Text; DataFormat: Text; DisplayName: Text; AppliedTraits: JsonArray; MaximumLength: Integer) Attribute: JsonObject
     begin
         Attribute.Add('name', Name);
         Attribute.Add('dataFormat', DataFormat);
         Attribute.Add('appliedTraits', AppliedTraits);
         Attribute.Add('displayName', DisplayName);
+        Attribute.Add('maximumLength', MaximumLength);
     end;
 
     procedure CheckChangeInEntities(EntityContentOld: JsonObject; EntityContentNew: JsonObject; EntityName: Text)
