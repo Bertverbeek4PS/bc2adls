@@ -169,6 +169,8 @@ table 82561 "ADLSE Table"
     var
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSECommunication: Codeunit "ADLSE Communication";
         Counter: Integer;
     begin
         if Rec.FindSet(true) then
@@ -181,6 +183,10 @@ table 82561 "ADLSE Table"
 
                 ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");
                 ADLSEDeletedRecord.DeleteAll();
+
+                ADLSESetup.GetSingleton();
+                if ADLSESetup."Delete Table" then
+                    ADLSECommunication.ResetTableExport(Rec."Table ID");
 
                 OnAfterResetSelected(Rec);
 
