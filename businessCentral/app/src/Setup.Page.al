@@ -148,6 +148,11 @@ page 82560 "ADLSE Setup"
                     {
                         ToolTip = 'Specifies if the enums will be exported as integers instead of strings. This is useful if you want to use the enums in Power BI.';
                     }
+                    field("Delete Table"; Rec."Delete Table")
+                    {
+                        ToolTip = 'Specifies if the table will be deleted if a reset of the table is done.';
+                        Editable = not AzureDataLake;
+                    }
                 }
             }
             part(Tables; "ADLSE Setup Tables")

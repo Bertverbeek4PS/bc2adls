@@ -129,6 +129,10 @@ table 82560 "ADLSE Setup"
                     Error(ErrorInfo.Create(NoSchemaExportedErr, true));
             end;
         }
+        field(50; "Delete Table"; Boolean)
+        {
+            Caption = 'Delete table';
+        }
         field(55; "Maximum Requests"; Integer)
         {
             Caption = 'Maximum requests';
