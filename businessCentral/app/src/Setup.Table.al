@@ -129,6 +129,21 @@ table 82560 "ADLSE Setup"
                     Error(ErrorInfo.Create(NoSchemaExportedErr, true));
             end;
         }
+        field(55; "Maximum Requests"; Integer)
+        {
+            Caption = 'Maximum requests';
+
+            trigger OnValidate()
+            begin
+                if Rec."Maximum Requests" > 10 then begin
+                    MaxReqErrorInfo.DataClassification := DataClassification::SystemMetadata;
+                    MaxReqErrorInfo.ErrorType := ErrorType::Client;
+                    MaxReqErrorInfo.Verbosity := Verbosity::Error;
+                    MaxReqErrorInfo.Message := MaximumRequestsErr;
+                    Error(MaxReqErrorInfo);
+                end;
+            end;
+        }
     }
 
     keys
@@ -140,11 +155,13 @@ table 82560 "ADLSE Setup"
     }
 
     var
+        MaxReqErrorInfo: ErrorInfo;
         ContainerNameIncorrectFormatErr: Label 'The container name is in an incorrect format.';
         AccountNameIncorrectFormatErr: Label 'The account name is in an incorrect format.';
         RecordDoesNotExistErr: Label 'No record on this table exists.';
         PrimaryKeyValueLbl: Label '0', Locked = true;
         NoSchemaExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
+        MaximumRequestsErr: Label 'Please enter a value smaller than 10 for maximum requests.';
 
     local procedure TextCharactersOtherThan(String: Text; CharString: Text): Boolean
     var
