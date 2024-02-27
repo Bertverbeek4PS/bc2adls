@@ -133,17 +133,18 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Delete table';
         }
-        field(55; "Maximum Requests"; Integer)
+        field(55; "Maximum Retries"; Integer)
         {
-            Caption = 'Maximum requests';
+            Caption = 'Maximum retries';
+            InitValue = 0;
 
             trigger OnValidate()
             begin
-                if Rec."Maximum Requests" > 10 then begin
+                if Rec."Maximum Retries" > 10 then begin
                     MaxReqErrorInfo.DataClassification := DataClassification::SystemMetadata;
                     MaxReqErrorInfo.ErrorType := ErrorType::Client;
                     MaxReqErrorInfo.Verbosity := Verbosity::Error;
-                    MaxReqErrorInfo.Message := MaximumRequestsErr;
+                    MaxReqErrorInfo.Message := MaximumRetriesErr;
                     Error(MaxReqErrorInfo);
                 end;
             end;
@@ -165,7 +166,7 @@ table 82560 "ADLSE Setup"
         RecordDoesNotExistErr: Label 'No record on this table exists.';
         PrimaryKeyValueLbl: Label '0', Locked = true;
         NoSchemaExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
-        MaximumRequestsErr: Label 'Please enter a value smaller than 10 for maximum requests.';
+        MaximumRetriesErr: Label 'Please enter a value that is equal or smaller than 10 for the maximum retries.';
 
     local procedure TextCharactersOtherThan(String: Text; CharString: Text): Boolean
     var

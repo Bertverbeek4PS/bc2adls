@@ -153,6 +153,10 @@ page 82560 "ADLSE Setup"
                         ToolTip = 'Specifies if the table will be deleted if a reset of the table is done.';
                         Editable = not AzureDataLake;
                     }
+                    field("Maximum retries"; Rec."Maximum Retries")
+                    {
+                        ToolTip = 'Specifies the maximum number of retries of a request. The maximum value is 10.';
+                    }
                 }
             }
             part(Tables; "ADLSE Setup Tables")

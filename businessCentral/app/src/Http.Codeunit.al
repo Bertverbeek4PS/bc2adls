@@ -112,7 +112,8 @@ codeunit 82563 "ADLSE Http"
         MaxRetries: Integer;
         RetryCount: Integer;
     begin
-        MaxRetries := 5;
+        ADLSESetup.GetSingleton();
+        MaxRetries := ADLSESetup."Maximum Retries";
         RetryCount := 0;
 
         HttpClient.SetBaseAddress(Url);
