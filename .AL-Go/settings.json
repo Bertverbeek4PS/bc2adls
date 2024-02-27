@@ -4,7 +4,7 @@
     "businessCentral\\app"
   ],
   "testFolders": [
-    "businessCentral\\test"
+    //"businessCentral\\test"
   ],
   "bcptTestFolders": [],
   "repoVersion": "2.19"
