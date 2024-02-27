@@ -32,6 +32,7 @@ codeunit 82562 "ADLSE Communication"
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
         MSFabricUrlTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2.Lakehouse/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
+        ResetTableExportTxt: Label '/reset/%1.txt', Locked = true, comment = '%1 = Table name';
 
     procedure SetupBlobStorage()
     var
@@ -352,5 +353,15 @@ codeunit 82562 "ADLSE Communication"
         ADLSEGen2Util.CreateOrUpdateJsonBlob(BlobPath, ADLSECredentials, LeaseID, ManifestJson);
         if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
             ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
+    end;
+
+    procedure ResetTableExport(ltableId: Integer)
+    var
+        ADLSEUtil: Codeunit "ADLSE Util";
+        ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
+        Body: JsonObject;
+    begin
+        ADLSECredentials.Init();
+        ADLSEGen2Util.CreateOrUpdateJsonBlob(GetBaseUrl() + StrSubstNo(ResetTableExportTxt, ADLSEUtil.GetDataLakeCompliantTableName(ltableId)), ADLSECredentials, '', Body);
     end;
 }
