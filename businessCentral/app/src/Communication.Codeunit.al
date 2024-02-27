@@ -362,6 +362,6 @@ codeunit 82562 "ADLSE Communication"
         Body: JsonObject;
     begin
         ADLSECredentials.Init();
-        ADLSEGen2Util.CreateOrUpdateJsonBlob(GetBaseUrl() + StrSubstNo(ResetTableExportTxt, ADLSEUtil.GetDataLakeCompliantTableName(TableID)), ADLSECredentials, '', Body);
+        ADLSEGen2Util.CreateOrUpdateJsonBlob(GetBaseUrl() + StrSubstNo(ResetTableExportTxt, ADLSEUtil.GetDataLakeCompliantTableName(ltableId)), ADLSECredentials, '', Body);
     end;
 }
