@@ -185,7 +185,7 @@ table 82561 "ADLSE Table"
                 ADLSEDeletedRecord.DeleteAll();
 
                 ADLSESetup.GetSingleton();
-                if ADLSESetup."Delete Table" then
+                if (ADLSESetup."Delete Table") and (ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Microsoft Fabric") then
                     ADLSECommunication.ResetTableExport(Rec."Table ID");
 
                 OnAfterResetSelected(Rec);
