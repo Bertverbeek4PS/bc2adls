@@ -97,7 +97,8 @@ table 82561 "ADLSE Table"
         TableNotNormalErr: Label 'Table %1 is not a normal table.', Comment = '%1: caption of table';
         TableExportingDataErr: Label 'Data is being executed for table %1. Please wait for the export to finish before making changes.', Comment = '%1: table caption';
         TableCannotBeExportedErr: Label 'The table %1 cannot be exported because of the following error. \%2', Comment = '%1: Table ID, %2: error text';
-        TablesResetTxt: Label '%1 table(s) were reset.', Comment = '%1 = number of tables that were reset';
+        TablesResetTxt: Label '%1 table(s) were reset %2', Comment = '%1 = number of tables that were reset, %2 = message if tables are exported';
+        TableResetExportedTxt: Label 'and are exported to the lakehouse. Please run the notebook first.';
 
     procedure FieldsChosen(): Integer
     var
@@ -192,7 +193,10 @@ table 82561 "ADLSE Table"
 
                 Counter += 1;
             until Rec.Next() = 0;
-        Message(TablesResetTxt, Counter);
+        if (ADLSESetup."Delete Table") and (ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Microsoft Fabric") then
+            Message(TablesResetTxt, Counter, TableResetExportedTxt)
+        else
+            Message(TablesResetTxt, Counter, '.');
     end;
 
     local procedure CheckExportingOnlyValidFields()
