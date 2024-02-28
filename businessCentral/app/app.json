@@ -12,8 +12,8 @@
   "contextSensitiveHelpUrl": "https://docs.microsoft.com/dynamics365/business-central/",
   "logo": "../../.assets/bc2adls_logo.png",
   "screenshots": [],
-  "platform": "22.0.0.0",
-  "application": "22.0.0.0",
+  "platform": "23.0.0.0",
+  "application": "23.0.0.0",
   "resourceExposurePolicy": {
     "allowDebugging": true,
     "allowDownloadingSource": true,
@@ -38,5 +38,5 @@
     }
   ],
   "target": "Cloud",
-  "runtime": "11.0"
+  "runtime": "12.0"
 }
