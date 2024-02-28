@@ -12,8 +12,8 @@
   "contextSensitiveHelpUrl": "https://docs.microsoft.com/dynamics365/business-central/",
   "logo": "../../.assets/bc2adls_logo.png",
   "screenshots": [],
-  "platform": "23.0.0.0",
-  "application": "23.0.0.0",
+  "platform": "22.0.0.0",
+  "application": "22.0.0.0",
   "resourceExposurePolicy": {
     "allowDebugging": true,
     "allowDownloadingSource": true,
@@ -33,10 +33,10 @@
     },
     {
       "publisher": "The bc2adls team",
-      "name": "Tests for Azure Data Lake Storage Export",
+      "name": "Azure Data Lake Storage Export Test",
       "id": "03486619-1622-4261-ae0e-b366b3c96e3c"
     }
   ],
   "target": "Cloud",
-  "runtime": "12.0"
+  "runtime": "11.0"
 }
