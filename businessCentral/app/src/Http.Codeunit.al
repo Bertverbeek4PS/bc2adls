@@ -109,12 +109,8 @@ codeunit 82563 "ADLSE Http"
         HttpContent: HttpContent;
         HeaderKey: Text;
         HeaderValue: Text;
-        MaxRetries: Integer;
-        RetryCount: Integer;
     begin
         ADLSESetup.GetSingleton();
-        MaxRetries := ADLSESetup."Maximum Retries";
-        RetryCount := 0;
 
         HttpClient.SetBaseAddress(Url);
         if not AddAuthorization(HttpClient, Response) then
@@ -137,17 +133,7 @@ codeunit 82563 "ADLSE Http"
                     HttpRequestMessage.Method('PUT');
                     HttpRequestMessage.SetRequestUri(Url);
                     AddContent(HttpContent);
-                    while RetryCount < MaxRetries do begin
-                        HttpClient.Put(Url, HttpContent, HttpResponseMessage);
-                        if HttpResponseMessage.IsSuccessStatusCode() then
-                            exit
-                        else begin
-                            RetryCount += 1;
-                            if RetryCount >= MaxRetries then
-                                exit;
-                            Sleep(5000);
-                        end;
-                    end;
+                    HttpClient.Put(Url, HttpContent, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Delete:
                 HttpClient.Delete(Url, HttpResponseMessage);
@@ -157,33 +143,13 @@ codeunit 82563 "ADLSE Http"
                     HttpRequestMessage.SetRequestUri(Url);
                     AddContent(HttpContent);
                     HttpRequestMessage.Content(HttpContent);
-                    while RetryCount < MaxRetries do begin
-                        HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
-                        if HttpResponseMessage.IsSuccessStatusCode() then
-                            exit
-                        else begin
-                            RetryCount += 1;
-                            if RetryCount >= MaxRetries then
-                                exit;
-                            Sleep(5000);
-                        end;
-                    end;
+                    HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Head:
                 begin
                     HttpRequestMessage.Method('HEAD');
                     HttpRequestMessage.SetRequestUri(Url);
-                    while RetryCount < MaxRetries do begin
-                        HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
-                        if HttpResponseMessage.IsSuccessStatusCode() then
-                            exit
-                        else begin
-                            RetryCount += 1;
-                            if RetryCount >= MaxRetries then
-                                exit;
-                            Sleep(5000);
-                        end;
-                    end;
+                    HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
             else
                 Error(UnsupportedMethodErr, HttpMethod);
