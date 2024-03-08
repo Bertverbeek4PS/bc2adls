@@ -110,6 +110,8 @@ codeunit 82563 "ADLSE Http"
         HeaderKey: Text;
         HeaderValue: Text;
     begin
+        ADLSESetup.GetSingleton();
+
         HttpClient.SetBaseAddress(Url);
         if not AddAuthorization(HttpClient, Response) then
             exit(false);
