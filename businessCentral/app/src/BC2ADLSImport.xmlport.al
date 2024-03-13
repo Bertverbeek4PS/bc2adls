@@ -1,7 +1,8 @@
-xmlport 82560 "BC2ADLS Import/Export"
+xmlport 82560 "BC2ADLS Import"
 {
-    Caption = 'BC2ADLS Import/Export';
+    Caption = 'BC2ADLS Import';
     UseRequestPage = false;
+    Direction = Import;
 
     schema
     {
