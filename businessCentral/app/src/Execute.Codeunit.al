@@ -14,7 +14,6 @@ codeunit 82561 "ADLSE Execute"
         ADLSECommunication: Codeunit "ADLSE Communication";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEUtil: Codeunit "ADLSE Util";
-        TypeHelper: Codeunit "Type Helper";
         CustomDimensions: Dictionary of [Text, Text];
         TableCaption: Text;
         UpdatedLastTimestamp: BigInteger;
@@ -44,10 +43,6 @@ codeunit 82561 "ADLSE Execute"
 
         UpdatedLastTimestamp := ADLSETableLastTimestamp.GetUpdatedLastTimestamp(Rec."Table ID");
         DeletedLastEntryNo := ADLSETableLastTimestamp.GetDeletedLastEntryNo(Rec."Table ID");
-
-        if not ADLSEUtil.IsTablePerCompany(Rec."Table ID") then
-            if (TypeHelper.EvaluateUnixTimestamp(UpdatedLastTimestamp) - CurrentDateTime) < 600000 then
-                exit;
 
         if EmitTelemetry then begin
             CustomDimensions.Add('Old Updated Last time stamp', Format(UpdatedLastTimestamp));
