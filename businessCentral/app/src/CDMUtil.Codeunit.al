@@ -113,6 +113,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
 
     local procedure CreateAttributes(TableID: Integer; FieldIdList: List of [Integer]) Result: JsonArray;
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
         RecordRef: RecordRef;
         FieldRef: FieldRef;
@@ -131,6 +132,12 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                     FieldRef.Name,
                     AppliedTraits,
                     FieldRef.Length));
+        end;
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Delivered DateTime" then begin
+            GetCDMAttributeDetails(FieldType::DateTime, DataFormat, AppliedTraits);
+            Result.Add(
+                CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetDeliveredDateTimeFieldName(), AppliedTraits, FieldRef.Length));
         end;
         if ADLSEUtil.IsTablePerCompany(TableID) then begin
             GetCDMAttributeDetails(FieldType::Text, DataFormat, AppliedTraits);
