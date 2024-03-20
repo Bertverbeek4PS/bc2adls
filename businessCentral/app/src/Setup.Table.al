@@ -153,6 +153,13 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Add delivered DateTime';
         }
+        //Add field for lookup to table companies
+        field(65; "Export Company Database Tables"; Text[30])
+        {
+            Caption = 'Export Company Database Tables';
+            TableRelation = Company.Name;
+        }
+
     }
 
     keys
