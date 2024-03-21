@@ -153,6 +153,10 @@ page 82560 "ADLSE Setup"
                         ToolTip = 'Specifies if the table will be deleted if a reset of the table is done.';
                         Editable = not AzureDataLake;
                     }
+                    field("Delivered DateTime"; Rec."Delivered DateTime")
+                    {
+                        ToolTip = 'Specifies if the column DeliveredDateTime will be added to the CSV export file.';
+                    }
                 }
             }
             part(Tables; "ADLSE Setup Tables")

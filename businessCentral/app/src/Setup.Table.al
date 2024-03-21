@@ -149,6 +149,10 @@ table 82560 "ADLSE Setup"
                 end;
             end;
         }
+        field(60; "Delivered DateTime"; Boolean)
+        {
+            Caption = 'Add delivered DateTime';
+        }
     }
 
     keys
