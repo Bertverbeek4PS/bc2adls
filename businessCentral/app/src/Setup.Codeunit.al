@@ -138,6 +138,7 @@ codeunit 82560 "ADLSE Setup"
                 until ADLSETable.Next() = 0;
 
             if ShowMessage then begin
+                ADLSESetupRec.GetSingleton();
                 ADLSESetupRec."Schema Exported On" := 0DT;
                 ADLSESetupRec.Modify(true);
                 Message(StrSubstNo(ShowMessageLbl));
