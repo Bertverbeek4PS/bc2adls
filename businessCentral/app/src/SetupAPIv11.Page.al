@@ -70,6 +70,15 @@ page 82568 "ADLSE Setup API v11"
     end;
 
     [ServiceEnabled]
+    procedure FixIncorrectData(var ActionContext: WebServiceActionContext)
+    var
+        ADLSESetup: Codeunit "ADLSE Setup";
+    begin
+        ADLSESetup.FixIncorrectData();
+        SetActionResponse(ActionContext, Rec."SystemId");
+    end;
+
+    [ServiceEnabled]
     procedure ClearSchemaExportedOn(var ActionContext: WebServiceActionContext)
     var
         ADLSEExecution: Codeunit "ADLSE Execution";

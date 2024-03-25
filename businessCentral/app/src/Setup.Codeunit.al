@@ -101,6 +101,7 @@ codeunit 82560 "ADLSE Setup"
         TableMetadata: Record "Table Metadata";
         ADLSESetup: Codeunit "ADLSE Setup";
         ConfirmManagement: Codeunit "Confirm Management";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         ShowMessage: Boolean;
         ShowMessageLbl: Label 'Incorrect data has been removed from the table. Please export the schema again and reset all tables.';
         ConfirmQuestionMsg: Label 'With this action you will remove all fields that cannot be exported and all obsolete tables (pending / removed). Do you want to continue?';
@@ -141,7 +142,10 @@ codeunit 82560 "ADLSE Setup"
                 ADLSESetupRec.GetSingleton();
                 ADLSESetupRec."Schema Exported On" := 0DT;
                 ADLSESetupRec.Modify(true);
-                Message(StrSubstNo(ShowMessageLbl));
+                if GuiAllowed then
+                    Message(StrSubstNo(ShowMessageLbl));
+
+                ADLSEExternalEvents.OnFixIncorrectData(ADLSESetupRec);
             end;
         end;
     end;
