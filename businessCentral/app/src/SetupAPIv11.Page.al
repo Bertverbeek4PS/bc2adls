@@ -79,6 +79,15 @@ page 82568 "ADLSE Setup API v11"
     end;
 
     [ServiceEnabled]
+    procedure RefreshOptions(var ActionContext: WebServiceActionContext)
+    var
+        ADLSEEnumTranslation: Record "ADLSE Enum Translation";
+    begin
+        ADLSEEnumTranslation.RefreshOptions();
+        SetActionResponse(ActionContext, Rec."SystemId");
+    end;
+
+    [ServiceEnabled]
     procedure ClearSchemaExportedOn(var ActionContext: WebServiceActionContext)
     var
         ADLSEExecution: Codeunit "ADLSE Execution";

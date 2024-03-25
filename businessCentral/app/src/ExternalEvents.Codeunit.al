@@ -127,6 +127,17 @@ codeunit 82574 "ADLSE External Events"
         MyBusinessOnFixIncorrectData(ADLSESetup.SystemId, ADLSESetup."Storage Type", Url, WebClientUrl);
     end;
 
+    internal procedure OnRefreshOptions(ADLSESetup: Record "ADLSE Setup")
+    var
+        Url: Text[250];
+        WebClientUrl: Text[250];
+        ADLSEFieldApiUrlTok: Label 'bc2adlsTeamMicrosoft/bc2adls/v1.0/companies(%1)/adlseSetup(%2)', Locked = true;
+    begin
+        Url := ADLSEExternalEventsHelper.CreateLink(ADLSEFieldApiUrlTok, ADLSESetup.SystemId);
+        WebClientUrl := CopyStr(GetUrl(ClientType::Web, CompanyName(), ObjectType::Page, Page::"ADLSE Setup", ADLSESetup), 1, MaxStrLen(WebClientUrl));
+        MyBusinessRefreshOptions(ADLSESetup.SystemId, ADLSESetup."Storage Type", Url, WebClientUrl);
+    end;
+
     local procedure GetSetup()
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -199,6 +210,11 @@ codeunit 82574 "ADLSE External Events"
 
     [ExternalBusinessEvent('OnFixIncorrectData', 'Fix incorrect data', 'When fix incorrect data is done', EventCategory::ADLSE)]
     local procedure MyBusinessOnFixIncorrectData(SystemId: Guid; "Storage Type": Enum "ADLSE Storage Type"; Url: Text[250]; WebClientUrl: Text[250])
+    begin
+    end;
+
+    [ExternalBusinessEvent('OnRefreshOptions', 'Refresh Options', 'When Refresh Options is done', EventCategory::ADLSE)]
+    local procedure MyBusinessRefreshOptions(SystemId: Guid; "Storage Type": Enum "ADLSE Storage Type"; Url: Text[250]; WebClientUrl: Text[250])
     begin
     end;
 

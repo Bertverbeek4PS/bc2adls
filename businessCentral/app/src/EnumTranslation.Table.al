@@ -8,6 +8,7 @@ table 82567 "ADLSE Enum Translation"
     {
         field(1; "Table Id"; Integer)
         {
+            AllowInCustomizations = Always;
             DataClassification = SystemMetadata;
             Caption = 'Table Id';
         }
@@ -18,6 +19,7 @@ table 82567 "ADLSE Enum Translation"
         }
         field(3; "Field Id"; Integer)
         {
+            AllowInCustomizations = Always;
             DataClassification = SystemMetadata;
             Caption = 'Field Id';
         }
@@ -45,7 +47,7 @@ table 82567 "ADLSE Enum Translation"
         Rec."Compliant Table Name" := CopyStr(ADLSEUtil.GetDataLakeCompliantTableName(TableId), 1, MaxStrLen((Rec."Compliant Table Name")));
         Rec."Field Id" := FieldNo;
         Rec."Compliant Field Name" := CopyStr(ADLSEUtil.GetDataLakeCompliantFieldName(FieldName, FieldNo), 1, MaxStrLen((Rec."Compliant Field Name")));
-        Rec.Insert();
+        Rec.Insert(true);
     end;
 
     procedure RefreshOptions()
@@ -53,11 +55,13 @@ table 82567 "ADLSE Enum Translation"
         ADLSETable: Record "ADLSE Table";
         ADLSEEnumTranslation: Record "ADLSE Enum Translation";
         ADLSEEnumTranslationLang: Record "ADLSE Enum Translation Lang";
+        ADLSESetupRec: Record "ADLSE Setup";
         RecordField: Record Field;
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         ADLSERecordRef: RecordRef;
     begin
-        ADLSEEnumTranslation.DeleteAll();
-        ADLSEEnumTranslationLang.DeleteAll();
+        ADLSEEnumTranslation.DeleteAll(true);
+        ADLSEEnumTranslationLang.DeleteAll(true);
 
         if ADLSETable.FindSet() then
             repeat
@@ -80,6 +84,8 @@ table 82567 "ADLSE Enum Translation"
             ADLSETable.Add(ADLSEEnumTranslationLang.RecordId.TableNo);
             ADLSETable.AddAllFields();
         end;
+
+        ADLSEExternalEvents.OnRefreshOptions(ADLSESetupRec);
     end;
 
     local procedure InsertEnums(ADLSERecordRef: RecordRef; FieldRec: Record Field)
