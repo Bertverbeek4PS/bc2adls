@@ -28,7 +28,12 @@ table 82561 "ADLSE Table"
             trigger OnValidate()
             var
                 ADLSEExternalEvents: Codeunit "ADLSE External Events";
+                ADLSETableErr: Label 'The ADLSE Table table cannot be disabled.';
             begin
+                if Rec."Table ID" = Database::"ADLSE Table" then
+                    if xRec.Enabled = false then
+                        Error(ADLSETableErr);
+
                 if Rec.Enabled then
                     CheckExportingOnlyValidFields();
 
@@ -176,8 +181,10 @@ table 82561 "ADLSE Table"
     begin
         if Rec.FindSet(true) then
             repeat
-                Rec.Enabled := true;
-                Rec.Modify();
+                if not Rec.Enabled then begin
+                    Rec.Enabled := true;
+                    Rec.Modify();
+                end;
 
                 ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Rec."Table ID", 0);
                 ADLSETableLastTimestamp.SaveDeletedLastEntryNo(Rec."Table ID", 0);
