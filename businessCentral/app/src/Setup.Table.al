@@ -126,7 +126,7 @@ table 82560 "ADLSE Setup"
             trigger OnValidate()
             begin
                 if Rec."Schema Exported On" <> 0DT then
-                    Error(ErrorInfo.Create(NoSchemaExportedErr, true));
+                    Error(ErrorInfo.Create(SchemaAlreadyExportedErr, true));
             end;
         }
         field(50; "Delete Table"; Boolean)
@@ -176,8 +176,9 @@ table 82560 "ADLSE Setup"
         AccountNameIncorrectFormatErr: Label 'The account name is in an incorrect format.';
         RecordDoesNotExistErr: Label 'No record on this table exists.';
         PrimaryKeyValueLbl: Label '0', Locked = true;
-        NoSchemaExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
+        SchemaAlreadyExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
         MaximumRetriesErr: Label 'Please enter a value that is equal or smaller than 10 for the maximum retries.';
+        NoSchemaExportedErr: Label 'No schema has been exported yet. Please export schema first before exporting the data.';
 
     local procedure TextCharactersOtherThan(String: Text; CharString: Text): Boolean
     var
@@ -225,12 +226,10 @@ table 82560 "ADLSE Setup"
     begin
         Rec.GetSingleton();
         if Rec."Schema Exported On" <> 0DT then
-            Error(ErrorInfo.Create(NoSchemaExportedErr, true));
+            Error(ErrorInfo.Create(SchemaAlreadyExportedErr, true));
     end;
 
     procedure CheckSchemaExported()
-    var
-        NoSchemaExportedErr: Label 'No schema has been exported yet. Please export schema first before exporting the data.';
     begin
         Rec.GetSingleton();
         if Rec."Schema Exported On" = 0DT then
