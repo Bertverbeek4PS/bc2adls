@@ -50,6 +50,21 @@ page 82567 "ADLSE Field API"
         SetActionResponse(ActionContext, Rec.SystemId);
     end;
 
+    [ServiceEnabled]
+    procedure Enable(var ActionContext: WebServiceActionContext)
+    var
+        SelectedADLSEField: Record "ADLSE Field";
+    begin
+        CurrPage.SetSelectionFilter(SelectedADLSEField);
+        if SelectedADLSEField.FindSet(true) then
+            repeat
+                SelectedADLSEField.Validate(Enabled, true);
+                SelectedADLSEField.Modify(true);
+            until SelectedADLSEField.Next() = 0;
+        SetActionResponse(ActionContext, Rec.SystemId);
+    end;
+
+
     local procedure SetActionResponse(var ActionContext: WebServiceActionContext; AdlsId: Guid)
     var
     begin
