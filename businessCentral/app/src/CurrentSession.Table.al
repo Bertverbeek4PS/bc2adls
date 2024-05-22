@@ -83,6 +83,7 @@ table 82565 "ADLSE Current Session"
 
     procedure AreAnySessionsActive() AnyActive: Boolean
     begin
+        Rec.SetRange("Company Name", CopyStr(CompanyName(), 1, 30));
         if Rec.FindSet(false) then
             repeat
                 if IsSessionActive() then begin
@@ -94,8 +95,8 @@ table 82565 "ADLSE Current Session"
 
     procedure CleanupSessions()
     begin
-        Rec.SetRange("Company Name", CompanyName());
-        Rec.DeleteAll();
+        Rec.SetRange("Company Name", CopyStr(CompanyName(), 1, 30));
+        Rec.DeleteAll(false);
     end;
 
     procedure CancelAll()
