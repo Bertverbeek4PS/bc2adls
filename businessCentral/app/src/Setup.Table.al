@@ -108,22 +108,28 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Workspace';
             trigger OnValidate()
+            var
+                ValidGuid: Guid;
             begin
-                if (StrLen(Rec.Workspace) < 3) or (StrLen(Rec.Workspace) > 24)
-                    or TextCharactersOtherThan(Rec.Workspace, 'abcdefghijklmnopqrstuvwxyz1234567890_')
-                then
-                    Error(WorkspaceIncorrectFormatErr);
+                if not Evaluate(ValidGuid, Rec.Workspace) then
+                    if (StrLen(Rec.Workspace) < 3) or (StrLen(Rec.Workspace) > 24)
+                        or TextCharactersOtherThan(Rec.Workspace, 'abcdefghijklmnopqrstuvwxyz1234567890_')
+                    then
+                        Error(WorkspaceIncorrectFormatErr);
             end;
         }
         field(31; Lakehouse; Text[100])
         {
             Caption = 'Lakehouse';
             trigger OnValidate()
+            var
+                ValidGuid: Guid;
             begin
-                if (StrLen(Rec.Lakehouse) < 3) or (StrLen(Rec.Lakehouse) > 24)
-                    or TextCharactersOtherThan(Rec.Lakehouse, 'abcdefghijklmnopqrstuvwxyz1234567890_')
-                then
-                    Error(LakehouseIncorrectFormatErr);
+                if not Evaluate(ValidGuid, Rec.Lakehouse) then
+                    if (StrLen(Rec.Lakehouse) < 3) or (StrLen(Rec.Lakehouse) > 24)
+                        or TextCharactersOtherThan(Rec.Lakehouse, 'abcdefghijklmnopqrstuvwxyz1234567890_')
+                    then
+                        Error(LakehouseIncorrectFormatErr);
             end;
         }
         field(35; "Schema Exported On"; DateTime)
@@ -188,8 +194,8 @@ table 82560 "ADLSE Setup"
         MaxReqErrorInfo: ErrorInfo;
         ContainerNameIncorrectFormatErr: Label 'The container name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_';
         AccountNameIncorrectFormatErr: Label 'The account name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890';
-        WorkspaceIncorrectFormatErr: Label 'The workspace is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_';
-        LakehouseIncorrectFormatErr: Label 'The lakehouse is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_';
+        WorkspaceIncorrectFormatErr: Label 'The workspace is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID';
+        LakehouseIncorrectFormatErr: Label 'The lakehouse is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID';
         RecordDoesNotExistErr: Label 'No record on this table exists.';
         PrimaryKeyValueLbl: Label '0', Locked = true;
         SchemaAlreadyExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
