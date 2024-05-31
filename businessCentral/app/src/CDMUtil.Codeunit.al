@@ -131,18 +131,20 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                     DataFormat,
                     FieldRef.Name,
                     AppliedTraits,
-                    FieldRef.Length));
+                    FieldRef.Length,
+                    IsPrimaryKeyField(RecordRef.Number, FieldRef.Number)
+                ));
         end;
         ADLSESetup.GetSingleton();
         if ADLSESetup."Delivered DateTime" then begin
             GetCDMAttributeDetails(FieldType::DateTime, DataFormat, AppliedTraits);
             Result.Add(
-                CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetDeliveredDateTimeFieldName(), AppliedTraits, FieldRef.Length));
+                CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetDeliveredDateTimeFieldName(), AppliedTraits, FieldRef.Length, false));
         end;
         if ADLSEUtil.IsTablePerCompany(TableID) then begin
             GetCDMAttributeDetails(FieldType::Text, DataFormat, AppliedTraits);
             Result.Add(
-                CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, FieldRef.Length));
+                CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, FieldRef.Length, false));
         end;
     end;
 
@@ -156,13 +158,23 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         exit(DeliveredDateTimeFieldNameLbl);
     end;
 
-    local procedure CreateAttributeJson(Name: Text; DataFormat: Text; DisplayName: Text; AppliedTraits: JsonArray; MaximumLength: Integer) Attribute: JsonObject
+    procedure IsPrimaryKeyField(TableId: Integer; FieldId: Integer): Boolean
+    var
+        FieldTable: Record Field;
+    begin
+        if FieldTable.Get(TableId, FieldId) then
+            exit(fieldTable.IsPartOfPrimaryKey);
+    end;
+
+    local procedure CreateAttributeJson(Name: Text; DataFormat: Text; DisplayName: Text; AppliedTraits: JsonArray; MaximumLength: Integer; IsPrimaryKeyField: Boolean) Attribute: JsonObject
     begin
         Attribute.Add('name', Name);
         Attribute.Add('dataFormat', DataFormat);
         Attribute.Add('appliedTraits', AppliedTraits);
         Attribute.Add('displayName', DisplayName);
         Attribute.Add('maximumLength', MaximumLength);
+        if IsPrimaryKeyField then
+            Attribute.Add('isPrimaryKey', true)
     end;
 
     procedure CheckChangeInEntities(EntityContentOld: JsonObject; EntityContentNew: JsonObject; EntityName: Text)
