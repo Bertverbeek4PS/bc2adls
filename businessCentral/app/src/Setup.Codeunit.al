@@ -17,6 +17,7 @@ codeunit 82560 "ADLSE Setup"
         AllObjectsWithCaption: Page "All Objects with Caption";
     begin
         AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
+        AllObjWithCaption.SetFilter("Object ID", '<>%1', Database::"ADLSE Deleted Record");
 
         AllObjectsWithCaption.Caption(SelectTableLbl);
         AllObjectsWithCaption.SetTableView(AllObjWithCaption);
@@ -138,6 +139,7 @@ codeunit 82560 "ADLSE Setup"
                 until ADLSETable.Next() = 0;
 
             if ShowMessage then begin
+                ADLSESetupRec.GetSingleton();
                 ADLSESetupRec."Schema Exported On" := 0DT;
                 ADLSESetupRec.Modify(true);
                 Message(StrSubstNo(ShowMessageLbl));

@@ -246,13 +246,14 @@ codeunit 82561 "ADLSE Execute"
                 ADLSEExecution.Log('ADLSE-010', 'Deleted records found', Verbosity::Normal, CustomDimensions);
             end;
 
-            repeat
-                ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, RecordRef);
-                if ADLSECommunication.TryCollectAndSendRecord(RecordRef, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp) then
-                    DeletedLastEntryNo := FlushedTimeStamp
-                else
-                    Error('%1%2', GetLastErrorText(), GetLastErrorCallStack());
-            until ADLSEDeletedRecord.Next() = 0;
+            if ADLSEDeletedRecord.FindSet() then
+                repeat
+                    ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, RecordRef);
+                    if ADLSECommunication.TryCollectAndSendRecord(RecordRef, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp) then
+                        DeletedLastEntryNo := FlushedTimeStamp
+                    else
+                        Error('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+                until ADLSEDeletedRecord.Next() = 0;
 
             if ADLSECommunication.TryFinish(FlushedTimeStamp) then
                 DeletedLastEntryNo := FlushedTimeStamp
@@ -268,17 +269,18 @@ codeunit 82561 "ADLSE Execute"
         RecordRef: RecordRef;
     begin
         //Because of the merge function of Contact, Vendor and customer
-        case ADLSEDeletedRecord."Table ID" of
-            18, 23, 5050:
-                begin
-                    RecordRef.Open(ADLSEDeletedRecord."Table ID");
-                    if ADLSEDeletedRecord.FindSet() then
-                        repeat
+        if ADLSEDeletedRecord.FindSet() then
+            repeat
+                case ADLSEDeletedRecord."Table ID" of
+                    18, 23, 5050:
+                        begin
+                            RecordRef.Open(ADLSEDeletedRecord."Table ID");
                             if RecordRef.GetBySystemId(ADLSEDeletedRecord."System ID") then
-                                ADLSEDeletedRecord.Delete();
-                        until ADLSEDeletedRecord.Next() = 0;
+                                ADLSEDeletedRecord.Delete(false);
+                            RecordRef.Close();
+                        end;
                 end;
-        end;
+            until ADLSEDeletedRecord.Next() = 0;
     end;
 
     procedure CreateFieldListForTable(TableID: Integer) FieldIdList: List of [Integer]
@@ -326,7 +328,7 @@ codeunit 82561 "ADLSE Execute"
         ADLSESessionManager.StartExportFromPendingTables();
 
         ADLSESetupRec.GetSingleton();
-        ADLSEExternalEvents.OnExportFinished(ADLSESetupRec);
+        ADLSEExternalEvents.OnExportFinished(ADLSESetupRec, ADLSETable);
 
         if not ADLSECurrentSession.AreAnySessionsActive() then
             if EmitTelemetry then

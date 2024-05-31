@@ -78,6 +78,15 @@ page 82568 "ADLSE Setup API v11"
         SetActionResponse(ActionContext, Rec."SystemId");
     end;
 
+    [ServiceEnabled]
+    procedure RefreshOptions(var ActionContext: WebServiceActionContext)
+    var
+        ADLSEEnumTranslation: Record "ADLSE Enum Translation";
+    begin
+        ADLSEEnumTranslation.RefreshOptions();
+        SetActionResponse(ActionContext, Rec."SystemId");
+    end;
+
     local procedure SetActionResponse(var ActionContext: WebServiceActionContext; AdlsId: Guid)
     var
     begin

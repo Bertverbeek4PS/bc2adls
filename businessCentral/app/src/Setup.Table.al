@@ -107,10 +107,30 @@ table 82560 "ADLSE Setup"
         field(30; Workspace; Text[100])
         {
             Caption = 'Workspace';
+            trigger OnValidate()
+            var
+                ValidGuid: Guid;
+            begin
+                if not Evaluate(ValidGuid, Rec.Workspace) then
+                    if (StrLen(Rec.Workspace) < 3) or (StrLen(Rec.Workspace) > 24)
+                        or TextCharactersOtherThan(Rec.Workspace, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_')
+                    then
+                        Error(WorkspaceIncorrectFormatErr);
+            end;
         }
         field(31; Lakehouse; Text[100])
         {
             Caption = 'Lakehouse';
+            trigger OnValidate()
+            var
+                ValidGuid: Guid;
+            begin
+                if not Evaluate(ValidGuid, Rec.Lakehouse) then
+                    if (StrLen(Rec.Lakehouse) < 3) or (StrLen(Rec.Lakehouse) > 24)
+                        or TextCharactersOtherThan(Rec.Lakehouse, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_')
+                    then
+                        Error(LakehouseIncorrectFormatErr);
+            end;
         }
         field(35; "Schema Exported On"; DateTime)
         {
@@ -126,7 +146,7 @@ table 82560 "ADLSE Setup"
             trigger OnValidate()
             begin
                 if Rec."Schema Exported On" <> 0DT then
-                    Error(ErrorInfo.Create(NoSchemaExportedErr, true));
+                    Error(ErrorInfo.Create(SchemaAlreadyExportedErr, true));
             end;
         }
         field(50; "Delete Table"; Boolean)
@@ -149,6 +169,17 @@ table 82560 "ADLSE Setup"
                 end;
             end;
         }
+        field(60; "Delivered DateTime"; Boolean)
+        {
+            Caption = 'Add delivered DateTime';
+        }
+        //Add field for lookup to table companies
+        field(65; "Export Company Database Tables"; Text[30])
+        {
+            Caption = 'Export Company Database Tables';
+            TableRelation = Company.Name;
+        }
+
     }
 
     keys
@@ -161,12 +192,15 @@ table 82560 "ADLSE Setup"
 
     var
         MaxReqErrorInfo: ErrorInfo;
-        ContainerNameIncorrectFormatErr: Label 'The container name is in an incorrect format.';
-        AccountNameIncorrectFormatErr: Label 'The account name is in an incorrect format.';
+        ContainerNameIncorrectFormatErr: Label 'The container name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_';
+        AccountNameIncorrectFormatErr: Label 'The account name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890';
+        WorkspaceIncorrectFormatErr: Label 'The workspace is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID';
+        LakehouseIncorrectFormatErr: Label 'The lakehouse is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID';
         RecordDoesNotExistErr: Label 'No record on this table exists.';
         PrimaryKeyValueLbl: Label '0', Locked = true;
-        NoSchemaExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
+        SchemaAlreadyExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
         MaximumRetriesErr: Label 'Please enter a value that is equal or smaller than 10 for the maximum retries.';
+        NoSchemaExportedErr: Label 'No schema has been exported yet. Please export schema first before exporting the data.';
 
     local procedure TextCharactersOtherThan(String: Text; CharString: Text): Boolean
     var
@@ -214,12 +248,10 @@ table 82560 "ADLSE Setup"
     begin
         Rec.GetSingleton();
         if Rec."Schema Exported On" <> 0DT then
-            Error(ErrorInfo.Create(NoSchemaExportedErr, true));
+            Error(ErrorInfo.Create(SchemaAlreadyExportedErr, true));
     end;
 
     procedure CheckSchemaExported()
-    var
-        NoSchemaExportedErr: Label 'No schema has been exported yet. Please export schema first before exporting the data.';
     begin
         Rec.GetSingleton();
         if Rec."Schema Exported On" = 0DT then
