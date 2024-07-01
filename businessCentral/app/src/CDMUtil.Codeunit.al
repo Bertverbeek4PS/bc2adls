@@ -118,6 +118,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         RecordRef: RecordRef;
         FieldRef: FieldRef;
         FieldId: Integer;
+        FieldLength: Integer;
         DataFormat: Text;
         AppliedTraits: JsonArray;
     begin
@@ -125,13 +126,18 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         foreach FieldId in FieldIdList do begin
             FieldRef := RecordRef.Field(FieldId);
             GetCDMAttributeDetails(FieldRef.Type, DataFormat, AppliedTraits);
+            FieldLength := FieldRef.Length;
+            if FieldRef.Type = FieldRef.Type::Option then
+                FieldLength := EnumValueMaxLength();
             Result.Add(
                 CreateAttributeJson(
                     ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number),
                     DataFormat,
                     FieldRef.Name,
                     AppliedTraits,
-                    FieldRef.Length));
+                    FieldLength,
+                    IsPrimaryKeyField(RecordRef.Number, FieldRef.Number)
+                ));
         end;
         ADLSESetup.GetSingleton();
         if ADLSESetup."Delivered DateTime" then begin
@@ -142,7 +148,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         if ADLSEUtil.IsTablePerCompany(TableID) then begin
             GetCDMAttributeDetails(FieldType::Text, DataFormat, AppliedTraits);
             Result.Add(
-                CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, FieldRef.Length));
+                CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, GetCompanyFieldNameLength(), false));
         end;
     end;
 
@@ -151,18 +157,35 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         exit(CompanyFieldNameLbl);
     end;
 
+    procedure GetCompanyFieldNameLength(): Integer
+    var
+        Company: Record Company;
+    begin
+        exit(MaxStrLen(Company.Name)); // see https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/methods-auto/database/database-copycompany-method
+    end;
+
     procedure GetDeliveredDateTimeFieldName(): Text
     begin
         exit(DeliveredDateTimeFieldNameLbl);
     end;
 
-    local procedure CreateAttributeJson(Name: Text; DataFormat: Text; DisplayName: Text; AppliedTraits: JsonArray; MaximumLength: Integer) Attribute: JsonObject
+    procedure IsPrimaryKeyField(TableId: Integer; FieldId: Integer): Boolean
+    var
+        FieldTable: Record Field;
+    begin
+        if FieldTable.Get(TableId, FieldId) then
+            exit(fieldTable.IsPartOfPrimaryKey);
+    end;
+
+    local procedure CreateAttributeJson(Name: Text; DataFormat: Text; DisplayName: Text; AppliedTraits: JsonArray; MaximumLength: Integer; IsPrimaryKeyFieldParameter: Boolean) Attribute: JsonObject
     begin
         Attribute.Add('name', Name);
         Attribute.Add('dataFormat', DataFormat);
         Attribute.Add('appliedTraits', AppliedTraits);
         Attribute.Add('displayName', DisplayName);
         Attribute.Add('maximumLength', MaximumLength);
+        if IsPrimaryKeyFieldParameter then
+            Attribute.Add('isPrimaryKey', true)
     end;
 
     procedure CheckChangeInEntities(EntityContentOld: JsonObject; EntityContentNew: JsonObject; EntityName: Text)
@@ -325,5 +348,10 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         Value2 := ADLSEUtil.GetTextValueForKeyInJson(Attribute2.AsObject(), FieldName);
         if (Value1 <> Value2) then
             Error(MismatchedValueInAttributeErr, FieldName, Index, Value1, Value2);
+    end;
+
+    local procedure EnumValueMaxLength(): Integer
+    begin
+        exit(100); //based on the Enum Translation Lang Table
     end;
 }
