@@ -163,7 +163,6 @@ codeunit 82569 "ADLSE Execution"
         JobQueueEntry."Object Type to Run" := JobQueueEntry."Object Type to Run"::Codeunit;
         JobQueueEntry."Object ID to Run" := CODEUNIT::"ADLSE Execution";
         JobQueueEntry."Earliest Start Date/Time" := CurrentDateTime(); // now
-        JobQueueEntry."Expiration Date/Time" := CurrentDateTime() + (7 * 24 * 60 * 60 * 1000); // 7 days from now
     end;
 
     internal procedure Log(EventId: Text; Message: Text; Verbosity: Verbosity)
