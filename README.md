@@ -2,25 +2,10 @@
 # Starting update
 **The original repo of [bc2adls](https://github.com/microsoft/bc2adls) is in read-only mode. But since allot of partners are using this tool we want to develop it further as an open source. A special thanks to the creators of this tool: [Soumya Dutta](https://www.linkedin.com/in/soumya-dutta-07813a5/) and [Henri Schulte](https://www.linkedin.com/in/henrischulte/). Who put allot of effort in it.**
 
-# Project
-
-> **This tool is an <u>experiment</u> on Dynamics 365 Business Central with the sole purpose of discovering the possibilities of having data exported to an Azure Data Lake. To see the details of how this tool is supported, please visit [the Support page](./SUPPORT.md). In case you wish to use this tool for your next project and engage with us, you are welcome to create a issue or a pull request. As we are a small team, please expect delays in getting back to you.**
-
 ## Introduction
 
-The **bc2adls** tool is used to export data from [Dynamics 365 Business Central](https://dynamics.microsoft.com/en-us/business-central/overview/) (BC) to [Azure Data Lake Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction) and expose it in the [CDM folder](https://docs.microsoft.com/en-us/common-data-model/data-lake) format. The components involved are the following,
-- the **[businessCentral](/tree/main/businessCentral/)** folder holds a [BC extension](https://docs.microsoft.com/en-gb/dynamics365/business-central/ui-extensions) called `Azure Data Lake Storage Export` (ADLSE) which enables export of incremental data updates to a container on the data lake. The increments are stored in the CDM folder format described by the `deltas.cdm.manifest.json manifest`.
-- the **[synapse](/tree/main/synapse/)** folder holds the templates needed to create an [Azure Synapse](https://azure.microsoft.com/en-gb/services/synapse-analytics/) pipeline that consolidates the increments into a final `data` CDM folder.
+The **bc2adls** tool is used to export incremental data from [Dynamics 365 Business Central](https://dynamics.microsoft.com/en-us/business-central/overview/) (BC) to [Microsoft Fabric ](https://learn.microsoft.com/nl-nl/fabric/get-started/microsoft-fabric-overview) or [Azure Data Lake Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction).
 
-The following diagram illustrates the flow of data through a usage scenario- the main points being,
-- Incremental update data from BC is moved to Azure Data Lake Storage through the ADLSE extension into the `deltas` folder.
-- Triggering the Synapse pipeline(s) consolidates the increments into the data folder.
-- The resulting data can be consumed by applications, such as Power BI, in the following ways:
-	- CDM: via the `data.cdm.manifest.json manifest`
-	- CSV/Parquet: via the underlying files for each individual entity inside the `data` folder
-	- Spark/SQL: via [shared metadata tables](/.assets/SharedMetadataTables.md)
-	
-![Architecture](/.assets/architecture.png "Flow of data")
 
 More details:
 - [Installation and configuration of the connection with Azure Data Lake](/.assets/Setup.md)

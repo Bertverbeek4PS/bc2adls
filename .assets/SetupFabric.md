@@ -1,3 +1,14 @@
+The components for exporting to Microsoft Fabric involved are the following,
+- the **[businessCentral](/tree/main/businessCentral/)** folder holds a [BC extension](https://docs.microsoft.com/en-gb/dynamics365/business-central/ui-extensions) called `Azure Data Lake Storage Export` (ADLSE) which enables export of incremental data updates to a container on the data lake. The increments are stored in the lakehouse folder in csv format.
+- the **[fabric](/tree/main/fabric/)** folder holds the template needed to create an `notebook` to move the delta files to delta parquet table in the lakehouse.
+
+The following diagram illustrates the flow of data through a usage scenario- the main points being,
+- Incremental update data from BC is moved to Microsoft Fabric through the ADLSE extension into the `deltas` folder in the lakehouse.
+- Triggering the notebook consolidates the increments into the delta parqeut tables.
+- The resulting data can be consumed by Power BI or other tools inside Microsoft Fabric.:
+
+![Architecture](/.assets/architectureFabric.png "Flow of data")
+
 The following steps take you through configuring your Dynamics 365 Business Central (BC) as well as Azure resources to enable the feature.
 
 ## Configuring Azure
@@ -50,10 +61,13 @@ Once you have the `Azure Data Lake Storage Export` extension deployed, open the 
 Let us take a look at the settings show in the sample screenshot below,
 - **Storage Type** choose here the storage type. Choose "Microsoft Fabric"
 - **Tenant ID** The tenant id at which the app registration created above resides (refer to **b)** in the picture at [Step 1](/.assets/Setup.md#step-1-create-an-azure-service-principal))
-- **Workspace** The workspace in your Microsoft Fabric environment where the lakehouse is located. This can also be a GUID.
-- **Lakehouse** The name or GUID of the lakehouse inside the workspace.
-- **Max payload size (MiBs)** The size of the individual data payload that constitutes a single REST Api upload operation to the data lake. A bigger size will surely mean less number of uploads but might consume too much memory on the BC side. Note that each upload creates a new block within the blob in the data lake. The size of such blocks are constrained as described at [Put Block (REST API) - Azure Storage | Microsoft Docs](https://docs.microsoft.com/en-us/rest/api/storageservices/put-block#remarks).
+- **Workspace** The workspace in your Microsoft Fabric environment where the lakehouse is located. This can also be a GUID. Be aware that the workspace name cannot contain spaces.
+- **Lakehouse** The name or GUID of the lakehouse inside the workspace. The same naming convention applies here as for the workspace.
 - **Skip row version sorting** Allows the records to be exported as they are fetched through SQL. This can be useful to avoid query timeouts when there is a large amount of records to be exported to the lake from a table, say, during the first export. The records are usually sorted ascending on their row version so that in case of a failure, the next export can re-start by exporting only those records that have a row version higher than that of the last exported one. This helps incremental updates to reach the lake in the same order that the updates were made. Enabling this check, however, may thus cause a subsequent export job to re-send records that had been exported to the lake already, thus leading to performance degradation on the next run. It is recommended to use this cautiously for only a few tables (while disabling export for all other tables), and disabling this check once all the data has been transferred to the lake.
 - **Emit telemetry** The flag to enable or disable operational telemetry from this extension. It is set to True by default. 
+- **Translations** Choose the languages that you want to export the enum translations. You have to refresh this every time there is new translation added. This you can do to go to `Related` and then `Enum translations`.
+- **Export Enum as Integer** The flag to enable or disable exporting the enum values as integers. It is set to False by default.
+- **Add delivered DateTime** If you want the exported time in the CSV file yes or no.
+- **Export Company Database Tables** Choose the company in which you want to export the DataPerCompany = false tables.
 
 ![Business Central Fabric](/.assets/businessCentralFabric.png)

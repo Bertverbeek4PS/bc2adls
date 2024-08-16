@@ -1,3 +1,17 @@
+The components for exporting to Azure Data Lake involved are the following,
+- the **[businessCentral](/tree/main/businessCentral/)** folder holds a [BC extension](https://docs.microsoft.com/en-gb/dynamics365/business-central/ui-extensions) called `Azure Data Lake Storage Export` (ADLSE) which enables export of incremental data updates to a container on the data lake. The increments are stored in the CDM folder format described by the `deltas.cdm.manifest.json manifest`.
+- the **[synapse](/tree/main/synapse/)** folder holds the templates needed to create an [Azure Synapse](https://azure.microsoft.com/en-gb/services/synapse-analytics/) pipeline that consolidates the increments into a final `data` CDM folder.
+
+The following diagram illustrates the flow of data through a usage scenario- the main points being,
+- Incremental update data from BC is moved to Azure Data Lake Storage through the ADLSE extension into the `deltas` folder.
+- Triggering the Synapse pipeline(s) consolidates the increments into the data folder.
+- The resulting data can be consumed by applications, such as Power BI, in the following ways:
+	- CDM: via the `data.cdm.manifest.json manifest`
+	- CSV/Parquet: via the underlying files for each individual entity inside the `data` folder
+	- Spark/SQL: via [shared metadata tables](/.assets/SharedMetadataTables.md)
+	
+![Architecture](/.assets/architecture.png "Flow of data")
+
 The following steps take you through configuring your Dynamics 365 Business Central (BC) as well as Azure resources to enable the feature.
 
 ## Configuring the storage account
@@ -35,9 +49,12 @@ Let us take a look at the settings show in the sample screenshot below,
 - **Client secret** The client credential key you had defined (refer to **c)** in the in the picture at [Step 1](/.assets/Setup.md#step-1-create-an-azure-service-principal))
 - **Max payload size (MiBs)** The size of the individual data payload that constitutes a single REST Api upload operation to the data lake. A bigger size will surely mean less number of uploads but might consume too much memory on the BC side. Note that each upload creates a new block within the blob in the data lake. The size of such blocks are constrained as described at [Put Block (REST API) - Azure Storage | Microsoft Docs](https://docs.microsoft.com/en-us/rest/api/storageservices/put-block#remarks).
 - **CDM data format** The format in which the exported data is stored on the data lake. Recommended format is Parquet, which is better at handling special characters in the BC text fields. Note that the `deltas` folder will always store files in the CSV format but the consolidated `data` folder will store files in the configured format. 
-- **Multi- company export** The flag to allow exporting data from multiple companies at the same time. You should enable this only after the export schema is finalized- in other words, ensure that at least one export for a company has been successful with all the desired tables and the desired fields in those tables. We recommend that the json files are manually checked in the outbound container before enabling this flag. Changes to the export schema (adding or removing tables as well as changing the field set to be exported) are not allowed as long as this flag is checked.
 - **Skip row version sorting** Allows the records to be exported as they are fetched through SQL. This can be useful to avoid query timeouts when there is a large amount of records to be exported to the lake from a table, say, during the first export. The records are usually sorted ascending on their row version so that in case of a failure, the next export can re-start by exporting only those records that have a row version higher than that of the last exported one. This helps incremental updates to reach the lake in the same order that the updates were made. Enabling this check, however, may thus cause a subsequent export job to re-send records that had been exported to the lake already, thus leading to performance degradation on the next run. It is recommended to use this cautiously for only a few tables (while disabling export for all other tables), and disabling this check once all the data has been transferred to the lake.
 - **Emit telemetry** The flag to enable or disable operational telemetry from this extension. It is set to True by default. 
+- **Translations** Choose the languages that you want to export the enum translations. You have to refresh this every time there is new translation added. This you can do to go to `Related` and then `Enum translations`.
+- **Export Enum as Integer** The flag to enable or disable exporting the enum values as integers. It is set to False by default.
+- **Add delivered DateTime** If you want the exported time in the CSV file yes or no.
+- **Export Company Database Tables** Choose the company in which you want to export the DataPerCompany = false tables.
 
 ![The Export to Azure Data Lake Storage page](/.assets/bcAdlsePage.png)
 
