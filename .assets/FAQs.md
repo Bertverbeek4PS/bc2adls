@@ -7,7 +7,7 @@ The [Job Queue](https://learn.microsoft.com/en-us/dynamics365/business-central/a
 We recommend that a data lake container holds data only for **only one** Business Central environment. After copying environments, ensure that the export destination on the setup page on the new environment points to a new data lake container.
 
 ### How do I export data from multiple companies in the same environment?
-The export process copies the updated data to the lake for ONLY the company it has been invoked from. This is true whether you start the process by a click on the `Export` button or by scheduling a `Job Queue Entry`. Therefore, one should log in and click the button or setup scheduled jobs from the company whose data needs to be exported. A field called `Multi- company export` was added in [Pull Request #47](https://github.com/microsoft/bc2adls/pull/47) to improve concurrency for parallel exports from different companies. The field, in and of itself, does not export data from  other companies.
+The export process copies the updated data to the lake for ONLY the company it has been invoked from. This is true whether you start the process by a click on the `Export` button or by scheduling a `Job Queue Entry`. Therefore, one should log in and click the button or setup scheduled jobs from the company whose data needs to be exported. If you want to export the data from multiple companies the `export schema` must be done first.
 
 ### Can I export calculated fields into the lake?
 No, only persistent fields on the BC tables can be exported. But, the [issue #88](/issues/88) describes a way to show up those fields when consuming the lake data.
