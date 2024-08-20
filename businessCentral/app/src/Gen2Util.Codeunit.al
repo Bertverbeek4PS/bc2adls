@@ -296,6 +296,26 @@ codeunit 82568 "ADLSE Gen 2 Util"
         exit(true);
     end;
 
+    procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSEHttp: Codeunit "ADLSE Http";
+        Response: Text;
+        Url: Text;
+        ADLSEContainerUrlTxt: Label 'https://%1.dfs.core.windows.net/%2', Comment = '%1: Account name, %2: Container Name', Locked = true;
+    begin
+        // DELETE https://{accountName}.{dnsSuffix}/{filesystem}/{path}
+        // https://learn.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete?view=rest-storageservices-datalakestoragegen2-2019-12-12
+        ADLSESetup.GetSingleton();
+        Url := StrSubstNo(ADLSEContainerUrlTxt, ADLSESetup."Account Name", ADLSESetup.Container);
+        Url += '/deltas/' + ADLSEntityName + '?recursive=true';
+
+        ADLSEHttp.SetMethod("ADLSE Http Method"::Delete);
+        ADLSEHttp.SetUrl(Url);
+        ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+        ADLSEHttp.InvokeRestApi(Response)
+    end;
+
     [IntegrationEvent(false, false)]
     local procedure OnBeforeGetBlobContent(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; var BlobExists: Boolean; var Content: JsonObject; var IsHandled: Boolean)
     begin

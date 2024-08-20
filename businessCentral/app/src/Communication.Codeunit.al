@@ -361,11 +361,20 @@ codeunit 82562 "ADLSE Communication"
 
     procedure ResetTableExport(ltableId: Integer)
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         Body: JsonObject;
     begin
+        ADLSESetup.GetSingleton();
         ADLSECredentials.Init();
-        ADLSEGen2Util.CreateOrUpdateJsonBlob(GetBaseUrl() + StrSubstNo(ResetTableExportTxt, ADLSEUtil.GetDataLakeCompliantTableName(ltableId)), ADLSECredentials, '', Body);
+        case ADLSESetup."Storage Type" of
+            "ADLSE Storage Type"::"Microsoft Fabric":
+                ADLSEGen2Util.CreateOrUpdateJsonBlob(GetBaseUrl() + StrSubstNo(ResetTableExportTxt, ADLSEUtil.GetDataLakeCompliantTableName(ltableId)), ADLSECredentials, '', Body);
+            "ADLSE Storage Type"::"Azure Data Lake":
+                ADLSEGen2Util.RemoveDeltasFromDataLake(ADLSEUtil.GetDataLakeCompliantTableName(ltableId), ADLSECredentials);
+        end;
     end;
+
+
 }
