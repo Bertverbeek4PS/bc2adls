@@ -33,12 +33,17 @@ jobs:
     runs-on: [windows-latest]
     name: Pull changes from ${{ inputs.environment }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Initialize the workflow
         id: init
-        uses: microsoft/AL-Go-Actions/WorkflowInitialize@v5.3
+        uses: microsoft/AL-Go-Actions/WorkflowInitialize@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: powershell
 
@@ -51,14 +56,14 @@ jobs:
           Add-Content -encoding utf8 -Path $env:GITHUB_ENV -Value "envName=$envName"
 
       - name: Read settings
-        uses: microsoft/AL-Go-Actions/ReadSettings@v5.3
+        uses: microsoft/AL-Go-Actions/ReadSettings@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: powershell
           get: powerPlatformSolutionFolder
 
       - name: Read secrets
         id: ReadSecrets
-        uses: microsoft/AL-Go-Actions/ReadSecrets@v5.3
+        uses: microsoft/AL-Go-Actions/ReadSecrets@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: powershell
           gitHubSecrets: ${{ toJson(secrets) }}
@@ -67,7 +72,7 @@ jobs:
 
       - name: Determine Deployment Environments
         id: DetermineDeploymentEnvironments
-        uses: microsoft/AL-Go-Actions/DetermineDeploymentEnvironments@v5.3
+        uses: microsoft/AL-Go-Actions/DetermineDeploymentEnvironments@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
@@ -89,7 +94,7 @@ jobs:
           Add-Content -encoding utf8 -Path $env:GITHUB_ENV -Value "solutionFolder=$solutionFolder"
 
       - name: Pull changes from Power Platform environment
-        uses: microsoft/AL-Go-Actions/PullPowerPlatformChanges@v5.3
+        uses: microsoft/AL-Go-Actions/PullPowerPlatformChanges@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         env:
           Secrets: '${{ steps.ReadSecrets.outputs.Secrets }}'
         with:
@@ -102,7 +107,7 @@ jobs:
 
       - name: Finalize the workflow
         if: always()
-        uses: microsoft/AL-Go-Actions/WorkflowPostProcess@v5.3
+        uses: microsoft/AL-Go-Actions/WorkflowPostProcess@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:

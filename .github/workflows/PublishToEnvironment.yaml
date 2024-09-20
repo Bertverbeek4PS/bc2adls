@@ -35,8 +35,13 @@ jobs:
       deviceCode: ${{ steps.Authenticate.outputs.deviceCode }}
       telemetryScopeJson: ${{ steps.init.outputs.telemetryScopeJson }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
       - name: Dump Workflow Information
-        uses: microsoft/AL-Go-Actions/DumpWorkflowInfo@v5.3
+        uses: microsoft/AL-Go-Actions/DumpWorkflowInfo@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: powershell
 
@@ -45,19 +50,19 @@ jobs:
 
       - name: Initialize the workflow
         id: init
-        uses: microsoft/AL-Go-Actions/WorkflowInitialize@v5.3
+        uses: microsoft/AL-Go-Actions/WorkflowInitialize@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: powershell
 
       - name: Read settings
         id: ReadSettings
-        uses: microsoft/AL-Go-Actions/ReadSettings@v5.3
+        uses: microsoft/AL-Go-Actions/ReadSettings@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: powershell
 
       - name: Determine Deployment Environments
         id: DetermineDeploymentEnvironments
-        uses: microsoft/AL-Go-Actions/DetermineDeploymentEnvironments@v5.3
+        uses: microsoft/AL-Go-Actions/DetermineDeploymentEnvironments@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
@@ -75,7 +80,7 @@ jobs:
 
       - name: Read secrets
         id: ReadSecrets
-        uses: microsoft/AL-Go-Actions/ReadSecrets@v5.3
+        uses: microsoft/AL-Go-Actions/ReadSecrets@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         if: steps.DetermineDeploymentEnvironments.outputs.UnknownEnvironment == 1
         with:
           shell: powershell
@@ -130,6 +135,11 @@ jobs:
     env:
       deviceCode: ${{ needs.Initialization.outputs.deviceCode }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
@@ -141,21 +151,21 @@ jobs:
           Add-Content -Encoding UTF8 -Path $env:GITHUB_OUTPUT -Value "envName=$envName"
 
       - name: Read settings
-        uses: microsoft/AL-Go-Actions/ReadSettings@v5.3
+        uses: microsoft/AL-Go-Actions/ReadSettings@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: ${{ matrix.shell }}
           get: type,powerPlatformSolutionFolder
 
       - name: Read secrets
         id: ReadSecrets
-        uses: microsoft/AL-Go-Actions/ReadSecrets@v5.3
+        uses: microsoft/AL-Go-Actions/ReadSecrets@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: ${{ matrix.shell }}
           gitHubSecrets: ${{ toJson(secrets) }}
           getSecrets: '${{ steps.envName.outputs.envName }}-AuthContext,${{ steps.envName.outputs.envName }}_AuthContext,AuthContext'
 
       - name: Get Artifacts for deployment
-        uses: microsoft/AL-Go-Actions/GetArtifactsForDeployment@v5.3
+        uses: microsoft/AL-Go-Actions/GetArtifactsForDeployment@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: ${{ matrix.shell }}
           artifactsVersion: ${{ github.event.inputs.appVersion }}
@@ -163,7 +173,7 @@ jobs:
 
       - name: Deploy to Business Central
         id: Deploy
-        uses: microsoft/AL-Go-Actions/Deploy@v5.3
+        uses: microsoft/AL-Go-Actions/Deploy@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         env:
           Secrets: '${{ steps.ReadSecrets.outputs.Secrets }}'
         with:
@@ -175,7 +185,7 @@ jobs:
 
       - name: Deploy to Power Platform
         if: env.type == 'PTE' && env.powerPlatformSolutionFolder != ''
-        uses: microsoft/AL-Go-Actions/DeployPowerPlatform@v5.3
+        uses: microsoft/AL-Go-Actions/DeployPowerPlatform@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         env:
           Secrets: '${{ steps.ReadSecrets.outputs.Secrets }}'
         with:
@@ -189,12 +199,17 @@ jobs:
     if: always()
     runs-on: [ windows-latest ]
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Finalize the workflow
         id: PostProcess
-        uses: microsoft/AL-Go-Actions/WorkflowPostProcess@v5.3
+        uses: microsoft/AL-Go-Actions/WorkflowPostProcess@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
