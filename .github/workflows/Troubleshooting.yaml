@@ -24,13 +24,18 @@ jobs:
   Troubleshooting:
     runs-on: [ windows-latest ]
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
           lfs: true
 
       - name: Troubleshooting
-        uses: microsoft/AL-Go-Actions/Troubleshooting@v5.3
+        uses: microsoft/AL-Go-Actions/Troubleshooting@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: powershell
           gitHubSecrets: ${{ toJson(secrets) }}

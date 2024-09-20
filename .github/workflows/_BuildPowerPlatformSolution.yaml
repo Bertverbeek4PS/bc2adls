@@ -54,6 +54,11 @@ jobs:
         shell: ${{ inputs.shell }}
     name: '${{ inputs.projectName }}'
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
@@ -61,14 +66,14 @@ jobs:
           lfs: true
 
       - name: Read settings
-        uses: microsoft/AL-Go-Actions/ReadSettings@v5.3
+        uses: microsoft/AL-Go-Actions/ReadSettings@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: ${{ inputs.shell }}
           project: ${{ inputs.project }}
           get: type,powerPlatformSolutionFolder,appRevision,appBuild
 
       - name: Build
-        uses: microsoft/AL-Go-Actions/BuildPowerPlatform@v5.3
+        uses: microsoft/AL-Go-Actions/BuildPowerPlatform@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         with:
           shell: ${{ inputs.shell }}
           solutionFolder: ${{ inputs.project }}
@@ -79,7 +84,7 @@ jobs:
 
       - name: Calculate Artifact names
         id: calculateArtifactsNames
-        uses: microsoft/AL-Go-Actions/CalculateArtifactNames@v5.3
+        uses: microsoft/AL-Go-Actions/CalculateArtifactNames@b1d94cdeafe4735a2dc05a7ad9320801dd43dde8 # v5.3
         if: success() || failure()
         with:
           shell: ${{ inputs.shell }}
