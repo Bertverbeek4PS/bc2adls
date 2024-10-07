@@ -313,7 +313,7 @@ codeunit 82561 "ADLSE Execute"
             CustomDimensions.Add('Entity', TableCaption);
             ADLSEExecution.Log('ADLSE-037', 'Finished the export process', Verbosity::Normal, CustomDimensions);
         end;
-        Commit();
+        Commit(); //To avoid misreading
 
         // This export session is soon going to end. Start up a new one from 
         // the stored list of pending tables to export.

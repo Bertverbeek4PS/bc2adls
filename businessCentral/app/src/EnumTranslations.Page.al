@@ -3,6 +3,7 @@ page 82569 "ADLSE Enum Translations"
 {
     PageType = List;
     ApplicationArea = All;
+    Caption = 'ADLSE Enum Translations';
     UsageCategory = Lists;
     SourceTable = "ADLSE Enum Translation";
 

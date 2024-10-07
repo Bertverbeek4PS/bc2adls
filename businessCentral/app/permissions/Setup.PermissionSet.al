@@ -15,5 +15,18 @@ permissionset 82560 "ADLSE - Setup"
                   tabledata "ADLSE Deleted Record" = RD,
                   tabledata "ADLSE Current Session" = R,
                   tabledata "ADLSE Table Last Timestamp" = RID,
-                  tabledata "ADLSE Run" = RD;
+                  tabledata "ADLSE Run" = RD,
+                  tabledata "ADLSE Enum Translation" = RIMD,
+                  tabledata "ADLSE Enum Translation Lang" = RIMD,
+                  codeunit "ADLSE Clear Tracked Deletions" = X,
+                  codeunit "ADLSE Credentials" = X,
+                  codeunit "ADLSE Setup" = X,
+                  codeunit "ADLSE Installer" = X,
+                  page "ADLSE Setup Tables" = X,
+                  page "ADLSE Setup Fields" = X,
+                  page "ADLSE Setup" = X,
+                  page "ADLSE Run" = X,
+                  page "ADLSE Enum Translations" = X,
+                  page "ADLSE Enum Translations Lang" = X,
+                  xmlport "BC2ADLS Import" = X;
 }

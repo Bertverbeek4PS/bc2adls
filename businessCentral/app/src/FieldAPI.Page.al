@@ -28,10 +28,12 @@ page 82567 "ADLSE Field API"
                 {
                     Editable = false;
                 }
+#pragma warning disable LC0016
                 field(systemRowVersion; Rec.SystemRowVersion)
                 {
                     Editable = false;
                 }
+#pragma warning restore
             }
         }
     }

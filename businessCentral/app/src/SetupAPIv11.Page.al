@@ -34,10 +34,12 @@ page 82568 "ADLSE Setup API v11"
                 {
                     Editable = false;
                 }
+#pragma warning disable LC0016
                 field(systemRowVersion; Rec.SystemRowVersion)
                 {
                     Editable = false;
                 }
+#pragma warning restore
             }
         }
     }

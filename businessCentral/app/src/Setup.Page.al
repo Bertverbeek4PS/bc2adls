@@ -139,7 +139,7 @@ page 82560 "ADLSE Setup"
                                             Rec.Translations += Language.Code + ';';
                                     until Language.Next() = 0;
                                 //Remove last semicolon
-                                Rec.Translations := CopyStr(Rec.Translations, 1, StrLen(Rec.Translations) - 1);
+                                Rec.Translations := CopyStr(CopyStr(Rec.Translations, 1, StrLen(Rec.Translations) - 1), 1, 250);
                                 CurrPage.Update();
                             end;
                         end;

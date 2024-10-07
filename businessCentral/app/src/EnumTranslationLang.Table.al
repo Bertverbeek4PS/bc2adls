@@ -1,8 +1,12 @@
+#pragma warning disable LC0015
 table 82568 "ADLSE Enum Translation Lang"
+#pragma warning restore
 {
     DataClassification = ToBeClassified;
     Caption = 'ADLSE Enum Translation Language';
     Access = Internal;
+    LookupPageId = "ADLSE Enum Translations Lang";
+    DrillDownPageId = "ADLSE Enum Translations Lang";
 
     fields
     {

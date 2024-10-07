@@ -89,7 +89,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         ContentLengthTok: Label 'Content-Length', Locked = true;
     begin
         OnBeforeGetBlobContentLength(BlobPath, ContentLength, IsHandled);
-        If IsHandled then
+        if IsHandled then
             exit;
 
         ADLSEHttp.SetMethod("ADLSE Http Method"::Head);

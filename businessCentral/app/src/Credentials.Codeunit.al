@@ -73,7 +73,7 @@ codeunit 82565 "ADLSE Credentials"
     [NonDebuggable]
     procedure IsClientIDSet(): Boolean
     begin
-        exit(GetClientId() <> '');
+        exit(GetClientID() <> '');
     end;
 
     [NonDebuggable]

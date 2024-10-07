@@ -1,13 +1,18 @@
+#pragma warning disable LC0015
 table 82567 "ADLSE Enum Translation"
+#pragma warning restore
 {
     DataClassification = ToBeClassified;
     Caption = 'ADLSE Enum Translation';
     Access = Internal;
+    LookupPageId = "ADLSE Enum Translations";
+    DrillDownPageId = "ADLSE Enum Translations";
 
     fields
     {
         field(1; "Table Id"; Integer)
         {
+            AllowInCustomizations = Always;
             DataClassification = SystemMetadata;
             Caption = 'Table Id';
         }
@@ -18,6 +23,7 @@ table 82567 "ADLSE Enum Translation"
         }
         field(3; "Field Id"; Integer)
         {
+            AllowInCustomizations = Always;
             DataClassification = SystemMetadata;
             Caption = 'Field Id';
         }
@@ -104,8 +110,8 @@ table 82567 "ADLSE Enum Translation"
             Translations := ADLSESetup.Translations.Split(';');
             Translations.Remove('');
             for x := 1 to Translations.Count() do begin
-                TranslationHelper.SetGlobalLanguageByCode(Translations.Get(x));
-                ADLSEEnumTranslationLang.InsertEnumLanguage(Translations.Get(x), FieldRec.TableNo, FieldRec."No.", FieldRec.FieldName, FieldRef.GetEnumValueOrdinal(i), FieldRef.GetEnumValueCaption(i));
+                TranslationHelper.SetGlobalLanguageByCode(CopyStr(Translations.Get(x), 1, 10));
+                ADLSEEnumTranslationLang.InsertEnumLanguage(CopyStr(Translations.Get(x), 1, 10), FieldRec.TableNo, FieldRec."No.", FieldRec.FieldName, FieldRef.GetEnumValueOrdinal(i), FieldRef.GetEnumValueCaption(i));
             end;
         end;
         TranslationHelper.RestoreGlobalLanguage();
