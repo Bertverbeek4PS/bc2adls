@@ -34,21 +34,25 @@ table 82566 "ADLSE Run"
         {
             Editable = false;
             Caption = 'State';
+            ToolTip = 'Specifies the state of the execution of export.';
         }
         field(5; "Error"; Text[2048])
         {
             Editable = false;
             Caption = 'Error';
+            ToolTip = 'Specifies the error if the execution had any.';
         }
         field(6; Started; DateTime)
         {
             Editable = false;
             Caption = 'Started';
+            ToolTip = 'Specifies when the export was started.';
         }
         field(7; Ended; DateTime)
         {
             Editable = false;
             Caption = 'Ended';
+            ToolTip = 'Specifies when the export was started.';
         }
     }
 

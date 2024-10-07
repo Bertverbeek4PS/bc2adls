@@ -156,6 +156,7 @@ codeunit 82561 "ADLSE Execute"
         FlushedTimeStamp: BigInteger;
         FieldId: Integer;
         SystemCreatedAt, UtcEpochZero : DateTime;
+        ErrorMessage: ErrorInfo;
     begin
         ADLSESetup.GetSingleton();
         SetFilterForUpdates(TableID, UpdatedLastTimeStamp, ADLSESetup."Skip Timestamp Sorting On Recs", RecordRef, TimeStampFieldRef);
@@ -189,14 +190,14 @@ codeunit 82561 "ADLSE Execute"
                     if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
                         UpdatedLastTimeStamp := FlushedTimeStamp;
                 end else
-                    Error('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+                    ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
             until RecordRef.Next() = 0;
 
             if ADLSECommunication.TryFinish(FlushedTimeStamp) then begin
                 if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
                     UpdatedLastTimeStamp := FlushedTimeStamp
             end else
-                Error('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+                ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
         end;
         if EmitTelemetry then
             ADLSEExecution.Log('ADLSE-009', 'Updated records exported', Verbosity::Normal);
@@ -230,6 +231,7 @@ codeunit 82561 "ADLSE Execute"
         TableCaption: Text;
         EntityCount: Text;
         FlushedTimeStamp: BigInteger;
+        ErrorMessage: ErrorInfo;
     begin
         SetFilterForDeletes(TableID, DeletedLastEntryNo, ADLSEDeletedRecord);
 
@@ -253,13 +255,13 @@ codeunit 82561 "ADLSE Execute"
                     if ADLSECommunication.TryCollectAndSendRecord(RecordRef, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp) then
                         DeletedLastEntryNo := FlushedTimeStamp
                     else
-                        Error('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+                        ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
                 until ADLSEDeletedRecord.Next() = 0;
 
             if ADLSECommunication.TryFinish(FlushedTimeStamp) then
                 DeletedLastEntryNo := FlushedTimeStamp
             else
-                Error('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+                ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
         end;
         if EmitTelemetry then
             ADLSEExecution.Log('ADLSE-011', 'Deleted records exported', Verbosity::Normal, CustomDimensions);

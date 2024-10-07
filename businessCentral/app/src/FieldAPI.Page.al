@@ -34,6 +34,10 @@ page 82567 "ADLSE Field API"
                     Editable = false;
                 }
 #pragma warning restore
+                field(lastModifiedDateTime; Rec.SystemModifiedAt)
+                {
+                    Editable = false;
+                }
             }
         }
     }

@@ -5,7 +5,7 @@ enum 82561 "ADLSE Http Method"
     Access = Internal;
     Extensible = false;
 
-#pragma warning disable LC0016
+#pragma warning disable LC0016, LC0045
     value(0; Get) { }
     value(1; Put) { }
     value(2; Delete) { }

@@ -16,9 +16,9 @@ codeunit 82563 "ADLSE Http"
         ContentTypeApplicationJsonTok: Label 'application/json', Locked = true;
         ContentTypePlainTextTok: Label 'text/plain; charset=utf-8', Locked = true;
         UnsupportedMethodErr: Label 'Unsupported method: %1', Comment = '%1: http method name';
-        OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id';
-        BearerTok: Label 'Bearer %1', Comment = '%1: access token';
-        AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret';
+        OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id', Locked = true;
+        BearerTok: Label 'Bearer %1', Comment = '%1: access token', Locked = true;
+        AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret', Locked = true;
 
     procedure SetMethod(HttpMethodValue: Enum "ADLSE Http Method")
     begin

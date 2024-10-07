@@ -37,6 +37,11 @@ page 82566 "ADLSE Run API"
                     Editable = false;
                 }
 #pragma warning restore
+
+                field(lastModifiedDateTime; Rec.SystemModifiedAt)
+                {
+                    Editable = false;
+                }
             }
         }
     }

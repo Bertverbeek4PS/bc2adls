@@ -225,7 +225,7 @@ page 82560 "ADLSE Setup"
             {
                 ApplicationArea = All;
                 Caption = 'Clear tracked deleted records';
-                ToolTip = 'Removes the entries in the deleted record list that have already been exported. This should be done periodically to free up storage space. The codeunit ADLSE Clear Tracked Deletions may be invoked using a job queue entry for the same end.';
+                ToolTip = 'Removes the entries in the deleted record list that have already been exported. The codeunit ADLSE Clear Tracked Deletions may be invoked using a job queue entry for the same end.';
                 Image = ClearLog;
                 Enabled = TrackedDeletedRecordsExist;
 

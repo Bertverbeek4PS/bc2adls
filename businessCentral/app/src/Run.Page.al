@@ -27,29 +27,17 @@ page 82563 "ADLSE Run"
                     Visible = not DisplayLogsForGivenTable;
                 }
 
-                field(State; Rec.State)
-                {
-                    ToolTip = 'Specifies the state of the execution of export.';
-                }
+                field(State; Rec.State) { }
 
-                field(Started; Rec.Started)
-                {
-                    ToolTip = 'Specifies when the export was started.';
-                }
+                field(Started; Rec.Started) { }
 
-                field(Ended; Rec.Ended)
-                {
-                    ToolTip = 'Specifies when the export was started.';
-                }
+                field(Ended; Rec.Ended) { }
                 field("Duration"; Rec.Duration())
                 {
                     Caption = 'Duration';
                     ToolTip = 'Specifies how long export has run.';
                 }
-                field("Error"; Rec.Error)
-                {
-                    ToolTip = 'Specifies the error if the execution had any.';
-                }
+                field("Error"; Rec.Error) { }
             }
         }
     }

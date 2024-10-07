@@ -34,6 +34,10 @@ page 82571 "ADLSE CurrentSession API"
                     Editable = false;
                 }
 #pragma warning restore
+                field(lastModifiedDateTime; Rec.SystemModifiedAt)
+                {
+                    Editable = false;
+                }
             }
         }
     }

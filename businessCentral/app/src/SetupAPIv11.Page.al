@@ -40,6 +40,10 @@ page 82568 "ADLSE Setup API v11"
                     Editable = false;
                 }
 #pragma warning restore
+                field(lastModifiedDateTime; Rec.SystemModifiedAt)
+                {
+                    Editable = false;
+                }
             }
         }
     }
