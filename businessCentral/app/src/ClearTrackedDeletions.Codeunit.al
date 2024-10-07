@@ -17,6 +17,8 @@ codeunit 82573 "ADLSE Clear Tracked Deletions"
     var
         TrackedDeletedRecordsRemovedMsg: Label 'Representations of deleted records that have been exported previously have been deleted.';
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'rd')]
     local procedure ClearTrackedDeletedRecords()
     var
         ADLSETable: Record "ADLSE Table";
@@ -29,7 +31,7 @@ codeunit 82573 "ADLSE Clear Tracked Deletions"
                 ADLSEDeletedRecord.SetRange("Table ID", ADLSETable."Table ID");
                 ADLSEDeletedRecord.SetFilter("Entry No.", '<=%1', ADLSETableLastTimestamp.GetDeletedLastEntryNo(ADLSETable."Table ID"));
                 if not ADLSEDeletedRecord.IsEmpty() then
-                    ADLSEDeletedRecord.DeleteAll();
+                    ADLSEDeletedRecord.DeleteAll(false);
 
                 ADLSETableLastTimestamp.SaveDeletedLastEntryNo(ADLSETable."Table ID", 0);
             until ADLSETable.Next() = 0;

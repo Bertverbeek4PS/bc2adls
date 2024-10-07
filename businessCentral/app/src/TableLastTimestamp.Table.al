@@ -113,6 +113,7 @@ table 82564 "ADLSE Table Last Timestamp"
         exit(RecordLastTimestamp(TableID, Timestamp, false));
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'rmi')]
     local procedure RecordLastTimestamp(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
     var
         Company: Text;
@@ -120,13 +121,13 @@ table 82564 "ADLSE Table Last Timestamp"
         Company := GetCompanyNameToLookFor(TableID);
         if Rec.Get(Company, TableID) then begin
             ChangeLastTimestamp(Timestamp, Upsert);
-            exit(Rec.Modify());
+            exit(Rec.Modify(true));
         end else begin
             Rec.Init();
             Rec."Company Name" := CopyStr(Company, 1, 30);
             Rec."Table ID" := TableID;
             ChangeLastTimestamp(Timestamp, Upsert);
-            exit(Rec.Insert());
+            exit(Rec.Insert(true));
         end;
     end;
 

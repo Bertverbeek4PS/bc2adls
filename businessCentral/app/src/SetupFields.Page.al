@@ -53,7 +53,7 @@ page 82562 "ADLSE Setup Fields"
                 field("Field Type"; FieldTypeName)
                 {
                     Caption = 'Type';
-                    ToolTip = 'Specifies the field type';
+                    ToolTip = 'Specifies the field type.';
                     Editable = false;
                     Visible = false;
                 }
@@ -62,7 +62,7 @@ page 82562 "ADLSE Setup Fields"
                 {
                     Caption = 'Obsolete State';
                     OptionCaption = 'No,Pending,Removed';
-                    ToolTip = 'Specifies the Obsolete State of the field';
+                    ToolTip = 'Specifies the Obsolete State of the field.';
                     Editable = false;
                     Visible = false;
                 }

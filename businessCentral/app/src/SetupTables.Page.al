@@ -29,14 +29,13 @@ page 82561 "ADLSE Setup Tables"
                     ApplicationArea = All;
                     Editable = true;
                     Caption = 'Enabled';
-                    ToolTip = 'Specifies the state of the table. Set this checkmark to export this table, otherwise not.';
                 }
                 field(FieldsChosen; NumberFieldsChosenValue)
                 {
                     ApplicationArea = All;
                     Editable = false;
                     Caption = '# Fields selected';
-                    ToolTip = 'Shows if any field has been chosen to be exported. Click on Choose Fields action to add fields to export.';
+                    ToolTip = 'Specifies if any field has been chosen to be exported. Click on Choose Fields action to add fields to export.';
 
                     trigger OnDrillDown()
                     begin
@@ -48,7 +47,7 @@ page 82561 "ADLSE Setup Tables"
                     ApplicationArea = All;
                     Editable = false;
                     Caption = 'Entity name';
-                    ToolTip = 'The name of the entity corresponding to this table on the data lake. The value at the end indicates the table number in Dynamics 365 Business Central.';
+                    ToolTip = 'Specifies the name of the entity corresponding to this table on the data lake. The value at the end indicates the table number in Dynamics 365 Business Central.';
                 }
                 field(Status; LastRunState)
                 {
@@ -74,14 +73,14 @@ page 82561 "ADLSE Setup Tables"
                 field(LastTimestamp; UpdatedLastTimestamp)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'The timestamp of the record in this table that was exported last.';
+                    ToolTip = 'Specifies the timestamp of the record in this table that was exported last.';
                     Caption = 'Last timestamp';
                     Visible = false;
                 }
                 field(LastTimestampDeleted; DeletedRecordLastEntryNo)
                 {
                     ApplicationArea = All;
-                    ToolTip = 'The timestamp of the deleted records in this table that was exported last.';
+                    ToolTip = 'Specifies the timestamp of the deleted records in this table that was exported last.';
                     Caption = 'Last timestamp deleted';
                     Visible = false;
                 }
@@ -97,7 +96,7 @@ page 82561 "ADLSE Setup Tables"
             {
                 ApplicationArea = All;
                 Caption = 'Add';
-                ToolTip = 'Add a table to be exported';
+                ToolTip = 'Add a table to be exported.';
                 Image = New;
                 Enabled = NoExportInProgress;
 
@@ -114,7 +113,7 @@ page 82561 "ADLSE Setup Tables"
             {
                 ApplicationArea = All;
                 Caption = 'Delete';
-                ToolTip = 'Removes a table that had been added to the list meant for export';
+                ToolTip = 'Removes a table that had been added to the list meant for export.';
                 Image = Delete;
                 Enabled = NoExportInProgress;
 
@@ -129,7 +128,7 @@ page 82561 "ADLSE Setup Tables"
             {
                 ApplicationArea = All;
                 Caption = 'Choose fields';
-                ToolTip = 'Select the fields of this table to be exported';
+                ToolTip = 'Select the fields of this table to be exported.';
                 Image = SelectEntries;
                 Enabled = NoExportInProgress;
 
@@ -233,7 +232,7 @@ page 82561 "ADLSE Setup Tables"
             UpdatedLastTimestamp := 0;
             DeletedRecordLastEntryNo := 0;
             ADLSEntityName := '';
-            Rec.Modify();
+            Rec.Modify(true);
         end;
         ADLSERun.GetLastRunDetails(Rec."Table ID", LastRunState, LastStarted, LastRunError);
 

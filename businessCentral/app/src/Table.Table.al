@@ -13,6 +13,7 @@ table 82561 "ADLSE Table"
     {
         field(1; "Table ID"; Integer)
         {
+            AllowInCustomizations = Always;
             Editable = false;
             Caption = 'Table ID';
         }
@@ -27,6 +28,7 @@ table 82561 "ADLSE Table"
         {
             Editable = false;
             Caption = 'Enabled';
+            ToolTip = 'Specifies the state of the table. Set this checkmark to export this table, otherwise not.';
 
             trigger OnValidate()
             var
@@ -193,7 +195,7 @@ table 82561 "ADLSE Table"
                 ADLSETableLastTimestamp.SaveDeletedLastEntryNo(Rec."Table ID", 0);
 
                 ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");
-                ADLSEDeletedRecord.DeleteAll();
+                ADLSEDeletedRecord.DeleteAll(false);
 
                 ADLSESetup.GetSingleton();
                 if (ADLSESetup."Delete Table") then
@@ -260,7 +262,7 @@ table 82561 "ADLSE Table"
             repeat
                 if (ADLSEFields.CanFieldBeEnabled()) then begin
                     ADLSEFields.Enabled := true;
-                    ADLSEFields.Modify();
+                    ADLSEFields.Modify(true);
                 end;
             until ADLSEFields.Next() = 0;
     end;
