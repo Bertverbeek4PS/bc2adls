@@ -1,13 +1,18 @@
+#pragma warning disable LC0015
 table 82567 "ADLSE Enum Translation"
+#pragma warning restore
 {
     DataClassification = ToBeClassified;
     Caption = 'ADLSE Enum Translation';
     Access = Internal;
+    LookupPageId = "ADLSE Enum Translations";
+    DrillDownPageId = "ADLSE Enum Translations";
 
     fields
     {
         field(1; "Table Id"; Integer)
         {
+            AllowInCustomizations = Always;
             DataClassification = SystemMetadata;
             Caption = 'Table Id';
         }
@@ -15,9 +20,11 @@ table 82567 "ADLSE Enum Translation"
         {
             DataClassification = SystemMetadata;
             Caption = 'Compliant Table Name';
+            ToolTip = 'Specifies the Compliant table Name of the table that is compliant with Data Lake standards.';
         }
         field(3; "Field Id"; Integer)
         {
+            AllowInCustomizations = Always;
             DataClassification = SystemMetadata;
             Caption = 'Field Id';
         }
@@ -25,6 +32,7 @@ table 82567 "ADLSE Enum Translation"
         {
             DataClassification = SystemMetadata;
             Caption = 'Compliant Object Name';
+            ToolTip = 'Specifies the compliant field name of the field that is compliant with Data Lake standards.';
         }
     }
 
@@ -36,6 +44,7 @@ table 82567 "ADLSE Enum Translation"
         }
     }
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Enum Translation", 'i')]
     local procedure InsertEnum(TableId: Integer; FieldNo: Integer; FieldName: Text[30])
     var
         ADLSEUtil: Codeunit "ADLSE Util";
@@ -45,9 +54,12 @@ table 82567 "ADLSE Enum Translation"
         Rec."Compliant Table Name" := CopyStr(ADLSEUtil.GetDataLakeCompliantTableName(TableId), 1, MaxStrLen((Rec."Compliant Table Name")));
         Rec."Field Id" := FieldNo;
         Rec."Compliant Field Name" := CopyStr(ADLSEUtil.GetDataLakeCompliantFieldName(FieldName, FieldNo), 1, MaxStrLen((Rec."Compliant Field Name")));
-        Rec.Insert();
+        Rec.Insert(true);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE table", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Enum Translation", 'd')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Enum Translation Lang", 'd')]
     procedure RefreshOptions()
     var
         ADLSETable: Record "ADLSE Table";
@@ -58,8 +70,8 @@ table 82567 "ADLSE Enum Translation"
         ADLSEExternalEvents: Codeunit "ADLSE External Events";
         ADLSERecordRef: RecordRef;
     begin
-        ADLSEEnumTranslation.DeleteAll();
-        ADLSEEnumTranslationLang.DeleteAll();
+        ADLSEEnumTranslation.DeleteAll(false);
+        ADLSEEnumTranslationLang.DeleteAll(false);
 
         if ADLSETable.FindSet() then
             repeat
@@ -104,8 +116,8 @@ table 82567 "ADLSE Enum Translation"
             Translations := ADLSESetup.Translations.Split(';');
             Translations.Remove('');
             for x := 1 to Translations.Count() do begin
-                TranslationHelper.SetGlobalLanguageByCode(Translations.Get(x));
-                ADLSEEnumTranslationLang.InsertEnumLanguage(Translations.Get(x), FieldRec.TableNo, FieldRec."No.", FieldRec.FieldName, FieldRef.GetEnumValueOrdinal(i), FieldRef.GetEnumValueCaption(i));
+                TranslationHelper.SetGlobalLanguageByCode(CopyStr(Translations.Get(x), 1, 10));
+                ADLSEEnumTranslationLang.InsertEnumLanguage(CopyStr(Translations.Get(x), 1, 10), FieldRec.TableNo, FieldRec."No.", FieldRec.FieldName, FieldRef.GetEnumValueOrdinal(i), FieldRef.GetEnumValueCaption(i));
             end;
         end;
         TranslationHelper.RestoreGlobalLanguage();
