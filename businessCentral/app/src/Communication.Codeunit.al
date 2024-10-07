@@ -33,7 +33,7 @@ codeunit 82562 "ADLSE Communication"
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
         MSFabricUrlTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2.Lakehouse/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
         MSFabricUrlGuidTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
-        ResetTableExportTxt: Label '/reset/%1.txt', Locked = true, comment = '%1 = Table name';
+        ResetTableExportTxt: Label '/reset/%1.txt', Locked = true, Comment = '%1 = Table name';
 
     procedure SetupBlobStorage()
     var
@@ -224,7 +224,7 @@ codeunit 82562 "ADLSE Communication"
         LastTimestampExported := LastFlushedTimeStamp;
 
         Payload.Append(RecordPayLoad);
-        LastRecordOnPayloadTimeStamp := RecordTimestamp;
+        LastRecordOnPayloadTimeStamp := RecordTimeStamp;
     end;
 
     [TryFunction]

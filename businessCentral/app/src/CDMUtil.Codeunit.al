@@ -174,7 +174,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         FieldTable: Record Field;
     begin
         if FieldTable.Get(TableId, FieldId) then
-            exit(fieldTable.IsPartOfPrimaryKey);
+            exit(FieldTable.IsPartOfPrimaryKey);
     end;
 
     local procedure CreateAttributeJson(Name: Text; DataFormat: Text; DisplayName: Text; AppliedTraits: JsonArray; MaximumLength: Integer; IsPrimaryKeyFieldParameter: Boolean) Attribute: JsonObject

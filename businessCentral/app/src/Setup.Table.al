@@ -3,6 +3,7 @@
 table 82560 "ADLSE Setup"
 {
     Access = Internal;
+    Caption = 'ADLSE Setup';
     DataClassification = CustomerContent;
     DataPerCompany = false;
     DataCaptionFields = Container;

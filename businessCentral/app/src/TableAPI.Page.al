@@ -39,7 +39,7 @@ page 82565 "ADLSE Table API"
             {
                 EntityName = 'adlseField';
                 EntitySetName = 'adlseFields';
-                SubPageLink = "Table ID" = Field("Table ID");
+                SubPageLink = "Table ID" = field("Table ID");
             }
         }
     }
@@ -85,7 +85,7 @@ page 82565 "ADLSE Table API"
     [ServiceEnabled]
     procedure AddAllFields(var ActionContext: WebServiceActionContext)
     begin
-        rec.AddAllFields();
+        Rec.AddAllFields();
         SetActionResponse(ActionContext, Rec.SystemId);
     end;
 

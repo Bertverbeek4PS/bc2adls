@@ -65,7 +65,7 @@ table 82566 "ADLSE Run"
         ExportStoppedDueToCancelledSessionTxt: Label 'Export stopped as session was cancelled. Please check state of the export on the data lake before enabling this.';
         CouldNotUpdateExportRunStatusErr: Label 'Could not update the status of the export run for table to %1.', Comment = '%1: New status';
 
-    procedure GetLastRunDetails(TableID: Integer; var Status: enum "ADLSE Run State"; var StartedTime: DateTime; var ErrorIfAny: Text[2048])
+    procedure GetLastRunDetails(TableID: Integer; var Status: Enum "ADLSE Run State"; var StartedTime: DateTime; var ErrorIfAny: Text[2048])
     begin
         if FindLastRun(TableID) then begin
             Status := Rec.State;

@@ -3,6 +3,7 @@
 table 82561 "ADLSE Table"
 {
     Access = Internal;
+    Caption = 'ADLSE Table';
     DataClassification = CustomerContent;
     DataPerCompany = false;
 
@@ -160,10 +161,10 @@ table 82561 "ADLSE Table"
             Error(TableExportingDataErr, ADLSEUtil.GetTableCaption(Rec."Table ID"));
     end;
 
-    local procedure GetLastRunState(): enum "ADLSE Run State"
+    local procedure GetLastRunState(): Enum "ADLSE Run State"
     var
         ADLSERun: Record "ADLSE Run";
-        LastState: enum "ADLSE Run State";
+        LastState: Enum "ADLSE Run State";
         LastStarted: DateTime;
         LastErrorText: Text[2048];
     begin
@@ -263,7 +264,7 @@ table 82561 "ADLSE Table"
     end;
 
     [IntegrationEvent(false, false)]
-    local procedure OnAfterResetSelected(ADLSETable: record "ADLSE Table")
+    local procedure OnAfterResetSelected(ADLSETable: Record "ADLSE Table")
     begin
 
     end;

@@ -7,7 +7,7 @@ permissionset 82561 "ADLSE - Execute"
     /// </summary>
     Access = Public;
     Assignable = true;
-    Caption = 'Azure Data Lake Storage - Execute';
+    Caption = 'ADLS - Execute', MaxLength = 30;
 
     Permissions = tabledata "ADLSE Setup" = RM,
                   tabledata "ADLSE Table" = RM,

@@ -19,57 +19,50 @@ page 82562 "ADLSE Setup Fields"
             {
                 field("FieldCaption"; Rec.FieldCaption)
                 {
-                    ApplicationArea = All;
-                    Tooltip = 'Specifies the name of the field to be exported';
+                    ToolTip = 'Specifies the name of the field to be exported';
                 }
 
                 field("Field ID"; Rec."Field ID")
                 {
-                    ApplicationArea = All;
                     Caption = 'Number';
-                    Tooltip = 'Specifies the ID of the field to be exported';
+                    ToolTip = 'Specifies the ID of the field to be exported';
                     Visible = false;
                 }
 
                 field(Enabled; Rec.Enabled)
                 {
-                    ApplicationArea = All;
-                    Tooltip = 'Specifies if the field will be exported';
+                    ToolTip = 'Specifies if the field will be exported';
                 }
 
                 field(ADLSFieldName; ADLSFieldName)
                 {
-                    ApplicationArea = All;
                     Caption = 'Attribute name';
-                    Tooltip = 'Specifies the name of the field for this entity in the data lake.';
+                    ToolTip = 'Specifies the name of the field for this entity in the data lake.';
                     Editable = false;
                 }
 
                 field("Field Class"; FieldClassName)
                 {
-                    ApplicationArea = All;
                     Caption = 'Class';
                     OptionCaption = 'Normal,FlowField,FlowFilter';
-                    Tooltip = 'Specifies the field class';
+                    ToolTip = 'Specifies the field class';
                     Editable = false;
                     Visible = false;
                 }
 
                 field("Field Type"; FieldTypeName)
                 {
-                    ApplicationArea = All;
                     Caption = 'Type';
-                    Tooltip = 'Specifies the field type';
+                    ToolTip = 'Specifies the field type';
                     Editable = false;
                     Visible = false;
                 }
 
                 field("Obsolete State"; FieldObsoleteState)
                 {
-                    ApplicationArea = All;
                     Caption = 'Obsolete State';
                     OptionCaption = 'No,Pending,Removed';
-                    Tooltip = 'Specifies the Obsolete State of the field';
+                    ToolTip = 'Specifies the Obsolete State of the field';
                     Editable = false;
                     Visible = false;
                 }

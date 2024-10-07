@@ -3,6 +3,7 @@
 table 82562 "ADLSE Field"
 {
     Access = Internal;
+    Caption = 'ADLSE Field';
     DataClassification = CustomerContent;
     DataPerCompany = false;
 

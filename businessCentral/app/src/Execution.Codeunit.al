@@ -161,7 +161,7 @@ codeunit 82569 "ADLSE Execution"
         JobQueueEntry.Status := JobQueueEntry.Status::"On Hold";
         JobQueueEntry.Description := JobQueueCategory.Description;
         JobQueueEntry."Object Type to Run" := JobQueueEntry."Object Type to Run"::Codeunit;
-        JobQueueEntry."Object ID to Run" := CODEUNIT::"ADLSE Execution";
+        JobQueueEntry."Object ID to Run" := Codeunit::"ADLSE Execution";
         JobQueueEntry."Earliest Start Date/Time" := CurrentDateTime(); // now
     end;
 

@@ -7,7 +7,7 @@ permissionset 82560 "ADLSE - Setup"
     /// </summary>
     Access = Public;
     Assignable = true;
-    Caption = 'Azure Data Lake Storage - Setup';
+    Caption = 'ADLS - Setup', MaxLength = 30;
 
     Permissions = tabledata "ADLSE Setup" = RIMD,
                   tabledata "ADLSE Table" = RIMD,

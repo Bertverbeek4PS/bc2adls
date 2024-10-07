@@ -3,6 +3,7 @@
 table 82565 "ADLSE Current Session"
 {
     Access = Internal;
+    Caption = 'ADLSE Current Session';
     DataClassification = SystemMetadata;
     DataPerCompany = false;
 

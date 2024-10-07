@@ -8,6 +8,7 @@ table 82564 "ADLSE Table Last Timestamp"
     /// </summary>
 
     Access = Internal;
+    Caption = 'ADLSE Table Last Timestamp';
     DataClassification = CustomerContent;
     DataPerCompany = false;
 
