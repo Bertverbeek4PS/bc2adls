@@ -3,6 +3,7 @@ page 82569 "ADLSE Enum Translations"
 {
     PageType = List;
     ApplicationArea = All;
+    Caption = 'ADLSE Enum Translations';
     UsageCategory = Lists;
     SourceTable = "ADLSE Enum Translation";
 
@@ -16,12 +17,10 @@ page 82569 "ADLSE Enum Translations"
                 field(CompliantTableName; Rec."Compliant Table Name")
                 {
                     Editable = false;
-                    ToolTip = 'The name of the table that is compliant with Data Lake standards.';
                 }
                 field(CompliantFieldName; Rec."Compliant Field Name")
                 {
                     Editable = false;
-                    ToolTip = 'The name of the field that is compliant with Data Lake standards.';
                 }
             }
         }
@@ -38,7 +37,7 @@ page 82569 "ADLSE Enum Translations"
                 ToolTip = 'Refresh the options of the enum fields.';
                 Image = Refresh;
 
-                trigger OnAction();
+                trigger OnAction()
                 begin
                     Rec.RefreshOptions();
                 end;
@@ -53,7 +52,7 @@ page 82569 "ADLSE Enum Translations"
                 ToolTip = 'View the translations of the enum fields.';
                 Image = Language;
 
-                trigger OnAction();
+                trigger OnAction()
                 var
                     ADLSEEnumTranslationLang: Record "ADLSE Enum Translation Lang";
                     ADLSEEnumTranslationsLang: Page "ADLSE Enum Translations Lang";

@@ -24,6 +24,7 @@ codeunit 82570 "ADLSE Session Manager"
         StartExport(TableID, true, false, EmitTelemetry);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     local procedure StartExport(TableID: Integer; ExportWasPending: Boolean; ForceExport: Boolean; EmitTelemetry: Boolean) Started: Boolean
     var
         ADLSETable: Record "ADLSE Table";
@@ -155,8 +156,10 @@ codeunit 82570 "ADLSE Session Manager"
     var
         Result: Text;
     begin
+#pragma warning disable LC0043
         IsolatedStorage.Get(PendingTablesKeyTxt, DataScope::Company, Result);
         exit(DeConcatenate(Result));
+#pragma warning restore LC0043
     end;
 
     local procedure Concatenate(Values: List of [Integer]) Result: Text
@@ -184,7 +187,9 @@ codeunit 82570 "ADLSE Session Manager"
 
     internal procedure SavePendingTables(Value: Text)
     begin
+#pragma warning disable LC0043
         if IsolatedStorage.Set(PendingTablesKeyTxt, Value, DataScope::Company) then
-            Commit(); // changing isolated storage triggers a write transaction            
+            Commit(); // changing isolated storage triggers a write transaction      
+#pragma warning restore LC0043      
     end;
 }

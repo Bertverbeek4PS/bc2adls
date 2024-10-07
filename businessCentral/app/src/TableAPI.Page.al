@@ -30,7 +30,13 @@ page 82565 "ADLSE Table API"
                 {
                     Editable = false;
                 }
+#pragma warning disable LC0016
                 field(systemRowVersion; Rec.SystemRowVersion)
+                {
+                    Editable = false;
+                }
+#pragma warning restore
+                field(lastModifiedDateTime; Rec.SystemModifiedAt)
                 {
                     Editable = false;
                 }
@@ -39,7 +45,7 @@ page 82565 "ADLSE Table API"
             {
                 EntityName = 'adlseField';
                 EntitySetName = 'adlseFields';
-                SubPageLink = "Table ID" = Field("Table ID");
+                SubPageLink = "Table ID" = field("Table ID");
             }
         }
     }
@@ -85,7 +91,7 @@ page 82565 "ADLSE Table API"
     [ServiceEnabled]
     procedure AddAllFields(var ActionContext: WebServiceActionContext)
     begin
-        rec.AddAllFields();
+        Rec.AddAllFields();
         SetActionResponse(ActionContext, Rec.SystemId);
     end;
 
