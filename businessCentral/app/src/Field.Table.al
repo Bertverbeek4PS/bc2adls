@@ -8,6 +8,7 @@ table 82562 "ADLSE Field"
     Caption = 'ADLSE Field';
     DataClassification = CustomerContent;
     DataPerCompany = false;
+    Permissions = tabledata "ADLSE Table" = r;
 
     fields
     {
@@ -90,6 +91,7 @@ table 82562 "ADLSE Field"
     var
         TableDoesNotExistErr: Label 'Table with ID %1 has not been set to be exported.', Comment = '%1 is the table ID';
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'ri')]
     procedure InsertForTable(ADLSETable: Record "ADLSE Table")
     var
         Field: Record Field;

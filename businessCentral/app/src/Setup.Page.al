@@ -374,6 +374,7 @@ page 82560 "ADLSE Setup"
         FailureNotificationID: Guid;
         ExportFailureNotificationMsg: Label 'Data from one or more tables failed to export on the last run. Please check the tables below to see the error(s).';
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     local procedure UpdateNotificationIfAnyTableExportFailed()
     var
         ADLSETable: Record "ADLSE Table";

@@ -23,6 +23,7 @@ codeunit 82571 "ADLSE Installer"
         RetenPolAllowedTables.AddAllowedTable(Database::"ADLSE Run", ADLSERun.FieldNo(SystemModifiedAt));
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     procedure ListInvalidFieldsBeingExported() InvalidFieldsMap: Dictionary of [Integer, List of [Text]]
     var
         ADLSETable: Record "ADLSE Table";
@@ -38,6 +39,7 @@ codeunit 82571 "ADLSE Installer"
             until ADLSETable.Next() = 0;
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
     local procedure DisableTablesExportingInvalidFields()
     var
         ADLSETable: Record "ADLSE Table";

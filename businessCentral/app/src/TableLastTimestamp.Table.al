@@ -50,6 +50,7 @@ table 82564 "ADLSE Table Last Timestamp"
         SaveUpsertLastTimestampFailedErr: Label 'Could not save the last time stamp for the upserts on table %1.', Comment = '%1: table caption';
         SaveDeletionLastTimestampFailedErr: Label 'Could not save the last time stamp for the deletions on table %1.', Comment = '%1: table caption';
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'r')]
     procedure ExistsUpdatedLastTimestamp(TableID: Integer): Boolean
     begin
         exit(Rec.Get(GetCompanyNameToLookFor(TableID), TableID));
@@ -61,6 +62,7 @@ table 82564 "ADLSE Table Last Timestamp"
             exit(Rec."Updated Last Timestamp");
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'r')]
     procedure GetDeletedLastEntryNo(TableID: Integer): BigInteger
     begin
         if Rec.Get(GetCompanyNameToLookFor(TableID), TableID) then

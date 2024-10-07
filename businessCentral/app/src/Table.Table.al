@@ -8,6 +8,8 @@ table 82561 "ADLSE Table"
     Caption = 'ADLSE Table';
     DataClassification = CustomerContent;
     DataPerCompany = false;
+    Permissions = tabledata "ADLSE Field" = rd,
+                  tabledata "ADLSE Table Last Timestamp" = d;
 
     fields
     {
@@ -83,13 +85,13 @@ table 82561 "ADLSE Table"
         ADLSESetup.SchemaExported();
 
         ADLSETableField.SetRange("Table ID", Rec."Table ID");
-        ADLSETableField.DeleteAll();
+        ADLSETableField.DeleteAll(false);
 
         ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");
-        ADLSEDeletedRecord.DeleteAll();
+        ADLSEDeletedRecord.DeleteAll(false);
 
         ADLSETableLastTimestamp.SetRange("Table ID", Rec."Table ID");
-        ADLSETableLastTimestamp.DeleteAll();
+        ADLSETableLastTimestamp.DeleteAll(false);
 
         ADLSEExternalEvents.OnDeleteTable(Rec);
     end;
@@ -119,6 +121,7 @@ table 82561 "ADLSE Table"
         exit(ADLSEField.Count());
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'i')]
     procedure Add(TableID: Integer)
     var
         ADLSEExternalEvents: Codeunit "ADLSE External Events";
@@ -176,6 +179,7 @@ table 82561 "ADLSE Table"
         exit(LastState);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
     procedure ResetSelected()
     var
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
@@ -211,6 +215,7 @@ table 82561 "ADLSE Table"
             Message(TablesResetTxt, Counter, '.');
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
     local procedure CheckExportingOnlyValidFields()
     var
         ADLSEField: Record "ADLSE Field";
@@ -226,6 +231,7 @@ table 82561 "ADLSE Table"
             until ADLSEField.Next() = 0;
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
     procedure ListInvalidFieldsBeingExported() FieldList: List of [Text]
     var
         ADLSEField: Record "ADLSE Field";
@@ -252,6 +258,7 @@ table 82561 "ADLSE Table"
         end;
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'rm')]
     procedure AddAllFields()
     var
         ADLSEFields: Record "ADLSE Field";

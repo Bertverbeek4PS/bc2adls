@@ -21,17 +21,14 @@ page 82570 "ADLSE Enum Translations Lang"
                 field(CompliantTableName; Rec."Compliant Table Name")
                 {
                     Editable = false;
-                    ToolTip = 'The name of the table that is compliant with Data Lake standards.';
                 }
                 field(CompliantFieldName; Rec."Compliant Field Name")
                 {
                     Editable = false;
-                    ToolTip = 'The name of the field that is compliant with Data Lake standards.';
                 }
                 field(EnumValueCaption; Rec."Enum Value Caption")
                 {
                     Editable = false;
-                    ToolTip = 'The caption of the enum value.';
                 }
             }
         }

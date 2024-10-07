@@ -161,7 +161,7 @@ codeunit 82561 "ADLSE Execute"
         SetFilterForUpdates(TableID, UpdatedLastTimeStamp, ADLSESetup."Skip Timestamp Sorting On Recs", RecordRef, TimeStampFieldRef);
 
         foreach FieldId in FieldIdList do
-            if RecordRef.AddLoadFields(FieldId) then;
+            if RecordRef.AddLoadFields(FieldId) then; // ignore the return value
 
         if not RecordRef.ReadPermission() then
             Error(InsufficientReadPermErr);
@@ -218,6 +218,7 @@ codeunit 82561 "ADLSE Execute"
         ADLSEDeletedRecord.SetFilter("Entry No.", '>%1', DeletedLastEntryNo);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'r')]
     local procedure ExportTableDeletes(TableID: Integer; ADLSECommunication: Codeunit "ADLSE Communication"; var DeletedLastEntryNo: BigInteger)
     var
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
@@ -264,6 +265,7 @@ codeunit 82561 "ADLSE Execute"
             ADLSEExecution.Log('ADLSE-011', 'Deleted records exported', Verbosity::Normal, CustomDimensions);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'rd')]
     procedure FixDeletedRecordThatAreInTable(var ADLSEDeletedRecord: Record "ADLSE Deleted Record")
     var
         RecordRef: RecordRef;
@@ -283,6 +285,7 @@ codeunit 82561 "ADLSE Execute"
             until ADLSEDeletedRecord.Next() = 0;
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
     procedure CreateFieldListForTable(TableID: Integer) FieldIdList: List of [Integer]
     var
         ADLSEField: Record "ADLSE Field";

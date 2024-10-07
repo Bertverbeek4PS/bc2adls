@@ -24,6 +24,7 @@ codeunit 82570 "ADLSE Session Manager"
         StartExport(TableID, true, false, EmitTelemetry);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     local procedure StartExport(TableID: Integer; ExportWasPending: Boolean; ForceExport: Boolean; EmitTelemetry: Boolean) Started: Boolean
     var
         ADLSETable: Record "ADLSE Table";

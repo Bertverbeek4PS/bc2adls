@@ -17,6 +17,8 @@ codeunit 82569 "ADLSE Execution"
         ClearSchemaExportedOnMsg: Label 'The schema export date has been cleared.';
 
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
     internal procedure StartExport()
     var
         ADLSESetupRec: Record "ADLSE Setup";
@@ -78,6 +80,8 @@ codeunit 82569 "ADLSE Execution"
             Log('ADLSE-019', 'Stopped export sessions', Verbosity::Normal);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'm')]
     internal procedure SchemaExport()
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -119,6 +123,7 @@ codeunit 82569 "ADLSE Execution"
         ADLSEExternalEvents.OnExportSchema(ADLSESetup);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'm')]
     internal procedure ClearSchemaExportedOn()
     var
         ADLSESetup: Record "ADLSE Setup";
