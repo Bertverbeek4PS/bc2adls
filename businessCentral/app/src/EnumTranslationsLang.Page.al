@@ -17,7 +17,6 @@ page 82570 "ADLSE Enum Translations Lang"
                 field(LanguageCode; Rec."Language Code")
                 {
                     Editable = false;
-                    ToolTip = 'The language code.';
                 }
                 field(CompliantTableName; Rec."Compliant Table Name")
                 {
