@@ -126,7 +126,7 @@ table 82566 "ADLSE Run"
 
         Rec.Ended := CurrentDateTime();
         ADLSEExternalEvents.OnTableExportRunEnded(Rec.ID, Rec.Started, Rec.Ended, Rec."Table ID", Rec.State);
-        if not Rec.Modify() then
+        if not Rec.Modify(true) then
             ADLSEExecution.Log('ADLSE-035', StrSubstNo(CouldNotUpdateExportRunStatusErr, Rec.State), Verbosity::Error, CustomDimensions)
         else
             ADLSEExecution.Log('ADLSE-038', 'The export run was registered as ended.', Verbosity::Normal, CustomDimensions);
@@ -154,7 +154,7 @@ table 82566 "ADLSE Run"
     begin
         LastErrorStack := GetLastErrorCallStack();
         Rec.Error := CopyStr(LastErrorMessage + LastErrorStack, 1, 2048); // 2048 is the max size of the field 
-        Rec.Modify();
+        Rec.Modify(true);
 
         if EmitTelemetry then begin
             CustomDimensions.Add('Error text', LastErrorMessage);
@@ -174,7 +174,7 @@ table 82566 "ADLSE Run"
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'r')]
-    procedure OldRunsExist(): Boolean;
+    procedure OldRunsExist(): Boolean
     begin
         CommmonFilterOnOldRuns();
         exit(not Rec.IsEmpty());

@@ -5,10 +5,12 @@ enum 82560 "ADLSE Run State"
     Access = Internal;
     Extensible = false;
 
+#pragma warning disable LC0045
     value(0; None)
     {
         Caption = 'Never run';
     }
+#pragma warning restore LC0045
 
     value(1; InProcess)
     {

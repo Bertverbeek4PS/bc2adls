@@ -17,22 +17,15 @@ page 82562 "ADLSE Setup Fields"
         {
             repeater(GroupName)
             {
-                field("FieldCaption"; Rec.FieldCaption)
-                {
-                    ToolTip = 'Specifies the name of the field to be exported';
-                }
+                field("FieldCaption"; Rec.FieldCaption) { }
 
                 field("Field ID"; Rec."Field ID")
                 {
                     Caption = 'Number';
-                    ToolTip = 'Specifies the ID of the field to be exported';
                     Visible = false;
                 }
 
-                field(Enabled; Rec.Enabled)
-                {
-                    ToolTip = 'Specifies if the field will be exported';
-                }
+                field(Enabled; Rec.Enabled) { }
 
                 field(ADLSFieldName; ADLSFieldName)
                 {
@@ -45,7 +38,7 @@ page 82562 "ADLSE Setup Fields"
                 {
                     Caption = 'Class';
                     OptionCaption = 'Normal,FlowField,FlowFilter';
-                    ToolTip = 'Specifies the field class';
+                    ToolTip = 'Specifies the field class.';
                     Editable = false;
                     Visible = false;
                 }

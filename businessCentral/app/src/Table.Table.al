@@ -9,7 +9,8 @@ table 82561 "ADLSE Table"
     DataClassification = CustomerContent;
     DataPerCompany = false;
     Permissions = tabledata "ADLSE Field" = rd,
-                  tabledata "ADLSE Table Last Timestamp" = d;
+                  tabledata "ADLSE Table Last Timestamp" = d,
+                  tabledata "ADLSE Deleted Record" = d;
 
     fields
     {
@@ -192,7 +193,7 @@ table 82561 "ADLSE Table"
             repeat
                 if not Rec.Enabled then begin
                     Rec.Enabled := true;
-                    Rec.Modify();
+                    Rec.Modify(true);
                 end;
 
                 ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Rec."Table ID", 0);

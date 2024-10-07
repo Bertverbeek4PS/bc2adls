@@ -9,7 +9,6 @@ page 82560 "ADLSE Setup"
     InsertAllowed = false;
     DeleteAllowed = false;
     Caption = 'Export to Azure Data Lake Storage';
-
     layout
     {
         area(Content)
@@ -22,8 +21,6 @@ page 82560 "ADLSE Setup"
                     Caption = 'Account';
                     field(StorageType; Rec."Storage Type")
                     {
-                        ToolTip = 'Specifies the type of storage type to use.';
-
                         trigger OnValidate()
                         begin
                             CurrPage.Update(true);
@@ -45,27 +42,15 @@ page 82560 "ADLSE Setup"
                 {
                     Caption = 'Azure Data Lake';
                     Editable = AzureDataLake;
-                    field(Container; Rec.Container)
-                    {
-                        ToolTip = 'Specifies the name of the container where the data is going to be uploaded. Please refer to constraints on container names at https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata.';
-                    }
-                    field(AccountName; Rec."Account Name")
-                    {
-                        ToolTip = 'Specifies the name of the storage account.';
-                    }
+                    field(Container; Rec.Container) { }
+                    field(AccountName; Rec."Account Name") { }
                 }
                 group(MSFabric)
                 {
                     Caption = 'Microsoft Fabric';
                     Editable = not AzureDataLake;
-                    field(Workspace; Rec.Workspace)
-                    {
-                        ToolTip = 'Specifies the name of the Workspace where the data is going to be uploaded. This can be a name or a GUID.';
-                    }
-                    field(Lakehouse; Rec.Lakehouse)
-                    {
-                        ToolTip = 'Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID.';
-                    }
+                    field(Workspace; Rec.Workspace) { }
+                    field(Lakehouse; Rec.Lakehouse) { }
                 }
                 group(Access)
                 {
@@ -99,27 +84,21 @@ page 82560 "ADLSE Setup"
                     field(MaxPayloadSize; Rec.MaxPayloadSizeMiB)
                     {
                         Editable = not AzureDataLake;
-                        ToolTip = 'Specifies the maximum size of the upload for each block of data in MiBs. A large value will reduce the number of iterations to upload the data but may interfear with the performance of other processes running on this environment.';
+
                     }
 
-                    field("CDM data format"; Rec.DataFormat)
-                    {
-                        ToolTip = 'Specifies the format in which to store the exported data in the ''data'' CDM folder. The Parquet format is recommended for storing the data with the best fidelity.';
-                    }
+                    field("CDM data format"; Rec.DataFormat) { }
 
                     field("Skip Timestamp Sorting On Recs"; Rec."Skip Timestamp Sorting On Recs")
                     {
                         Enabled = not ExportInProgress;
-                        ToolTip = 'Specifies that the records are not sorted as per their row version before exporting them to the lake. Enabling this may interfear with how incremental data is pushed to the lake in subsequent export runs- please refer to the documentation.';
+
                     }
 
-                    field("Emit telemetry"; Rec."Emit telemetry")
-                    {
-                        ToolTip = 'Specifies if operational telemetry will be emitted to this extension publisher''s telemetry pipeline. You will have to configure a telemetry account for this extension first.';
-                    }
+                    field("Emit telemetry"; Rec."Emit telemetry") { }
                     field("Translations"; Rec.Translations)
                     {
-                        ToolTip = 'Specifies the translations for the enums used in the selected tables.';
+
 
                         trigger OnAssistEdit()
                         var
@@ -144,21 +123,11 @@ page 82560 "ADLSE Setup"
                             end;
                         end;
                     }
-                    field("Export Enum as Integer"; Rec."Export Enum as Integer")
-                    {
-                        ToolTip = 'Specifies if the enums will be exported as integers instead of strings. This is useful if you want to use the enums in Power BI.';
-                    }
-                    field("Delete Table"; Rec."Delete Table")
-                    {
-                        ToolTip = 'Specifies if the table will be deleted if a reset of the table is done.';
-                    }
-                    field("Delivered DateTime"; Rec."Delivered DateTime")
-                    {
-                        ToolTip = 'Specifies if the column DeliveredDateTime will be added to the CSV export file.';
-                    }
+                    field("Export Enum as Integer"; Rec."Export Enum as Integer") { }
+                    field("Delete Table"; Rec."Delete Table") { }
+                    field("Delivered DateTime"; Rec."Delivered DateTime") { }
                     field("Export Company Database Tables"; Rec."Export Company Database Tables")
                     {
-                        ToolTip = 'Specifies the company for the export of the database tables.';
                         Lookup = true;
                     }
                 }
