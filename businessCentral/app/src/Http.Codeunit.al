@@ -192,7 +192,7 @@ codeunit 82563 "ADLSE Http"
     var
         ADLSEUtil: Codeunit "ADLSE Util";
         Headers: HttpHeaders;
-        AccessToken: Text;
+        AccessToken: SecretText;
         AuthError: Text;
     begin
         if not Credentials.IsInitialized() then begin // anonymous call
@@ -201,13 +201,13 @@ codeunit 82563 "ADLSE Http"
         end;
 
         AccessToken := AcquireTokenOAuth2(AuthError);
-        if AccessToken = '' then begin
+        if AccessToken.IsEmpty() then begin
             Response := AuthError;
             Success := false;
             exit;
         end;
         Headers := HttpClient.DefaultRequestHeaders();
-        Headers.Add('Authorization', StrSubstNo(BearerTok, AccessToken));
+        Headers.Add('Authorization', SecretStrSubstNo(BearerTok, AccessToken));
         Headers.Add('x-ms-version', AzureStorageServiceVersionTok);
         Headers.Add('x-ms-date', ADLSEUtil.GetCurrentDateTimeInGMTFormat());
         Success := true;
