@@ -1,14 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-page 82571 "ADLSE CurrentSession API"
+page 82574 "ADLSE Run API v12"
 {
     PageType = API;
     APIPublisher = 'bc2adlsTeamMicrosoft';
     APIGroup = 'bc2adls';
-    APIVersion = 'v1.1', 'v1.2';
-    EntityName = 'adlseCurrentSession';
-    EntitySetName = 'adlseCurrentSessions';
-    SourceTable = "ADLSE Current Session";
+    APIVersion = 'v1.2';
+    EntityName = 'adlseRun';
+    EntitySetName = 'adlseRun';
+    SourceTable = "ADLSE Run";
     InsertAllowed = false;
     DeleteAllowed = false;
     ModifyAllowed = false;
@@ -20,10 +20,13 @@ page 82571 "ADLSE CurrentSession API"
         {
             repeater(GroupName)
             {
+                field(no; Rec.ID) { }
                 field(tableId; Rec."Table ID") { }
-                field(sessionId; Rec."Session ID") { }
                 field(companyName; Rec."Company Name") { }
-                field(sessionUniqueId; Rec."Session Unique ID") { }
+                field(state; Rec.State) { }
+                field("error"; Rec.Error) { }
+                field(started; Rec.Started) { }
+                field(ended; Rec.Ended) { }
                 field(id; Rec.SystemId)
                 {
                     Editable = false;
@@ -34,6 +37,7 @@ page 82571 "ADLSE CurrentSession API"
                     Editable = false;
                 }
 #pragma warning restore
+
                 field(lastModifiedDateTime; Rec.SystemModifiedAt)
                 {
                     Editable = false;

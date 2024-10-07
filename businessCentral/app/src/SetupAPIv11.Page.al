@@ -13,6 +13,8 @@ page 82568 "ADLSE Setup API v11"
     DeleteAllowed = false;
     ModifyAllowed = false;
     ODataKeyFields = SystemId;
+    ObsoleteState = Pending;
+    ObsoleteReason = 'This API is obsolete. Use the API v1.2 instead.';
 
     layout
     {
