@@ -1,8 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+#pragma warning disable LC0004, LC0015
 table 82566 "ADLSE Run"
+#pragma warning restore
 {
     Access = Internal;
+    Caption = 'ADLSE Run';
     DataClassification = CustomerContent;
     DataPerCompany = false;
 
@@ -10,17 +13,20 @@ table 82566 "ADLSE Run"
     {
         field(1; ID; Integer)
         {
+            AllowInCustomizations = Always;
             Editable = false;
             Caption = 'ID';
             AutoIncrement = true;
         }
         field(2; "Table ID"; Integer)
         {
+            AllowInCustomizations = Always;
             Editable = false;
             Caption = 'Table ID';
         }
         field(3; "Company Name"; Text[30])
         {
+            AllowInCustomizations = Always;
             Editable = false;
             Caption = 'Company name';
         }
@@ -28,21 +34,25 @@ table 82566 "ADLSE Run"
         {
             Editable = false;
             Caption = 'State';
+            ToolTip = 'Specifies the state of the execution of export.';
         }
         field(5; "Error"; Text[2048])
         {
             Editable = false;
             Caption = 'Error';
+            ToolTip = 'Specifies the error if the execution had any.';
         }
         field(6; Started; DateTime)
         {
             Editable = false;
             Caption = 'Started';
+            ToolTip = 'Specifies when the export was started.';
         }
         field(7; Ended; DateTime)
         {
             Editable = false;
             Caption = 'Ended';
+            ToolTip = 'Specifies when the export was started.';
         }
     }
 
@@ -65,7 +75,7 @@ table 82566 "ADLSE Run"
         ExportStoppedDueToCancelledSessionTxt: Label 'Export stopped as session was cancelled. Please check state of the export on the data lake before enabling this.';
         CouldNotUpdateExportRunStatusErr: Label 'Could not update the status of the export run for table to %1.', Comment = '%1: New status';
 
-    procedure GetLastRunDetails(TableID: Integer; var Status: enum "ADLSE Run State"; var StartedTime: DateTime; var ErrorIfAny: Text[2048])
+    procedure GetLastRunDetails(TableID: Integer; var Status: Enum "ADLSE Run State"; var StartedTime: DateTime; var ErrorIfAny: Text[2048])
     begin
         if FindLastRun(TableID) then begin
             Status := Rec.State;
@@ -85,6 +95,7 @@ table 82566 "ADLSE Run"
         exit(Round(Ended - Started, 100));
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'i')]
     procedure RegisterStarted(TableID: Integer)
     begin
         Rec.Init();
@@ -92,9 +103,10 @@ table 82566 "ADLSE Run"
         Rec."Company Name" := CopyStr(CompanyName(), 1, 30);
         Rec.State := "ADLSE Run State"::InProcess;
         Rec.Started := CurrentDateTime();
-        Rec.Insert();
+        Rec.Insert(true);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'm')]
     procedure RegisterEnded(TableID: Integer; EmitTelemetry: Boolean; TableCaption: Text)
     var
         ADLSEExecution: Codeunit "ADLSE Execution";
@@ -118,7 +130,7 @@ table 82566 "ADLSE Run"
 
         Rec.Ended := CurrentDateTime();
         ADLSEExternalEvents.OnTableExportRunEnded(Rec.ID, Rec.Started, Rec.Ended, Rec."Table ID", Rec.State);
-        if not Rec.Modify() then
+        if not Rec.Modify(true) then
             ADLSEExecution.Log('ADLSE-035', StrSubstNo(CouldNotUpdateExportRunStatusErr, Rec.State), Verbosity::Error, CustomDimensions)
         else
             ADLSEExecution.Log('ADLSE-038', 'The export run was registered as ended.', Verbosity::Normal, CustomDimensions);
@@ -138,6 +150,7 @@ table 82566 "ADLSE Run"
             FillErrorDetails(LastErrorMessage, EmitTelemetry, CustomDimensions);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'm')]
     local procedure FillErrorDetails(LastErrorMessage: Text; EmitTelemetry: Boolean; CustomDimensions: Dictionary of [Text, Text])
     var
         ADLSEExecution: Codeunit "ADLSE Execution";
@@ -145,7 +158,7 @@ table 82566 "ADLSE Run"
     begin
         LastErrorStack := GetLastErrorCallStack();
         Rec.Error := CopyStr(LastErrorMessage + LastErrorStack, 1, 2048); // 2048 is the max size of the field 
-        Rec.Modify();
+        Rec.Modify(true);
 
         if EmitTelemetry then begin
             CustomDimensions.Add('Error text', LastErrorMessage);
@@ -155,24 +168,27 @@ table 82566 "ADLSE Run"
         ClearLastError();
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'm')]
     procedure CancelAllRuns()
     begin
         Rec.SetRange(State, "ADLSE Run State"::InProcess);
-        Rec.ModifyAll(Ended, CurrentDateTime);
-        Rec.ModifyAll(State, "ADLSE Run State"::Failed);
-        Rec.ModifyAll(Error, ExportStoppedDueToCancelledSessionTxt);
+        Rec.ModifyAll(Ended, CurrentDateTime, true);
+        Rec.ModifyAll(State, "ADLSE Run State"::Failed, true);
+        Rec.ModifyAll(Error, ExportStoppedDueToCancelledSessionTxt, true);
     end;
 
-    procedure OldRunsExist(): Boolean;
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'r')]
+    procedure OldRunsExist(): Boolean
     begin
         CommmonFilterOnOldRuns();
         exit(not Rec.IsEmpty());
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'd')]
     procedure DeleteOldRuns()
     begin
         CommmonFilterOnOldRuns();
-        Rec.DeleteAll();
+        Rec.DeleteAll(false);
     end;
 
     procedure DeleteOldRuns(TableID: Integer)
@@ -181,6 +197,7 @@ table 82566 "ADLSE Run"
         DeleteOldRuns();
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'r')]
     local procedure FindLastRun(TableID: Integer) Found: Boolean
     begin
         Rec.SetCurrentKey(ID);

@@ -1,0 +1,24 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+permissionset 82563 "ADLSE - API"
+{
+    /// <summary>
+    /// The permission set to be used when using the API.
+    /// </summary>
+    Access = Public;
+    Assignable = true;
+    Caption = 'ADLS - Api', MaxLength = 30;
+
+    Permissions = tabledata "ADLSE Table" = RMI,
+                  tabledata "ADLSE Setup" = R,
+                  tabledata "ADLSE Current Session" = R,
+                  tabledata "ADLSE Run" = R,
+                  tabledata "ADLSE Field" = RI,
+                  page "ADLSE Table API" = X,
+                  page "ADLSE Setup API v11" = X,
+                  page "ADLSE CurrentSession API" = X,
+                  page "ADLSE Run API" = X,
+                  page "ADLSE Field API" = X,
+                  codeunit "ADLSE External Events Helper" = X,
+                  codeunit "ADLSE External Events" = X;
+}

@@ -61,6 +61,7 @@ codeunit 82572 "ADLSE Upgrade"
             Result += StrSubstNo(TableFieldsTok, ADLSEUtil.GetTableCaption(TableID), ADLSEUtil.Concatenate(TableIDFieldNameList.Get(TableID)));
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'm')]
     local procedure DoContainerFieldFromIsolatedStorageToSetupField()
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -69,7 +70,9 @@ codeunit 82572 "ADLSE Upgrade"
     begin
         if not IsolatedStorage.Contains(StorageAccountKeyNameTok, DataScope::Module) then
             exit;
+#pragma warning disable LC0043
         IsolatedStorage.Get(StorageAccountKeyNameTok, DataScope::Module, AccountName);
+#pragma warning restore LC0043
 
         if not ADLSESetup.Exists() then
             exit;
@@ -93,6 +96,7 @@ codeunit 82572 "ADLSE Upgrade"
         UpgradeTag.SetUpgradeTag(GetSeperateSchemaAndDataUpgradeTag());
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'm')]
     local procedure DoGetSeperateSchemaAndData()
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -103,7 +107,7 @@ codeunit 82572 "ADLSE Upgrade"
 
         if ADLSESetup."Multi- Company Export" then begin
             ADLSESetup."Schema Exported On" := CurrentDateTime();
-            ADLSESetup.Modify();
+            ADLSESetup.Modify(true);
         end;
     end;
 

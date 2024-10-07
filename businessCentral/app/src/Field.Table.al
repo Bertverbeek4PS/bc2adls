@@ -1,15 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+#pragma warning disable LC0015
 table 82562 "ADLSE Field"
+#pragma warning restore
 {
     Access = Internal;
+    Caption = 'ADLSE Field';
     DataClassification = CustomerContent;
     DataPerCompany = false;
+    Permissions = tabledata "ADLSE Table" = r;
 
     fields
     {
         field(1; "Table ID"; Integer)
         {
+            AllowInCustomizations = Always;
             Editable = false;
             Caption = 'Table ID';
             TableRelation = "ADLSE Table"."Table ID";
@@ -26,10 +31,12 @@ table 82562 "ADLSE Field"
         {
             Editable = false;
             Caption = 'Field ID';
+            ToolTip = 'Specifies the ID of the field to be exported.';
         }
         field(3; Enabled; Boolean)
         {
             Caption = 'Enabled';
+            ToolTip = 'Specifies if the field will be exported.';
 
             trigger OnValidate()
             var
@@ -47,6 +54,7 @@ table 82562 "ADLSE Field"
             Editable = false;
             FieldClass = FlowField;
             CalcFormula = lookup(Field."Field Caption" where("No." = field("Field ID"), TableNo = field("Table ID")));
+            ToolTip = 'Specifies the name of the field to be exported.';
         }
     }
 
@@ -86,6 +94,7 @@ table 82562 "ADLSE Field"
     var
         TableDoesNotExistErr: Label 'Table with ID %1 has not been set to be exported.', Comment = '%1 is the table ID';
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'ri')]
     procedure InsertForTable(ADLSETable: Record "ADLSE Table")
     var
         Field: Record Field;
@@ -100,7 +109,7 @@ table 82562 "ADLSE Field"
                     Rec."Table ID" := Field.TableNo;
                     Rec."Field ID" := Field."No.";
                     Rec.Enabled := false;
-                    Rec.Insert();
+                    Rec.Insert(true);
                 end;
             until Field.Next() = 0;
     end;
