@@ -278,6 +278,14 @@ page 82560 "ADLSE Setup"
                 Image = Translations;
                 RunObject = page "ADLSE Enum Translations";
             }
+            action(DeletedTablesNotToSync)
+            {
+                ApplicationArea = All;
+                Caption = 'Deleted tables not to sync';
+                ToolTip = 'Shows all the tables that are specified not to be tracked for deletes.';
+                Image = Delete;
+                RunObject = page "Deleted Tables Not To Sync";
+            }
         }
         area(Promoted)
         {

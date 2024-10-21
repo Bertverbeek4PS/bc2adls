@@ -18,6 +18,7 @@ permissionset 82560 "ADLSE - Setup"
                   tabledata "ADLSE Run" = RD,
                   tabledata "ADLSE Enum Translation" = RIMD,
                   tabledata "ADLSE Enum Translation Lang" = RIMD,
+                  tabledata "Deleted Tables Not to Sync" = RIMD,
                   codeunit "ADLSE Clear Tracked Deletions" = X,
                   codeunit "ADLSE Credentials" = X,
                   codeunit "ADLSE Setup" = X,
