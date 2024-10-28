@@ -3,7 +3,7 @@
 
 ![](.assets/bc2adls_banner.png)
 # Starting update
-**The original repository "[microsoft/bc2adls](https://github.com/microsoft/bc2adls)" is in read-only mode. But since a lot of partners are using this tool, we want to develop it further as open source software. A special thanks to the creators of this tool: [Soumya Dutta](https://www.linkedin.com/in/soumya-dutta-07813a5/) and [Henri Schulte](https://www.linkedin.com/in/henrischulte/), who put a lot of effort into it!.**
+**The original repository "[microsoft/bc2adls](https://github.com/microsoft/bc2adls)" is in read-only mode. But since a lot of partners are using this tool, we want to develop it further as open source software. A special thanks to the creators of this tool: [Soumya Dutta](https://www.linkedin.com/in/soumya-dutta-07813a5/) and [Henri Schulte](https://www.linkedin.com/in/henrischulte/), who put a lot of effort into it!**
 
 ## Introduction
 
