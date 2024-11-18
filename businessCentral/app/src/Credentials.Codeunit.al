@@ -73,7 +73,7 @@ codeunit 82565 "ADLSE Credentials"
     [NonDebuggable]
     procedure IsClientIDSet(): Boolean
     begin
-        exit(GetClientId() <> '');
+        exit(GetClientID() <> '');
     end;
 
     [NonDebuggable]
@@ -100,17 +100,21 @@ codeunit 82565 "ADLSE Credentials"
     begin
         if not IsolatedStorage.Contains(KeyName, IsolatedStorageDataScope()) then
             exit('');
+#pragma warning disable LC0043            
         IsolatedStorage.Get(KeyName, IsolatedStorageDataScope(), Secret);
+#pragma warning restore LC0043
     end;
 
     [NonDebuggable]
     local procedure SetSecret(KeyName: Text; Secret: Text)
     begin
+#pragma warning disable LC0043
         if EncryptionEnabled() then begin
             IsolatedStorage.SetEncrypted(KeyName, Secret, IsolatedStorageDataScope());
             exit;
         end;
         IsolatedStorage.Set(KeyName, Secret, IsolatedStorageDataScope());
+#pragma warning restore LC0043
     end;
 
     [NonDebuggable]

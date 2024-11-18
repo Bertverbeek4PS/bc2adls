@@ -1,6 +1,9 @@
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Bertverbeek4PS/bc2adls/badge)](https://scorecard.dev/viewer/?uri=github.com/Bertverbeek4PS/bc2adls)
+[![Scorecard supply-chain security](https://github.com/Bertverbeek4PS/bc2adls/actions/workflows/scorecard.yml/badge.svg)](https://github.com/Bertverbeek4PS/bc2adls/actions/workflows/scorecard.yml)
+
 ![](.assets/bc2adls_banner.png)
 # Starting update
-**The original repo of [bc2adls](https://github.com/microsoft/bc2adls) is in read-only mode. But since allot of partners are using this tool we want to develop it further as an open source. A special thanks to the creators of this tool: [Soumya Dutta](https://www.linkedin.com/in/soumya-dutta-07813a5/) and [Henri Schulte](https://www.linkedin.com/in/henrischulte/). Who put allot of effort in it.**
+**The original repository "[microsoft/bc2adls](https://github.com/microsoft/bc2adls)" is in read-only mode. But since a lot of partners are using this tool, we want to develop it further as open source software. A special thanks to the creators of this tool: [Soumya Dutta](https://www.linkedin.com/in/soumya-dutta-07813a5/) and [Henri Schulte](https://www.linkedin.com/in/henrischulte/), who put a lot of effort into it!**
 
 ## Introduction
 

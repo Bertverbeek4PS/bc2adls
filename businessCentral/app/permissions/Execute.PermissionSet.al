@@ -7,7 +7,7 @@ permissionset 82561 "ADLSE - Execute"
     /// </summary>
     Access = Public;
     Assignable = true;
-    Caption = 'Azure Data Lake Storage - Execute';
+    Caption = 'ADLS - Execute', MaxLength = 30;
 
     Permissions = tabledata "ADLSE Setup" = RM,
                   tabledata "ADLSE Table" = RM,
@@ -17,5 +17,19 @@ permissionset 82561 "ADLSE - Execute"
                   tabledata "ADLSE Table Last Timestamp" = RIMD,
                   tabledata "ADLSE Run" = RIMD,
                   tabledata "ADLSE Enum Translation" = RIMD,
-                  tabledata "ADLSE Enum Translation Lang" = RIMD;
+                  tabledata "ADLSE Enum Translation Lang" = RIMD,
+                  tabledata "Deleted Tables Not to Sync" = R,
+                  codeunit "ADLSE UpgradeTagNewCompanySubs" = X,
+                  codeunit "ADLSE Upgrade" = X,
+                  codeunit "ADLSE Util" = X,
+                  codeunit ADLSE = X,
+                  codeunit "ADLSE CDM Util" = X,
+                  codeunit "ADLSE Communication" = X,
+                  codeunit "ADLSE Session Manager" = X,
+                  codeunit "ADLSE Http" = X,
+                  codeunit "ADLSE Gen 2 Util" = X,
+                  codeunit "ADLSE Execute" = X,
+                  codeunit "ADLSE Execution" = X,
+                  report "ADLSE Seek Data" = X,
+                  xmlport "BC2ADLS Export" = X;
 }

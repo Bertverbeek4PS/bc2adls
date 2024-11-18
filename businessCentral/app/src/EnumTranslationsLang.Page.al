@@ -3,6 +3,7 @@ page 82570 "ADLSE Enum Translations Lang"
 {
     PageType = List;
     ApplicationArea = All;
+    Caption = 'Enum Translations Language';
     UsageCategory = Lists;
     SourceTable = "ADLSE Enum Translation Lang";
 
@@ -16,22 +17,18 @@ page 82570 "ADLSE Enum Translations Lang"
                 field(LanguageCode; Rec."Language Code")
                 {
                     Editable = false;
-                    ToolTip = 'The language code.';
                 }
                 field(CompliantTableName; Rec."Compliant Table Name")
                 {
                     Editable = false;
-                    ToolTip = 'The name of the table that is compliant with Data Lake standards.';
                 }
                 field(CompliantFieldName; Rec."Compliant Field Name")
                 {
                     Editable = false;
-                    ToolTip = 'The name of the field that is compliant with Data Lake standards.';
                 }
                 field(EnumValueCaption; Rec."Enum Value Caption")
                 {
                     Editable = false;
-                    ToolTip = 'The caption of the enum value.';
                 }
             }
         }

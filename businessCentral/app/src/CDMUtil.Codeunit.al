@@ -12,7 +12,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         FieldDataTypeCannotBeChangedErr: Label 'The data type for the field %1 in the entity %2 cannot be changed.', Comment = '%1: field name, %2: entity name';
         RepresentsTableTxt: Label 'Represents the table %1', Comment = '%1: table caption';
         ManifestNameTxt: Label '%1-manifest', Comment = '%1: name of manifest';
-        EntityPathTok: Label '%1.cdm.json/%1', Comment = '%1: Entity';
+        EntityPathTok: Label '%1.cdm.json/%1', Comment = '%1: Entity', Locked = true;
         UnequalAttributeCountErr: Label 'Unequal number of attributes';
         MismatchedValueInAttributeErr: Label 'The attribute value for %1 at index %2 is different. First: %3, Second: %4', Comment = '%1 = field, %2 = index, %3 = value of the first, %4 = value of the second';
 
@@ -111,7 +111,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         Token.Add(NameValue);
     end;
 
-    local procedure CreateAttributes(TableID: Integer; FieldIdList: List of [Integer]) Result: JsonArray;
+    local procedure CreateAttributes(TableID: Integer; FieldIdList: List of [Integer]) Result: JsonArray
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
@@ -140,15 +140,15 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                 ));
         end;
         ADLSESetup.GetSingleton();
-        if ADLSESetup."Delivered DateTime" then begin
-            GetCDMAttributeDetails(FieldType::DateTime, DataFormat, AppliedTraits);
-            Result.Add(
-                CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetDeliveredDateTimeFieldName(), AppliedTraits, FieldRef.Length, false));
-        end;
         if ADLSEUtil.IsTablePerCompany(TableID) then begin
             GetCDMAttributeDetails(FieldType::Text, DataFormat, AppliedTraits);
             Result.Add(
                 CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, GetCompanyFieldNameLength(), false));
+        end;
+        if ADLSESetup."Delivered DateTime" then begin
+            GetCDMAttributeDetails(FieldType::DateTime, DataFormat, AppliedTraits);
+            Result.Add(
+                CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetDeliveredDateTimeFieldName(), AppliedTraits, FieldRef.Length, false));
         end;
     end;
 
@@ -174,7 +174,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         FieldTable: Record Field;
     begin
         if FieldTable.Get(TableId, FieldId) then
-            exit(fieldTable.IsPartOfPrimaryKey);
+            exit(FieldTable.IsPartOfPrimaryKey);
     end;
 
     local procedure CreateAttributeJson(Name: Text; DataFormat: Text; DisplayName: Text; AppliedTraits: JsonArray; MaximumLength: Integer; IsPrimaryKeyFieldParameter: Boolean) Attribute: JsonObject

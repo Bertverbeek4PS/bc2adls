@@ -9,13 +9,13 @@ codeunit 82564 "ADLSE Util"
         AlphabetsUpperTxt: Label 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         NumeralsTxt: Label '1234567890';
         FieldTypeNotSupportedErr: Label 'The field %1 of type %2 is not supported.', Comment = '%1 = field name, %2 = field type';
-        ConcatNameIdTok: Label '%1-%2', Comment = '%1: Name, %2: ID';
-        DateTimeExpandedFormatTok: Label '%1, %2 %3 %4 %5:%6:%7 GMT', Comment = '%1: weekday, %2: day, %3: month, %4: year, %5: hour, %6: minute, %7: second';
-        QuotedTextTok: Label '"%1"', Comment = '%1: text to be double- quoted';
-        CommaPrefixedTok: Label ',%1', Comment = '%1: text to be prefixed';
-        CommaSuffixedTok: Label '%1, ', Comment = '%1: text to be suffixed';
-        WholeSecondsTok: Label ':%1Z', Comment = '%1: seconds';
-        FractionSecondsTok: Label ':%1.%2Z', Comment = '%1: seconds, %2: milliseconds';
+        ConcatNameIdTok: Label '%1-%2', Comment = '%1: Name, %2: ID', Locked = true;
+        DateTimeExpandedFormatTok: Label '%1, %2 %3 %4 %5:%6:%7 GMT', Comment = '%1: weekday, %2: day, %3: month, %4: year, %5: hour, %6: minute, %7: second', Locked = true;
+        QuotedTextTok: Label '"%1"', Comment = '%1: text to be double- quoted', Locked = true;
+        CommaPrefixedTok: Label ',%1', Comment = '%1: text to be prefixed', Locked = true;
+        CommaSuffixedTok: Label '%1, ', Comment = '%1: text to be suffixed', Locked = true;
+        WholeSecondsTok: Label ':%1Z', Comment = '%1: seconds', Locked = true;
+        FractionSecondsTok: Label ':%1.%2Z', Comment = '%1: seconds, %2: milliseconds', Locked = true;
 
     procedure ToText(GuidValue: Guid): Text
     begin
