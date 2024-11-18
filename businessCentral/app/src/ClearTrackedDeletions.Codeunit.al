@@ -34,6 +34,8 @@ codeunit 82573 "ADLSE Clear Tracked Deletions"
                     ADLSEDeletedRecord.DeleteAll(false);
 
                 ADLSETableLastTimestamp.SaveDeletedLastEntryNo(ADLSETable."Table ID", 0);
+
+                Commit(); //Because of very large numbers of records, we commit after each table.
             until ADLSETable.Next() = 0;
         Message(TrackedDeletedRecordsRemovedMsg);
     end;
