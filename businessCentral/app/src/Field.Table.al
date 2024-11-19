@@ -45,6 +45,9 @@ table 82562 "ADLSE Field"
                 if Rec.Enabled then
                     Rec.CheckFieldToBeEnabled();
 
+                if not Rec.Enabled then
+                    Rec.CheckNotPrimaryKeyField();
+
                 ADLSEExternalEvents.OnEnableFieldChanged(Rec);
             end;
         }
@@ -123,6 +126,17 @@ table 82562 "ADLSE Field"
         Field.Get(Rec."Table ID", Rec."Field ID");
         ADLSEUtil.CheckFieldTypeForExport(Field);
         ADLSESetup.CheckFieldCanBeExported(Field);
+    end;
+
+    procedure CheckNotPrimaryKeyField()
+    var
+        Field: Record Field;
+        FieldCannotBeDisabledErr: Label 'Table field is part of the Primary Key, Field cannot be disabled.';
+    begin
+        if Rec.Enabled then exit;
+        if not Field.Get(Rec."Table ID", Rec."Field ID") then exit;
+        if Field.IsPartOfPrimaryKey then
+            error(FieldCannotBeDisabledErr)
     end;
 
     [TryFunction]

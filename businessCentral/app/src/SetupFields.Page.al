@@ -17,19 +17,34 @@ page 82562 "ADLSE Setup Fields"
         {
             repeater(GroupName)
             {
-                field("FieldCaption"; Rec.FieldCaption) { }
+                field("FieldCaption"; Rec.FieldCaption) 
+		{ 
+                    StyleExpr = StyleExprAsText;
+		}
 
                 field("Field ID"; Rec."Field ID")
                 {
                     Caption = 'Number';
+                    StyleExpr = StyleExprAsText;
                     Visible = false;
                 }
 
-                field(Enabled; Rec.Enabled) { }
-
+                field(Enabled; Rec.Enabled) 
+		{ 
+                    StyleExpr = StyleExprAsText;
+		}
+                field(IsPartOfPrimaryKey; IsPartOfPrimaryKey)
+                {
+                    ApplicationArea = All;
+                    Caption = 'Part of Primary Key';
+                    Editable = false;
+                    StyleExpr = StyleExprAsText;
+                    ToolTip = 'Specifies if the the field is part of the primary key';
+                }
                 field(ADLSFieldName; ADLSFieldName)
                 {
                     Caption = 'Attribute name';
+                    StyleExpr = StyleExprAsText;
                     ToolTip = 'Specifies the name of the field for this entity in the data lake.';
                     Editable = false;
                 }
@@ -38,6 +53,7 @@ page 82562 "ADLSE Setup Fields"
                 {
                     Caption = 'Class';
                     OptionCaption = 'Normal,FlowField,FlowFilter';
+                    StyleExpr = StyleExprAsText;
                     ToolTip = 'Specifies the field class.';
                     Editable = false;
                     Visible = false;
@@ -105,10 +121,17 @@ page 82562 "ADLSE Setup Fields"
         FieldClassName := Field.Class;
         FieldTypeName := Field."Type Name";
         FieldObsoleteState := Field.ObsoleteState;
+        IsPartOfPrimaryKey := Field.IsPartOfPrimaryKey;
+        if IsPartOfPrimaryKey then
+            StyleExprAsText := 'StrongAccent'
+        else
+            StyleExprAsText := 'Standard';
     end;
 
     var
+        IsPartOfPrimaryKey: Boolean;
         ADLSFieldName: Text;
+        StyleExprAsText: Text;
         FieldClassName: Option Normal,FlowField,FlowFilter;
         FieldTypeName: Text[30];
         SomeFieldsCouldNotBeEnabledMsg: Label 'One or more fields could not be enabled.';
