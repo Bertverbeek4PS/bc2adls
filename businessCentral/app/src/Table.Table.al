@@ -134,6 +134,7 @@ table 82561 "ADLSE Table"
         Rec.Enabled := true;
         Rec.Insert(true);
 
+        AddPrimaryKeyFields();
         ADLSEExternalEvents.OnAddTable(Rec);
     end;
 
@@ -275,6 +276,23 @@ table 82561 "ADLSE Table"
             until ADLSEFields.Next() = 0;
     end;
 
+    local procedure AddPrimaryKeyFields()
+    var
+        Field: Record Field;
+        ADLSEField: Record "ADLSE Field";
+    begin
+        Field.SetRange(TableNo, Rec."Table ID");
+        Field.SetRange(IsPartOfPrimaryKey, true);
+        if Field.Findset() then
+            repeat
+                if not ADLSEField.Get(Rec."Table ID", Field."No.") then begin
+                    ADLSEField."Table ID" := Field.TableNo;
+                    ADLSEField."Field ID" := Field."No.";
+                    ADLSEField.Enabled := true;
+                    ADLSEField.Insert();
+                end;
+            until Field.Next() = 0;
+    end;
     [IntegrationEvent(false, false)]
     local procedure OnAfterResetSelected(ADLSETable: Record "ADLSE Table")
     begin
