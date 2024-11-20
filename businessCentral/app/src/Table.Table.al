@@ -56,6 +56,11 @@ table 82561 "ADLSE Table"
             ObsoleteTag = '1.2.2.0';
             ObsoleteState = Removed;
         }
+        field(10; ExportCategory; Code[50])
+        {
+            TableRelation = "ADLSE Export Category";
+            DataClassification = CustomerContent;
+        }
     }
 
     keys
