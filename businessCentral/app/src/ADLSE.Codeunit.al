@@ -26,8 +26,8 @@ codeunit 82567 ADLSE
     internal procedure selectbc2adlsIntegrations(var AdlsIntegrations: Interface "ADLS Integrations")
     var
         ADLSESetup: Record "ADLSE Setup";
-        AzureIntegration: Codeunit "Azure Integration";
-        FabricLakehouseIntegration: Codeunit "FL Integration";
+        AzureIntegration: Codeunit "Azure Communication";
+        FabricLakehouseIntegration: Codeunit "Fabric Communication";
     begin
         //TODO: Make it extendible
         ADLSESetup.GetSingleton();
@@ -41,6 +41,4 @@ codeunit 82567 ADLSE
                 Error('The storage type is not supported.');
         end;
     end;
-
-
 }

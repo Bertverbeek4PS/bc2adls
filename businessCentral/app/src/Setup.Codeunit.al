@@ -75,25 +75,6 @@ codeunit 82560 "ADLSE Setup"
         exit(true);
     end;
 
-    procedure CheckSetup(var ADLSESetup: Record "ADLSE Setup")
-    var
-        ADLSECurrentSession: Record "ADLSE Current Session";
-        ADLSECredentials: Codeunit "ADLSE Credentials";
-    begin
-        ADLSESetup.GetSingleton();
-        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Azure Data Lake" then
-            ADLSESetup.TestField(Container)
-        else
-            ADLSESetup.TestField(Workspace);
-
-        ADLSESetup.CheckSchemaExported();
-
-        if ADLSECurrentSession.AreAnySessionsActive() then
-            ADLSECurrentSession.CheckForNoActiveSessions();
-
-        ADLSECredentials.Check();
-    end;
-
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'rd')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rd')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'm')]

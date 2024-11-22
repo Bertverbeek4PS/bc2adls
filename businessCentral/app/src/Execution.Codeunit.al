@@ -25,17 +25,19 @@ codeunit 82569 "ADLSE Execution"
         ADLSETable: Record "ADLSE Table";
         ADLSEField: Record "ADLSE Field";
         ADLSECurrentSession: Record "ADLSE Current Session";
-        ADLSESetup: Codeunit "ADLSE Setup";
-        ADLSECommunication: Codeunit "ADLSE Communication";
+        ADLSE: Codeunit "ADLSE";
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
         ADLSEExternalEvents: Codeunit "ADLSE External Events";
+        ADLSIntegrations: Interface "ADLS Integrations";
         Counter: Integer;
         Started: Integer;
     begin
-        ADLSESetup.CheckSetup(ADLSESetupRec);
+        ADLSE.selectbc2adlsIntegrations(ADLSIntegrations);
+        ADLSIntegrations.CheckSetup();
 
         OnStartExportOnAfterCheckSetup();
 
+        ADLSESetupRec.GetSingleton();
         EmitTelemetry := ADLSESetupRec."Emit telemetry";
         ADLSECurrentSession.CleanupSessions();
 

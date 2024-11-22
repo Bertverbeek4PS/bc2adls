@@ -7,12 +7,12 @@ enum 82563 "ADLSE Storage Type" implements "ADLS Integrations"
     value(0; "Azure Data Lake")
     {
         Caption = 'Azure Data Lake';
-        Implementation = "ADLS Integrations" = "Azure Integration";
+        Implementation = "ADLS Integrations" = "Azure Communication";
     }
 #pragma warning restore LC0045
     value(1; "Microsoft Fabric")
     {
         Caption = 'Microsoft Fabric';
-        Implementation = "ADLS Integrations" = "FL Integration";
+        Implementation = "ADLS Integrations" = "Fabric Communication";
     }
 }
