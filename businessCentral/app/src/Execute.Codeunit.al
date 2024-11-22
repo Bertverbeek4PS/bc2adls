@@ -104,6 +104,7 @@ codeunit 82561 "ADLSE Execute"
         var UpdatedLastTimeStamp: BigInteger; var DeletedLastEntryNo: BigInteger;
         var EntityJsonNeedsUpdate: Boolean; var ManifestJsonsNeedsUpdate: Boolean)
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSECommunicationDeletions: Codeunit "ADLSE Communication";
         FieldIdList: List of [Integer];
     begin
@@ -112,7 +113,8 @@ codeunit 82561 "ADLSE Execute"
         // first export the upserts
         ADLSECommunication.Init(TableID, FieldIdList, UpdatedLastTimeStamp, EmitTelemetry);
 
-        ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate, false);
+        if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Microsoft Fabric Open Mirroring" then
+            ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate, false);
 
         ExportTableUpdates(TableID, FieldIdList, ADLSECommunication, UpdatedLastTimeStamp);
 

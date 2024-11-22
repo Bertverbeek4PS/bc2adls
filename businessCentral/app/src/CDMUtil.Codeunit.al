@@ -18,6 +18,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
 
     procedure CreateEntityContent(TableID: Integer; FieldIdList: List of [Integer]) Content: JsonObject
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
         Definition: JsonObject;
         Definitions: JsonArray;
@@ -25,18 +26,24 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         Imports: JsonArray;
         EntityName: Text;
     begin
-        Content.Add('jsonSchemaSemanticVersion', '1.0.0');
-        Import.Add('corpusPath', 'cdm:/foundations.cdm.json');
-        Imports.Add(Import);
-        Content.Add('imports', Imports);
-        EntityName := ADLSEUtil.GetDataLakeCompliantTableName(TableID);
-        Definition.Add('entityName', EntityName);
-        Definition.Add('exhibitsTraits', BlankArray);
-        Definition.Add('displayName', ADLSEUtil.GetTableName(TableID));
-        Definition.Add('description', StrSubstNo(RepresentsTableTxt, ADLSEUtil.GetTableName(TableID)));
-        Definition.Add('hasAttributes', CreateAttributes(TableID, FieldIdList));
-        Definitions.Add(Definition);
-        Content.Add('definitions', Definitions);
+        ADLSESetup.GetSingleton();
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric Open Mirroring" then begin
+            Definitions.Add('systemId-2000000000');
+            Content.Add('keyColumns', Definitions);
+        end else begin
+            Content.Add('jsonSchemaSemanticVersion', '1.0.0');
+            Import.Add('corpusPath', 'cdm:/foundations.cdm.json');
+            Imports.Add(Import);
+            Content.Add('imports', Imports);
+            EntityName := ADLSEUtil.GetDataLakeCompliantTableName(TableID);
+            Definition.Add('entityName', EntityName);
+            Definition.Add('exhibitsTraits', BlankArray);
+            Definition.Add('displayName', ADLSEUtil.GetTableName(TableID));
+            Definition.Add('description', StrSubstNo(RepresentsTableTxt, ADLSEUtil.GetTableName(TableID)));
+            Definition.Add('hasAttributes', CreateAttributes(TableID, FieldIdList));
+            Definitions.Add(Definition);
+            Content.Add('definitions', Definitions);
+        end;
     end;
 
     procedure UpdateDefaultManifestContent(ExistingContent: JsonObject; TableID: Integer; Folder: Text; ADLSECdmFormat: Enum "ADLSE CDM Format") Content: JsonObject

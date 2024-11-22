@@ -130,7 +130,8 @@ codeunit 82568 "ADLSE Gen 2 Util"
         case ADLSESetup.GetStorageType() of
             ADLSESetup."Storage Type"::"Azure Data Lake":
                 ADLSEHttp.SetUrl(BlobPath);
-            ADLSESetup."Storage Type"::"Microsoft Fabric":
+            ADLSESetup."Storage Type"::"Microsoft Fabric",
+            ADLSESetup."Storage Type"::"Microsoft Fabric Open Mirroring":
                 begin
                     BlobPathOrg := BlobPath;
                     ADLSEHttp.SetUrl(BlobPath + '?resource=file');
@@ -151,7 +152,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
             Error(CouldNotCreateBlobErr, BlobPath, Response);
 
         //Upload Json for Microsoft Fabric
-        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (IsJson) then
+        if (ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Azure Data Lake") and (IsJson) then
             AddBlockToDataBlob(BlobPathOrg, Body, 0, ADLSECredentials);
     end;
 
@@ -196,6 +197,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         ADLSEHttp.SetUrl(BlobPath + '?position=' + Format(Position) + '&action=append&flush=true');
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
         ADLSEHttp.SetBody(Body);
+
         if not ADLSEHttp.InvokeRestApi(Response) then
             Error(CouldNotAppendDataToBlobErr, BlobPath, Response);
     end;

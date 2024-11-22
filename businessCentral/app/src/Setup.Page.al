@@ -51,6 +51,7 @@ page 82560 "ADLSE Setup"
                     Editable = not AzureDataLake;
                     field(Workspace; Rec.Workspace) { }
                     field(Lakehouse; Rec.Lakehouse) { }
+                    field(MirroredDatabase; Rec."Mirrored database") { }
                 }
                 group(Access)
                 {

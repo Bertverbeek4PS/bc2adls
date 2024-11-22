@@ -145,6 +145,17 @@ table 82560 "ADLSE Setup"
                         Error(LakehouseIncorrectFormatErr);
             end;
         }
+        field(32; "Mirrored database"; Text[100])
+        {
+            Caption = 'Mirrored database';
+            ToolTip = 'Specifies the guid of the mirrored database where the data is going to be uploaded. This must be a GUID.';
+            trigger OnValidate()
+            var
+                ValidGuid: Guid;
+            begin
+                Evaluate(ValidGuid, Rec."Mirrored database"); //TODO with error message
+            end;
+        }
         field(35; "Schema Exported On"; DateTime)
         {
             AllowInCustomizations = Always;

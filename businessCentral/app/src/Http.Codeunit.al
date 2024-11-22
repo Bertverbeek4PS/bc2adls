@@ -98,7 +98,7 @@ codeunit 82563 "ADLSE Http"
         Success := InvokeRestApi(Response, StatusCode);
     end;
 
-    [NonDebuggable]
+    //[NonDebuggable] //TODO Uncomment this line when the feature is available
     procedure InvokeRestApi(var Response: Text; var StatusCode: Integer) Success: Boolean
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -169,7 +169,8 @@ codeunit 82563 "ADLSE Http"
         Headers: HttpHeaders;
     begin
         if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake") or
-        (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson)
+        (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson) or
+        (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric Open Mirroring") and (not ContentTypeJson)
         then
             HttpContent.WriteFrom(Body);
 
@@ -179,7 +180,7 @@ codeunit 82563 "ADLSE Http"
             Headers.Remove('Content-Type');
             Headers.Add('Content-Type', 'application/json');
             Headers.Remove('Content-Length');
-            if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric" then
+            if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Azure Data Lake" then
                 Headers.Add('Content-Length', '0');
         end;
 
