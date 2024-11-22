@@ -5,7 +5,9 @@ codeunit 82562 "ADLSE Communication"
     Access = Internal;
 
     var
+        ADLSE: Codeunit "ADLSE";
         ADLSECredentials: Codeunit "ADLSE Credentials";
+        AdlsIntegrations: Interface "ADLS Integrations";
         TableID: Integer;
         FieldIdList: List of [Integer];
         DataBlobPath: Text;
@@ -17,13 +19,11 @@ codeunit 82562 "ADLSE Communication"
         NumberOfFlushes: Integer;
         EntityName: Text;
         EntityJson: JsonObject;
-        DefaultContainerName: Text;
         MaxSizeOfPayloadMiB: Integer;
         EmitTelemetry: Boolean;
         DeltaCdmManifestNameTxt: Label 'deltas.manifest.cdm.json', Locked = true;
         DataCdmManifestNameTxt: Label 'data.manifest.cdm.json', Locked = true;
         EntityManifestNameTemplateTxt: Label '%1.cdm.json', Locked = true, Comment = '%1 = Entity name';
-        ContainerUrlTxt: Label 'https://%1.blob.core.windows.net/%2', Comment = '%1: Account name, %2: Container Name';
         CorpusJsonPathTxt: Label '/%1', Comment = '%1 = name of the blob', Locked = true;
         CannotAddedMoreBlocksErr: Label 'The number of blocks that can be added to the blob has reached its maximum limit.';
         SingleRecordTooLargeErr: Label 'A single record payload exceeded the max payload size. Please adjust the payload size or reduce the fields to be exported for the record.';
@@ -31,9 +31,6 @@ codeunit 82562 "ADLSE Communication"
         ExportOfSchemaNotPerformendTxt: Label 'Please export the schema first before trying to export the data.';
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
-        MSFabricUrlTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2.Lakehouse/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
-        MSFabricUrlGuidTxt: Label 'https://onelake.dfs.fabric.microsoft.com/%1/%2/Files', Locked = true, Comment = '%1: Workspace name, %2: Lakehouse Name';
-        ResetTableExportTxt: Label '/reset/%1.txt', Locked = true, Comment = '%1 = Table name';
 
     procedure SetupBlobStorage()
     var
@@ -46,25 +43,8 @@ codeunit 82562 "ADLSE Communication"
     end;
 
     local procedure GetBaseUrl(): Text
-    var
-        ADLSESetup: Record "ADLSE Setup";
-        ValidGuid: Guid;
     begin
-        ADLSESetup.GetSingleton();
-        case ADLSESetup.GetStorageType() of
-            ADLSESetup."Storage Type"::"Azure Data Lake":
-                begin
-                    if DefaultContainerName = '' then
-                        DefaultContainerName := ADLSESetup.Container;
-
-                    exit(StrSubstNo(ContainerUrlTxt, ADLSESetup."Account Name", DefaultContainerName));
-                end;
-            ADLSESetup."Storage Type"::"Microsoft Fabric":
-                if not Evaluate(ValidGuid, ADLSESetup.Lakehouse) then
-                    exit(StrSubstNo(MSFabricUrlTxt, ADLSESetup.Workspace, ADLSESetup.Lakehouse))
-                else
-                    exit(StrSubstNo(MSFabricUrlGuidTxt, ADLSESetup.Workspace, ADLSESetup.Lakehouse));
-        end;
+        exit(AdlsIntegrations.GetBaseUrl());
     end;
 
     procedure Init(TableIDValue: Integer; FieldIdListValue: List of [Integer]; LastFlushedTimeStampValue: BigInteger; EmitTelemetryValue: Boolean)
@@ -74,6 +54,8 @@ codeunit 82562 "ADLSE Communication"
         ADLSEExecution: Codeunit "ADLSE Execution";
         CustomDimensions: Dictionary of [Text, Text];
     begin
+        ADLSE.selectbc2adlsIntegrations(AdlsIntegrations);
+
         TableID := TableIDValue;
         FieldIdList := FieldIdListValue;
 
@@ -82,6 +64,7 @@ codeunit 82562 "ADLSE Communication"
 
         LastFlushedTimeStamp := LastFlushedTimeStampValue;
         ADLSESetup.GetSingleton();
+
         MaxSizeOfPayloadMiB := ADLSESetup.MaxPayloadSizeMiB;
         EmitTelemetry := EmitTelemetryValue;
         if EmitTelemetry then begin
@@ -258,7 +241,6 @@ codeunit 82562 "ADLSE Communication"
         ADLSESetup: Record "ADLSE Setup";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
-        ADLSE: Codeunit ADLSE;
         CustomDimensions: Dictionary of [Text, Text];
         BlockID: Text;
     begin
@@ -358,23 +340,4 @@ codeunit 82562 "ADLSE Communication"
         if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
             ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
     end;
-
-    procedure ResetTableExport(ltableId: Integer)
-    var
-        ADLSESetup: Record "ADLSE Setup";
-        ADLSEUtil: Codeunit "ADLSE Util";
-        ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
-        Body: JsonObject;
-    begin
-        ADLSESetup.GetSingleton();
-        ADLSECredentials.Init();
-        case ADLSESetup."Storage Type" of
-            "ADLSE Storage Type"::"Microsoft Fabric":
-                ADLSEGen2Util.CreateOrUpdateJsonBlob(GetBaseUrl() + StrSubstNo(ResetTableExportTxt, ADLSEUtil.GetDataLakeCompliantTableName(ltableId)), ADLSECredentials, '', Body);
-            "ADLSE Storage Type"::"Azure Data Lake":
-                ADLSEGen2Util.RemoveDeltasFromDataLake(ADLSEUtil.GetDataLakeCompliantTableName(ltableId), ADLSECredentials);
-        end;
-    end;
-
-
 }

@@ -187,7 +187,8 @@ table 82561 "ADLSE Table"
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSESetup: Record "ADLSE Setup";
-        ADLSECommunication: Codeunit "ADLSE Communication";
+        ADLSE: Codeunit "ADLSE";
+        ADLSIntegrations: Interface "ADLS Integrations";
         Counter: Integer;
     begin
         if Rec.FindSet(true) then
@@ -204,8 +205,11 @@ table 82561 "ADLSE Table"
                 ADLSEDeletedRecord.DeleteAll(false);
 
                 ADLSESetup.GetSingleton();
-                if (ADLSESetup."Delete Table") then
-                    ADLSECommunication.ResetTableExport(Rec."Table ID");
+                if (ADLSESetup."Delete Table") then begin
+                    ADLSE.selectbc2adlsIntegrations(ADLSIntegrations);
+                    ADLSIntegrations.ResetTableExport(Rec."Table ID");
+
+                end;
 
                 OnAfterResetSelected(Rec);
 
@@ -293,6 +297,7 @@ table 82561 "ADLSE Table"
                 end;
             until Field.Next() = 0;
     end;
+
     [IntegrationEvent(false, false)]
     local procedure OnAfterResetSelected(ADLSETable: Record "ADLSE Table")
     begin

@@ -22,4 +22,25 @@ codeunit 82567 ADLSE
     internal procedure OnTableExported(TableID: Integer; LastTimeStampExported: BigInteger)
     begin
     end;
+
+    internal procedure selectbc2adlsIntegrations(var AdlsIntegrations: Interface "ADLS Integrations")
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        AzureIntegration: Codeunit "Azure Integration";
+        FabricLakehouseIntegration: Codeunit "Fabric Lakehouse Integration";
+    begin
+        //TODO: Make it extendible
+        ADLSESetup.GetSingleton();
+        case
+            ADLSESetup."Storage Type" of
+            ADLSESetup."Storage Type"::"Azure Data Lake":
+                AdlsIntegrations := AzureIntegration;
+            ADLSESetup."Storage Type"::"Microsoft Fabric":
+                AdlsIntegrations := FabricLakehouseIntegration;
+            else
+                Error('The storage type is not supported.');
+        end;
+    end;
+
+
 }
