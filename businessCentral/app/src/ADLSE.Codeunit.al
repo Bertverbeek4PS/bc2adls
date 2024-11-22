@@ -27,7 +27,7 @@ codeunit 82567 ADLSE
     var
         ADLSESetup: Record "ADLSE Setup";
         AzureIntegration: Codeunit "Azure Integration";
-        FabricLakehouseIntegration: Codeunit "Fabric Lakehouse Integration";
+        FabricLakehouseIntegration: Codeunit "FL Integration";
     begin
         //TODO: Make it extendible
         ADLSESetup.GetSingleton();

@@ -1,4 +1,4 @@
-codeunit 82578 "Fabric Lakehouse Integration" implements "ADLS Integrations"
+codeunit 82578 "FL Integration" implements "ADLS Integrations"
 {
     procedure GetBaseUrl(): Text
     var

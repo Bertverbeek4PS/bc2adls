@@ -13,6 +13,6 @@ enum 82563 "ADLSE Storage Type" implements "ADLS Integrations"
     value(1; "Microsoft Fabric")
     {
         Caption = 'Microsoft Fabric';
-        Implementation = "ADLS Integrations" = "Fabric Lakehouse Integration";
+        Implementation = "ADLS Integrations" = "FL Integration";
     }
 }

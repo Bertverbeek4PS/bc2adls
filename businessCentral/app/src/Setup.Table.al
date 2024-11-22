@@ -8,7 +8,6 @@ table 82560 "ADLSE Setup"
     Caption = 'ADLSE Setup';
     DataClassification = CustomerContent;
     DataPerCompany = false;
-    DataCaptionFields = Container;
 
     fields
     {
@@ -18,38 +17,6 @@ table 82560 "ADLSE Setup"
             Caption = 'Primary Key';
             Editable = false;
         }
-
-        field(5; "Account Name"; Text[24])
-        {
-            Caption = 'Account Name';
-            ToolTip = 'Specifies the name of the storage account.';
-
-            trigger OnValidate()
-            begin
-                // Name constraints based on https://learn.microsoft.com/en-us/azure/storage/common/storage-account-overview#storage-account-name
-                if (StrLen(Rec."Account Name") < 3) or (StrLen(Rec."Account Name") > 24) // between 3 and 24 characters long
-                    or TextCharactersOtherThan(Rec."Account Name", 'abcdefghijklmnopqrstuvwxyz1234567890') // only made of lower case letters and numerals
-                then
-                    Error(AccountNameIncorrectFormatErr);
-            end;
-        }
-
-        field(2; Container; Text[63])
-        {
-            Caption = 'Container';
-            ToolTip = 'Specifies the name of the container where the data is going to be uploaded. Please refer to constraints on container names at https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata.';
-
-            trigger OnValidate()
-            begin
-                // Name constraints based on https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata
-                if (StrLen(Container) < 3) or (StrLen(Container) > 63) // between 6 and 63 characters long
-                    or TextCharactersOtherThan(Container, 'abcdefghijklmnopqrstuvwxyz1234567890-') // only made of lower case letters, numerals and dashes
-                    or (StrPos(Container, '--') <> 0) // no occurence of multiple dashes together
-                then
-                    Error(ContainerNameIncorrectFormatErr);
-            end;
-        }
-
         field(3; MaxPayloadSizeMiB; Integer)
         {
             Caption = 'Max payload size (MiBs)';
@@ -113,37 +80,6 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Storage type';
             ToolTip = 'Specifies the type of storage type to use.';
-        }
-
-        field(30; Workspace; Text[100])
-        {
-            Caption = 'Workspace';
-            ToolTip = 'Specifies the name of the Workspace where the data is going to be uploaded. This can be a name or a GUID.';
-            trigger OnValidate()
-            var
-                ValidGuid: Guid;
-            begin
-                if not Evaluate(ValidGuid, Rec.Workspace) then
-                    if (StrLen(Rec.Workspace) < 3) or (StrLen(Rec.Workspace) > 24)
-                        or TextCharactersOtherThan(Rec.Workspace, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_')
-                    then
-                        Error(WorkspaceIncorrectFormatErr);
-            end;
-        }
-        field(31; Lakehouse; Text[100])
-        {
-            Caption = 'Lakehouse';
-            ToolTip = 'Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID.';
-            trigger OnValidate()
-            var
-                ValidGuid: Guid;
-            begin
-                if not Evaluate(ValidGuid, Rec.Lakehouse) then
-                    if (StrLen(Rec.Lakehouse) < 3) or (StrLen(Rec.Lakehouse) > 24)
-                        or TextCharactersOtherThan(Rec.Lakehouse, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_')
-                    then
-                        Error(LakehouseIncorrectFormatErr);
-            end;
         }
         field(35; "Schema Exported On"; DateTime)
         {
@@ -214,27 +150,11 @@ table 82560 "ADLSE Setup"
 
     var
         MaxReqErrorInfo: ErrorInfo;
-        ContainerNameIncorrectFormatErr: Label 'The container name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_';
-        AccountNameIncorrectFormatErr: Label 'The account name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890';
-        WorkspaceIncorrectFormatErr: Label 'The workspace is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID';
-        LakehouseIncorrectFormatErr: Label 'The lakehouse is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID';
         RecordDoesNotExistErr: Label 'No record on this table exists.';
         PrimaryKeyValueLbl: Label '0', Locked = true;
         SchemaAlreadyExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
         MaximumRetriesErr: Label 'Please enter a value that is equal or smaller than 10 for the maximum retries.';
         NoSchemaExportedErr: Label 'No schema has been exported yet. Please export schema first before exporting the data.';
-
-    local procedure TextCharactersOtherThan(String: Text; CharString: Text): Boolean
-    var
-        Index: Integer;
-        Letter: Text;
-    begin
-        for Index := 1 to StrLen(String) do begin
-            Letter := CopyStr(String, Index, 1);
-            if StrPos(CharString, Letter) = 0 then
-                exit(true);
-        end;
-    end;
 
     procedure GetSingleton()
     begin
