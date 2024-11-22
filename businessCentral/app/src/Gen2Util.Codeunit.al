@@ -194,25 +194,6 @@ codeunit 82568 "ADLSE Gen 2 Util"
             Error(CouldNotReleaseLockOnBlobErr, BlobPath, Response);
     end;
 
-    procedure IsMaxBlobFileSize(DataBlobPath: Text; BlobContentLength: Integer; PayloadLength: Integer): Boolean
-    var
-        ADLSESetup: Record "ADLSE Setup";
-        BlobTotalContentSize: BigInteger;
-    begin
-        if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Microsoft Fabric" then
-            exit(false);
-
-        // To prevent a overflow, use a BigInterger to calculate the total value
-        BlobTotalContentSize := BlobContentLength;
-        BlobTotalContentSize += PayloadLength;
-
-        // Microsoft Fabric has a limit of 2 GB (2147483647) for a blob.
-        if BlobTotalContentSize < 2147483647 then
-            exit(false);
-
-        exit(true);
-    end;
-
     procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
     var
         ADLSESetup: Record "ADLSE Setup";

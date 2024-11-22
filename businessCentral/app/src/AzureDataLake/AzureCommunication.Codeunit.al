@@ -208,21 +208,8 @@ codeunit 82577 "Azure Communication" implements "ADLS Integrations"
         FileIdentifer: Guid;
     begin
         if DataBlobPath <> '' then
-            // Microsoft Fabric has a limit on the blob size. Create a new blob before reaching this limit
-            if not ADLSEGen2Util.IsMaxBlobFileSize(DataBlobPath, BlobContentLength, Payload.Length()) then
-                exit // no need to create a new blob
-            else begin
-                if EmitTelemetry then begin
-                    Clear(CustomDimension);
-                    CustomDimension.Add('Entity', EntityName);
-                    CustomDimension.Add('DataBlobPath', DataBlobPath);
-                    CustomDimension.Add('BlobContentLength', Format(BlobContentLength));
-                    CustomDimension.Add('PayloadContentLength', Format(Payload.Length()));
-                    ADLSEExecution.Log('ADLSE-030', 'Maximum blob size reached.', Verbosity::Normal, CustomDimension);
-                end;
-                Created := true;
-                BlobContentLength := 0;
-            end;
+            // already created blob
+            exit;
 
         FileIdentifer := CreateGuid();
 

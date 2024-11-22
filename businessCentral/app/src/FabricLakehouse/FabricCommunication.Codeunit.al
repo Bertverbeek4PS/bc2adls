@@ -217,7 +217,7 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
     begin
         if DataBlobPath <> '' then
             // Microsoft Fabric has a limit on the blob size. Create a new blob before reaching this limit
-            if not ADLSEGen2Util.IsMaxBlobFileSize(DataBlobPath, BlobContentLength, Payload.Length()) then
+            if not IsMaxBlobFileSize(BlobContentLength, Payload.Length()) then
                 exit // no need to create a new blob
             else begin
                 if EmitTelemetry then begin
@@ -243,6 +243,25 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
             CustomDimension.Add('DataBlobPath', DataBlobPath);
             ADLSEExecution.Log('ADLSE-012', 'Created new blob to hold the data to be exported', Verbosity::Normal, CustomDimension);
         end;
+    end;
+
+    local procedure IsMaxBlobFileSize(BlobContentLength: Integer; PayloadLength: Integer): Boolean
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        BlobTotalContentSize: BigInteger;
+    begin
+        if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Microsoft Fabric" then
+            exit(false);
+
+        // To prevent a overflow, use a BigInterger to calculate the total value
+        BlobTotalContentSize := BlobContentLength;
+        BlobTotalContentSize += PayloadLength;
+
+        // Microsoft Fabric has a limit of 2 GB (2147483647) for a blob.
+        if BlobTotalContentSize < 2147483647 then
+            exit(false);
+
+        exit(true);
     end;
 
     procedure TryCollectAndSendRecord(RecordRef: RecordRef; RecordTimeStamp: BigInteger; var LastTimestampExported: BigInteger)
