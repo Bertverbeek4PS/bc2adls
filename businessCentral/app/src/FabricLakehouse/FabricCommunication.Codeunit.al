@@ -247,12 +247,8 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
 
     local procedure IsMaxBlobFileSize(BlobContentLength: Integer; PayloadLength: Integer): Boolean
     var
-        ADLSESetup: Record "ADLSE Setup";
         BlobTotalContentSize: BigInteger;
     begin
-        if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Microsoft Fabric" then
-            exit(false);
-
         // To prevent a overflow, use a BigInterger to calculate the total value
         BlobTotalContentSize := BlobContentLength;
         BlobTotalContentSize += PayloadLength;

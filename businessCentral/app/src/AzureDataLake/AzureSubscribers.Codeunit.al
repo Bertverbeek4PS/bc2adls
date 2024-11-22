@@ -19,4 +19,27 @@ codeunit 82579 "Azure Subscribers"
         if not ADLSEGen2Util.ContainerExists(ADLSIntegrations.GetBaseUrl(), ADLSECredentials) then
             ADLSEGen2Util.CreateContainer(ADLSIntegrations.GetBaseUrl(), ADLSECredentials);
     end;
+
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"ADLSE Http", 'OnBeforeAddContent', '', true, true)]
+    local procedure OnBeforeAddContent(var HttpContent: HttpContent; ContentTypeJson: Boolean; body: Text)
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        Headers: HttpHeaders;
+    begin
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Storage Type" <> ADLSESetup."Storage Type"::"Azure Data Lake" then
+            exit;
+
+        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake") then
+            HttpContent.WriteFrom(Body);
+
+        HttpContent.GetHeaders(Headers);
+
+        if ContentTypeJson then begin
+            Headers.Remove('Content-Type');
+            Headers.Add('Content-Type', 'application/json');
+            Headers.Remove('Content-Length');
+        end;
+    end;
 }

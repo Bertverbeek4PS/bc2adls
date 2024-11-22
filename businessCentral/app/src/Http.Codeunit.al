@@ -132,7 +132,7 @@ codeunit 82563 "ADLSE Http"
                 begin
                     HttpRequestMessage.Method('PUT');
                     HttpRequestMessage.SetRequestUri(Url);
-                    AddContent(HttpContent);
+                    AddContent(HttpContent, body);
                     HttpClient.Put(Url, HttpContent, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Delete:
@@ -141,7 +141,7 @@ codeunit 82563 "ADLSE Http"
                 begin
                     HttpRequestMessage.Method('PATCH');
                     HttpRequestMessage.SetRequestUri(Url);
-                    AddContent(HttpContent);
+                    AddContent(HttpContent, body);
                     HttpRequestMessage.Content(HttpContent);
                     HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
@@ -163,28 +163,9 @@ codeunit 82563 "ADLSE Http"
         StatusCode := HttpResponseMessage.HttpStatusCode();
     end;
 
-    local procedure AddContent(var HttpContent: HttpContent)
-    var
-        ADLSESetup: Record "ADLSE Setup";
-        Headers: HttpHeaders;
+    local procedure AddContent(var HttpContent: HttpContent; body: Text)
     begin
-        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake") or
-        (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson)
-        then
-            HttpContent.WriteFrom(Body);
-
-        HttpContent.GetHeaders(Headers);
-
-        if ContentTypeJson then begin
-            Headers.Remove('Content-Type');
-            Headers.Add('Content-Type', 'application/json');
-            Headers.Remove('Content-Length');
-            if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric" then
-                Headers.Add('Content-Length', '0');
-        end;
-
-        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson) then
-            Headers.Remove('Content-Length');
+        OnBeforeAddContent(HttpContent, ContentTypeJson, body);
     end;
 
     [NonDebuggable]
@@ -262,5 +243,10 @@ codeunit 82563 "ADLSE Http"
         Json.ReadFrom(ResponseBody);
         AccessToken := ADSEUtil.GetTextValueForKeyInJson(Json, 'access_token');
         // TODO: Store access token in cache, and use it based on expiry date. 
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeAddContent(var HttpContent: HttpContent; ContentTypeJson: Boolean; body: Text)
+    begin
     end;
 }
