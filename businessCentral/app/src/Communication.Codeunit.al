@@ -32,16 +32,6 @@ codeunit 82562 "ADLSE Communication"
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
 
-    procedure SetupBlobStorage()
-    var
-        ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
-    begin
-        ADLSECredentials.Init();
-
-        if not ADLSEGen2Util.ContainerExists(GetBaseUrl(), ADLSECredentials) then
-            ADLSEGen2Util.CreateContainer(GetBaseUrl(), ADLSECredentials);
-    end;
-
     local procedure GetBaseUrl(): Text
     begin
         exit(AdlsIntegrations.GetBaseUrl());
