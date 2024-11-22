@@ -42,4 +42,16 @@ codeunit 82579 "Azure Subscribers"
             Headers.Remove('Content-Length');
         end;
     end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"ADLSE Http", 'OnBeforeAcquireTokenOAuth2', '', true, true)]
+    local procedure OnBeforeAcquireTokenOAuth2(var ScopeUrlEncoded: Text)
+    var
+        ADLSESetup: Record "ADLSE Setup";
+    begin
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Storage Type" <> ADLSESetup."Storage Type"::"Azure Data Lake" then
+            exit;
+
+        ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation'; // url encoded form of https://storage.azure.com/user_impersonation
+    end;
 }

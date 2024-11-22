@@ -23,4 +23,16 @@ codeunit 82580 "Fabric Subscribers"
         end else
             Headers.Remove('Content-Length');
     end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"ADLSE Http", 'OnBeforeAcquireTokenOAuth2', '', true, true)]
+    local procedure OnBeforeAcquireTokenOAuth2(var ScopeUrlEncoded: Text)
+    var
+        ADLSESetup: Record "ADLSE Setup";
+    begin
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Storage Type" <> ADLSESetup."Storage Type"::"Microsoft Fabric" then
+            exit;
+
+        ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2F.default'; // url encoded form of https://storage.azure.com/.default                
+    end;
 }

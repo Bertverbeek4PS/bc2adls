@@ -210,12 +210,7 @@ codeunit 82563 "ADLSE Http"
         Json: JsonObject;
         ScopeUrlEncoded: Text;
     begin
-        case ADLSESetup.GetStorageType() of
-            ADLSESetup."Storage Type"::"Azure Data Lake":
-                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation'; // url encoded form of https://storage.azure.com/user_impersonation
-            ADLSESetup."Storage Type"::"Microsoft Fabric":
-                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2F.default'; // url encoded form of https://storage.azure.com/.default                
-        end;
+        OnBeforeAcquireTokenOAuth2(ScopeUrlEncoded);
 
         Uri := StrSubstNo(OAuthTok, Credentials.GetTenantID());
         HttpRequestMessage.Method('POST');
@@ -247,6 +242,11 @@ codeunit 82563 "ADLSE Http"
 
     [IntegrationEvent(false, false)]
     local procedure OnBeforeAddContent(var HttpContent: HttpContent; ContentTypeJson: Boolean; body: Text)
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeAcquireTokenOAuth2(var ScopeUrlEncoded: Text)
     begin
     end;
 }
