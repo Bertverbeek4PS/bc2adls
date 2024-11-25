@@ -1,0 +1,13 @@
+feat(bulk-reset): Implement bulk table reset functionality
+
+- Add ResetTables procedure to ADLSE Table for bulk reset operations
+- Implement OnAfterResetSelectedBulk event in External Events
+- Maintain backward compatibility with existing reset functionality
+- Update documentation with implementation details and tasks
+
+Changes:
+- Added ResetTables procedure in ADLSE Table with proper documentation
+- Added OnAfterResetSelectedBulk event with both internal and external implementations
+- Updated reset-table-functionality.md with implementation details
+
+Related: #issue_number

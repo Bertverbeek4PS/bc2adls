@@ -152,6 +152,11 @@ codeunit 82574 "ADLSE External Events"
         MyBusinessOnRefreshOptions(ADLSESetup.SystemId, ADLSESetup."Storage Type", Url, WebClientUrl);
     end;
 
+    internal procedure OnAfterResetSelectedBulk(TableList: List of [Guid]; TableIdList: List of [Integer])
+    begin
+        MyBusinessEventOnAfterResetSelectedBulk(TableList, TableIdList);
+    end;
+
     local procedure GetSetup()
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -235,6 +240,11 @@ codeunit 82574 "ADLSE External Events"
 
     [ExternalBusinessEvent('OnRefreshOptions', 'Refresh Options', 'When the options are refreshed', EventCategory::ADLSE)]
     local procedure MyBusinessOnRefreshOptions(SystemId: Guid; "Storage Type": Enum "ADLSE Storage Type"; Url: Text[250]; WebClientUrl: Text[250])
+    begin
+    end;
+
+    [ExternalBusinessEvent('OnAfterResetSelectedBulk', 'Multiple tables reset completed', EventCategory::ADLSE)]
+    local procedure MyBusinessEventOnAfterResetSelectedBulk(SystemIds: List of [Guid]; TableIds: List of [Integer])
     begin
     end;
 

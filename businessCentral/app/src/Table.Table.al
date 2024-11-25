@@ -293,6 +293,32 @@ table 82561 "ADLSE Table"
                 end;
             until Field.Next() = 0;
     end;
+
+    /// <summary>
+    /// Resets multiple tables in bulk, maintaining individual reset behavior while providing a bulk operation event.
+    /// </summary>
+    /// <param name="SelectedADLSETables">The record variable containing the selected tables to reset.</param>
+    /// <error>No tables were selected for reset.</error>
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
+    procedure ResetTables(var SelectedADLSETables: Record "ADLSE Table")
+    var
+        TableList: List of [Guid];
+        TableIdList: List of [Integer];
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
+        NoTablesSelectedErr: Label 'No tables were selected for reset.';
+    begin
+        if not SelectedADLSETables.FindSet() then
+            Error(NoTablesSelectedErr);
+
+        repeat
+            TableList.Add(SelectedADLSETables.SystemId);
+            TableIdList.Add(SelectedADLSETables."Table ID");
+            SelectedADLSETables.ResetSelected();
+        until SelectedADLSETables.Next() = 0;
+        
+        ADLSEExternalEvents.OnAfterResetSelectedBulk(TableList, TableIdList);
+    end;
+
     [IntegrationEvent(false, false)]
     local procedure OnAfterResetSelected(ADLSETable: Record "ADLSE Table")
     begin
