@@ -7,7 +7,6 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
         TableID: Integer;
         FieldIdList: List of [Integer];
         DataBlobPath: Text;
-        DataBlobBlockIDs: List of [Text];
         BlobContentLength: Integer;
         LastRecordOnPayloadTimeStamp: BigInteger;
         Payload: TextBuilder;
@@ -59,7 +58,7 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
         ADLSECredentials.Check();
     end;
 
-    procedure CreateBlockBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; LeaseID: Text; Body: Text; IsJson: Boolean)
+    procedure CreateBlockBlob(BlobPath: Text; lADLSECredentials: Codeunit "ADLSE Credentials"; LeaseID: Text; Body: Text; IsJson: Boolean)
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -71,7 +70,7 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
         BlobPathOrg := BlobPath;
         ADLSEHttp.SetUrl(BlobPath + '?resource=file');
 
-        ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+        ADLSEHttp.SetAuthorizationCredentials(lADLSECredentials);
         ADLSEHttp.AddHeader('x-ms-blob-type', 'BlockBlob');
         if IsJson then begin
             ADLSEHttp.AddHeader('x-ms-blob-content-type', ADLSEHttp.GetContentTypeJson());
@@ -86,7 +85,7 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
 
         //Upload Json for Microsoft Fabric
         if IsJson then
-            AddBlockToDataBlob(BlobPathOrg, Body, 0, ADLSECredentials);
+            AddBlockToDataBlob(BlobPathOrg, Body, 0, lADLSECredentials);
     end;
 
     procedure ResetTableExport(ltableId: Integer)
@@ -94,7 +93,6 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
         ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
-        ADLSECredentials: Codeunit "ADLSE Credentials";
         Body: JsonObject;
         ResetTableExportTxt: Label '/reset/%1.txt', Locked = true, Comment = '%1 = Table name';
     begin
@@ -104,7 +102,7 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
         ADLSEGen2Util.CreateOrUpdateJsonBlob(GetBaseUrl() + StrSubstNo(ResetTableExportTxt, ADLSEUtil.GetDataLakeCompliantTableName(ltableId)), ADLSECredentials, '', Body);
     end;
 
-    local procedure AddBlockToDataBlob(BlobPath: Text; Body: Text; Position: Integer; ADLSECredentials: Codeunit "ADLSE Credentials")
+    local procedure AddBlockToDataBlob(BlobPath: Text; Body: Text; Position: Integer; lADLSECredentials: Codeunit "ADLSE Credentials")
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -112,7 +110,7 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
     begin
         ADLSEHttp.SetMethod("ADLSE Http Method"::Patch);
         ADLSEHttp.SetUrl(BlobPath + '?position=' + Format(Position) + '&action=append&flush=true');
-        ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+        ADLSEHttp.SetAuthorizationCredentials(lADLSECredentials);
         ADLSEHttp.SetBody(Body);
         if not ADLSEHttp.InvokeRestApi(Response) then
             Error(CouldNotAppendDataToBlobErr, BlobPath, Response);
@@ -322,11 +320,9 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
 
     local procedure FlushPayload()
     var
-        ADLSESetup: Record "ADLSE Setup";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
         CustomDimensions: Dictionary of [Text, Text];
-        BlockID: Text;
     begin
         if Payload.Length() = 0 then
             exit;
@@ -382,7 +378,6 @@ codeunit 82578 "Fabric Communication" implements "ADLS Integrations"
 
     local procedure UpdateManifest(BlobPath: Text; Folder: Text; ADLSECdmFormat: Enum "ADLSE CDM Format")
     var
-        ADLSESetup: Record "ADLSE Setup";
         ADLSECdmUtil: Codeunit "ADLSE CDM Util";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ManifestJson: JsonObject;

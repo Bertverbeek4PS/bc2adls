@@ -8,7 +8,6 @@ codeunit 82577 "Azure Communication" implements "ADLS Integrations"
         FieldIdList: List of [Integer];
         DataBlobPath: Text;
         DataBlobBlockIDs: List of [Text];
-        BlobContentLength: Integer;
         LastRecordOnPayloadTimeStamp: BigInteger;
         Payload: TextBuilder;
         LastFlushedTimeStamp: BigInteger;
