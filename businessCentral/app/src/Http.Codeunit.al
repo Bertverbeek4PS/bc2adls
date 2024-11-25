@@ -107,23 +107,14 @@ codeunit 82563 "ADLSE Http"
         HttpRequestMessage: HttpRequestMessage;
         HttpResponseMessage: HttpResponseMessage;
         HttpContent: HttpContent;
-        HeaderKey: Text;
-        HeaderValue: Text;
     begin
+        OnBeforeInvokeRestApi(AdditionalRequestHeaders, Headers, HttpClient);
+
         ADLSESetup.GetSingleton();
 
         HttpClient.SetBaseAddress(Url);
         if not AddAuthorization(HttpClient, Response) then
             exit(false);
-
-        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
-            if AdditionalRequestHeaders.Count() > 0 then begin
-                Headers := HttpClient.DefaultRequestHeaders();
-                foreach HeaderKey in AdditionalRequestHeaders.Keys do begin
-                    AdditionalRequestHeaders.Get(HeaderKey, HeaderValue);
-                    Headers.Add(HeaderKey, HeaderValue);
-                end;
-            end;
 
         case HttpMethod of
             "ADLSE Http Method"::Get:
@@ -197,7 +188,6 @@ codeunit 82563 "ADLSE Http"
     [NonDebuggable]
     local procedure AcquireTokenOAuth2(var AuthError: Text) AccessToken: Text
     var
-        ADLSESetup: Record "ADLSE Setup";
         ADSEUtil: Codeunit "ADLSE Util";
         HttpClient: HttpClient;
         HttpRequestMessage: HttpRequestMessage;
@@ -249,4 +239,10 @@ codeunit 82563 "ADLSE Http"
     local procedure OnBeforeAcquireTokenOAuth2(var ScopeUrlEncoded: Text)
     begin
     end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeInvokeRestApi(AdditionalRequestHeaders: Dictionary of [Text, Text]; var Headers: HttpHeaders; HttpClient: HttpClient)
+    begin
+    end;
+
 }

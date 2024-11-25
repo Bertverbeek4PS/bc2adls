@@ -54,4 +54,25 @@ codeunit 82579 "Azure Subscribers"
 
         ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation'; // url encoded form of https://storage.azure.com/user_impersonation
     end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"ADLSE Http", 'OnBeforeInvokeRestApi', '', true, true)]
+    local procedure OnBeforeInvokeRestApi(AdditionalRequestHeaders: Dictionary of [Text, Text]; var Headers: HttpHeaders; HttpClient: HttpClient)
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        HeaderKey: Text;
+        HeaderValue: Text;
+    begin
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Storage Type" <> ADLSESetup."Storage Type"::"Azure Data Lake" then
+            exit;
+
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
+            if AdditionalRequestHeaders.Count() > 0 then begin
+                Headers := HttpClient.DefaultRequestHeaders();
+                foreach HeaderKey in AdditionalRequestHeaders.Keys do begin
+                    AdditionalRequestHeaders.Get(HeaderKey, HeaderValue);
+                    Headers.Add(HeaderKey, HeaderValue);
+                end;
+            end;
+    end;
 }
