@@ -382,9 +382,8 @@ codeunit 82564 "ADLSE Util"
     var
         TableMetadata: Record "Table Metadata";
     begin
-        TableMetadata.SetRange(ID, TableID);
-        TableMetadata.FindFirst();
-        exit(TableMetadata.DataPerCompany);
+        if TableMetadata.get(TableID)then
+            exit(TableMetadata.DataPerCompany);
     end;
 
     procedure CreateFakeRecordForDeletedAction(ADLSEDeletedRecord: Record "ADLSE Deleted Record"; var RecordRef: RecordRef)

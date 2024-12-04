@@ -207,6 +207,9 @@ codeunit 82569 "ADLSE Execution"
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
         DeletedTablesNottoSync: Record "Deleted Tables Not to Sync";
     begin
+        if RecRef.Number = Database::"ADLSE Deleted Record" then
+            exit;
+            
         if DeletedTablesNottoSync.Get(RecRef.Number) then
             exit;
 
