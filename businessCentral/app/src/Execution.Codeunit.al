@@ -21,8 +21,16 @@ codeunit 82569 "ADLSE Execution"
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
     internal procedure StartExport()
     var
-        ADLSESetupRec: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
+    begin
+        StartExport(AdlseTable);
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
+    internal procedure StartExport(var AdlseTable: Record "ADLSE Table")
+    var
+        ADLSESetupRec: Record "ADLSE Setup";
         ADLSEField: Record "ADLSE Field";
         ADLSECurrentSession: Record "ADLSE Current Session";
         ADLSESetup: Codeunit "ADLSE Setup";

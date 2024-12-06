@@ -84,6 +84,12 @@ page 82561 "ADLSE Setup Tables"
                     Caption = 'Last timestamp deleted';
                     Visible = false;
                 }
+                field(ExportCategory; Rec.ExportCategory)
+                {
+                    Caption = 'Export Category';
+                    ApplicationArea = All;
+                    ToolTip = 'Export Category which can be linked to tables which are part of the export to Azure Datalake. The Category can be used to schedule the export.';
+                }
             }
         }
     }
@@ -201,6 +207,25 @@ page 82561 "ADLSE Setup Tables"
                     ADLSETable.Reset();
                     XmlPort.Run(XmlPort::"BC2ADLS Export", false, false, ADLSETable);
                     CurrPage.Update(false);
+                end;
+            }
+            action(AssignExportCategory)
+            {
+                ApplicationArea = All;
+                Caption = 'Assign Export Category';
+                Image = Apply;
+                ToolTip = 'Assign an Export Category to the Table.';
+
+                trigger OnAction()
+                var
+                    ADLSETable: Record "ADLSE Table";
+                    AssignExportCategory: Page "ADLSE Assign Export Category";
+                begin
+                    CurrPage.SetSelectionFilter(ADLSETable);
+                    AssignExportCategory.LookupMode(true);
+                    if AssignExportCategory.RunModal() = Action::LookupOK then
+                        ADLSETable.ModifyAll(ExportCategory, AssignExportCategory.GetExportCategoryCode());
+                    CurrPage.Update();
                 end;
             }
         }
