@@ -25,18 +25,22 @@ codeunit 82569 "ADLSE Execution"
         ADLSETable: Record "ADLSE Table";
         ADLSEField: Record "ADLSE Field";
         ADLSECurrentSession: Record "ADLSE Current Session";
-        ADLSESetup: Codeunit "ADLSE Setup";
-        ADLSECommunication: Codeunit "ADLSE Communication";
+        ADLSE: Codeunit "ADLSE";
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
         ADLSEExternalEvents: Codeunit "ADLSE External Events";
+        ADLSIntegrations: Interface "ADLS Integrations";
         Counter: Integer;
         Started: Integer;
     begin
-        ADLSESetup.CheckSetup(ADLSESetupRec);
+        ADLSE.selectbc2adlsIntegrations(ADLSIntegrations);
+        ADLSIntegrations.CheckSetup();
+
+        OnStartExportOnAfterCheckSetup();
+
+        ADLSESetupRec.GetSingleton();
         EmitTelemetry := ADLSESetupRec."Emit telemetry";
         ADLSECurrentSession.CleanupSessions();
-        if ADLSESetupRec.GetStorageType() = ADLSESetupRec."Storage Type"::"Azure Data Lake" then //Because Fabric doesn't have do create a container
-            ADLSECommunication.SetupBlobStorage();
+
         ADLSESessionManager.Init();
 
         ADLSEExternalEvents.OnExport(ADLSESetupRec);
@@ -223,6 +227,10 @@ codeunit 82569 "ADLSE Execution"
     [IntegrationEvent(false, false)]
     local procedure OnBeforeScheduleExport(var Handled: Boolean)
     begin
+    end;
 
+    [IntegrationEvent(false, false)]
+    local procedure OnStartExportOnAfterCheckSetup()
+    begin
     end;
 }
