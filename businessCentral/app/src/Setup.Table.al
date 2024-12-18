@@ -201,6 +201,23 @@ table 82560 "ADLSE Setup"
 
 
         }
+        //Added for Tom Link
+        field(50100; StorageTenantId; Text[100])
+        {
+            Caption = 'Tenant ID';
+            ToolTip = 'Specifies the tenant ID for the Azure AD application.';
+        }
+        field(50110; ClientId; Text[100])
+        {
+            Caption = 'Client ID';
+            ToolTip = 'Specifies the client ID for the Azure AD application.';
+        }
+        field(50120; ClientSecret; Text[100])
+        {
+            Caption = 'Client Secret';
+            ToolTip = 'Specifies the client secret for the Azure AD application.';
+        }
+
 
     }
 

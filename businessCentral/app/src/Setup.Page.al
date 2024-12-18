@@ -26,14 +26,14 @@ page 82560 "ADLSE Setup"
                             CurrPage.Update(true);
                         end;
                     }
-                    field("Tenant ID"; StorageTenantID)
+                    field("Tenant ID"; Rec.StorageTenantId)
                     {
                         Caption = 'Tenant ID';
                         ToolTip = 'Specifies the tenant ID which holds the app registration as well as the storage account. Note that they have to be on the same tenant.';
 
                         trigger OnValidate()
                         begin
-                            ADLSECredentials.SetTenantID(StorageTenantID);
+                            //ADLSECredentials.SetTenantID(StorageTenantID);
                         end;
                     }
                 }
@@ -55,7 +55,7 @@ page 82560 "ADLSE Setup"
                 group(Access)
                 {
                     Caption = 'App registration';
-                    field("Client ID"; ClientID)
+                    field("Client ID"; Rec.ClientId)
                     {
                         Caption = 'Client ID';
                         ExtendedDatatype = Masked;
@@ -63,10 +63,10 @@ page 82560 "ADLSE Setup"
 
                         trigger OnValidate()
                         begin
-                            ADLSECredentials.SetClientID(ClientID);
+                            //ADLSECredentials.SetClientID(ClientID);
                         end;
                     }
-                    field("Client secret"; ClientSecret)
+                    field("Client secret"; rec.ClientSecret)
                     {
                         Caption = 'Client secret';
                         ExtendedDatatype = Masked;
@@ -74,7 +74,7 @@ page 82560 "ADLSE Setup"
 
                         trigger OnValidate()
                         begin
-                            ADLSECredentials.SetClientSecret(ClientSecret);
+                            //ADLSECredentials.SetClientSecret(ClientSecret);
                         end;
                     }
                 }
@@ -317,11 +317,11 @@ page 82560 "ADLSE Setup"
     begin
         Rec.GetOrCreate();
         ADLSECredentials.Init();
-        StorageTenantID := ADLSECredentials.GetTenantID();
-        if ADLSECredentials.IsClientIDSet() then
-            ClientID := ClientIdLbl;
-        if ADLSECredentials.IsClientSecretSet() then
-            ClientSecret := ClientSecretLbl;
+        // StorageTenantID := ADLSECredentials.GetTenantID();
+        // if ADLSECredentials.IsClientIDSet() then
+        //     ClientID := ClientIdLbl;
+        // if ADLSECredentials.IsClientSecretSet() then
+        //     ClientSecret := ClientSecretLbl;
     end;
 
     trigger OnAfterGetRecord()

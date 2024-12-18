@@ -24,10 +24,13 @@ codeunit 82565 "ADLSE Credentials"
 
     [NonDebuggable]
     procedure Init()
+    var
+        ADLSESetup: Record "ADLSE Setup";
     begin
-        StorageTenantID := GetSecret(TenantIdKeyNameTok);
-        ClientID := GetSecret(ClientIdKeyNameTok);
-        ClientSecret := GetSecret(ClientSecretKeyNameTok);
+        ADLSESetup.GetSingleton();
+        StorageTenantID := ADLSESetup.StorageTenantId;
+        ClientID := ADLSESetup.ClientId;
+        ClientSecret := ADLSESetup.ClientSecret;
         Initialized := true;
     end;
 
@@ -38,16 +41,20 @@ codeunit 82565 "ADLSE Credentials"
 
     procedure Check()
     begin
-        Init();
-        CheckValueExists(TenantIdKeyNameTok, StorageTenantID);
-        CheckValueExists(ClientIdKeyNameTok, ClientID);
-        CheckValueExists(ClientSecretKeyNameTok, ClientSecret);
+        // Init();
+        // CheckValueExists(TenantIdKeyNameTok, StorageTenantID);
+        // CheckValueExists(ClientIdKeyNameTok, ClientID);
+        // CheckValueExists(ClientSecretKeyNameTok, ClientSecret);
     end;
 
     [NonDebuggable]
     procedure GetTenantID(): Text
+    var
+        ADLSESetup: Record "ADLSE Setup";
     begin
-        exit(StorageTenantID);
+        ADLSESetup.GetSingleton();
+        exit(ADLSESetup.StorageTenantId);
+        //exit(StorageTenantID);
     end;
 
     [NonDebuggable]
@@ -59,8 +66,12 @@ codeunit 82565 "ADLSE Credentials"
 
     [NonDebuggable]
     procedure GetClientID(): Text
+    var
+        ADLSESetup: Record "ADLSE Setup";
     begin
-        exit(ClientID);
+        ADLSESetup.GetSingleton();
+        exit(ADLSESetup.ClientId);
+        //exit(ClientID);
     end;
 
     [NonDebuggable]
@@ -78,8 +89,12 @@ codeunit 82565 "ADLSE Credentials"
 
     [NonDebuggable]
     procedure GetClientSecret(): Text
+    var
+        ADLSESetup: Record "ADLSE Setup";
     begin
-        exit(ClientSecret);
+        ADLSESetup.GetSingleton();
+        exit(ADLSESetup.ClientSecret);
+        //exit(ClientSecret);
     end;
 
     [NonDebuggable]
