@@ -146,23 +146,6 @@ codeunit 82569 "ADLSE Execution"
         ADLSEExternalEvents.OnClearSchemaExportedOn(ADLSESetup);
     end;
 
-    internal procedure ScheduleExport()
-    var
-        JobQueueEntry: Record "Job Queue Entry";
-        ScheduleAJob: Page "Schedule a Job";
-        Handled: Boolean;
-    begin
-        OnBeforeScheduleExport(Handled);
-        if Handled then
-            exit;
-
-        CreateJobQueueEntry(JobQueueEntry);
-        ScheduleAJob.SetJob(JobQueueEntry);
-        Commit(); // above changes go into the DB before RunModal
-        if ScheduleAJob.RunModal() = Action::OK then
-            Message(JobScheduledTxt);
-    end;
-
     local procedure CreateJobQueueEntry(var JobQueueEntry: Record "Job Queue Entry")
     var
         JobQueueCategory: Record "Job Queue Category";

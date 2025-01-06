@@ -15,7 +15,7 @@ page 82576 "ADLSE Assign Export Category"
                 ApplicationArea = Basic, Suite;
                 Caption = 'Export Catgory';
                 TableRelation = "ADLSE Export Category".Code;
-                ToolTip = 'Unique Code of an Export Category which can be linked to tables which are part of the export to Azure Datalake.';
+                ToolTip = 'Specifies Unique Code of an Export Category which can be linked to tables which are part of the export to Azure Datalake.';
             }
         }
     }

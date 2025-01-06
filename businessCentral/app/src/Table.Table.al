@@ -106,9 +106,10 @@ table 82561 "ADLSE Table"
     var
         ADLSESetup: Record "ADLSE Setup";
     begin
-        ADLSESetup.SchemaExported();
-
-        CheckNotExporting();
+        if (Rec."Table ID" <> xRec."Table ID") or (Rec.Enabled <> xRec.Enabled) then begin
+            ADLSESetup.SchemaExported();
+            CheckNotExporting();
+        end;
     end;
 
     var

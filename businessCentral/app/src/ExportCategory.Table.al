@@ -2,6 +2,7 @@ table 82570 "ADLSE Export Category"
 {
     Caption = 'Export Category';
     DataClassification = ToBeClassified;
+    LookupPageId = "ADLSE Export Categories";
 
     fields
     {
@@ -9,11 +10,13 @@ table 82570 "ADLSE Export Category"
         {
             Caption = 'Code';
             DataClassification = CustomerContent;
+            ToolTip = 'Specifies the Unique Code of a Export Category which can be linked to tables which are part of the export to Azure Datalake.';
         }
         field(10; Description; Text[250])
         {
             Caption = 'Description';
             DataClassification = CustomerContent;
+            ToolTip = 'Specifies the Description of the Export Category.';
         }
     }
     keys

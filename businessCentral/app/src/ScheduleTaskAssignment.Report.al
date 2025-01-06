@@ -1,7 +1,7 @@
 report 82561 "ADLSE Schedule Task Assignment"
 {
     ApplicationArea = Basic, Suite;
-    Caption = 'Schedule Execution WRP Tables';
+    Caption = 'Schedule Export to Azure Data Lake';
     ProcessingOnly = true;
 
 
@@ -9,7 +9,7 @@ report 82561 "ADLSE Schedule Task Assignment"
     {
         dataitem(ADLSETable; "ADLSE Table")
         {
-            RequestFilterFields = "Table ID", ExportCategory, Enabled;
+            RequestFilterFields = ExportCategory;
             trigger OnPreDataItem()
             var
                 ADLSEExecution: Codeunit "ADLSE Execution";
@@ -32,13 +32,13 @@ report 82561 "ADLSE Schedule Task Assignment"
                     {
                         ApplicationArea = All;
                         Caption = 'Description';
-                        ToolTip = 'The description that is displayed in the job queue.';
+                        ToolTip = 'Specifies the description that is displayed in the job queue.';
                     }
                     field(EarliestStartDateTimeControl; EarliestStartDateTime)
                     {
                         ApplicationArea = All;
                         Caption = 'Earliest Start Dqate / Time ';
-                        ToolTip = 'The date and time when the job queue must be executed for the first time.';
+                        ToolTip = 'Specifies the date and time when the job queue must be executed for the first time.';
                     }
                     field(NoofMinutesBetweeenRuns; NoofMinutesBetweenRuns)
                     {
@@ -59,47 +59,47 @@ report 82561 "ADLSE Schedule Task Assignment"
                             field(RunOnMondaysControl; RunOnMondays)
                             {
                                 ApplicationArea = All;
-                                Caption = 'RunOnMondays';
+                                Caption = 'Run On Mondays';
                                 ToolTip = 'Specifies that the job queue entry runs on Mondays.';
                             }
                             field(RunOnTeusdaysControl; RunOnTeusdays)
                             {
                                 ApplicationArea = All;
-                                Caption = 'RunOnTeusdays';
+                                Caption = 'Run On Tuesdays';
                                 ToolTip = 'Specifies that the job queue entry runs on Teusdays.';
                             }
-                            field(RunOnWednesdayControl; RunOnWednesday)
+                            field(RunOnWednesdayControl; RunOnWednesdays)
                             {
                                 ApplicationArea = All;
-                                Caption = 'RunOnWednesday';
+                                Caption = 'Run On Wednesdays';
                                 ToolTip = 'Specifies that the job queue entry runs on Wednesdays.';
                             }
-                            field(RunOnThursdayControl; RunOnThursday)
+                            field(RunOnThursdayControl; RunOnThursdays)
                             {
                                 ApplicationArea = All;
-                                Caption = 'RunOnThursday';
+                                Caption = 'Run On Thursdays';
                                 ToolTip = 'Specifies that the job queue entry runs on Thursdays.';
                             }
                         }
                         group(Recurrence2)
                         {
                             ShowCaption = false;
-                            field(RunOnFridayControl; RunOnFriday)
+                            field(RunOnFridayControl; RunOnFridays)
                             {
                                 ApplicationArea = All;
-                                Caption = 'RunOnFriday';
+                                Caption = 'Run On Fridays';
                                 ToolTip = 'Specifies that the job queue entry runs on Fridays.';
                             }
-                            field(RunOnSaturdayControl; RunOnSaturday)
+                            field(RunOnSaturdayControl; RunOnSaturdays)
                             {
                                 ApplicationArea = All;
-                                Caption = 'RunOnSaturday';
+                                Caption = 'Run On Saturdays';
                                 ToolTip = 'Specifies that the job queue entry runs on Saturdays.';
                             }
                             field(RunOnSundaysControl; RunOnSundays)
                             {
                                 ApplicationArea = All;
-                                Caption = 'RunOnSundays';
+                                Caption = 'Run On Sundays';
                                 ToolTip = 'Specifies that the job queue entry runs on Sundays.';
                             }
                         }
@@ -107,16 +107,6 @@ report 82561 "ADLSE Schedule Task Assignment"
                 }
             }
         }
-
-        trigger OnQueryClosePage(CloseAction: Action): Boolean
-        begin
-
-        end;
-
-        trigger OnOpenPage()
-        begin
-
-        end;
     }
 
     var
@@ -127,26 +117,10 @@ report 82561 "ADLSE Schedule Task Assignment"
         RunOnSundays: Boolean;
         RunOnMondays: Boolean;
         RunOnTeusdays: Boolean;
-        RunOnWednesday: Boolean;
-        RunOnThursday: Boolean;
-        RunOnFriday: Boolean;
-        RunOnSaturday: Boolean;
-
-
-    trigger OnInitReport()
-    begin
-
-    end;
-
-    trigger OnPreReport()
-    begin
-
-    end;
-
-    trigger OnPostReport()
-    begin
-
-    end;
+        RunOnWednesdays: Boolean;
+        RunOnThursdays: Boolean;
+        RunOnFridays: Boolean;
+        RunOnSaturdays: Boolean;
 
     procedure CreateJobQueueEntry(var JobQueueEntry: Record "Job Queue Entry")
     var
@@ -160,10 +134,10 @@ report 82561 "ADLSE Schedule Task Assignment"
         JobQueueEntry."No. of Minutes between Runs" := NoofMinutesBetweenRuns;
         JobQueueEntry."Run on Mondays" := RunOnMondays;
         JobQueueEntry."Run on Tuesdays" := RunOnTeusdays;
-        JobQueueEntry."Run on Wednesdays" := RunOnWednesday;
-        JobQueueEntry."Run on Thursdays" := RunOnThursday;
-        JobQueueEntry."Run on Fridays" := RunOnFriday;
-        JobQueueEntry."Run on Saturdays" := RunOnSaturday;
+        JobQueueEntry."Run on Wednesdays" := RunOnWednesdays;
+        JobQueueEntry."Run on Thursdays" := RunOnThursdays;
+        JobQueueEntry."Run on Fridays" := RunOnFridays;
+        JobQueueEntry."Run on Saturdays" := RunOnSaturdays;
         JobQueueEntry."Run on Sundays" := RunOnSundays;
         JobQueueEntry."Object Type to Run" := JobQueueEntry."Object Type to Run"::Report;
         JobQueueEntry."Object ID to Run" := Report::"ADLSE Schedule Task Assignment";
