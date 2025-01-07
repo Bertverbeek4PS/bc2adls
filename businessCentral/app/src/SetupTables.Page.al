@@ -88,7 +88,6 @@ page 82561 "ADLSE Setup Tables"
                 {
                     Caption = 'Export Category';
                     ApplicationArea = All;
-                    ToolTip = 'Export Category which can be linked to tables which are part of the export to Azure Datalake. The Category can be used to schedule the export.';
                 }
             }
         }

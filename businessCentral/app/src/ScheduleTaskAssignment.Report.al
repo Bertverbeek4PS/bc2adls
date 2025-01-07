@@ -1,7 +1,7 @@
 report 82561 "ADLSE Schedule Task Assignment"
 {
     ApplicationArea = Basic, Suite;
-    Caption = 'Schedule Export to Azure Data Lake';
+    Caption = 'Schedule Export';
     ProcessingOnly = true;
 
 
@@ -37,7 +37,7 @@ report 82561 "ADLSE Schedule Task Assignment"
                     field(EarliestStartDateTimeControl; EarliestStartDateTime)
                     {
                         ApplicationArea = All;
-                        Caption = 'Earliest Start Dqate / Time ';
+                        Caption = 'Earliest Start Date / Time ';
                         ToolTip = 'Specifies the date and time when the job queue must be executed for the first time.';
                     }
                     field(NoofMinutesBetweeenRuns; NoofMinutesBetweenRuns)
