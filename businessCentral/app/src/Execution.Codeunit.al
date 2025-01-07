@@ -20,7 +20,7 @@ codeunit 82569 "ADLSE Execution"
     var
         ADLSETable: Record "ADLSE Table";
     begin
-        StartExport(AdlseTable);
+        StartExport(ADLSETable);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]

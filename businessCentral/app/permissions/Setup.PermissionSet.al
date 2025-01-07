@@ -32,6 +32,7 @@ permissionset 82560 "ADLSE - Setup"
                   page "ADLSE Enum Translations Lang" = X,
                   page "ADLSE Export Categories" = X,
                   page "ADLSE Assign Export Category" = X,
+                  page "Deleted Tables Not To Sync" = X,
                   report "ADLSE Schedule Task Assignment" = X,
                   xmlport "BC2ADLS Import" = X;
 }
