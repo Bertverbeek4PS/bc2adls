@@ -143,6 +143,36 @@ codeunit 82569 "ADLSE Execution"
         ADLSEExternalEvents.OnClearSchemaExportedOn(ADLSESetup);
     end;
 
+    internal procedure ScheduleExport()
+    var
+        JobQueueEntry: Record "Job Queue Entry";
+        ADLSEScheduleTaskAssignment: Report "ADLSE Schedule Task Assignment";
+        SavedData: Text;
+        xmldata: Text;
+        Handled: Boolean;
+    begin
+        OnBeforeScheduleExport(Handled);
+        if Handled then
+            exit;
+
+        JobQueueEntry.SetFilter("User ID", UserId());
+        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
+        JobQueueEntry.SetRange("Object ID to Run", Report::"ADLSE Schedule Task Assignment");
+        JobQueueEntry.SetCurrentKey(SystemCreatedAt);
+        JobQueueEntry.SetAscending(SystemCreatedAt, false);
+
+        if JobQueueEntry.FindFirst() then
+            SavedData := JobQueueEntry.GetReportParameters();
+
+        xmldata := ADLSEScheduleTaskAssignment.RunRequestPage(SavedData);
+
+        if xmldata <> '' then begin
+            ADLSEScheduleTaskAssignment.CreateJobQueueEntry(JobQueueEntry);
+            JobQueueEntry.SetReportParameters(xmldata);
+            JobQueueEntry.Modify();
+        end;
+    end;
+
     internal procedure Log(EventId: Text; Message: Text; Verbosity: Verbosity)
     var
         CustomDimensions: Dictionary of [Text, Text];
@@ -192,5 +222,11 @@ codeunit 82569 "ADLSE Execution"
             exit;
 
         ADLSEDeletedRecord.TrackDeletedRecord(RecRef);
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeScheduleExport(var Handled: Boolean)
+    begin
+
     end;
 }
