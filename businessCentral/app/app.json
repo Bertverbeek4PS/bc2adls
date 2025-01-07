@@ -4,7 +4,7 @@
   "publisher": "The bc2adls team",
   "brief": "Sync data from Business Central to the Azure storage",
   "description": "Exports data in chosen tables to the Azure Data Lake and keeps it in sync by incremental updates. Before you use this tool, please read the SUPPORT.md file at https://github.com/microsoft/bc2adls.",
-  "version": "25.26.0.0",
+  "version": "25.27.0.0",
   "privacyStatement": "https://go.microsoft.com/fwlink/?LinkId=724009",
   "EULA": "https://go.microsoft.com/fwlink/?linkid=2009120",
   "help": "https://go.microsoft.com/fwlink/?LinkId=724011",
