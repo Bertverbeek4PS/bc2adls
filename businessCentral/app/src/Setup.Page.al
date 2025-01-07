@@ -215,9 +215,27 @@ page 82560 "ADLSE Setup"
 
                 trigger OnAction()
                 var
-                    ADLSEExecution: Codeunit "ADLSE Execution";
+                    JobQueueEntry: Record "Job Queue Entry";
+                    ADLSEScheduleTaskAssignment: Report "ADLSE Schedule Task Assignment";
+                    SavedData: Text;
+                    xmldata: Text;
                 begin
-                    ADLSEExecution.ScheduleExport();
+                    JobQueueEntry.SetFilter("User ID", UserId());
+                    JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
+                    JobQueueEntry.SetRange("Object ID to Run",  Report::"ADLSE Schedule Task Assignment");
+                    JobQueueEntry.SetCurrentKey(SystemCreatedAt);
+                    JobQueueEntry.SetAscending(SystemCreatedAt, false);
+
+                    if JobQueueEntry.FindFirst() then
+                        SavedData := JobQueueEntry.GetReportParameters();
+
+                    xmldata := ADLSEScheduleTaskAssignment.RunRequestPage(SavedData);
+
+                    if xmldata <> '' then begin
+                        ADLSEScheduleTaskAssignment.CreateJobQueueEntry(JobQueueEntry);
+                        JobQueueEntry.SetReportParameters(xmldata);
+                        JobQueueEntry.Modify();
+                    end;
                 end;
             }
 
@@ -285,6 +303,28 @@ page 82560 "ADLSE Setup"
                 ToolTip = 'Shows all the tables that are specified not to be tracked for deletes.';
                 Image = Delete;
                 RunObject = page "Deleted Tables Not To Sync";
+            }
+            action("Job Queue")
+            {
+                Caption = 'Job Queue';
+                ApplicationArea = All;
+                ToolTip = 'Specifies the scheduled Job Queues for the export to Datalake.';
+                Image = BulletList;
+                trigger OnAction()
+                var
+                    JobQueueEntry: Record "Job Queue Entry";
+                begin
+                    JobQueueEntry.SetFilter("Object ID to Run", '%1|%2', Codeunit::"ADLSE Execution", Report::"ADLSE Schedule Task Assignment");
+                    Page.Run(Page::"Job Queue Entries", JobQueueEntry);
+                end;
+            }
+            action("Export Category")
+            {
+                Caption = 'Export Category';
+                ApplicationArea = All;
+                ToolTip = 'Specifies the Export Categories available for scheduling the export to Datalake.';
+                Image = Export;
+                RunObject = page "ADLSE Export Categories";
             }
         }
         area(Promoted)

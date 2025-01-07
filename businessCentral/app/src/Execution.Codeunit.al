@@ -21,8 +21,16 @@ codeunit 82569 "ADLSE Execution"
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
     internal procedure StartExport()
     var
-        ADLSESetupRec: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
+    begin
+        StartExport(AdlseTable);
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
+    internal procedure StartExport(var AdlseTable: Record "ADLSE Table")
+    var
+        ADLSESetupRec: Record "ADLSE Setup";
         ADLSEField: Record "ADLSE Field";
         ADLSECurrentSession: Record "ADLSE Current Session";
         ADLSESetup: Codeunit "ADLSE Setup";
@@ -136,23 +144,6 @@ codeunit 82569 "ADLSE Execution"
             Message(ClearSchemaExportedOnMsg);
 
         ADLSEExternalEvents.OnClearSchemaExportedOn(ADLSESetup);
-    end;
-
-    internal procedure ScheduleExport()
-    var
-        JobQueueEntry: Record "Job Queue Entry";
-        ScheduleAJob: Page "Schedule a Job";
-        Handled: Boolean;
-    begin
-        OnBeforeScheduleExport(Handled);
-        if Handled then
-            exit;
-
-        CreateJobQueueEntry(JobQueueEntry);
-        ScheduleAJob.SetJob(JobQueueEntry);
-        Commit(); // above changes go into the DB before RunModal
-        if ScheduleAJob.RunModal() = Action::OK then
-            Message(JobScheduledTxt);
     end;
 
     local procedure CreateJobQueueEntry(var JobQueueEntry: Record "Job Queue Entry")

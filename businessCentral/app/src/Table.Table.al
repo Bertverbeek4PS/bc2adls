@@ -56,6 +56,12 @@ table 82561 "ADLSE Table"
             ObsoleteTag = '1.2.2.0';
             ObsoleteState = Removed;
         }
+        field(10; ExportCategory; Code[50])
+        {
+            TableRelation = "ADLSE Export Category";
+            DataClassification = CustomerContent;
+            ToolTip = 'Specifies the Export Category which can be linked to tables which are part of the export to Azure Datalake. The Category can be used to schedule the export.';
+        }
     }
 
     keys
@@ -101,9 +107,10 @@ table 82561 "ADLSE Table"
     var
         ADLSESetup: Record "ADLSE Setup";
     begin
-        ADLSESetup.SchemaExported();
-
-        CheckNotExporting();
+        if (Rec."Table ID" <> xRec."Table ID") or (Rec.Enabled <> xRec.Enabled) then begin
+            ADLSESetup.SchemaExported();
+            CheckNotExporting();
+        end;
     end;
 
     var
