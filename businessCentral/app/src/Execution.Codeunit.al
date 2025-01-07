@@ -13,7 +13,6 @@ codeunit 82569 "ADLSE Execution"
         SuccessfulStopMsg: Label 'The export process was stopped successfully.';
         JobCategoryCodeTxt: Label 'ADLSE';
         JobCategoryDescriptionTxt: Label 'Export to Azure Data Lake';
-        JobScheduledTxt: Label 'The job has been scheduled. Please go to the Job Queue Entries page to locate it and make further changes.';
         ClearSchemaExportedOnMsg: Label 'The schema export date has been cleared.';
 
 
@@ -200,7 +199,7 @@ codeunit 82569 "ADLSE Execution"
     begin
         if RecRef.Number = Database::"ADLSE Deleted Record" then
             exit;
-            
+
         if DeletedTablesNottoSync.Get(RecRef.Number) then
             exit;
 

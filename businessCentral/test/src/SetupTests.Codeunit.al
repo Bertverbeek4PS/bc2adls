@@ -166,7 +166,7 @@ codeunit 85565 "ADLSE Setup Tests"
     procedure ScheduleAnExportforJobQueue()
     var
         JobQueueEntry: Record "Job Queue Entry";
-        ADLSEExecution: Codeunit "ADLSE Execution";
+        ADLSEScheduleTaskAssignment: Report "ADLSE Schedule Task Assignment";
         JobScheduledTxt: Label 'The job has been scheduled. Please go to the Job Queue Entries page to locate it and make further changes.';
     begin
         // [SCENARIO 108] Schedule an export for the Job Queue
@@ -178,8 +178,8 @@ codeunit 85565 "ADLSE Setup Tests"
         // [GIVEN] Setup bc2adls table for Azure Blob Storage
         ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
 
-        // [WHEN] Schedule an export for the Job Queue is triggerd
-        ADLSEExecution.ScheduleExport();
+        // [WHEN] Schedule an export for the Job Queue is triggerd        
+        ADLSEScheduleTaskAssignment.CreateJobQueueEntry(JobQueueEntry);
 
         // [THEN] Check if the export is scheduled
         JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Codeunit);
