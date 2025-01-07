@@ -175,7 +175,7 @@ codeunit 82569 "ADLSE Execution"
     [InherentPermissions(PermissionObjectType::Table, Database::"ADLSE Table Last Timestamp", 'X')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'R')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'RI')]
-    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"Deleted Tables Not to Sync", 'r')]
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseDelete, '', true, true)]
     local procedure OnAfterOnDatabaseDelete(RecRef: RecordRef)
     var
