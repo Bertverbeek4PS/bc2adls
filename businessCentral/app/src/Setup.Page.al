@@ -215,27 +215,9 @@ page 82560 "ADLSE Setup"
 
                 trigger OnAction()
                 var
-                    JobQueueEntry: Record "Job Queue Entry";
-                    ADLSEScheduleTaskAssignment: Report "ADLSE Schedule Task Assignment";
-                    SavedData: Text;
-                    xmldata: Text;
+                    ADLSEExecution: Codeunit "ADLSE Execution";
                 begin
-                    JobQueueEntry.SetFilter("User ID", UserId());
-                    JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
-                    JobQueueEntry.SetRange("Object ID to Run",  Report::"ADLSE Schedule Task Assignment");
-                    JobQueueEntry.SetCurrentKey(SystemCreatedAt);
-                    JobQueueEntry.SetAscending(SystemCreatedAt, false);
-
-                    if JobQueueEntry.FindFirst() then
-                        SavedData := JobQueueEntry.GetReportParameters();
-
-                    xmldata := ADLSEScheduleTaskAssignment.RunRequestPage(SavedData);
-
-                    if xmldata <> '' then begin
-                        ADLSEScheduleTaskAssignment.CreateJobQueueEntry(JobQueueEntry);
-                        JobQueueEntry.SetReportParameters(xmldata);
-                        JobQueueEntry.Modify();
-                    end;
+                    ADLSEExecution.ScheduleExport();
                 end;
             }
 

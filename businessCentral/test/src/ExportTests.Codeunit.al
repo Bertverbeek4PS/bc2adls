@@ -8,15 +8,11 @@ codeunit 85566 "ADLSE Export Tests"
     end;
 
     var
-        ADLSEField: Record "ADLSE Field";
-        ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
         ADLSLibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
         LibraryAssert: Codeunit "Library Assert";
         LibraryDialogHandler: Codeunit "Library - Dialog Handler";
         LibraryERM: Codeunit "Library - ERM";
-        LibraryRandom: Codeunit "Library - Random";
-        LibraryUtility: Codeunit "Library - Utility";
         IsInitialized: Boolean;
         "Storage Type": Enum "ADLSE Storage Type";
 
