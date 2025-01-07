@@ -162,7 +162,6 @@ codeunit 85565 "ADLSE Setup Tests"
     end;
 
     [Test]
-    [HandlerFunctions('ModalPageHandlerScheduleaJob,MessageHandler')]
     procedure ScheduleAnExportforJobQueue()
     var
         JobQueueEntry: Record "Job Queue Entry";
@@ -182,8 +181,8 @@ codeunit 85565 "ADLSE Setup Tests"
         ADLSEScheduleTaskAssignment.CreateJobQueueEntry(JobQueueEntry);
 
         // [THEN] Check if the export is scheduled
-        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Codeunit);
-        JobQueueEntry.SetRange("Object ID to Run", Codeunit::"ADLSE Execution");
+        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
+        JobQueueEntry.SetRange("Object ID to Run", Report::"ADLSE Schedule Task Assignment");
         LibraryAssert.RecordCount(JobQueueEntry, 1);
     end;
 
@@ -210,11 +209,5 @@ codeunit 85565 "ADLSE Setup Tests"
     procedure MessageHandler(Message: Text[1024]);
     begin
         LibraryDialogHandler.HandleMessage(Message);
-    end;
-
-    [ModalPageHandler]
-    procedure ModalPageHandlerScheduleaJob(var ScheduleaJob: TestPage "Schedule a Job")
-    begin
-        ScheduleaJob.OK().Invoke();
     end;
 }
