@@ -106,21 +106,21 @@ codeunit 82569 "ADLSE Execution"
         ADLSETable.Reset();
         ADLSETable.SetRange(Enabled, true);
         if ADLSETable.FindSet(false) then
-            if GuiAllowed then
+            if GuiAllowed() then
                 ProgressWindowDialog.Open(Progress1Msg);
         repeat
-            if GuiAllowed then begin
+            if GuiAllowed() then begin
                 AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
                 AllObjWithCaption.SetRange("Object ID", ADLSETable."Table ID");
                 if AllObjWithCaption.FindFirst() then
-                    if GuiAllowed then
+                    if GuiAllowed() then
                         ProgressWindowDialog.Update(1, AllObjWithCaption."Object Caption");
             end;
 
             ADLSEExecute.ExportSchema(ADLSETable."Table ID");
         until ADLSETable.Next() = 0;
 
-        if GuiAllowed then
+        if GuiAllowed() then
             ProgressWindowDialog.Close();
 
         ADLSESetup.GetSingleton();
@@ -139,25 +139,10 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup.GetSingleton();
         ADLSESetup."Schema Exported On" := 0DT;
         ADLSESetup.Modify(true);
-        if GuiAllowed then
+        if GuiAllowed() then
             Message(ClearSchemaExportedOnMsg);
 
         ADLSEExternalEvents.OnClearSchemaExportedOn(ADLSESetup);
-    end;
-
-    local procedure CreateJobQueueEntry(var JobQueueEntry: Record "Job Queue Entry")
-    var
-        JobQueueCategory: Record "Job Queue Category";
-    begin
-        JobQueueCategory.InsertRec(JobCategoryCodeTxt, JobCategoryDescriptionTxt);
-        if JobQueueEntry.FindJobQueueEntry(JobQueueEntry."Object Type to Run"::Codeunit, Codeunit::"ADLSE Execution") then
-            exit;
-        JobQueueEntry.Init();
-        JobQueueEntry.Status := JobQueueEntry.Status::"On Hold";
-        JobQueueEntry.Description := JobQueueCategory.Description;
-        JobQueueEntry."Object Type to Run" := JobQueueEntry."Object Type to Run"::Codeunit;
-        JobQueueEntry."Object ID to Run" := Codeunit::"ADLSE Execution";
-        JobQueueEntry."Earliest Start Date/Time" := CurrentDateTime(); // now
     end;
 
     internal procedure Log(EventId: Text; Message: Text; Verbosity: Verbosity)
@@ -190,6 +175,7 @@ codeunit 82569 "ADLSE Execution"
     [InherentPermissions(PermissionObjectType::Table, Database::"ADLSE Table Last Timestamp", 'X')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'R')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'RI')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'r')]
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseDelete, '', true, true)]
     local procedure OnAfterOnDatabaseDelete(RecRef: RecordRef)
     var
@@ -208,11 +194,5 @@ codeunit 82569 "ADLSE Execution"
             exit;
 
         ADLSEDeletedRecord.TrackDeletedRecord(RecRef);
-    end;
-
-    [IntegrationEvent(false, false)]
-    local procedure OnBeforeScheduleExport(var Handled: Boolean)
-    begin
-
     end;
 }
