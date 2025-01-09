@@ -129,21 +129,23 @@ report 82561 "ADLSE Schedule Task Assignment"
         Clear(JobQueueEntry);
         JobQueueCategory.InsertRec(JobCategoryCodeTxt, Description);
         JobQueueEntry.Init();
-        JobQueueEntry.Status := JobQueueEntry.Status::"On Hold";
+        JobQueueEntry.Validate("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
+        JobQueueEntry.Validate("Object ID to Run", Report::"ADLSE Schedule Task Assignment");
+        JobQueueEntry.Insert(true);
+
         JobQueueEntry.Description := Description;
         JobQueueEntry."No. of Minutes between Runs" := NoofMinutesBetweenRuns;
-        JobQueueEntry."Run on Mondays" := RunOnMondays;
-        JobQueueEntry."Run on Tuesdays" := RunOnTeusdays;
-        JobQueueEntry."Run on Wednesdays" := RunOnWednesdays;
-        JobQueueEntry."Run on Thursdays" := RunOnThursdays;
-        JobQueueEntry."Run on Fridays" := RunOnFridays;
-        JobQueueEntry."Run on Saturdays" := RunOnSaturdays;
-        JobQueueEntry."Run on Sundays" := RunOnSundays;
-        JobQueueEntry."Object Type to Run" := JobQueueEntry."Object Type to Run"::Report;
-        JobQueueEntry."Object ID to Run" := Report::"ADLSE Schedule Task Assignment";
-        JobQueueEntry."Earliest Start Date/Time" := EarliestStartDateTime;
+        JobQueueEntry.Validate("Run on Mondays", RunOnMondays);
+        JobQueueEntry.Validate("Run on Tuesdays", RunOnTeusdays);
+        JobQueueEntry.Validate("Run on Wednesdays", RunOnWednesdays);
+        JobQueueEntry.Validate("Run on Thursdays", RunOnThursdays);
+        JobQueueEntry.Validate("Run on Fridays", RunOnFridays);
+        JobQueueEntry.Validate("Run on Saturdays", RunOnSaturdays);
+        JobQueueEntry.Validate("Run on Sundays", RunOnSundays);
+
+        JobQueueEntry.Validate("Earliest Start Date/Time", EarliestStartDateTime);
         JobQueueEntry."Report Output Type" := JobQueueEntry."Report Output Type"::"None (Processing only)";
-        JobQueueEntry.Insert(true);
+        JobQueueEntry.Modify(true);
     end;
 }
 
