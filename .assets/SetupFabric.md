@@ -71,3 +71,7 @@ Let us take a look at the settings show in the sample screenshot below,
 - **Export Company Database Tables** Choose the company in which you want to export the DataPerCompany = false tables. This gives better performance for exporting data of that or not on company level.
 
 ![Business Central Fabric](/.assets/businessCentralFabric.png)
+
+### Step 6. Schedule export
+You can also schedule the export. For each company you need to create Job Queue's. How you can do that you can read here:
+[`How do I run the export to the lake in a recurring schedule`](https://github.com/Bertverbeek4PS/bc2adls/blob/main/.assets/FAQs.md#how-do-i-run-the-export-to-the-lake-in-a-recurring-schedule)

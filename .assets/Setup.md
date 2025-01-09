@@ -138,6 +138,9 @@ This is the step that would create the analytics pipelines in the above workspac
 
 6. At the toolbar of the **Synapse Studio** at the top, you may now click on **Validate all** and if there are no errors, click on **Publish all**.
 
+### Step 7. Schedule export
+You can also schedule the export. For each company you need to create Job Queue's. How you can do that you can read here:
+[`How do I run the export to the lake in a recurring schedule`](https://github.com/Bertverbeek4PS/bc2adls/blob/main/.assets/FAQs.md#how-do-i-run-the-export-to-the-lake-in-a-recurring-schedule)
 
 ## Congratulations!
 You have completed configuring the resources. Please proceed to running the tool and exporting BC data to data lake [here](/.assets/Execution.md).
