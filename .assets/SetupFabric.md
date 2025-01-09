@@ -68,6 +68,6 @@ Let us take a look at the settings show in the sample screenshot below,
 - **Translations** Choose the languages that you want to export the enum translations. You have to refresh this every time there is new translation added. This you can do to go to `Related` and then `Enum translations`.
 - **Export Enum as Integer** The flag to enable or disable exporting the enum values as integers. It is set to False by default.
 - **Add delivered DateTime** If you want the exported time in the CSV file yes or no.
-- **Export Company Database Tables** Choose the company in which you want to export the DataPerCompany = false tables.
+- **Export Company Database Tables** Choose the company in which you want to export the DataPerCompany = false tables. This gives better performance for exporting data of that or not on company level.
 
 ![Business Central Fabric](/.assets/businessCentralFabric.png)
