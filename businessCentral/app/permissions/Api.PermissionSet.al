@@ -14,15 +14,11 @@ permissionset 82563 "ADLSE - API"
                   tabledata "ADLSE Current Session" = R,
                   tabledata "ADLSE Run" = R,
                   tabledata "ADLSE Field" = RI,
-                  page "ADLSE Table API" = X,
                   page "ADLSE Table API v12" = X,
-                  page "ADLSE Setup API v11" = X,
                   page "ADLSE Setup API v12" = X,
                   page "ADLSE Field API v12" = X,
                   page "ADLSE CurrentSession API" = X,
-                  page "ADLSE Run API" = X,
                   page "ADLSE Run API v12" = X,
-                  page "ADLSE Field API" = X,
                   codeunit "ADLSE External Events Helper" = X,
                   codeunit "ADLSE External Events" = X;
 }

@@ -270,6 +270,28 @@ page 82560 "ADLSE Setup"
                 Image = Delete;
                 RunObject = page "Deleted Tables Not To Sync";
             }
+            action("Job Queue")
+            {
+                Caption = 'Job Queue';
+                ApplicationArea = All;
+                ToolTip = 'Specifies the scheduled Job Queues for the export to Datalake.';
+                Image = BulletList;
+                trigger OnAction()
+                var
+                    JobQueueEntry: Record "Job Queue Entry";
+                begin
+                    JobQueueEntry.SetFilter("Object ID to Run", '%1|%2', Codeunit::"ADLSE Execution", Report::"ADLSE Schedule Task Assignment");
+                    Page.Run(Page::"Job Queue Entries", JobQueueEntry);
+                end;
+            }
+            action("Export Category")
+            {
+                Caption = 'Export Category';
+                ApplicationArea = All;
+                ToolTip = 'Specifies the Export Categories available for scheduling the export to Datalake.';
+                Image = Export;
+                RunObject = page "ADLSE Export Categories";
+            }
         }
         area(Promoted)
         {

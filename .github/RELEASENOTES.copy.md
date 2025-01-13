@@ -1,3 +1,58 @@
+## v6.2
+
+### Issues
+
+- Issue 1296 Make property "appFolders" optional
+- Issue 1344 Experimental feature "git submodules" seems to be a breaking change
+- Issue 1305 Extra telemetry Property RepositoryOwner and RepositoryName¨
+- Add RunnerEnvironment to Telemetry
+- Output a notice, not a warning, when there are no available updates for AL-Go for GitHub
+
+### New Repository Settings
+
+- `useGitSubmodules` can be either `true` or `recursive` if you want to enable Git Submodules in your repository. If your Git submodules resides in a private repository, you need to create a secret called `gitSubmodulesToken` containing a PAT with access to the submodule repositories. Like with all other secrets, you can also create a setting called `gitSubmodulesTokenSecretName` and specify the name of another secret, with these permissions (f.ex. ghTokenWorkflow).
+- `commitOptions` - is a structure defining how you want AL-Go to handle automated commits or pull requests coming from AL-Go (e.g. for Update AL-Go System Files). The structure contains the following properties
+  - `messageSuffix` : A string you want to append to the end of commits/pull requests created by AL-Go. This can be useful if you are using the Azure Boards integration (or similar integration) to link commits to workitems.
+  - `pullRequestAutoMerge` : A boolean defining whether you want AL-Go pull requests to be set to auto-complete. This will auto-complete the pull requests once all checks are green and all required reviewers have approved.
+  - `pullRequestLabels` : A list of labels to add to the pull request. The labels need to be created in the repository before they can be applied.
+
+### Support for Git submodules
+
+In v6.1 we added experimental support for Git submodules - this did however only work if the submodules was in a public repository. In this version, you can use the `useGitSubmodules` setting to control whether you want to use Git Submodules and the `gitSubmodulesToken` secret to allow permission to read these repositories.
+
+## v6.1
+
+### Issues
+
+- Issue 1241 Increment Version Number might produce wrong app.json
+- When auto discovering appFolders, testFolders and bcptTestFolders - if a BCPT Test app has a dependency to a test framework app, it is added to testFolders as well as bcptTestFolders and will cause a failure.
+
+### New Project Settings
+
+- `pageScriptingTests` should be an array of page scripting test file specifications, relative to the AL-Go project. Examples of file specifications: `recordings/my*.yml` (for all yaml files in the recordings subfolder matching my\*.yml), `recordings` (for all \*.yml files in the recordings subfolder) or `recordings/test.yml` (for a single yml file)
+- `doNotRunPageScriptingTests` can force the pipeline to NOT run the page scripting tests specified in pageScriptingTests. Note this setting can be set in a [workflow specific settings file](#where-are-the-settings-located) to only apply to that workflow
+- `restoreDatabases` should be an array of events, indicating when you want to start with clean databases in the container. Possible events are: `BeforeBcpTests`, `BeforePageScriptingTests`, `BeforeEachTestApp`, `BeforeEachBcptTestApp`, `BeforeEachPageScriptingTest`
+
+### New Repository Settings
+
+- `trustedSigning` is a structure defining `Account`, `EndPoint` and `CertificateProfile` if you want to use trusted signing. Note that your Azure_Credentials secret (Microsoft Entra ID App or Managed identity) still needs to provide access to your azure subscription and be assigned the `Trusted Signing Certificate Profile Signer` role in the Trusted Signing Account.
+- `deployTo<environment>` now has an additional property called DependencyInstallMode, which determines how dependencies are deployed if GenerateDependencyArtifact is true. Default value is `install` to install dependencies if not already installed. Other values are `ignore` for ignoring dependencies, `upgrade` for upgrading dependencies if possible and `forceUpgrade` for force upgrading dependencies.
+
+### Support for Azure Trusted Signing
+
+Read https://learn.microsoft.com/en-us/azure/trusted-signing/ for more information about Trusted Signing and how to set it up. After setting up your trusted signing account and certificate profile, you need to create a setting called [trustedSigning](https://aka.ms/algosettings#trustedSigning) for AL-Go to sign your apps using Azure Trusted Signing.
+
+### Support for Page Scripting Tests
+
+Page Scripting tests are now supported as part of CI/CD. By specifying pageScriptingTests in your project settings file, AL-Go for GitHub will automatically run these page scripting tests as part of your CI/CD workflow, generating the following build artifacts:
+
+- `PageScriptingTestResults` is a JUnit test results file with all results combined.
+- `PageScriptingTestResultDetails` are the detailed test results (including videos) when any of the page scripting tests have failures. If the page scripting tests succeed - the details are not published.
+
+### Experimental support for Git submodule
+
+[Git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) is now supported as part of CI/CD on your project.
+
 ## v6.0
 
 ### Issues
@@ -648,7 +703,7 @@ Setting the repo setting "runs-on" to "Ubuntu-Latest", followed by running Updat
 ### CI/CD and Publish To New Environment
 
 - Base functionality for selecting a specific GitHub runner for an environment
-- Include dependencies artifacts when deploying (if generateDependencyArtifacts is true)
+- Include dependencies artifacts when deploying (if generateDependencyArtifact is true)
 
 ### localDevEnv.ps1 and cloudDevEnv.ps1
 

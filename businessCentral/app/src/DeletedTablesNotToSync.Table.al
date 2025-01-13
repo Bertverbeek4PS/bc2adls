@@ -1,12 +1,12 @@
 table 82569 "Deleted Tables Not to Sync"
 {
     DataClassification = ToBeClassified;
+    Caption = 'Deleted Tables Not to Sync';
 
     fields
     {
         field(1; TableId; Integer)
         {
-            DataClassification = ToBeClassified;
             TableRelation = "ADLSE Table"."Table ID";
             Caption = 'Table ID';
             ToolTip = 'Specify the ID of the table that should not be tracked for deletes.';
