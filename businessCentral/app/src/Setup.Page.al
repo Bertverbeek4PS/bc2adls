@@ -37,21 +37,6 @@ page 82560 "ADLSE Setup"
                         end;
                     }
                 }
-
-                group(Account)
-                {
-                    Caption = 'Azure Data Lake';
-                    Editable = AzureDataLake;
-                    field(Container; Rec.Container) { }
-                    field(AccountName; Rec."Account Name") { }
-                }
-                group(MSFabric)
-                {
-                    Caption = 'Microsoft Fabric';
-                    Editable = not AzureDataLake;
-                    field(Workspace; Rec.Workspace) { }
-                    field(Lakehouse; Rec.Lakehouse) { }
-                }
                 group(Access)
                 {
                     Caption = 'App registration';
@@ -83,7 +68,6 @@ page 82560 "ADLSE Setup"
                     Caption = 'Execution';
                     field(MaxPayloadSize; Rec.MaxPayloadSizeMiB)
                     {
-                        Editable = not AzureDataLake;
 
                     }
 
@@ -331,7 +315,6 @@ page 82560 "ADLSE Setup"
     }
 
     var
-        AzureDataLake: Boolean;
         ClientSecretLbl: Label 'Secret not shown';
         ClientIdLbl: Label 'ID not shown';
 
@@ -356,7 +339,6 @@ page 82560 "ADLSE Setup"
         TrackedDeletedRecordsExist := not ADLSEDeletedRecord.IsEmpty();
         OldLogsExist := ADLSERun.OldRunsExist();
         UpdateNotificationIfAnyTableExportFailed();
-        AzureDataLake := Rec."Storage Type" = Rec."Storage Type"::"Azure Data Lake";
     end;
 
     var

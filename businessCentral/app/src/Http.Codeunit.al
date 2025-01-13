@@ -107,23 +107,14 @@ codeunit 82563 "ADLSE Http"
         HttpRequestMessage: HttpRequestMessage;
         HttpResponseMessage: HttpResponseMessage;
         HttpContent: HttpContent;
-        HeaderKey: Text;
-        HeaderValue: Text;
     begin
+        OnBeforeInvokeRestApi(AdditionalRequestHeaders, Headers, HttpClient);
+
         ADLSESetup.GetSingleton();
 
         HttpClient.SetBaseAddress(Url);
         if not AddAuthorization(HttpClient, Response) then
             exit(false);
-
-        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
-            if AdditionalRequestHeaders.Count() > 0 then begin
-                Headers := HttpClient.DefaultRequestHeaders();
-                foreach HeaderKey in AdditionalRequestHeaders.Keys do begin
-                    AdditionalRequestHeaders.Get(HeaderKey, HeaderValue);
-                    Headers.Add(HeaderKey, HeaderValue);
-                end;
-            end;
 
         case HttpMethod of
             "ADLSE Http Method"::Get:
@@ -132,7 +123,7 @@ codeunit 82563 "ADLSE Http"
                 begin
                     HttpRequestMessage.Method('PUT');
                     HttpRequestMessage.SetRequestUri(Url);
-                    AddContent(HttpContent);
+                    AddContent(HttpContent, body);
                     HttpClient.Put(Url, HttpContent, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Delete:
@@ -141,7 +132,7 @@ codeunit 82563 "ADLSE Http"
                 begin
                     HttpRequestMessage.Method('PATCH');
                     HttpRequestMessage.SetRequestUri(Url);
-                    AddContent(HttpContent);
+                    AddContent(HttpContent, body);
                     HttpRequestMessage.Content(HttpContent);
                     HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
@@ -163,28 +154,9 @@ codeunit 82563 "ADLSE Http"
         StatusCode := HttpResponseMessage.HttpStatusCode();
     end;
 
-    local procedure AddContent(var HttpContent: HttpContent)
-    var
-        ADLSESetup: Record "ADLSE Setup";
-        Headers: HttpHeaders;
+    local procedure AddContent(var HttpContent: HttpContent; body: Text)
     begin
-        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake") or
-        (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson)
-        then
-            HttpContent.WriteFrom(Body);
-
-        HttpContent.GetHeaders(Headers);
-
-        if ContentTypeJson then begin
-            Headers.Remove('Content-Type');
-            Headers.Add('Content-Type', 'application/json');
-            Headers.Remove('Content-Length');
-            if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric" then
-                Headers.Add('Content-Length', '0');
-        end;
-
-        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson) then
-            Headers.Remove('Content-Length');
+        OnBeforeAddContent(HttpContent, ContentTypeJson, body);
     end;
 
     [NonDebuggable]
@@ -216,7 +188,6 @@ codeunit 82563 "ADLSE Http"
     [NonDebuggable]
     local procedure AcquireTokenOAuth2(var AuthError: Text) AccessToken: Text
     var
-        ADLSESetup: Record "ADLSE Setup";
         ADSEUtil: Codeunit "ADLSE Util";
         HttpClient: HttpClient;
         HttpRequestMessage: HttpRequestMessage;
@@ -229,12 +200,7 @@ codeunit 82563 "ADLSE Http"
         Json: JsonObject;
         ScopeUrlEncoded: Text;
     begin
-        case ADLSESetup.GetStorageType() of
-            ADLSESetup."Storage Type"::"Azure Data Lake":
-                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation'; // url encoded form of https://storage.azure.com/user_impersonation
-            ADLSESetup."Storage Type"::"Microsoft Fabric":
-                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2F.default'; // url encoded form of https://storage.azure.com/.default                
-        end;
+        OnBeforeAcquireTokenOAuth2(ScopeUrlEncoded);
 
         Uri := StrSubstNo(OAuthTok, Credentials.GetTenantID());
         HttpRequestMessage.Method('POST');
@@ -263,4 +229,20 @@ codeunit 82563 "ADLSE Http"
         AccessToken := ADSEUtil.GetTextValueForKeyInJson(Json, 'access_token');
         // TODO: Store access token in cache, and use it based on expiry date. 
     end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeAddContent(var HttpContent: HttpContent; ContentTypeJson: Boolean; body: Text)
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeAcquireTokenOAuth2(var ScopeUrlEncoded: Text)
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnBeforeInvokeRestApi(AdditionalRequestHeaders: Dictionary of [Text, Text]; var Headers: HttpHeaders; HttpClient: HttpClient)
+    begin
+    end;
+
 }
