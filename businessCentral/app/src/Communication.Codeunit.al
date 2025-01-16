@@ -359,6 +359,12 @@ codeunit 82562 "ADLSE Communication"
             ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
     end;
 
+    [Obsolete('Use ResetTableExport(ltableId: Integer; AllCompanies: Boolean) instead', '26.0')]
+    procedure ResetTableExport(ltableId: Integer)
+    begin
+        ResetTableExport(ltableId, false);
+    end;
+
     procedure ResetTableExport(ltableId: Integer; AllCompanies: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
