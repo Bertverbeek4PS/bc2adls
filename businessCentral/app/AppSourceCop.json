@@ -2,5 +2,7 @@
     "supportedCountries": [
         "W1"
     ],
-    "mandatorySuffix": "ADLSE"
+    "mandatorySuffix": "ADLSE",
+    "version": "25.26.0.0",
+    "baselinePackageCachePath": ".alPackages"
 }

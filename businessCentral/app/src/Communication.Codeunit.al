@@ -359,7 +359,7 @@ codeunit 82562 "ADLSE Communication"
             ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
     end;
 
-    procedure ResetTableExport(ltableId: Integer)
+    procedure ResetTableExport(ltableId: Integer; AllCompanies: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
@@ -368,13 +368,17 @@ codeunit 82562 "ADLSE Communication"
     begin
         ADLSESetup.GetSingleton();
         ADLSECredentials.Init();
+
+        if not AllCompanies then
+            if ADLSESetup."Export Company Database Tables" in ['', CompanyName()] then
+                if not ADLSEUtil.IsTablePerCompany(ltableId) then
+                    AllCompanies := true;
+
         case ADLSESetup."Storage Type" of
             "ADLSE Storage Type"::"Microsoft Fabric":
                 ADLSEGen2Util.CreateOrUpdateJsonBlob(GetBaseUrl() + StrSubstNo(ResetTableExportTxt, ADLSEUtil.GetDataLakeCompliantTableName(ltableId)), ADLSECredentials, '', Body);
             "ADLSE Storage Type"::"Azure Data Lake":
-                ADLSEGen2Util.RemoveDeltasFromDataLake(ADLSEUtil.GetDataLakeCompliantTableName(ltableId), ADLSECredentials);
+                ADLSEGen2Util.RemoveDeltasFromDataLake(ADLSEUtil.GetDataLakeCompliantTableName(ltableId), ADLSECredentials, AllCompanies);
         end;
     end;
-
-
 }

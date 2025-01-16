@@ -296,7 +296,13 @@ codeunit 82568 "ADLSE Gen 2 Util"
         exit(true);
     end;
 
+    [Obsolete('Use RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "MAWB ADLSE Credentials"; AllCompanies:Boolean) instead', '25.0')]
     procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
+    begin
+        RemoveDeltasFromDataLake(ADLSEntityName, ADLSECredentials, false);
+    end;
+
+    procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSEHttp: Codeunit "ADLSE Http";
@@ -307,13 +313,136 @@ codeunit 82568 "ADLSE Gen 2 Util"
         // DELETE https://{accountName}.{dnsSuffix}/{filesystem}/{path}
         // https://learn.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete?view=rest-storageservices-datalakestoragegen2-2019-12-12
         ADLSESetup.GetSingleton();
-        Url := StrSubstNo(ADLSEContainerUrlTxt, ADLSESetup."Account Name", ADLSESetup.Container);
-        Url += '/deltas/' + ADLSEntityName + '?recursive=true';
 
-        ADLSEHttp.SetMethod("ADLSE Http Method"::Delete);
+        if AllCompanies then begin
+            Url := StrSubstNo(ADLSEContainerUrlTxt, ADLSESetup."Account Name", ADLSESetup.Container);
+            Url += '/deltas/' + ADLSEntityName + '?recursive=true';
+
+            ADLSEHttp.SetMethod("ADLSE Http Method"::Delete);
+            ADLSEHttp.SetUrl(Url);
+            ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+            ADLSEHttp.InvokeRestApi(Response)
+        end else
+            RemoveDeltaFromDataLakeForCurrentCompany(ADLSEntityName, ADLSECredentials);
+    end;
+
+    local procedure RemoveDeltaFromDataLakeForCurrentCompany(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        TempCSVBuffer: Record "CSV Buffer" temporary;
+        ADLSEHttp: Codeunit "ADLSE Http";
+        TypeHelper: Codeunit "Type Helper";
+        Success: Boolean;
+        BlobExists: Boolean;
+        indexvalue, indexvalue2 : Integer;
+        Response: Text;
+        Url: Text;
+        FileDir: Text;
+        Content: Text;
+        SeparatorTxt: Text;
+        JO: JsonObject;
+        JT: JsonToken;
+        ADLSEContainerUrlTxt: Label 'https://%1.dfs.core.windows.net/%2', Comment = '%1: Account name, %2: Container Name', Locked = true;
+    begin
+        ADLSESetup.GetSingleton();
+        Url := StrSubstNo(ADLSEContainerUrlTxt, ADLSESetup."Account Name", ADLSESetup.Container);
+        Url += '?recursive=true&resource=filesystem&directory=deltas/' + ADLSEntityName;
+
+        ADLSEHttp.SetMethod("ADLSE Http Method"::Get);
         ADLSEHttp.SetUrl(Url);
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
-        ADLSEHttp.InvokeRestApi(Response)
+        Success := ADLSEHttp.InvokeRestApi(Response);
+        if Response <> '' then begin
+            JO.ReadFrom(Response);
+            JO.get('paths', JT);
+            if JT.IsArray() then
+                foreach JT in JT.AsArray() do begin
+                    TempCSVBuffer.Reset();
+                    TempCSVBuffer.DeleteAll();
+                    JT.AsObject().Get('name', JT);
+                    FileDir := JT.AsValue().AsText();
+                    Url := StrSubstNo(ADLSEContainerUrlTxt, ADLSESetup."Account Name", ADLSESetup.Container);
+                    Content := GetBlobContentText(Url + '/' + FileDir, ADLSECredentials, BlobExists);
+                    if Content <> '' then begin
+                        if SeparatorTxt = '' then
+                            if content.IndexOf(TypeHelper.CRLFSeparator(), 1) > 0 then
+                                SeparatorTxt := TypeHelper.CRLFSeparator()
+                            else
+                                SeparatorTxt := TypeHelper.LFSeparator();
+                        indexvalue := content.IndexOf(SeparatorTxt, 1);
+                        indexvalue2 := content.IndexOf(SeparatorTxt, indexvalue + 3);
+                        LoadCSVData(TempCSVBuffer, CopyStr(content, 1, indexvalue - 1), 1);
+                        LoadCSVData(TempCSVBuffer, CopyStr(content, indexvalue + 2, indexvalue2 - indexvalue - 2), 2);
+                        TempCSVBuffer.SetRange("Line No.", 1);
+                        TempCSVBuffer.SetRange(Value, '$Company');
+                        if TempCSVBuffer.FindFirst() then
+                            if TempCSVBuffer.GetValue(2, TempCSVBuffer."Field No.") = CompanyName() then begin
+                                ADLSESetup.GetSingleton();
+                                Url := StrSubstNo(ADLSEContainerUrlTxt, ADLSESetup."Account Name", ADLSESetup.Container);
+                                Url += '/' + FileDir;
+
+                                ADLSEHttp.SetMethod("ADLSE Http Method"::Delete);
+                                ADLSEHttp.SetUrl(Url);
+                                ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+                                Success := false;
+                                Success := ADLSEHttp.InvokeRestApi(Response)
+                            end;
+                    end;
+                end;
+        end;
+    end;
+
+    local procedure LoadCSVData(var CSVBuffer: Record "CSV Buffer" temporary; Content: Text; LineNo: Integer)
+    var
+        index: Integer;
+        indexlength: Integer;
+        CurrentColumnNo: Integer;
+    begin
+        CurrentColumnNo := 0;
+        while Content <> '' do begin
+            indexlength := 1;
+            if copystr(content, 1, 1) = '"' then begin
+                index := content.IndexOf('",');
+                indexlength := 2;
+            end
+            else
+                index := content.IndexOf(',');
+            if index = 0 then
+                index := StrLen(content) + 1;
+            CSVBuffer."Line No." := LineNo;
+            CSVBuffer."Field No." := CurrentColumnNo;
+            CSVBuffer.Value := copystr(Copystr(content, 1, index - 1).TrimStart('"').TrimEnd('"'), 1, MaxStrLen(CSVBuffer.Value));
+            CSVBuffer.Insert();
+
+            CurrentColumnNo += 1;
+            Content := CopyStr(Content, index + indexlength);
+        end;
+    end;
+
+    procedure GetBlobContentText(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; var BlobExists: Boolean) Content: Text
+    var
+        ADLSEHttp: Codeunit "ADLSE Http";
+        IsHandled: Boolean;
+        Response: Text;
+        StatusCode: Integer;
+    begin
+        if IsHandled then
+            exit(Content);
+
+        ADLSEHttp.SetMethod("ADLSE Http Method"::Get);
+        ADLSEHttp.SetUrl(BlobPath);
+        ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+        BlobExists := true;
+        if ADLSEHttp.InvokeRestApi(Response, StatusCode) then begin
+            if Response.Trim() <> '' then
+                Content := Response;
+            exit;
+        end;
+
+        BlobExists := StatusCode <> 404;
+
+        if BlobExists then // real error
+            Error(CouldNotReadDataInBlobErr, BlobPath, Response);
     end;
 
     [IntegrationEvent(false, false)]
