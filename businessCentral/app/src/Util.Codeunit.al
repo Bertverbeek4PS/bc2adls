@@ -133,10 +133,10 @@ codeunit 82564 "ADLSE Util"
 
     procedure GetTableCaption(TableID: Integer): Text
     var
-        RecordRef: RecordRef;
+        AllObjWithCaption: Record AllObjWithCaption;
     begin
-        RecordRef.Open(TableID);
-        exit(RecordRef.Caption());
+        if AllObjWithCaption.Get(AllObjWithCaption."Object Type"::Table, TableID) then
+            exit(AllObjWithCaption."Object Caption");
     end;
 
     procedure GetDataLakeCompliantTableName(TableID: Integer) TableName: Text
@@ -155,10 +155,10 @@ codeunit 82564 "ADLSE Util"
 
     procedure GetTableName(TableID: Integer) TableName: Text
     var
-        RecordRef: RecordRef;
+        AllObjWithCaption: Record AllObjWithCaption;
     begin
-        RecordRef.Open(TableID);
-        TableName := RecordRef.Name;
+        if AllObjWithCaption.Get(AllObjWithCaption."Object Type"::Table, TableID) then
+            TableName := AllObjWithCaption."Object Name";
     end;
 
     procedure GetDataLakeCompliantName(Name: Text) Result: Text
@@ -382,7 +382,7 @@ codeunit 82564 "ADLSE Util"
     var
         TableMetadata: Record "Table Metadata";
     begin
-        if TableMetadata.get(TableID)then
+        if TableMetadata.get(TableID) then
             exit(TableMetadata.DataPerCompany);
     end;
 
