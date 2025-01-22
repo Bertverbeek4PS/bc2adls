@@ -1,11 +1,9 @@
-table 82570 "ADLSE Export Category"
+table 82571 "ADLSE Export Category Table"
 {
-    Caption = 'Export Category';
+    Caption = 'Export Category Table';
     DataClassification = ToBeClassified;
     LookupPageId = "ADLSE Export Categories";
-    ObsoleteReason = 'Replaced with MAWB Export Category Table.';
-    ObsoleteTag = '25.0';
-    ObsoleteState = Pending;
+    DataPerCompany = false;
 
     fields
     {
@@ -14,6 +12,7 @@ table 82570 "ADLSE Export Category"
             Caption = 'Code';
             DataClassification = CustomerContent;
             ToolTip = 'Specifies the Unique Code of a Export Category which can be linked to tables which are part of the export to Azure Datalake.';
+            NotBlank = true;
         }
         field(10; Description; Text[250])
         {
@@ -30,4 +29,3 @@ table 82570 "ADLSE Export Category"
         }
     }
 }
-
