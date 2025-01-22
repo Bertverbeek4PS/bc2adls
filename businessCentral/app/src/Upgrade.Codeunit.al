@@ -156,6 +156,6 @@ codeunit 82572 "ADLSE Upgrade"
 
     procedure GetCopyValuesFromExportCategoryToExportcategoryTableUpgradeTag(): Code[250]
     begin
-        exit('GITHUB-35-CopyValuesFromExportCategoryToExportcategoryTable-20250121');
+        exit('GITHUB-225-CopyValuesFromExportCategoryToExportcategoryTable-20250121');
     end;
 }

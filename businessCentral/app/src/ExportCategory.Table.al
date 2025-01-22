@@ -3,7 +3,7 @@ table 82570 "ADLSE Export Category"
     Caption = 'Export Category';
     DataClassification = ToBeClassified;
     LookupPageId = "ADLSE Export Categories";
-    ObsoleteReason = 'Replaced with MAWB Export Category Table.';
+    ObsoleteReason = 'Replaced with ADLSE Export Category Table.';
     ObsoleteTag = '25.0';
     ObsoleteState = Pending;
 
