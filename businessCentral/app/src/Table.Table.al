@@ -58,7 +58,7 @@ table 82561 "ADLSE Table"
         }
         field(10; ExportCategory; Code[50])
         {
-            TableRelation = "ADLSE Export Category";
+            TableRelation = "ADLSE Export Category Table";
             DataClassification = CustomerContent;
             ToolTip = 'Specifies the Export Category which can be linked to tables which are part of the export to Azure Datalake. The Category can be used to schedule the export.';
         }

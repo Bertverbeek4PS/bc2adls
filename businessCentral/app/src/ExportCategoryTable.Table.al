@@ -1,11 +1,9 @@
-table 82570 "ADLSE Export Category"
+table 82571 "ADLSE Export Category Table"
 {
-    Caption = 'Export Category';
+    Caption = 'Export Category Table';
     DataClassification = ToBeClassified;
     LookupPageId = "ADLSE Export Categories";
-    ObsoleteReason = 'Replaced with ADLSE Export Category Table.';
-    ObsoleteTag = '25.0';
-    ObsoleteState = Pending;
+    DataPerCompany = false;
 
     fields
     {
@@ -31,4 +29,3 @@ table 82570 "ADLSE Export Category"
         }
     }
 }
-

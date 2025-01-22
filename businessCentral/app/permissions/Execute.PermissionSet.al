@@ -19,7 +19,10 @@ permissionset 82561 "ADLSE - Execute"
                   tabledata "ADLSE Enum Translation" = RIMD,
                   tabledata "ADLSE Enum Translation Lang" = RIMD,
                   tabledata "Deleted Tables Not to Sync" = R,
+#pragma warning disable AL0432
                   tabledata "ADLSE Export Category" = R,
+#pragma warning restore AL0432
+                  tabledata "ADLSE Export Category Table" = R,
                   codeunit "ADLSE UpgradeTagNewCompanySubs" = X,
                   codeunit "ADLSE Upgrade" = X,
                   codeunit "ADLSE Util" = X,
