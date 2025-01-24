@@ -297,9 +297,15 @@ codeunit 82568 "ADLSE Gen 2 Util"
     end;
 
     procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
+    begin
+        RemoveDeltasFromDataLake(ADLSEntityName, ADLSECredentials, false);
+    end;
+
+    procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSEHttp: Codeunit "ADLSE Http";
+        IsHandled: Boolean;
         Response: Text;
         Url: Text;
         ADLSEContainerUrlTxt: Label 'https://%1.dfs.core.windows.net/%2', Comment = '%1: Account name, %2: Container Name', Locked = true;
@@ -307,13 +313,21 @@ codeunit 82568 "ADLSE Gen 2 Util"
         // DELETE https://{accountName}.{dnsSuffix}/{filesystem}/{path}
         // https://learn.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/delete?view=rest-storageservices-datalakestoragegen2-2019-12-12
         ADLSESetup.GetSingleton();
-        Url := StrSubstNo(ADLSEContainerUrlTxt, ADLSESetup."Account Name", ADLSESetup.Container);
-        Url += '/deltas/' + ADLSEntityName + '?recursive=true';
 
-        ADLSEHttp.SetMethod("ADLSE Http Method"::Delete);
-        ADLSEHttp.SetUrl(Url);
-        ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
-        ADLSEHttp.InvokeRestApi(Response)
+        OnBeforeRemoveDeltasFromDataLake(ADLSEntityName, ADLSECredentials, AllCompanies, IsHandled);
+        if IsHandled then
+            exit;
+
+
+        if AllCompanies then begin
+            Url := StrSubstNo(ADLSEContainerUrlTxt, ADLSESetup."Account Name", ADLSESetup.Container);
+            Url += '/deltas/' + ADLSEntityName + '?recursive=true';
+
+            ADLSEHttp.SetMethod("ADLSE Http Method"::Delete);
+            ADLSEHttp.SetUrl(Url);
+            ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+            ADLSEHttp.InvokeRestApi(Response)
+        end;
     end;
 
     [IntegrationEvent(false, false)]
@@ -338,6 +352,11 @@ codeunit 82568 "ADLSE Gen 2 Util"
 
     [IntegrationEvent(false, false)]
     local procedure OnBeforeCommitAllBlocksOnDataBlob(BlobPath: Text; BlockIDList: List of [Text]; var IsHandled: Boolean)
+    begin
+    end;
+
+    [Integrationevent(false, false)]
+    local procedure OnBeforeRemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean; var IsHandled: Boolean)
     begin
     end;
 }

@@ -154,9 +154,23 @@ page 82561 "ADLSE Setup Tables"
                 trigger OnAction()
                 var
                     SelectedADLSETable: Record "ADLSE Table";
+                    Options: Text[30];
+                    OptionStringLbl: Label 'Current Company,All Companies';
+                    ChosenOption: Integer;
                 begin
+                    Options := OptionStringLbl;
+                    ChosenOption := Dialog.StrMenu(Options, 1, 'Do you want to reset the selected tables for the current company or all companies?');
                     CurrPage.SetSelectionFilter(SelectedADLSETable);
-                    SelectedADLSETable.ResetSelected();
+                    case ChosenOption of
+                        0:
+                            exit;
+                        1:
+                            SelectedADLSETable.ResetSelected(false);
+                        2:
+                            SelectedADLSETable.ResetSelected(true);
+                        else
+                            Error('Chosen option is not valid');
+                    end;
                     CurrPage.Update();
                 end;
             }
