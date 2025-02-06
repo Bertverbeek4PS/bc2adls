@@ -6,12 +6,12 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
 
     var
         BlankArray: JsonArray;
-        CompanyFieldNameLbl: Label '$Company';
-        DeliveredDateTimeFieldNameLbl: Label '$DeliveredDateTime';
+        CompanyFieldNameLbl: Label '$Company', Locked = true;
+        DeliveredDateTimeFieldNameLbl: Label '$DeliveredDateTime', Locked = true;
         ExistingFieldCannotBeRemovedErr: Label 'The field %1 in the entity %2 is already present in the data lake and cannot be removed.', Comment = '%1: field name, %2: entity name';
         FieldDataTypeCannotBeChangedErr: Label 'The data type for the field %1 in the entity %2 cannot be changed.', Comment = '%1: field name, %2: entity name';
         RepresentsTableTxt: Label 'Represents the table %1', Comment = '%1: table caption';
-        ManifestNameTxt: Label '%1-manifest', Comment = '%1: name of manifest';
+        ManifestNameTxt: Label '%1-manifest', Comment = '%1: name of manifest', Locked = true;
         EntityPathTok: Label '%1.cdm.json/%1', Comment = '%1: Entity', Locked = true;
         UnequalAttributeCountErr: Label 'Unequal number of attributes';
         MismatchedValueInAttributeErr: Label 'The attribute value for %1 at index %2 is different. First: %3, Second: %4', Comment = '%1 = field, %2 = index, %3 = value of the first, %4 = value of the second';
