@@ -129,6 +129,8 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             FieldLength := FieldRef.Length;
             if FieldRef.Type = FieldRef.Type::Option then
                 FieldLength := EnumValueMaxLength();
+            if FieldRef.Type = FieldRef.Type::Decimal then
+                FieldLength := 15; // 15 is the default max number of digits. FieldRef.Length is giving the wrong number back for decimal
             Result.Add(
                 CreateAttributeJson(
                     ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number),
