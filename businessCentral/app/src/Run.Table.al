@@ -223,4 +223,26 @@ table 82566 "ADLSE Run"
         Rec.SetFilter(State, '<>%1', "ADLSE Run State"::InProcess);
         Rec.SetRange("Company Name", CompanyName());
     end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'm')]
+    internal procedure PutOnFailed(ADLSRun: Record "ADLSE Run")
+    var
+        ADLSESessionManager: Codeunit "ADLSE Session Manager";
+        ADLSEExecution: Codeunit "ADLSE Execution";
+        CustomDimensions: Dictionary of [Text, Text];
+        CannotHandleEntryLbl: Label 'The log is not in processed state. Cannot put on failed log.';
+        ManualPutOnFailedLbl: Label 'The log is put on state failed manually.';
+    begin
+        if (ADLSESessionManager.GetFromPendingTables(ADLSRun."Table ID")) and
+            (ADLSRun.State = "ADLSE Run State"::InProcess) and
+            (ADLSRun.Error <> '') then begin
+
+            ADLSRun.State := "ADLSE Run State"::Failed;
+            ADLSRun.Error := ManualPutOnFailedLbl;
+            ADLSRun.Modify(true);
+            CustomDimensions.Add('Entity', TableCaption);
+            ADLSEExecution.Log('ADLSE-042', 'State changed to Failed manually.', Verbosity::Normal, CustomDimensions);
+        end else
+            Message(CannotHandleEntryLbl);
+    end;
 }

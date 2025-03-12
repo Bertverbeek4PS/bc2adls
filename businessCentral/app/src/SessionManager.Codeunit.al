@@ -124,7 +124,7 @@ codeunit 82570 "ADLSE Session Manager"
             StartExportFromPending(TableID, ADLSESetup."Emit telemetry");
     end;
 
-    local procedure GetFromPendingTables(var TableID: Integer): Boolean
+    internal procedure GetFromPendingTables(var TableID: Integer): Boolean
     var
         Tables: List of [Integer];
     begin

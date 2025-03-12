@@ -63,6 +63,24 @@ page 82563 "ADLSE Run"
                     CurrPage.Update(false);
                 end;
             }
+            action("PutOnFailed")
+            {
+                ApplicationArea = All;
+                Caption = 'Put on failed log';
+                ToolTip = 'Marks the current execution log as failed. This should be done for logs that are in the state processed.';
+                Image = Cancel;
+                Enabled = LogsFound;
+
+                trigger OnAction()
+                var
+                    ADLSERun: Record "ADLSE Run";
+                    CannotHandleEntryLbl: Label 'The log is not in processed state. Cannot put on failed log.';
+                begin
+                    ADLSERun.PutOnFailed(Rec);
+                    CurrPage.Update(false);
+                end;
+            }
+
         }
     }
 

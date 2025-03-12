@@ -45,4 +45,32 @@ page 82574 "ADLSE Run API v12"
             }
         }
     }
+
+    [ServiceEnabled]
+    procedure PutOnFailed(var ActionContext: WebServiceActionContext)
+    var
+        SelectedADLSERun: Record "ADLSE Run";
+    begin
+        CurrPage.SetSelectionFilter(SelectedADLSERun);
+        if SelectedADLSERun.FindSet(true) then
+            repeat
+                SelectedADLSERun.PutOnFailed(SelectedADLSERun);
+            until SelectedADLSERun.Next() = 0;
+        SetActionResponse(ActionContext, Rec.SystemId);
+    end;
+
+    local procedure SetActionResponse(var ActionContext: WebServiceActionContext; AdlsId: Guid)
+    var
+    begin
+        SetActionResponse(ActionContext, Page::"ADLSE Run API v12", AdlsId);
+    end;
+
+    local procedure SetActionResponse(var ActionContext: WebServiceActionContext; PageId: Integer; DocumentId: Guid)
+    var
+    begin
+        ActionContext.SetObjectType(ObjectType::Page);
+        ActionContext.SetObjectId(PageId);
+        ActionContext.AddEntityKey(Rec.FieldNo(SystemId), DocumentId);
+        ActionContext.SetResultCode(WebServiceActionResultCode::Updated);
+    end;
 }
