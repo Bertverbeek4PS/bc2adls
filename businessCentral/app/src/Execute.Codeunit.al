@@ -14,6 +14,7 @@ codeunit 82561 "ADLSE Execute"
         ADLSECommunication: Codeunit "ADLSE Communication";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEUtil: Codeunit "ADLSE Util";
+        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         CustomDimensions: Dictionary of [Text, Text];
         TableCaption: Text;
         UpdatedLastTimestamp: BigInteger;
@@ -91,6 +92,8 @@ codeunit 82561 "ADLSE Execute"
                 ADLSEExecution.Log('ADLSE-005', 'Export completed without error', Verbosity::Normal, CustomDimensions)
             else
                 ADLSEExecution.Log('ADLSE-040', 'Export completed with errors', Verbosity::Warning, CustomDimensions);
+
+        ADLSEExternalEvents.OnAllExportIsFinished(ADLSESetup);
     end;
 
     var

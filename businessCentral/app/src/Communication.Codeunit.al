@@ -23,7 +23,7 @@ codeunit 82562 "ADLSE Communication"
         DeltaCdmManifestNameTxt: Label 'deltas.manifest.cdm.json', Locked = true;
         DataCdmManifestNameTxt: Label 'data.manifest.cdm.json', Locked = true;
         EntityManifestNameTemplateTxt: Label '%1.cdm.json', Locked = true, Comment = '%1 = Entity name';
-        ContainerUrlTxt: Label 'https://%1.blob.core.windows.net/%2', Comment = '%1: Account name, %2: Container Name';
+        ContainerUrlTxt: Label 'https://%1.blob.core.windows.net/%2', Locked = true, Comment = '%1: Account name, %2: Container Name';
         CorpusJsonPathTxt: Label '/%1', Comment = '%1 = name of the blob', Locked = true;
         CannotAddedMoreBlocksErr: Label 'The number of blocks that can be added to the blob has reached its maximum limit.';
         SingleRecordTooLargeErr: Label 'A single record payload exceeded the max payload size. Please adjust the payload size or reduce the fields to be exported for the record.';
