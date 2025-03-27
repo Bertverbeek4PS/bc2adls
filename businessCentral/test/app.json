@@ -2,7 +2,7 @@
   "id": "03486619-1622-4261-ae0e-b366b3c96e3c",
   "name": "Azure Data Lake Storage Export Tests",
   "publisher": "The bc2adls team",
-  "version": "25.30.0.0",
+  "version": "26.30.0.0",
   "brief": "Tests for Azure Data Lake Storage Export",
   "description": "Tests for Azure Data Lake Storage Export",
   "privacyStatement": "",
@@ -16,42 +16,42 @@
       "publisher": "Microsoft",
       "name": "Library Assert",
       "id": "dd0be2ea-f733-4d65-bb34-a28f4624fb14",
-      "version": "25.0.0.0"
+      "version": "26.0.0.0"
     },
     {
       "publisher": "Microsoft",
       "name": "Any",
       "id": "e7320ebb-08b3-4406-b1ec-b4927d3e280b",
-      "version": "25.0.0.0"
+      "version": "26.0.0.0"
     },
     {
       "publisher": "Microsoft",
       "name": "Library Variable Storage",
       "id": "5095f467-0a01-4b99-99d1-9ff1237d286f",
-      "version": "25.0.0.0"
+      "version": "26.0.0.0"
     },
     {
       "publisher": "Microsoft",
       "name": "Tests-TestLibraries",
       "id": "5d86850b-0d76-4eca-bd7b-951ad998e997",
-      "version": "25.0.0.0"
+      "version": "26.0.0.0"
     },
     {
       "publisher": "Microsoft",
       "name": "Test Runner",
       "id": "23de40a6-dfe8-4f80-80db-d70f83ce8caf",
-      "version": "25.0.0.0"
+      "version": "26.0.0.0"
     },
     {
       "publisher": "The bc2adls team",
       "name": "Azure Data Lake Storage Export",
       "id": "1688530c-452c-4b06-8947-ab4bf5b26053",
-      "version": "25.30.0.0"
+      "version": "26.0.0.0"
     }
   ],
   "screenshots": [],
-  "platform": "25.0.0.0",
-  "application": "25.0.0.0",
+  "platform": "26.0.0.0",
+  "application": "26.0.0.0",
   "idRanges": [
     {
       "from": 85560,
