@@ -1,5 +1,4 @@
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Bertverbeek4PS/bc2adls/badge)](https://scorecard.dev/viewer/?uri=github.com/Bertverbeek4PS/bc2adls)
-[![Scorecard supply-chain security](https://github.com/Bertverbeek4PS/bc2adls/actions/workflows/scorecard.yml/badge.svg)](https://github.com/Bertverbeek4PS/bc2adls/actions/workflows/scorecard.yml)
 
 ![](.assets/bc2adls_banner.png)
 # Starting update
