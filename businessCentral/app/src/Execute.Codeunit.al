@@ -160,8 +160,14 @@ codeunit 82561 "ADLSE Execute"
         FieldId: Integer;
         SystemCreatedAt, UtcEpochZero : DateTime;
         ErrorMessage: ErrorInfo;
+        CurrentDateTime: DateTime;
+        RecordModifiedAt: DateTime;
     begin
         ADLSESetup.GetSingleton();
+
+        // Set CutoffTimeStamp to current time minus ADLSESeetup."Delayed Export"
+        CurrentDateTime := CurrentDateTime();
+
         SetFilterForUpdates(TableID, UpdatedLastTimeStamp, ADLSESetup."Skip Timestamp Sorting On Recs", RecordRef, TimeStampFieldRef);
 
         foreach FieldId in FieldIdList do
@@ -189,11 +195,28 @@ codeunit 82561 "ADLSE Execute"
                 if SystemCreatedAt = 0DT then
                     FieldRef.Value(UtcEpochZero);
 
-                if ADLSECommunication.TryCollectAndSendRecord(RecordRef, TimeStampFieldRef.Value(), FlushedTimeStamp) then begin
-                    if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
-                        UpdatedLastTimeStamp := FlushedTimeStamp;
+                FieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
+                RecordModifiedAt := FieldRef.Value();
+                if RecordModifiedAt = 0DT then
+                    RecordModifiedAt := UtcEpochZero;
+
+                if (CurrentDateTime - RecordModifiedAt > (ADLSESetup."Delayed Export" * 1000)) then begin
+                    if (EmitTelemetry) then begin
+                        CustomDimensions.Set('Record Time Stamp', Format(RecordModifiedAt));
+                        ADLSEExecution.Log('ADLSE-022', 'Exporting record', Verbosity::Normal, CustomDimensions);
+                    end;
+
+                    if ADLSECommunication.TryCollectAndSendRecord(RecordRef, TimeStampFieldRef.Value(), FlushedTimeStamp) then begin
+                        if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
+                            UpdatedLastTimeStamp := FlushedTimeStamp;
+                    end else
+                        ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
                 end else
-                    ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+                    if EmitTelemetry then begin
+                        CustomDimensions.Set('Record Time Stamp', Format(RecordModifiedAt));
+                        ADLSEExecution.Log('ADLSE-023', 'Skipping record in delay window', Verbosity::Normal, CustomDimensions);
+                    end;
+
             until RecordRef.Next() = 0;
 
             if ADLSECommunication.TryFinish(FlushedTimeStamp) then begin
@@ -226,6 +249,7 @@ codeunit 82561 "ADLSE Execute"
     local procedure ExportTableDeletes(TableID: Integer; ADLSECommunication: Codeunit "ADLSE Communication"; var DeletedLastEntryNo: BigInteger)
     var
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
+        ADLSESetup: Record "ADLSE Setup";
         ADLSESeekData: Report "ADLSE Seek Data";
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
@@ -235,7 +259,10 @@ codeunit 82561 "ADLSE Execute"
         EntityCount: Text;
         FlushedTimeStamp: BigInteger;
         ErrorMessage: ErrorInfo;
+        CurrentDateTime: DateTime;
     begin
+        ADLSESetup.GetSingleton();
+        CurrentDateTime := CurrentDateTime();
         SetFilterForDeletes(TableID, DeletedLastEntryNo, ADLSEDeletedRecord);
 
 
@@ -254,11 +281,13 @@ codeunit 82561 "ADLSE Execute"
 
             if ADLSEDeletedRecord.FindSet() then
                 repeat
-                    ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, RecordRef);
-                    if ADLSECommunication.TryCollectAndSendRecord(RecordRef, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp) then
-                        DeletedLastEntryNo := FlushedTimeStamp
-                    else
-                        ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+                    if (CurrentDateTime - ADLSEDeletedRecord.SystemCreatedAt > (ADLSESetup."Delayed Export" * 1000)) then begin
+                        ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, RecordRef);
+                        if ADLSECommunication.TryCollectAndSendRecord(RecordRef, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp) then
+                            DeletedLastEntryNo := FlushedTimeStamp
+                        else
+                            ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+                    end;
                 until ADLSEDeletedRecord.Next() = 0;
 
             if ADLSECommunication.TryFinish(FlushedTimeStamp) then
