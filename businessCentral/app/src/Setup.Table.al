@@ -113,6 +113,14 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Storage type';
             ToolTip = 'Specifies the type of storage type to use.';
+
+            trigger OnValidate()
+            var
+                OpenMirroringPreviewLbl: label 'Microsoft Fabric - Open Mirroring connection in bc2adls is still in preview. Please use it with caution.';
+            begin
+                if Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring" then
+                    Message(OpenMirroringPreviewLbl);
+            end;
         }
 
         field(30; Workspace; Text[100])
