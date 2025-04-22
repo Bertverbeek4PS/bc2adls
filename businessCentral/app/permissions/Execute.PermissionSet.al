@@ -34,6 +34,7 @@ permissionset 82561 "ADLSE - Execute"
                   codeunit "ADLSE Gen 2 Util" = X,
                   codeunit "ADLSE Execute" = X,
                   codeunit "ADLSE Execution" = X,
+                  codeunit "ADLSE Wrapper Execute" = X,
                   report "ADLSE Seek Data" = X,
                   xmlport "BC2ADLS Export" = X;
 }

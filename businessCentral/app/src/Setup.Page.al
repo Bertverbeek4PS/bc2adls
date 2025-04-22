@@ -94,6 +94,11 @@ page 82560 "ADLSE Setup"
                         Enabled = not ExportInProgress;
 
                     }
+                    field("Delayed Export"; Rec."Delayed Export")
+                    {
+                        Enabled = not ExportInProgress;
+
+                    }
 
                     field("Emit telemetry"; Rec."Emit telemetry") { }
                     field("Translations"; Rec.Translations)
