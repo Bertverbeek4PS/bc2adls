@@ -199,6 +199,8 @@ codeunit 82569 "ADLSE Execution"
     end;
 
     [InherentPermissions(PermissionObjectType::Table, Database::"ADLSE Table Last Timestamp", 'X')]
+    [InherentPermissions(PermissionObjectType::Table, Database::"ADLSE Deleted Record", 'X')]
+    [InherentPermissions(PermissionObjectType::Table, Database::"Deleted Tables Not to Sync", 'X')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'R')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'RI')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"Deleted Tables Not to Sync", 'r')]
