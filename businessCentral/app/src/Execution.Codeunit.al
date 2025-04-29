@@ -214,6 +214,9 @@ codeunit 82569 "ADLSE Execution"
         if RecRef.Number = Database::"ADLSE Deleted Record" then
             exit;
 
+        if RecRef.CurrentCompany() <> CompanyName() then //workarround for records which are deleted usings changecompany
+            ADLSETableLastTimestamp.ChangeCompany(RecRef.CurrentCompany());
+
         if DeletedTablesNottoSync.Get(RecRef.Number) then
             exit;
 
