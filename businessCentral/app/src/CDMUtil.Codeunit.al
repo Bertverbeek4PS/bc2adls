@@ -39,6 +39,23 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         Content.Add('definitions', Definitions);
     end;
 
+    procedure CreateEntityContent(TableID: Integer) Content: JsonObject
+    var
+        ADLSEUtil: Codeunit "ADLSE Util";
+        RecordRef: RecordRef;
+        FieldRef: FieldRef;
+        Imports: JsonArray;
+    begin
+        RecordRef.Open(TableID);
+        FieldRef := RecordRef.Field(2000000000);
+        if ADLSEUtil.IsTablePerCompany(TableID) then begin
+            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
+            Imports.Add(this.GetCompanyFieldName());
+        end else
+            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
+        Content.Add('keyColumns', Imports);
+    end;
+
     procedure UpdateDefaultManifestContent(ExistingContent: JsonObject; TableID: Integer; Folder: Text; ADLSECdmFormat: Enum "ADLSE CDM Format") Content: JsonObject
     var
         ADLSEUtil: Codeunit "ADLSE Util";

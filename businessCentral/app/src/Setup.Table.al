@@ -153,6 +153,11 @@ table 82560 "ADLSE Setup"
                         Error(LakehouseIncorrectFormatErr);
             end;
         }
+        field(32; LandingZone; Text[250])
+        {
+            Caption = 'Landing Zone';
+            ToolTip = 'Specifies the name of the Landing Zone where the data is going to be uploaded. This Landing Zone you can find at the Replication Status page in Microsoft Fabric.';
+        }
         field(35; "Schema Exported On"; DateTime)
         {
             AllowInCustomizations = Always;

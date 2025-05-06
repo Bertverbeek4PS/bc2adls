@@ -131,9 +131,15 @@ codeunit 82562 "ADLSE Communication"
 
     procedure CreateEntityContent()
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSECdmUtil: Codeunit "ADLSE CDM Util";
     begin
-        EntityJson := ADLSECdmUtil.CreateEntityContent(TableID, FieldIdList);
+        ADLSESetup.GetSingleton();
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+            EntityJson := ADLSECdmUtil.CreateEntityContent(TableID)
+        else
+            EntityJson := ADLSECdmUtil.CreateEntityContent(TableID, FieldIdList);
+
     end;
 
     local procedure JsonsDifferent(Json1: JsonObject; Json2: JsonObject) Result: Boolean
@@ -313,12 +319,21 @@ codeunit 82562 "ADLSE Communication"
         BlobPath: Text;
         BlobExists: Boolean;
     begin
+        ADLSESetup.ReadIsolation := IsolationLevel::UpdLock;
+        ADLSESetup.GetSingleton();
+
+        //TODO create open morroring specific code for this
         // update entity json
         if EntityJsonNeedsUpdate then begin
-            BlobPath := GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, StrSubstNo(EntityManifestNameTemplateTxt, EntityName));
+            if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
+                BlobPath := ADLSESetup.LandingZone + StrSubstNo(CorpusJsonPathTxt, EntityName) + StrSubstNo(CorpusJsonPathTxt, '_metadata.json')
+            else
+                BlobPath := GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, StrSubstNo(EntityManifestNameTemplateTxt, EntityName));
             if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
                 LeaseID := ADLSEGen2Util.AcquireLease(BlobPath, ADLSECredentials, BlobExists);
+
             ADLSEGen2Util.CreateOrUpdateJsonBlob(BlobPath, ADLSECredentials, LeaseID, EntityJson);
+
             if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
                 ADLSEGen2Util.ReleaseBlob(BlobPath, ADLSECredentials, LeaseID);
         end;
@@ -327,9 +342,6 @@ codeunit 82562 "ADLSE Communication"
         if ManifestJsonsNeedsUpdate then begin
             // Expected that multiple sessions that export data from different tables will be competing for writing to 
             // manifest. Semaphore applied.
-            ADLSESetup.ReadIsolation := IsolationLevel::UpdLock;
-            ADLSESetup.GetSingleton();
-
             UpdateManifest(GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, DataCdmManifestNameTxt), 'data', ADLSESetup.DataFormat);
 
             UpdateManifest(GetBaseUrl() + StrSubstNo(CorpusJsonPathTxt, DeltaCdmManifestNameTxt), 'deltas', "ADLSE CDM Format"::Csv);

@@ -393,7 +393,13 @@ codeunit 82561 "ADLSE Execute"
         FieldIdList := CreateFieldListForTable(tableId);
 
         ADLSECommunication.Init(tableId, FieldIdList, UpdatedLastTimestamp, EmitTelemetry);
-        ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate, true);
+
+        if ADLSESetup."Storage Type" <> ADLSESetup."Storage Type"::"Open Mirroring" then //Always export the schema for Open Mirroring
+            ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate, true)
+        else begin
+            ManifestJsonsNeedsUpdate := false;
+            EntityJsonNeedsUpdate := true;
+        end;
 
         if EmitTelemetry then begin
             Clear(CustomDimensions);
