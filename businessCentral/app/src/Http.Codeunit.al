@@ -190,7 +190,7 @@ codeunit 82563 "ADLSE Http"
 
             ContentLength := Format(StrLen(this.Body));
             Headers.Add('x-ms-overwrite', 'true');
-            Headers.Add('Content-Length', ContentLength);
+            Headers.Add('Content-Length', ContentLength); // TODO BV FIXME. Isn't working 
         end;
 
 
