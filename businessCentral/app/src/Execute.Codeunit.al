@@ -176,6 +176,8 @@ codeunit 82561 "ADLSE Execute"
         if not RecordRef.ReadPermission() then
             Error(InsufficientReadPermErr);
 
+        if (ADLSESetup."Read Committed") then
+            RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
         if ADLSESeekData.FindRecords(RecordRef) then begin
             if EmitTelemetry then begin
                 TableCaption := RecordRef.Caption();
@@ -200,11 +202,7 @@ codeunit 82561 "ADLSE Execute"
                 if RecordModifiedAt = 0DT then
                     RecordModifiedAt := UtcEpochZero;
 
-                if (CurrentDateTime - RecordModifiedAt > (ADLSESetup."Delayed Export" * 1000)) then begin
-                    if (EmitTelemetry) then begin
-                        CustomDimensions.Set('Record Time Stamp', Format(RecordModifiedAt));
-                        ADLSEExecution.Log('ADLSE-022', 'Exporting record', Verbosity::Normal, CustomDimensions);
-                    end;
+                if ((ADLSESetup."Delayed Export" = 0) or (CurrentDateTime - RecordModifiedAt > (ADLSESetup."Delayed Export" * 1000))) then begin
 
                     if ADLSECommunication.TryCollectAndSendRecord(RecordRef, TimeStampFieldRef.Value(), FlushedTimeStamp) then begin
                         if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
@@ -266,6 +264,8 @@ codeunit 82561 "ADLSE Execute"
         SetFilterForDeletes(TableID, DeletedLastEntryNo, ADLSEDeletedRecord);
 
 
+        if (ADLSESetup."Read Committed") then
+            ADLSEDeletedRecord.ReadIsolation := ADLSEDeletedRecord.ReadIsolation::ReadCommitted;
         if ADLSESeekData.FindRecords(ADLSEDeletedRecord) then begin
             RecordRef.Open(ADLSEDeletedRecord."Table ID");
 
@@ -281,7 +281,7 @@ codeunit 82561 "ADLSE Execute"
 
             if ADLSEDeletedRecord.FindSet() then
                 repeat
-                    if (CurrentDateTime - ADLSEDeletedRecord.SystemCreatedAt > (ADLSESetup."Delayed Export" * 1000)) then begin
+                    if ((ADLSESetup."Delayed Export" = 0) or (CurrentDateTime - ADLSEDeletedRecord.SystemCreatedAt > (ADLSESetup."Delayed Export" * 1000))) then begin
                         ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, RecordRef);
                         if ADLSECommunication.TryCollectAndSendRecord(RecordRef, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp) then
                             DeletedLastEntryNo := FlushedTimeStamp
