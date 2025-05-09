@@ -207,6 +207,12 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies the delayed export time in seconds (0 = No delay).';
             InitValue = 0;
         }
+        field(75; "Read Committed"; Boolean)
+        {
+            Caption = 'Use Read Committed';
+            ToolTip = 'When selecting records for export, use Read Committed. Records part of transactions in progress wont be included before fully committed. Only enable this if you have tri-state commit enabled.';
+            InitValue = true;
+        }
 
     }
 
