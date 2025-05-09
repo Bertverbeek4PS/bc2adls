@@ -38,5 +38,5 @@
     }
   ],
   "target": "Cloud",
-  "runtime": "14.0"
+  "runtime": "15.0"
 }

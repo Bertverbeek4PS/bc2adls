@@ -9,7 +9,10 @@ permissionset 82560 "ADLSE - Setup"
     Assignable = true;
     Caption = 'ADLS - Setup', MaxLength = 30;
 
-    Permissions = tabledata "ADLSE Setup" = RIMD,
+    Permissions = table "Deleted Tables Not to Sync" = x,
+                  table "ADLSE Export Category" = x,
+                  table "ADLSE Export Category Table" = x,
+                  tabledata "ADLSE Setup" = RIMD,
                   tabledata "ADLSE Table" = RIMD,
                   tabledata "ADLSE Field" = RIMD,
                   tabledata "ADLSE Deleted Record" = RD,
