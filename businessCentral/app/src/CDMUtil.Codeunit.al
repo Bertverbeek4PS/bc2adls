@@ -54,6 +54,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         end else
             Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
         Content.Add('keyColumns', Imports);
+        Content.Add('fileFormat', 'csv');
     end;
 
     procedure UpdateDefaultManifestContent(ExistingContent: JsonObject; TableID: Integer; Folder: Text; ADLSECdmFormat: Enum "ADLSE CDM Format") Content: JsonObject
