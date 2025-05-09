@@ -417,7 +417,7 @@ codeunit 82564 "ADLSE Util"
     var
         TableMetadata: Record "Table Metadata";
     begin
-        if TableMetadata.get(TableID) then
+        if TableMetadata.Get(TableID) then
             exit(TableMetadata.DataPerCompany);
     end;
 
