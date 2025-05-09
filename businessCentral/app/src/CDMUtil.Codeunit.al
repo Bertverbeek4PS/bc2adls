@@ -46,6 +46,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         FieldRef: FieldRef;
         Imports: JsonArray;
     begin
+        //Must be systemId and $Company because of the deleted record table
         RecordRef.Open(TableID);
         FieldRef := RecordRef.Field(2000000000);
         if ADLSEUtil.IsTablePerCompany(TableID) then begin

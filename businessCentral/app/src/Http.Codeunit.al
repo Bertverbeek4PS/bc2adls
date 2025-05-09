@@ -167,10 +167,8 @@ codeunit 82563 "ADLSE Http"
     var
         ADLSESetup: Record "ADLSE Setup";
         Headers: HttpHeaders;
-        ContentLength: Text;
     begin
-        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake") or
-        (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson)
+        if not ContentTypeJson
         then
             HttpContent.WriteFrom(Body);
 
@@ -185,12 +183,10 @@ codeunit 82563 "ADLSE Http"
         end;
 
         if (ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Azure Data Lake") and (not ContentTypeJson) then begin
+            Headers.Remove('Content-Type');
+            Headers.Add('Content-Type', 'application/octet-stream');
             Headers.Remove('Content-Length');
-            Headers.Remove('x-ms-overwrite');
-
-            ContentLength := Format(StrLen(this.Body));
-            Headers.Add('x-ms-overwrite', 'true');
-            Headers.Add('Content-Length', ContentLength); // TODO BV FIXME. Isn't working 
+            Headers.Add('content-length', Format(StrLen(this.Body)));
         end;
 
 

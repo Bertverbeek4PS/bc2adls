@@ -4,11 +4,13 @@ codeunit 82561 "ADLSE Execute"
 {
     Access = Internal;
     TableNo = "ADLSE Table";
+    Permissions = tabledata "ADLSE Table" = rm;
 
     trigger OnRun()
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSERun: Record "ADLSE Run";
+        ADLSETable: Record "ADLSE Table";
         ADLSECurrentSession: Record "ADLSE Current Session";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSECommunication: Codeunit "ADLSE Communication";
@@ -93,6 +95,13 @@ codeunit 82561 "ADLSE Execute"
             else
                 ADLSEExecution.Log('ADLSE-040', 'Export completed with errors', Verbosity::Warning, CustomDimensions);
 
+        //Addin the number when open mirroring is used
+        if (ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring") and (ExportSuccess) then begin
+            ADLSETable.Get(Rec."Table ID");
+            ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
+            ADLSETable.Modify(true);
+        end;
+
         ADLSEExternalEvents.OnAllExportIsFinished(ADLSESetup);
     end;
 
@@ -107,6 +116,7 @@ codeunit 82561 "ADLSE Execute"
         var UpdatedLastTimeStamp: BigInteger; var DeletedLastEntryNo: BigInteger;
         var EntityJsonNeedsUpdate: Boolean; var ManifestJsonsNeedsUpdate: Boolean)
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSECommunicationDeletions: Codeunit "ADLSE Communication";
         FieldIdList: List of [Integer];
     begin
@@ -115,7 +125,8 @@ codeunit 82561 "ADLSE Execute"
         // first export the upserts
         ADLSECommunication.Init(TableID, FieldIdList, UpdatedLastTimeStamp, EmitTelemetry);
 
-        ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate, false);
+        if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Open Mirroring" then //TODO is this really needed for open mirroring?
+            ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate, false);
 
         ExportTableUpdates(TableID, FieldIdList, ADLSECommunication, UpdatedLastTimeStamp);
 
@@ -206,7 +217,7 @@ codeunit 82561 "ADLSE Execute"
                         ADLSEExecution.Log('ADLSE-022', 'Exporting record', Verbosity::Normal, CustomDimensions);
                     end;
 
-                    if ADLSECommunication.TryCollectAndSendRecord(RecordRef, TimeStampFieldRef.Value(), FlushedTimeStamp) then begin
+                    if ADLSECommunication.TryCollectAndSendRecord(RecordRef, TimeStampFieldRef.Value(), FlushedTimeStamp, false) then begin
                         if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
                             UpdatedLastTimeStamp := FlushedTimeStamp;
                     end else
@@ -283,7 +294,7 @@ codeunit 82561 "ADLSE Execute"
                 repeat
                     if (CurrentDateTime - ADLSEDeletedRecord.SystemCreatedAt > (ADLSESetup."Delayed Export" * 1000)) then begin
                         ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, RecordRef);
-                        if ADLSECommunication.TryCollectAndSendRecord(RecordRef, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp) then
+                        if ADLSECommunication.TryCollectAndSendRecord(RecordRef, ADLSEDeletedRecord."Entry No.", FlushedTimeStamp, true) then
                             DeletedLastEntryNo := FlushedTimeStamp
                         else
                             ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());

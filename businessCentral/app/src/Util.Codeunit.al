@@ -320,8 +320,16 @@ codeunit 82564 "ADLSE Util"
         FieldsAdded: Integer;
         FieldTextValue: Text;
         Payload: TextBuilder;
+        RowMarkerTok: Label '__rowMarker__', Comment = 'Rowmarker must always be the first column for open mirroring', Locked = true;
     begin
         FieldsAdded := 0;
+        ADLSESetup.GetSingleton();
+
+        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+            Payload.Append(RowMarkerTok);
+            FieldsAdded += 1;
+        end;
+
         foreach FieldID in FieldIdList do begin
             FieldRef := RecordRef.Field(FieldID);
 
@@ -334,17 +342,20 @@ codeunit 82564 "ADLSE Util"
         end;
         if IsTablePerCompany(RecordRef.Number) then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetCompanyFieldName()));
-        ADLSESetup.GetSingleton();
+
         if ADLSESetup."Delivered DateTime" then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetDeliveredDateTimeFieldName()));
         Payload.AppendLine();
         RecordPayload := Payload.ToText();
     end;
 
-    procedure CreateCsvPayload(RecordRef: RecordRef; FieldIdList: List of [Integer]; AddHeaders: Boolean) RecordPayload: Text
+    procedure CreateCsvPayload(RecordRef: RecordRef; FieldIdList: List of [Integer]; AddHeaders: Boolean; Deletes: Boolean) RecordPayload: Text
     var
         ADLSESetup: Record "ADLSE Setup";
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         FieldRef: FieldRef;
+        SystemCreatedAtNoFieldref: FieldRef;
+        SystemModifiedAtNoFieldref: FieldRef;
         CurrDateTime: DateTime;
         FieldID: Integer;
         FieldsAdded: Integer;
@@ -359,6 +370,30 @@ codeunit 82564 "ADLSE Util"
             CurrDateTime := CurrentDateTime();
 
         FieldsAdded := 0;
+
+        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+            //https://learn.microsoft.com/en-us/fabric/database/mirrored-database/open-mirroring-landing-zone-format#data-file-and-format-in-the-landing-zone
+            // 0- 	Insert
+            // 1- 	Update
+            // 2- 	Delete
+            if not ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(RecordRef.Number) then
+                //Because of an reset always 0 is sent for the first time
+                Payload.Append('0')
+            else
+                if Deletes then
+                    Payload.Append('2')
+                else begin
+                    SystemCreatedAtNoFieldref := RecordRef.Field(RecordRef.SystemCreatedAtNo());
+                    SystemModifiedAtNoFieldref := RecordRef.Field(RecordRef.SystemModifiedAtNo());
+                    if SystemCreatedAtNoFieldref.Value() = SystemModifiedAtNoFieldref.Value() then
+                        Payload.Append('0')
+                    else
+                        Payload.Append('1');
+                end;
+
+            FieldsAdded += 1;
+        end;
+
         foreach FieldID in FieldIdList do begin
             FieldRef := RecordRef.Field(FieldID);
 
