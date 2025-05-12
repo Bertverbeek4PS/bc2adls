@@ -414,7 +414,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             FieldType::Code:
                 exit(GetCDMDataFormat_String());
             FieldType::Guid:
-                exit('UNIQUEIDENTIFIER');
+                exit(GetCDMDataFormat_String());
             FieldType::Text:
                 exit(GetCDMDataFormat_String());
         end;
