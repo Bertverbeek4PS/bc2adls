@@ -342,7 +342,7 @@ codeunit 82564 "ADLSE Util"
             Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetDeliveredDateTimeFieldName()));
 
         if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
-            Payload.Append(RowMarkerTok);
+            Payload.Append(StrSubstNo(CommaPrefixedTok, RowMarkerTok));
 
         Payload.AppendLine();
         RecordPayload := Payload.ToText();
@@ -392,17 +392,17 @@ codeunit 82564 "ADLSE Util"
             // 2- 	Delete
             if ADLSETableLastTimestamp.GetUpdatedLastTimestamp(RecordRef.Number) = 0 then
                 //Because of an reset always 0 is sent for the first time
-                Payload.Append('0')
+                Payload.Append(StrSubstNo(CommaPrefixedTok, '0'))
             else
                 if Deletes then
-                    Payload.Append('2')
+                    Payload.Append(StrSubstNo(CommaPrefixedTok, '2'))
                 else begin
                     SystemCreatedAtNoFieldref := RecordRef.Field(RecordRef.SystemCreatedAtNo());
                     SystemModifiedAtNoFieldref := RecordRef.Field(RecordRef.SystemModifiedAtNo());
                     if SystemCreatedAtNoFieldref.Value() = SystemModifiedAtNoFieldref.Value() then
-                        Payload.Append('0')
+                        Payload.Append(StrSubstNo(CommaPrefixedTok, '0'))
                     else
-                        Payload.Append('1');
+                        Payload.Append(StrSubstNo(CommaPrefixedTok, '1'));
                 end;
 
         Payload.AppendLine();
