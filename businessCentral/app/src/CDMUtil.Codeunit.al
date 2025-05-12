@@ -384,8 +384,6 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
     var
         ADLSESetup: Record "ADLSE Setup";
     begin
-        // Refer https://docs.microsoft.com/en-us/common-data-model/sdk/list-of-datatypes
-        // Refer https://docs.microsoft.com/en-us/common-data-model/1.0om/api-reference/cdm/dataformat
         case FieldType of
             FieldType::BigInteger:
                 exit('Int');
@@ -416,7 +414,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             FieldType::Code:
                 exit(GetCDMDataFormat_String());
             FieldType::Guid:
-                exit(GetCDMDataFormat_String());
+                exit('UNIQUEIDENTIFIER');
             FieldType::Text:
                 exit(GetCDMDataFormat_String());
         end;
