@@ -98,7 +98,7 @@ codeunit 82563 "ADLSE Http"
         Success := InvokeRestApi(Response, StatusCode);
     end;
 
-    //[NonDebuggable]
+    [NonDebuggable]
     procedure InvokeRestApi(var Response: Text; var StatusCode: Integer) Success: Boolean
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -168,12 +168,10 @@ codeunit 82563 "ADLSE Http"
         ADLSESetup: Record "ADLSE Setup";
         Headers: HttpHeaders;
     begin
-        if not ContentTypeJson
-        then
+        if not ContentTypeJson then
             HttpContent.WriteFrom(Body);
 
         HttpContent.GetHeaders(Headers);
-
         if ContentTypeJson then begin
             Headers.Remove('Content-Type');
             Headers.Add('Content-Type', 'application/json');
@@ -182,14 +180,8 @@ codeunit 82563 "ADLSE Http"
                 Headers.Add('Content-Length', '0');
         end;
 
-        if (ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Azure Data Lake") and (not ContentTypeJson) then begin
+        if (ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Azure Data Lake") and (not ContentTypeJson) then
             Headers.Remove('Content-Type');
-            Headers.Add('Content-Type', 'application/octet-stream');
-            Headers.Remove('Content-Length');
-            Headers.Add('content-length', Format(StrLen(this.Body)));
-        end;
-
-
     end;
 
     [NonDebuggable]
