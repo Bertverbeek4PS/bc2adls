@@ -113,6 +113,14 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Storage type';
             ToolTip = 'Specifies the type of storage type to use.';
+
+            trigger OnValidate()
+            var
+                OpenMirroringPreviewLbl: label 'Microsoft Fabric - Open Mirroring connection in bc2adls is still in preview. Please use it with caution.';
+            begin
+                if Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring" then
+                    Message(OpenMirroringPreviewLbl);
+            end;
         }
 
         field(30; Workspace; Text[100])
@@ -144,6 +152,11 @@ table 82560 "ADLSE Setup"
                     then
                         Error(LakehouseIncorrectFormatErr);
             end;
+        }
+        field(32; LandingZone; Text[250])
+        {
+            Caption = 'Landing Zone';
+            ToolTip = 'Specifies the name of the Landing Zone where the data is going to be uploaded. This Landing Zone you can find at the Replication Status page in Microsoft Fabric.';
         }
         field(35; "Schema Exported On"; DateTime)
         {
