@@ -42,12 +42,20 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
     procedure CreateEntityContent(TableID: Integer) Content: JsonObject
     var
         ADLSEUtil: Codeunit "ADLSE Util";
+        ADLSEExecute: Codeunit "ADLSE Execute";
         RecordRef: RecordRef;
         FieldRef: FieldRef;
+        FieldIdList: List of [Integer];
+        FieldId: Integer;
         Imports: JsonArray;
+        Columns: JsonArray;
+        Column: JsonObject;
+        SchemaDefinition: JsonObject;
     begin
         //Must be systemId and $Company because of the deleted record table
         RecordRef.Open(TableID);
+        FieldIdList := ADLSEExecute.CreateFieldListForTable(TableID);
+
         FieldRef := RecordRef.Field(2000000000);
         if ADLSEUtil.IsTablePerCompany(TableID) then begin
             Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
@@ -55,6 +63,19 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         end else
             Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
         Content.Add('keyColumns', Imports);
+
+        foreach FieldId in FieldIdList do begin
+            FieldRef := RecordRef.Field(FieldId);
+            Clear(Column);
+            Column.Add('Name', ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
+            Column.Add('DataType', GetCDMDataFormat(FieldRef.Type));
+            Columns.Add(Column);
+        end;
+
+
+
+        SchemaDefinition.Add('Columns', Columns);
+        Content.Add('SchemaDefinition', SchemaDefinition);
         Content.Add('fileFormat', 'csv');
     end;
 
