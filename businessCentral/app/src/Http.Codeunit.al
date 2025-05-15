@@ -168,7 +168,7 @@ codeunit 82563 "ADLSE Http"
         ADLSESetup: Record "ADLSE Setup";
         Headers: HttpHeaders;
     begin
-        if not ContentTypeJson
+        if (not ContentTypeJson) or (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake")
         then
             HttpContent.WriteFrom(Body);
 
