@@ -207,11 +207,9 @@ codeunit 82569 "ADLSE Execution"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseDelete, '', false, false)]
     local procedure OnAfterOnDatabaseDelete(RecRef: RecordRef)
     var
-        ADLSESetup: Record "ADLSE Setup";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
         DeletedTablesNottoSync: Record "Deleted Tables Not to Sync";
-        ADLSEUtil: Codeunit "ADLSE Util";
     begin
         if RecRef.Number() = Database::"ADLSE Deleted Record" then
             exit;
@@ -221,12 +219,6 @@ codeunit 82569 "ADLSE Execution"
 
         if DeletedTablesNottoSync.Get(RecRef.Number()) then
             exit;
-
-        //Deletes in table on tenant level and deleted in another company
-        if not ADLSEUtil.IsTablePerCompany(RecRef.Number()) then begin
-            ADLSESetup.GetSingleton();
-            ADLSETableLastTimestamp.ChangeCompany(ADLSESetup."Export Company Database Tables");
-        end;
 
         // check if table is to be tracked.
         if not ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(RecRef.Number()) then
