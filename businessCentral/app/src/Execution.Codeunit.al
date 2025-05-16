@@ -211,17 +211,17 @@ codeunit 82569 "ADLSE Execution"
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
         DeletedTablesNottoSync: Record "Deleted Tables Not to Sync";
     begin
-        if RecRef.Number = Database::"ADLSE Deleted Record" then
+        if RecRef.Number() = Database::"ADLSE Deleted Record" then
             exit;
 
         if RecRef.CurrentCompany() <> CompanyName() then //workarround for records which are deleted usings changecompany
             ADLSETableLastTimestamp.ChangeCompany(RecRef.CurrentCompany());
 
-        if DeletedTablesNottoSync.Get(RecRef.Number) then
+        if DeletedTablesNottoSync.Get(RecRef.Number()) then
             exit;
 
         // check if table is to be tracked.
-        if not ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(RecRef.Number) then
+        if not ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(RecRef.Number()) then
             exit;
 
         ADLSEDeletedRecord.TrackDeletedRecord(RecRef);

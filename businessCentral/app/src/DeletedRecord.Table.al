@@ -46,6 +46,8 @@ table 82563 "ADLSE Deleted Record"
 
     procedure TrackDeletedRecord(RecordRef: RecordRef)
     var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSEUtil: Codeunit "ADLSE Util";
         SystemIdFieldRef: FieldRef;
         TimestampFieldRef: FieldRef;
     begin
@@ -58,6 +60,12 @@ table 82563 "ADLSE Deleted Record"
         SystemIdFieldRef := RecordRef.Field(RecordRef.SystemIdNo());
         if IsNullGuid(SystemIdFieldRef.Value()) then
             exit;
+
+        //Handle deletes in table on tenant level and deleted in another company
+        if not ADLSEUtil.IsTablePerCompany(RecordRef.Number()) then begin
+            ADLSESetup.GetSingleton();
+            ChangeCompany(ADLSESetup."Export Company Database Tables");
+        end;
 
         // Do not log a deletion if its for a record that is created after the last sync
         // TODO: This requires tracking the SystemModifiedAt of the last time stamp 
