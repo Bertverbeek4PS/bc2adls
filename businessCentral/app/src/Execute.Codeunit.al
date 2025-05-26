@@ -187,8 +187,7 @@ codeunit 82561 "ADLSE Execute"
         if not RecordRef.ReadPermission() then
             Error(InsufficientReadPermErr);
 
-        if (ADLSESetup."Read Committed") then
-            RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
+        RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
         if ADLSESeekData.FindRecords(RecordRef) then begin
             if EmitTelemetry then begin
                 TableCaption := RecordRef.Caption();
@@ -274,9 +273,7 @@ codeunit 82561 "ADLSE Execute"
         CurrentDateTime := CurrentDateTime();
         SetFilterForDeletes(TableID, DeletedLastEntryNo, ADLSEDeletedRecord);
 
-
-        if (ADLSESetup."Read Committed") then
-            ADLSEDeletedRecord.ReadIsolation := ADLSEDeletedRecord.ReadIsolation::ReadCommitted;
+        ADLSEDeletedRecord.ReadIsolation := ADLSEDeletedRecord.ReadIsolation::ReadCommitted;
         if ADLSESeekData.FindRecords(ADLSEDeletedRecord) then begin
             RecordRef.Open(ADLSEDeletedRecord."Table ID");
 
