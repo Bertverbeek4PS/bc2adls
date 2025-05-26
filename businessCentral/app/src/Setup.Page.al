@@ -49,8 +49,18 @@ page 82560 "ADLSE Setup"
                 {
                     Caption = 'Microsoft Fabric';
                     Editable = not AzureDataLake;
-                    field(Workspace; Rec.Workspace) { }
-                    field(Lakehouse; Rec.Lakehouse) { }
+                    field(Workspace; Rec.Workspace)
+                    {
+                        Editable = not this.FabricOpenMirroring;
+                    }
+                    field(Lakehouse; Rec.Lakehouse)
+                    {
+                        Editable = not this.FabricOpenMirroring;
+                    }
+                    field(LandingZone; Rec.LandingZone)
+                    {
+                        Editable = this.FabricOpenMirroring;
+                    }
                 }
                 group(Access)
                 {
@@ -84,10 +94,12 @@ page 82560 "ADLSE Setup"
                     field(MaxPayloadSize; Rec.MaxPayloadSizeMiB)
                     {
                         Editable = AzureDataLake;
-
                     }
 
-                    field("CDM data format"; Rec.DataFormat) { }
+                    field("CDM data format"; Rec.DataFormat)
+                    {
+                        Editable = AzureDataLake;
+                    }
 
                     field("Skip Timestamp Sorting On Recs"; Rec."Skip Timestamp Sorting On Recs")
                     {
@@ -340,7 +352,7 @@ page 82560 "ADLSE Setup"
     }
 
     var
-        AzureDataLake: Boolean;
+        FabricOpenMirroring, AzureDataLake : Boolean;
         ClientSecretLbl: Label 'Secret not shown';
         ClientIdLbl: Label 'ID not shown';
 
@@ -366,6 +378,7 @@ page 82560 "ADLSE Setup"
         OldLogsExist := ADLSERun.OldRunsExist();
         UpdateNotificationIfAnyTableExportFailed();
         AzureDataLake := Rec."Storage Type" = Rec."Storage Type"::"Azure Data Lake";
+        FabricOpenMirroring := Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring";
     end;
 
     var

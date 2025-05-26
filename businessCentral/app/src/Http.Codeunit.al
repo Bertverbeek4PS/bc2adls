@@ -168,23 +168,22 @@ codeunit 82563 "ADLSE Http"
         ADLSESetup: Record "ADLSE Setup";
         Headers: HttpHeaders;
     begin
-        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake") or
-        (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson)
+
+        if (not ContentTypeJson) or (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake")
         then
             HttpContent.WriteFrom(Body);
 
         HttpContent.GetHeaders(Headers);
-
         if ContentTypeJson then begin
             Headers.Remove('Content-Type');
             Headers.Add('Content-Type', 'application/json');
             Headers.Remove('Content-Length');
-            if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric" then
+            if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Azure Data Lake" then
                 Headers.Add('Content-Length', '0');
         end;
 
-        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric") and (not ContentTypeJson) then
-            Headers.Remove('Content-Length');
+        if (ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Azure Data Lake") and (not ContentTypeJson) then
+            Headers.Remove('Content-Type');
     end;
 
     [NonDebuggable]

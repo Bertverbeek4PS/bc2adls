@@ -39,6 +39,44 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         Content.Add('definitions', Definitions);
     end;
 
+    procedure CreateEntityContent(TableID: Integer) Content: JsonObject
+    var
+        ADLSEUtil: Codeunit "ADLSE Util";
+        ADLSEExecute: Codeunit "ADLSE Execute";
+        RecordRef: RecordRef;
+        FieldRef: FieldRef;
+        FieldIdList: List of [Integer];
+        FieldId: Integer;
+        Imports: JsonArray;
+        Columns: JsonArray;
+        Column: JsonObject;
+        SchemaDefinition: JsonObject;
+    begin
+        //Must be systemId and $Company because of the deleted record table
+        RecordRef.Open(TableID);
+        FieldIdList := ADLSEExecute.CreateFieldListForTable(TableID);
+
+        FieldRef := RecordRef.Field(2000000000);
+        if ADLSEUtil.IsTablePerCompany(TableID) then begin
+            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
+            Imports.Add(this.GetCompanyFieldName());
+        end else
+            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
+        Content.Add('keyColumns', Imports);
+
+        foreach FieldId in FieldIdList do begin
+            FieldRef := RecordRef.Field(FieldId);
+            Clear(Column);
+            Column.Add('Name', ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
+            Column.Add('DataType', GetFabricDataFormat(FieldRef.Type));
+            Columns.Add(Column);
+        end;
+
+        SchemaDefinition.Add('Columns', Columns);
+        Content.Add('SchemaDefinition', SchemaDefinition);
+        Content.Add('fileFormat', 'csv');
+    end;
+
     procedure UpdateDefaultManifestContent(ExistingContent: JsonObject; TableID: Integer; Folder: Text; ADLSECdmFormat: Enum "ADLSE CDM Format") Content: JsonObject
     var
         ADLSEUtil: Codeunit "ADLSE Util";
@@ -338,6 +376,46 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
     local procedure GetCDMDataFormat_String(): Text
     begin
         exit('String');
+    end;
+
+    local procedure GetFabricDataFormat(FieldType: FieldType): Text
+    var
+        ADLSESetup: Record "ADLSE Setup";
+    begin
+        case FieldType of
+            FieldType::BigInteger:
+                exit('Int');
+            FieldType::Date:
+                exit('date');
+            FieldType::DateFormula:
+                exit(GetCDMDataFormat_String());
+            FieldType::DateTime:
+                exit('DateTimeFormat');
+            FieldType::Decimal:
+                exit('DecimalFormat');
+            FieldType::Duration:
+                exit('timedelta');
+            FieldType::Integer:
+                exit('Int');
+            FieldType::Option:
+                begin
+                    ADLSESetup.GetSingleton();
+                    if ADLSESetup."Export Enum as Integer" then
+                        exit('Int')
+                    else
+                        exit(GetCDMDataFormat_String());
+                end;
+            FieldType::Time:
+                exit(GetCDMDataFormat_String());
+            FieldType::Boolean:
+                exit('Boolean');
+            FieldType::Code:
+                exit(GetCDMDataFormat_String());
+            FieldType::Guid:
+                exit(GetCDMDataFormat_String());
+            FieldType::Text:
+                exit(GetCDMDataFormat_String());
+        end;
     end;
 
     local procedure CompareAttributeField(Attribute1: JsonToken; Attribute2: JsonToken; FieldName: Text; Index: Integer)
