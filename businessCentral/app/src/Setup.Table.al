@@ -220,7 +220,6 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies the delayed export time in seconds (0 = No delay).';
             InitValue = 0;
         }
-
     }
 
     keys
