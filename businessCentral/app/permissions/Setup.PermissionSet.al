@@ -12,6 +12,7 @@ permissionset 82560 "ADLSE - Setup"
     Permissions = table "Deleted Tables Not to Sync" = x,
                   table "ADLSE Export Category" = x,
                   table "ADLSE Export Category Table" = x,
+                  table "ADLSE Setup" = x,
                   tabledata "ADLSE Setup" = RIMD,
                   tabledata "ADLSE Table" = RIMD,
                   tabledata "ADLSE Field" = RIMD,
