@@ -154,7 +154,7 @@ page 82561 "ADLSE Setup Tables"
                 trigger OnAction()
                 var
                     SelectedADLSETable: Record "ADLSE Table";
-                    Options: Text[30];
+                    Options: Text[50];
                     OptionStringLbl: Label 'Current Company,All Companies';
                     ChosenOption: Integer;
                 begin
