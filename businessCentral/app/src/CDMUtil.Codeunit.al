@@ -41,6 +41,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
 
     procedure CreateEntityContent(TableID: Integer) Content: JsonObject
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEExecute: Codeunit "ADLSE Execute";
         RecordRef: RecordRef;
@@ -64,11 +65,15 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
         Content.Add('keyColumns', Imports);
 
+        ADLSESetup.GetSingleton();
         foreach FieldId in FieldIdList do begin
             FieldRef := RecordRef.Field(FieldId);
             Clear(Column);
             Column.Add('Name', ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
-            Column.Add('DataType', GetFabricDataFormat(FieldRef.Type));
+            if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
+                Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type))
+            else
+                Column.Add('DataType', GetFabricDataFormat(FieldRef.Type));
             Columns.Add(Column);
         end;
 
@@ -417,6 +422,48 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                 exit(GetCDMDataFormat_String());
         end;
     end;
+
+
+    local procedure GetOpenMirrorDataFormat(FieldType: FieldType): Text
+    var
+        ADLSESetup: Record "ADLSE Setup";
+    begin
+        case FieldType of
+            FieldType::BigInteger:
+                exit('Int64');
+            FieldType::Date:
+                exit('IDate');
+            FieldType::DateFormula:
+                exit(GetCDMDataFormat_String());
+            FieldType::DateTime:
+                exit('DateTime');
+            FieldType::Decimal:
+                exit('Double');
+            FieldType::Duration:
+                exit('Int32');
+            FieldType::Integer:
+                exit('Int32');
+            FieldType::Option:
+                begin
+                    ADLSESetup.GetSingleton();
+                    if ADLSESetup."Export Enum as Integer" then
+                        exit('Int16')
+                    else
+                        exit(GetCDMDataFormat_String());
+                end;
+            FieldType::Time:
+                exit('ITime');
+            FieldType::Boolean:
+                exit('Boolean');
+            FieldType::Code:
+                exit(GetCDMDataFormat_String());
+            FieldType::Guid:
+                exit(GetCDMDataFormat_String());
+            FieldType::Text:
+                exit(GetCDMDataFormat_String());
+        end;
+    end;
+
 
     local procedure CompareAttributeField(Attribute1: JsonToken; Attribute2: JsonToken; FieldName: Text; Index: Integer)
     var
