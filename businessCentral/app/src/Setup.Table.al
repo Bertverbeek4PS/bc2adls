@@ -118,10 +118,8 @@ table 82560 "ADLSE Setup"
             var
                 OpenMirroringPreviewLbl: label 'Microsoft Fabric - Open Mirroring connection in bc2adls is still in preview. Please use it with caution.';
             begin
-                if Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring" then begin
-                    Rec."Delete Table" := true;
+                if Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring" then
                     Message(OpenMirroringPreviewLbl);
-                end;
             end;
         }
 

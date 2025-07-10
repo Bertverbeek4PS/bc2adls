@@ -330,35 +330,6 @@ codeunit 82568 "ADLSE Gen 2 Util"
         end;
     end;
 
-    procedure DropTableFromOpenMirroring(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean)
-    var
-        ADLSESetup: Record "ADLSE Setup";
-        ADLSEHttp: Codeunit "ADLSE Http";
-        IsHandled: Boolean;
-        Response: Text;
-        Url: Text;
-    begin
-        // DELETE https://onelake.dfs.fabric.microsoft.com/{CONTAINER_ID}/{MIRRORED_DATABASE_ID}/Files/LandingZone/{FOLDER_NAME}?recursive=true
-        // https://learn.microsoft.com/en-us/fabric/database/mirrored-database/open-mirroring-landing-zone-format#drop-table
-        ADLSESetup.GetSingleton();
-
-        OnBeforeDropTableFromOpenMirroring(ADLSEntityName, ADLSECredentials, AllCompanies, IsHandled);
-        if IsHandled then
-            exit;
-
-
-        if AllCompanies then begin
-            Url := ADLSESetup.LandingZone;
-            Url += '/' + ADLSEntityName + '?recursive=true';
-
-            ADLSEHttp.SetMethod("ADLSE Http Method"::Delete);
-            ADLSEHttp.SetUrl(Url);
-            ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
-            ADLSEHttp.InvokeRestApi(Response)
-        end;
-    end;
-
-
     [IntegrationEvent(false, false)]
     local procedure OnBeforeGetBlobContent(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; var BlobExists: Boolean; var Content: JsonObject; var IsHandled: Boolean)
     begin
@@ -386,11 +357,6 @@ codeunit 82568 "ADLSE Gen 2 Util"
 
     [Integrationevent(false, false)]
     local procedure OnBeforeRemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean; var IsHandled: Boolean)
-    begin
-    end;
-
-    [Integrationevent(false, false)]
-    local procedure OnBeforeDropTableFromOpenMirroring(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean; var IsHandled: Boolean)
     begin
     end;
 }
