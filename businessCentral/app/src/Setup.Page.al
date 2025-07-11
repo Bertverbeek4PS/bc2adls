@@ -140,7 +140,10 @@ page 82560 "ADLSE Setup"
                         end;
                     }
                     field("Export Enum as Integer"; Rec."Export Enum as Integer") { }
-                    field("Delete Table"; Rec."Delete Table") { }
+                    field("Delete Table"; Rec."Delete Table")
+                    {
+                        Editable = not this.FabricOpenMirroring;
+                    }
                     field("Delivered DateTime"; Rec."Delivered DateTime") { }
                     field("Export Company Database Tables"; Rec."Export Company Database Tables")
                     {
