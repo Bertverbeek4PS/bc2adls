@@ -154,12 +154,22 @@ page 82561 "ADLSE Setup Tables"
                 trigger OnAction()
                 var
                     SelectedADLSETable: Record "ADLSE Table";
+                    ADLSESetup: Record "ADLSE Setup";
                     Options: Text[50];
                     OptionStringLbl: Label 'Current Company,All Companies';
+                    ResetTablesForAllCompaniesQst: Label 'Do you want to reset the selected tables for all companies?';
+                    ResetTablesQst: Label 'Do you want to reset the selected tables for the current company or all companies?';
                     ChosenOption: Integer;
                 begin
                     Options := OptionStringLbl;
-                    ChosenOption := Dialog.StrMenu(Options, 1, 'Do you want to reset the selected tables for the current company or all companies?');
+                    ADLSESetup.GetSingleton();
+                    if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                        if Confirm(ResetTablesForAllCompaniesQst, true) then
+                            ChosenOption := 2
+                        else
+                            exit;
+                    end else
+                        ChosenOption := Dialog.StrMenu(Options, 1, ResetTablesQst);
                     CurrPage.SetSelectionFilter(SelectedADLSETable);
                     case ChosenOption of
                         0:
