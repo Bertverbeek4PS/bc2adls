@@ -69,7 +69,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         foreach FieldId in FieldIdList do begin
             FieldRef := RecordRef.Field(FieldId);
             Clear(Column);
-            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
+            Column.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
             if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
                 Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type))
             else
