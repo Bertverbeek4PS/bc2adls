@@ -59,17 +59,17 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
 
         FieldRef := RecordRef.Field(2000000000);
         if ADLSEUtil.IsTablePerCompany(TableID) then begin
-            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
+            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
             Imports.Add(this.GetCompanyFieldName());
         end else
-            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
+            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
         Content.Add('keyColumns', Imports);
 
         ADLSESetup.GetSingleton();
         foreach FieldId in FieldIdList do begin
             FieldRef := RecordRef.Field(FieldId);
             Clear(Column);
-            Column.Add('Name', ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number));
+            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
             if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
                 Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type))
             else
@@ -176,7 +176,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                 FieldLength := 15; // 15 is the default max number of digits. FieldRef.Length is giving the wrong number back for decimal
             Result.Add(
                 CreateAttributeJson(
-                    ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number),
+                    ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef),
                     DataFormat,
                     FieldRef.Name,
                     AppliedTraits,

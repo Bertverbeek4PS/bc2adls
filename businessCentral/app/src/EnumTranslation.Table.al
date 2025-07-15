@@ -53,7 +53,7 @@ table 82567 "ADLSE Enum Translation"
         Rec."Table Id" := TableId;
         Rec."Compliant Table Name" := CopyStr(ADLSEUtil.GetDataLakeCompliantTableName(TableId), 1, MaxStrLen((Rec."Compliant Table Name")));
         Rec."Field Id" := FieldNo;
-        Rec."Compliant Field Name" := CopyStr(ADLSEUtil.GetDataLakeCompliantFieldName(FieldName, FieldNo), 1, MaxStrLen((Rec."Compliant Field Name")));
+        Rec."Compliant Field Name" := CopyStr(ADLSEUtil.GetDataLakeCompliantFieldName(TableId, FieldNo), 1, MaxStrLen((Rec."Compliant Field Name")));
         Rec.Insert(true);
     end;
 

@@ -141,16 +141,60 @@ codeunit 82564 "ADLSE Util"
 
     procedure GetDataLakeCompliantTableName(TableID: Integer) TableName: Text
     var
+        ADLSESetup: Record "ADLSE Setup";
+        AllObjWithCaption: Record AllObjWithCaption;
         OrigTableName: Text;
     begin
         OrigTableName := GetTableName(TableID);
-        TableName := GetDataLakeCompliantName(OrigTableName);
-        exit(StrSubstNo(ConcatNameIdTok, TableName, TableID));
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Use IDs for Duplicates Only" then begin
+            AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
+            AllObjWithCaption.SetFilter("Object ID", '<>%1', TableID);
+            AllObjWithCaption.SetFilter("Object Caption", OrigTableName);
+            if AllObjWithCaption.IsEmpty() then // there is not a duplicate table caption
+                exit(GetDataLakeCompliantName(OrigTableName))
+            else
+                exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(OrigTableName), TableID));
+        end else
+            exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(OrigTableName), TableID));
     end;
 
-    procedure GetDataLakeCompliantFieldName(FieldName: Text; FieldID: Integer): Text
+    procedure GetDataLakeCompliantFieldName(TableID: Integer; FieldID: Integer): Text
+    var
+        RecRef: RecordRef;
+        FieldRef: FieldRef;
     begin
-        exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(FieldName), FieldID));
+        RecRef.Open(TableID);
+        FieldRef := RecRef.Field(FieldID);
+        exit(GetDataLakeCompliantFieldName(FieldRef));
+    end;
+
+    procedure GetDataLakeCompliantFieldName(FieldRef: FieldRef): Text
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        TableFields: Record Field;
+        RecRef: RecordRef;
+        NameToUse: Text;
+    begin
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Use Field Captions" then
+            NameToUse := FieldRef.Caption()
+        else
+            NameToUse := FieldRef.Name();
+        if ADLSESetup."Use IDs for Duplicates Only" then begin
+            RecRef := FieldRef.Record();
+            TableFields.SetRange(TableNo, RecRef.Number);
+            if ADLSESetup."Use Field Captions" then
+                TableFields.SetRange("Field Caption", NameToUse)
+            else
+                TableFields.SetRange(FieldName, NameToUse);
+            TableFields.SetFilter("No.", '<>%1', FieldRef.Number);
+            if TableFields.IsEmpty() then // there is not a duplicate field name/caption
+                exit(GetDataLakeCompliantName(NameToUse))
+            else
+                exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number));
+        end else
+            exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number));
     end;
 
     procedure GetTableName(TableID: Integer) TableName: Text
@@ -328,7 +372,7 @@ codeunit 82564 "ADLSE Util"
         foreach FieldID in FieldIdList do begin
             FieldRef := RecordRef.Field(FieldID);
 
-            FieldTextValue := GetDataLakeCompliantFieldName(FieldRef.Name, FieldRef.Number);
+            FieldTextValue := GetDataLakeCompliantFieldName(FieldRef);
             if FieldsAdded = 0 then
                 Payload.Append(FieldTextValue)
             else

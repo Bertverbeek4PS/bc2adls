@@ -140,6 +140,12 @@ page 82560 "ADLSE Setup"
                         end;
                     }
                     field("Export Enum as Integer"; Rec."Export Enum as Integer") { }
+                    field("Use Field Captions"; Rec."Use Field Captions")
+                    {
+                    }
+                    field("Use IDs for Duplicates Only"; Rec."Use IDs for Duplicates Only")
+                    {
+                    }
                     field("Delete Table"; Rec."Delete Table")
                     {
                         Editable = not this.FabricOpenMirroring;
