@@ -17,10 +17,10 @@ page 82562 "ADLSE Setup Fields"
         {
             repeater(GroupName)
             {
-                field("FieldCaption"; Rec.FieldCaption) 
-		{ 
+                field("FieldCaption"; Rec.FieldCaption)
+                {
                     StyleExpr = StyleExprAsText;
-		}
+                }
 
                 field("Field ID"; Rec."Field ID")
                 {
@@ -29,10 +29,10 @@ page 82562 "ADLSE Setup Fields"
                     Visible = false;
                 }
 
-                field(Enabled; Rec.Enabled) 
-		{ 
+                field(Enabled; Rec.Enabled)
+                {
                     StyleExpr = StyleExprAsText;
-		}
+                }
                 field(IsPartOfPrimaryKey; IsPartOfPrimaryKey)
                 {
                     ApplicationArea = All;
@@ -117,7 +117,7 @@ page 82562 "ADLSE Setup Fields"
         ADLSEUtil: Codeunit "ADLSE Util";
     begin
         Field.Get(Rec."Table ID", Rec."Field ID");
-        ADLSFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(Field.FieldName, Field."No.");
+        ADLSFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(Field.TableNo, Field."No.");
         FieldClassName := Field.Class;
         FieldTypeName := Field."Type Name";
         FieldObsoleteState := Field.ObsoleteState;
