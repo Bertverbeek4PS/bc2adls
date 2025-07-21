@@ -270,8 +270,8 @@ codeunit 82564 "ADLSE Util"
                             DateTimeValue := ADLSEUtil.GetUtcEpochWithTimezoneOffset()
                         else
                             exit('');
-                    end;
-                    exit(ConvertDateTimeToText(DateTimeValue));
+                    end else
+                        exit(ConvertDateTimeToText(DateTimeValue));
                 end;
             FieldRef.Type::Date:
                 begin
@@ -282,7 +282,8 @@ codeunit 82564 "ADLSE Util"
                             exit(ConvertNumberToText(DMY2Date(1, 1, 1900)))
                         else
                             exit(ConvertNumberToText(FieldRef.Value()));
-                    end;
+                    end else
+                        exit(ConvertNumberToText(DateValue));
 
                 end;
             FieldRef.Type::Option:
