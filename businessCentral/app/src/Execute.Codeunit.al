@@ -209,8 +209,10 @@ codeunit 82561 "ADLSE Execute"
 
                 FieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
                 RecordModifiedAt := FieldRef.Value();
-                if RecordModifiedAt = 0DT then
+                if RecordModifiedAt = 0DT then begin
+                    FieldRef.Value(UtcEpochZero);
                     RecordModifiedAt := UtcEpochZero;
+                end;
 
                 if ((ADLSESetup."Delayed Export" = 0) or (CurrentDateTime - RecordModifiedAt > (ADLSESetup."Delayed Export" * 1000))) then begin
 
