@@ -260,12 +260,7 @@ codeunit 82564 "ADLSE Util"
             FieldRef.Type::Duration,
             FieldRef.Type::Integer,
             FieldRef.Type::Time:
-                begin
-                    if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
-                        exit(ConvertStringToText(FieldRef.Value()))
-                    else
-                        exit(ConvertNumberToText(FieldRef.Value()))
-                end;
+                exit(ConvertNumberToText(FieldRef.Value()));
             FieldRef.Type::DateTime:
                 begin
                     DateTimeValue := FieldRef.Value();
@@ -296,7 +291,7 @@ codeunit 82564 "ADLSE Util"
                     if ADLSESetup."Export Enum as Integer" then
                         exit(ConvertOptionFieldToValueText(FieldRef))
                     else
-                        exit(ConvertStringToText(FieldRef.GetEnumValueNameFromOrdinalValue(FieldRef.Value())));
+                        exit(FieldRef.GetEnumValueNameFromOrdinalValue(FieldRef.Value()));
                 end;
             FieldRef.Type::Boolean:
                 exit(Format(FieldRef.Value(), 0, 9));
@@ -338,8 +333,7 @@ codeunit 82564 "ADLSE Util"
 
     local procedure ConvertNumberToText(Variant: Variant): Text
     begin
-        exit(ConvertStringToText(Format(Variant, 0, 9))); // Format the variant as text
-        //exit(Format(Variant, 0, 9));
+        exit(Format(Variant, 0, 9));
     end;
 
     local procedure ConvertDateTimeToText(Val: DateTime) Result: Text
