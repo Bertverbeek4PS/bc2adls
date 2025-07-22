@@ -189,6 +189,13 @@ codeunit 82562 "ADLSE Communication"
                 end;
                 Created := true;
                 BlobContentLength := 0;
+
+                if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring") then begin
+                    ADLSETable.Get(TableID);
+                    ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
+                    ADLSETable.Modify(true);
+                    Commit(); // Because of multiple files in one session can be exported
+                end;
             end;
 
         if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Open Mirroring" then
