@@ -249,23 +249,46 @@ codeunit 82564 "ADLSE Util"
     procedure ConvertFieldToText(FieldRef: FieldRef): Text
     var
         ADLSESetup: Record "ADLSE Setup";
+        ADLSEUtil: Codeunit "ADLSE Util";
         DateTimeValue: DateTime;
+        DateValue: Date;
     begin
         case FieldRef.Type of
             FieldRef.Type::BigInteger,
-            FieldRef.Type::Date,
             FieldRef.Type::DateFormula,
             FieldRef.Type::Decimal,
             FieldRef.Type::Duration,
             FieldRef.Type::Integer,
             FieldRef.Type::Time:
-                exit(ConvertNumberToText(FieldRef.Value()));
+                begin
+                    if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+                        exit(ConvertStringToText(FieldRef.Value()))
+                    else
+                        exit(ConvertNumberToText(FieldRef.Value()))
+                end;
             FieldRef.Type::DateTime:
                 begin
                     DateTimeValue := FieldRef.Value();
-                    if DateTimeValue = 0DT then
-                        exit('');
-                    exit(ConvertDateTimeToText(DateTimeValue));
+                    if DateTimeValue = 0DT then begin
+                        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+                            exit(ConvertDateTimeToText(ADLSEUtil.GetUtcEpochWithTimezoneOffset()))
+                        else
+                            exit('');
+                    end else
+                        exit(ConvertDateTimeToText(DateTimeValue));
+                end;
+            FieldRef.Type::Date:
+                begin
+                    DateValue := FieldRef.Value();
+                    if DateValue = 0D then begin
+                        ADLSESetup.GetSingleton();
+                        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+                            exit(ConvertNumberToText(DMY2Date(1, 1, 1900)))
+                        else
+                            exit(ConvertNumberToText(FieldRef.Value()));
+                    end else
+                        exit(ConvertNumberToText(DateValue));
+
                 end;
             FieldRef.Type::Option:
                 begin
@@ -273,7 +296,7 @@ codeunit 82564 "ADLSE Util"
                     if ADLSESetup."Export Enum as Integer" then
                         exit(ConvertOptionFieldToValueText(FieldRef))
                     else
-                        exit(FieldRef.GetEnumValueNameFromOrdinalValue(FieldRef.Value()));
+                        exit(ConvertStringToText(FieldRef.GetEnumValueNameFromOrdinalValue(FieldRef.Value())));
                 end;
             FieldRef.Type::Boolean:
                 exit(Format(FieldRef.Value(), 0, 9));
@@ -315,17 +338,22 @@ codeunit 82564 "ADLSE Util"
 
     local procedure ConvertNumberToText(Variant: Variant): Text
     begin
-        exit(Format(Variant, 0, 9));
+        exit(ConvertStringToText(Format(Variant, 0, 9))); // Format the variant as text
+        //exit(Format(Variant, 0, 9));
     end;
 
     local procedure ConvertDateTimeToText(Val: DateTime) Result: Text
     var
+        ADLSESetup: Record "ADLSE Setup";
         SecondsText: Text;
         WholeSecondsText: Text;
         MillisecondsText: Text;
         StartIdx: Integer;
         PeriodIdx: Integer;
     begin
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+            exit(ConvertStringToText(Format(Val, 0, '<Year4>-<Month,2>-<Day,2> <Hours24,2>:<Minutes,2>:<Seconds,2>')));
+
         // get default formatted as UTC
         Result := Format(Val, 0, 9); // The default formatting excludes the zeroes for the millseconds to the right.
 
