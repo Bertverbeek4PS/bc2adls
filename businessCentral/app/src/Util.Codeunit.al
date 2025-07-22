@@ -249,13 +249,12 @@ codeunit 82564 "ADLSE Util"
     procedure ConvertFieldToText(FieldRef: FieldRef): Text
     var
         ADLSESetup: Record "ADLSE Setup";
-        ADLSEUtil: Codeunit "ADLSE Util";
         DateTimeValue: DateTime;
-        DateValue: Date;
         TimeValue: Time;
     begin
         case FieldRef.Type of
             FieldRef.Type::BigInteger,
+            FieldRef.Type::Date,
             FieldRef.Type::DateFormula,
             FieldRef.Type::Decimal,
             FieldRef.Type::Duration,
@@ -269,26 +268,9 @@ codeunit 82564 "ADLSE Util"
             FieldRef.Type::DateTime:
                 begin
                     DateTimeValue := FieldRef.Value();
-                    if DateTimeValue = 0DT then begin
-                        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
-                            exit(ConvertDateTimeToText(ADLSEUtil.GetUtcEpochWithTimezoneOffset()))
-                        else
-                            exit('');
-                    end else
-                        exit(ConvertDateTimeToText(DateTimeValue));
-                end;
-            FieldRef.Type::Date:
-                begin
-                    DateValue := FieldRef.Value();
-                    if DateValue = 0D then begin
-                        ADLSESetup.GetSingleton();
-                        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
-                            exit(ConvertNumberToText(DMY2Date(1, 1, 1900)))
-                        else
-                            exit(ConvertNumberToText(FieldRef.Value()));
-                    end else
-                        exit(ConvertNumberToText(DateValue));
-
+                    if DateTimeValue = 0DT then
+                        exit('');
+                    exit(ConvertDateTimeToText(DateTimeValue));
                 end;
             FieldRef.Type::Option:
                 begin
@@ -362,8 +344,8 @@ codeunit 82564 "ADLSE Util"
         StartIdx: Integer;
         PeriodIdx: Integer;
     begin
-        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
-            exit(ConvertStringToText(Format(Val, 0, '<Year4>-<Month,2>-<Day,2> <Hours24,2>:<Minutes,2>:<Seconds,2>')));
+        //if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+        //    exit(ConvertStringToText(Format(Val, 0, '<Year4>-<Month,2>-<Day,2> <Hours24,2>:<Minutes,2>:<Seconds,2>')));
 
         // get default formatted as UTC
         Result := Format(Val, 0, 9); // The default formatting excludes the zeroes for the millseconds to the right.
