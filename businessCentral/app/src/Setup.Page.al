@@ -93,7 +93,7 @@ page 82560 "ADLSE Setup"
                     Caption = 'Execution';
                     field(MaxPayloadSize; Rec.MaxPayloadSizeMiB)
                     {
-                        Editable = AzureDataLake;
+                        Editable = AzureDataLake or FabricOpenMirroring;
                     }
 
                     field("CDM data format"; Rec.DataFormat)

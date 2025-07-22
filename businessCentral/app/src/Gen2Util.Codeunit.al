@@ -282,7 +282,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         ADLSESetup: Record "ADLSE Setup";
         BlobTotalContentSize: BigInteger;
     begin
-        if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Microsoft Fabric" then
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
             exit(false);
 
         // To prevent a overflow, use a BigInterger to calculate the total value
@@ -290,8 +290,14 @@ codeunit 82568 "ADLSE Gen 2 Util"
         BlobTotalContentSize += PayloadLength;
 
         // Microsoft Fabric has a limit of 2 GB (2147483647) for a blob.
-        if BlobTotalContentSize < 2147483647 then
-            exit(false);
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Microsoft Fabric" then
+            if BlobTotalContentSize < 2147483647 then
+                exit(false);
+
+        // Microsoft Fabric Open Mirroring cannot append data because it is reading directly.
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+            if BlobTotalContentSize < (ADLSESetup.MaxPayloadSizeMiB * 1024 * 1024) then
+                exit(false);
 
         exit(true);
     end;
