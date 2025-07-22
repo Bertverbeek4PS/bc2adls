@@ -70,9 +70,11 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             FieldRef := RecordRef.Field(FieldId);
             Clear(Column);
             Column.Add('Name', ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
-            if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
-                Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type))
-            else
+            if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type));
+                if (FieldRef.Number <> RecordRef.SystemIdNo()) and (GetOpenMirrorDataFormat(FieldRef.Type) <> GetCDMDataFormat_String()) then
+                    Column.Add('IsNullable', true);
+            end else
                 Column.Add('DataType', GetFabricDataFormat(FieldRef.Type));
             Columns.Add(Column);
         end;
