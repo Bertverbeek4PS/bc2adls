@@ -252,15 +252,20 @@ codeunit 82564 "ADLSE Util"
         ADLSEUtil: Codeunit "ADLSE Util";
         DateTimeValue: DateTime;
         DateValue: Date;
+        TimeValue: Time;
     begin
         case FieldRef.Type of
             FieldRef.Type::BigInteger,
             FieldRef.Type::DateFormula,
             FieldRef.Type::Decimal,
             FieldRef.Type::Duration,
-            FieldRef.Type::Integer,
-            FieldRef.Type::Time:
+            FieldRef.Type::Integer:
                 exit(ConvertNumberToText(FieldRef.Value()));
+            FieldRef.Type::Time:
+                begin
+                    TimeValue := FieldRef.Value();
+                    exit(ConvertTimeToText(TimeValue));
+                end;
             FieldRef.Type::DateTime:
                 begin
                     DateTimeValue := FieldRef.Value();
@@ -334,6 +339,18 @@ codeunit 82564 "ADLSE Util"
     local procedure ConvertNumberToText(Variant: Variant): Text
     begin
         exit(Format(Variant, 0, 9));
+    end;
+
+    local procedure ConvertTimeToText(Variant: Variant): Text
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        TimeValue: Time;
+    begin
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+            TimeValue := Variant;
+            exit(ConvertStringToText(Format(TimeValue, 0, '<Hours24>:<Minutes,2>:<Seconds,2>')))
+        end else
+            exit(ConvertNumberToText(Variant));
     end;
 
     local procedure ConvertDateTimeToText(Val: DateTime) Result: Text
