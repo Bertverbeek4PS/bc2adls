@@ -337,16 +337,12 @@ codeunit 82564 "ADLSE Util"
 
     local procedure ConvertDateTimeToText(Val: DateTime) Result: Text
     var
-        ADLSESetup: Record "ADLSE Setup";
         SecondsText: Text;
         WholeSecondsText: Text;
         MillisecondsText: Text;
         StartIdx: Integer;
         PeriodIdx: Integer;
     begin
-        //if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
-        //    exit(ConvertStringToText(Format(Val, 0, '<Year4>-<Month,2>-<Day,2> <Hours24,2>:<Minutes,2>:<Seconds,2>')));
-
         // get default formatted as UTC
         Result := Format(Val, 0, 9); // The default formatting excludes the zeroes for the millseconds to the right.
 
