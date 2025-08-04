@@ -8,6 +8,7 @@ codeunit 82564 "ADLSE Util"
         AlphabetsLowerTxt: Label 'abcdefghijklmnopqrstuvwxyz', Locked = true;
         AlphabetsUpperTxt: Label 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', Locked = true;
         NumeralsTxt: Label '1234567890', Locked = true;
+        SpecialCharsTxt: Label '%', Locked = true;
         FieldTypeNotSupportedErr: Label 'The field %1 of type %2 is not supported.', Comment = '%1 = field name, %2 = field type';
         ConcatNameIdTok: Label '%1-%2', Comment = '%1: Name, %2: ID', Locked = true;
         DateTimeExpandedFormatTok: Label '%1, %2 %3 %4 %5:%6:%7 GMT', Comment = '%1: weekday, %2: day, %3: month, %4: year, %5: hour, %6: minute, %7: second', Locked = true;
@@ -218,7 +219,8 @@ codeunit 82564 "ADLSE Util"
             if StrPos(AlphabetsLowerTxt, Letter) = 0 then
                 if StrPos(AlphabetsUpperTxt, Letter) = 0 then
                     if StrPos(NumeralsTxt, Letter) = 0 then
-                        AddToResult := false;
+                        if StrPos(SpecialCharsTxt, Letter) = 0 then
+                            AddToResult := false;
             if AddToResult then
                 ResultBuilder.Append(Letter);
         end;

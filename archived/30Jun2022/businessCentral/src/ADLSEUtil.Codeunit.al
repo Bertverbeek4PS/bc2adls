@@ -5,9 +5,10 @@ codeunit 82564 "ADLSE Util"
     Access = Internal;
 
     var
-        AlphabetsLowerTxt: Label 'abcdefghijklmnopqrstuvwxyz';
-        AlphabetsUpperTxt: Label 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        NumeralsTxt: Label '1234567890';
+        AlphabetsLowerTxt: Label 'abcdefghijklmnopqrstuvwxyz', Locked = true;
+        AlphabetsUpperTxt: Label 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', Locked = true;
+        NumeralsTxt: Label '1234567890', Locked = true;
+        SpecialCharsTxt: Label '%', Locked = true;
         FieldTypeNotSupportedErr: Label 'The field %1 of type %2 is not supported.', Comment = '%1 = field name, %2 = field type';
 
     procedure ToText(GuidValue: Guid): Text
@@ -150,7 +151,8 @@ codeunit 82564 "ADLSE Util"
             if StrPos(AlphabetsLowerTxt, Letter) = 0 then
                 if StrPos(AlphabetsUpperTxt, Letter) = 0 then
                     if StrPos(NumeralsTxt, Letter) = 0 then
-                        AddToResult := false;
+                        if StrPos(SpecialCharsTxt, Letter) = 0 then
+                            AddToResult := false;
             if AddToResult then
                 ResultBuilder.Append(Letter);
         end;
