@@ -155,6 +155,9 @@ page 82560 "ADLSE Setup"
                     {
                         Lookup = true;
                     }
+                    field("Use Friendly Company Name"; Rec."Use Friendly Company Name")
+                    {
+                    }
                 }
             }
             part(Tables; "ADLSE Setup Tables")
