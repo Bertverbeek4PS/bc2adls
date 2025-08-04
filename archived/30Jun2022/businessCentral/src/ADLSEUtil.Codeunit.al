@@ -5,9 +5,9 @@ codeunit 82564 "ADLSE Util"
     Access = Internal;
 
     var
-        AlphabetsLowerTxt: Label 'abcdefghijklmnopqrstuvwxyz', Locked = true;
-        AlphabetsUpperTxt: Label 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', Locked = true;
-        NumeralsTxt: Label '1234567890', Locked = true;
+        AlphabetsLowerTxt: Label 'abcdefghijklmnopqrstuvwxyz';
+        AlphabetsUpperTxt: Label 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        NumeralsTxt: Label '1234567890';
         FieldTypeNotSupportedErr: Label 'The field %1 of type %2 is not supported.', Comment = '%1 = field name, %2 = field type';
 
     procedure ToText(GuidValue: Guid): Text
