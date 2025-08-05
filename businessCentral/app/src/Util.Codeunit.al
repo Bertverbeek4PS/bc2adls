@@ -208,18 +208,24 @@ codeunit 82564 "ADLSE Util"
 
     procedure GetDataLakeCompliantName(Name: Text) Result: Text
     var
+        ADLSESetup: Record "ADLSE Setup";
         ResultBuilder: TextBuilder;
         Index: Integer;
         Letter: Text;
         AddToResult: Boolean;
     begin
+        ADLSESetup.GetSingleton();
         for Index := 1 to StrLen(Name) do begin
             Letter := CopyStr(Name, Index, 1);
             AddToResult := true;
             if StrPos(AlphabetsLowerTxt, Letter) = 0 then
                 if StrPos(AlphabetsUpperTxt, Letter) = 0 then
                     if StrPos(NumeralsTxt, Letter) = 0 then
-                        if StrPos(SpecialCharsTxt, Letter) = 0 then
+                        if ADLSESetup."Use Field Captions" then begin
+                            if StrPos(SpecialCharsTxt, Letter) = 0 then
+                                AddToResult := false;
+                        end
+                        else
                             AddToResult := false;
             if AddToResult then
                 ResultBuilder.Append(Letter);
