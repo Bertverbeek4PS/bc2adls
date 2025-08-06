@@ -237,7 +237,7 @@ table 82560 "ADLSE Setup"
         field(95; "Use Table Captions"; Boolean)
         {
             Caption = 'Use Table Captions';
-            ToolTip = 'Specifies if the captions of fields will be used instead of names.';
+            ToolTip = 'Specifies if the captions of Tables will be used instead of names.';
             InitValue = false;
         }
     }
