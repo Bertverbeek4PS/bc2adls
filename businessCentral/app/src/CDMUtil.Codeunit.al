@@ -7,6 +7,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
     var
         BlankArray: JsonArray;
         CompanyFieldNameLbl: Label '$Company', Locked = true;
+        FriendlyCompanyFieldNameLbl: Label 'CompanyName', Locked = true;
         DeliveredDateTimeFieldNameLbl: Label '$DeliveredDateTime', Locked = true;
         ExistingFieldCannotBeRemovedErr: Label 'The field %1 in the entity %2 is already present in the data lake and cannot be removed.', Comment = '%1: field name, %2: entity name';
         FieldDataTypeCannotBeChangedErr: Label 'The data type for the field %1 in the entity %2 cannot be changed.', Comment = '%1: field name, %2: entity name';
@@ -69,14 +70,16 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         foreach FieldId in FieldIdList do begin
             FieldRef := RecordRef.Field(FieldId);
             Clear(Column);
-            Column.Add('Name', ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
-            if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
-                Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type));
-                if (FieldRef.Number <> RecordRef.SystemIdNo()) and (GetOpenMirrorDataFormat(FieldRef.Type) <> GetCDMDataFormat_String()) then
-                    Column.Add('IsNullable', true);
-            end else
-                Column.Add('DataType', GetFabricDataFormat(FieldRef.Type));
-            Columns.Add(Column);
+            if not ((ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef) = GetCompanyFieldName()) and (ADLSESetup."Use Friendly Company Name")) then begin // if table has own companyname field dont add another. To prevent clash
+                Column.Add('Name', ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
+                if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                    Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type));
+                    if (FieldRef.Number <> RecordRef.SystemIdNo()) and (GetOpenMirrorDataFormat(FieldRef.Type) <> GetCDMDataFormat_String()) then
+                        Column.Add('IsNullable', true);
+                end else
+                    Column.Add('DataType', GetFabricDataFormat(FieldRef.Type));
+                Columns.Add(Column);
+            end;
         end;
 
         SchemaDefinition.Add('Columns', Columns);
@@ -200,8 +203,14 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
     end;
 
     procedure GetCompanyFieldName(): Text
+    var
+        ADLSESetup: Record "ADLSE Setup";
     begin
-        exit(CompanyFieldNameLbl);
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Use Friendly Company Name" then
+            exit(FriendlyCompanyFieldNameLbl)
+        else
+            exit(CompanyFieldNameLbl);
     end;
 
     procedure GetCompanyFieldNameLength(): Integer

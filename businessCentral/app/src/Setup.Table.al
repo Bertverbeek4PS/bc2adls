@@ -234,6 +234,12 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies that table and field IDs will only be used in names if duplicates exist.';
             InitValue = false;
         }
+        field(90; "Use Friendly Company Name"; Boolean)
+        {
+            Caption = 'Use friendly company name';
+            ToolTip = 'Specifies if the friendly CompanyName will be used instead of the $Company';
+            InitValue = false;
+        }
     }
 
     keys
