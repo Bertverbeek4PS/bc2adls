@@ -145,12 +145,18 @@ codeunit 82564 "ADLSE Util"
         AllObjWithCaption: Record AllObjWithCaption;
         OrigTableName: Text;
     begin
-        OrigTableName := GetTableName(TableID);
         ADLSESetup.GetSingleton();
+        if ADLSESetup."Use Table Captions" then
+            OrigTableName := GetTableCaption(TableID)
+        else
+            OrigTableName := GetTableName(TableID);
         if ADLSESetup."Use IDs for Duplicates Only" then begin
             AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
             AllObjWithCaption.SetFilter("Object ID", '<>%1', TableID);
-            AllObjWithCaption.SetFilter("Object Name", OrigTableName);
+            if ADLSESetup."Use Table Captions" then
+                AllObjWithCaption.SetFilter("Object Caption", OrigTableName)
+            else
+                AllObjWithCaption.SetFilter("Object Name", OrigTableName);
             if AllObjWithCaption.IsEmpty() then // there is not a duplicate table caption
                 exit(GetDataLakeCompliantName(OrigTableName))
             else
