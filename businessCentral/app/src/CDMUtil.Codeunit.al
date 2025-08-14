@@ -45,6 +45,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEExecute: Codeunit "ADLSE Execute";
         RecordRef: RecordRef;
+        SystemIdFieldRef: FieldRef;
         FieldRef: FieldRef;
         FieldIdList: List of [Integer];
         FieldId: Integer;
@@ -57,12 +58,10 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         RecordRef.Open(TableID);
         FieldIdList := ADLSEExecute.CreateFieldListForTable(TableID);
 
-        FieldRef := RecordRef.Field(2000000000);
-        if ADLSEUtil.IsTablePerCompany(TableID) then begin
-            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
+        SystemIdFieldRef := RecordRef.Field(2000000000);
+        Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(SystemIdFieldRef));
+        if ADLSEUtil.IsTablePerCompany(TableID) then
             Imports.Add(this.GetCompanyFieldName());
-        end else
-            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
         Content.Add('keyColumns', Imports);
 
         ADLSESetup.GetSingleton();

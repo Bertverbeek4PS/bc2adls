@@ -300,10 +300,20 @@ table 82560 "ADLSE Setup"
     end;
 
     procedure SchemaExported()
+    var
+        FixitErrorInfo: ErrorInfo;
+        ClearSchemaExportDateLbl: Label 'Clear schema export date';
     begin
         Rec.GetSingleton();
-        if Rec."Schema Exported On" <> 0DT then
-            Error(ErrorInfo.Create(SchemaAlreadyExportedErr, true));
+        if Rec."Schema Exported On" <> 0DT then begin
+            FixitErrorInfo := ErrorInfo.Create(SchemaAlreadyExportedErr, true);
+            FixitErrorInfo.AddAction(
+                ClearSchemaExportDateLbl,
+                Codeunit::"ADLSE Execution",
+                'ClearSchemaExportedOn'
+            );
+            Error(FixitErrorInfo);
+        end;
     end;
 
     procedure CheckSchemaExported()

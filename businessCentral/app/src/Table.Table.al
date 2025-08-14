@@ -268,6 +268,7 @@ table 82561 "ADLSE Table"
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
         CustomDimensions: Dictionary of [Text, Text];
+        RemovedFieldNameLbl: Label '#[%1]', Locked = true;
     begin
         ADLSEField.SetRange("Table ID", Rec."Table ID");
         ADLSEField.SetRange(Enabled, true);
@@ -275,7 +276,7 @@ table 82561 "ADLSE Table"
             repeat
                 if not ADLSESetup.CanFieldBeExported(ADLSEField."Table ID", ADLSEField."Field ID") then begin
                     ADLSEField.CalcFields(FieldCaption);
-                    FieldList.Add(ADLSEField.FieldCaption);
+                    FieldList.Add(ADLSEField.FieldCaption <> '' ? ADLSEField.FieldCaption : StrSubstNo(RemovedFieldNameLbl, ADLSEField."Field ID"));
                 end;
             until ADLSEField.Next() = 0;
 
