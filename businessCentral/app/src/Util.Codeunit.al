@@ -193,7 +193,8 @@ codeunit 82564 "ADLSE Util"
             if ADLSESetup."Use Field Captions" then
                 TableFields.SetRange("Field Caption", NameToUse)
             else
-                TableFields.SetRange(FieldName, NameToUse);
+                exit(GetDataLakeCompliantName(NameToUse));
+
             TableFields.SetFilter("No.", '<>%1', FieldRef.Number);
             if TableFields.IsEmpty() then // there is not a duplicate field name/caption
                 exit(GetDataLakeCompliantName(NameToUse))
