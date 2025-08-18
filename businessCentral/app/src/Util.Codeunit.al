@@ -221,7 +221,7 @@ codeunit 82564 "ADLSE Util"
             if StrPos(AlphabetsLowerTxt, Letter) = 0 then
                 if StrPos(AlphabetsUpperTxt, Letter) = 0 then
                     if StrPos(NumeralsTxt, Letter) = 0 then
-                        if ADLSESetup."Use Field Captions" then begin
+                        if ADLSESetup."Use IDs for Duplicates Only" then begin
                             if StrPos(SpecialCharsTxt, Letter) = 0 then
                                 AddToResult := false;
                         end
