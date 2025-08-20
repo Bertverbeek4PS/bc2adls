@@ -298,6 +298,7 @@ page 82561 "ADLSE Setup Tables"
         LastStarted: DateTime;
         LastRunError: Text[2048];
         NoExportInProgress: Boolean;
+        InvalidFieldNotificationSent: List of [Integer];
         InvalidFieldConfiguredMsg: Label 'The following fields have been incorrectly enabled for exports in the table %1: %2', Comment = '%1 = table name; %2 = List of invalid field names';
         WarnOfSchemaChangeQst: Label 'Data may have been exported from this table before. Changing the export schema now may cause unexpected side- effects. You may reset the table first so all the data shall be exported afresh. Do you still wish to continue?';
 
@@ -319,11 +320,14 @@ page 82561 "ADLSE Setup Tables"
         InvalidFieldNotification: Notification;
         InvalidFieldList: List of [Text];
     begin
+        if InvalidFieldNotificationSent.Contains(Rec."Table ID") then
+            exit;
         InvalidFieldList := Rec.ListInvalidFieldsBeingExported();
         if InvalidFieldList.Count() = 0 then
             exit;
         InvalidFieldNotification.Message := StrSubstNo(InvalidFieldConfiguredMsg, TableCaptionValue, ADLSEUtil.Concatenate(InvalidFieldList));
         InvalidFieldNotification.Scope := NotificationScope::LocalScope;
         InvalidFieldNotification.Send();
+        InvalidFieldNotificationSent.Add(Rec."Table ID");
     end;
 }

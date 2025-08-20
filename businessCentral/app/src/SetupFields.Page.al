@@ -94,7 +94,7 @@ page 82562 "ADLSE Setup Fields"
                 var
                     SomeFieldsCouldNotBeEnabled: Boolean;
                 begin
-                    Rec.SetFilter(Enabled, '<>%1', true);
+                    Rec.SetRange(Enabled, false);
                     if Rec.FindSet() then
                         repeat
                             if Rec.CanFieldBeEnabled() then begin
@@ -116,16 +116,28 @@ page 82562 "ADLSE Setup Fields"
         Field: Record Field;
         ADLSEUtil: Codeunit "ADLSE Util";
     begin
-        Field.Get(Rec."Table ID", Rec."Field ID");
-        ADLSFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(Field.TableNo, Field."No.");
-        FieldClassName := Field.Class;
-        FieldTypeName := Field."Type Name";
-        FieldObsoleteState := Field.ObsoleteState;
-        IsPartOfPrimaryKey := Field.IsPartOfPrimaryKey;
+        if not Field.Get(Rec."Table ID", Rec."Field ID") then begin
+            ADLSFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(Rec."Table ID", Rec."Field ID");
+            Clear(FieldClassName);
+            Clear(FieldTypeName);
+            FieldObsoleteState := Field.ObsoleteState::Removed;
+            Clear(IsPartOfPrimaryKey);
+        end
+        else begin
+            ADLSFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(Field.TableNo, Field."No.");
+            FieldClassName := Field.Class;
+            FieldTypeName := Field."Type Name";
+            FieldObsoleteState := Field.ObsoleteState;
+            IsPartOfPrimaryKey := Field.IsPartOfPrimaryKey;
+        end;
+
         if IsPartOfPrimaryKey then
             StyleExprAsText := 'StrongAccent'
         else
             StyleExprAsText := 'Standard';
+
+        if FieldObsoleteState <> Field.ObsoleteState::No then
+            StyleExprAsText := 'Attention';
     end;
 
     var

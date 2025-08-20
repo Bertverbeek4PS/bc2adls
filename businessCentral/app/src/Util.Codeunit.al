@@ -28,6 +28,7 @@ codeunit 82564 "ADLSE Util"
     begin
         foreach Item in List do
             Result += StrSubstNo(CommaSuffixedTok, Item);
+        Result := Result.TrimEnd(', ');
     end;
 
     procedure GetCurrentDateTimeInGMTFormat(): Text
