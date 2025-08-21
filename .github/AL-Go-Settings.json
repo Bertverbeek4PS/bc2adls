@@ -1,5 +1,24 @@
 {
   "type": "PTE",
   "templateUrl": "https://github.com/microsoft/AL-Go-PTE@main",
+    "environments": [
+    "Sandbox_Unger",
+    "Production_Unger"
+  ],
+  "DeployToProduction_Unger": {
+    "EnvironmentName": "Production",
+    "Branches": [
+      "release/*",
+      "main"
+    ],
+    "continuousDeployment": false
+  },
+  "DeployToSandbox_Unger": {
+    "EnvironmentName": "Sandbox",
+    "Branches": [
+      "main"
+    ],
+    "continuousDeployment": true
+  },
   "templateSha": "1ac0d953e1909925d7c7b06361f225f8883a9674"
 }
