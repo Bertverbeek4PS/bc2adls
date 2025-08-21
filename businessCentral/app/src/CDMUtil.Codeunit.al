@@ -18,6 +18,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
 
     procedure CreateEntityContent(TableID: Integer; FieldIdList: List of [Integer]) Content: JsonObject
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
         Definition: JsonObject;
         Definitions: JsonArray;
@@ -25,6 +26,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         Imports: JsonArray;
         EntityName: Text;
     begin
+        ADLSESetup.GetSingleton();
         Content.Add('jsonSchemaSemanticVersion', '1.0.0');
         Import.Add('corpusPath', 'cdm:/foundations.cdm.json');
         Imports.Add(Import);
@@ -32,7 +34,10 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         EntityName := ADLSEUtil.GetDataLakeCompliantTableName(TableID);
         Definition.Add('entityName', EntityName);
         Definition.Add('exhibitsTraits', BlankArray);
-        Definition.Add('displayName', ADLSEUtil.GetTableName(TableID));
+        if ADLSESetup."Use Table Captions" then
+            Definition.Add('displayName', ADLSEUtil.GetTableCaption(TableID))
+        else
+            Definition.Add('displayName', ADLSEUtil.GetTableName(TableID));
         Definition.Add('description', StrSubstNo(RepresentsTableTxt, ADLSEUtil.GetTableName(TableID)));
         Definition.Add('hasAttributes', CreateAttributes(TableID, FieldIdList));
         Definitions.Add(Definition);

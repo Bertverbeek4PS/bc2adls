@@ -143,6 +143,9 @@ page 82560 "ADLSE Setup"
                     field("Use Field Captions"; Rec."Use Field Captions")
                     {
                     }
+                    field("Use Table Captions"; Rec."Use Table Captions")
+                    {
+                    }
                     field("Use IDs for Duplicates Only"; Rec."Use IDs for Duplicates Only")
                     {
                     }

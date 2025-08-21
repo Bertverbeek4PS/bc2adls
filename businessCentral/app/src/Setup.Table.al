@@ -224,7 +224,7 @@ table 82560 "ADLSE Setup"
         }
         field(75; "Use Field Captions"; Boolean)
         {
-            Caption = 'Use Captions';
+            Caption = 'Use Field Captions';
             ToolTip = 'Specifies if the captions of fields will be used instead of names.';
             InitValue = false;
         }
@@ -232,6 +232,12 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'IDs for Duplicates Only';
             ToolTip = 'Specifies that table and field IDs will only be used in names if duplicates exist.';
+            InitValue = false;
+        }
+        field(95; "Use Table Captions"; Boolean)
+        {
+            Caption = 'Use Table Captions';
+            ToolTip = 'Specifies if the captions of Tables will be used instead of names.';
             InitValue = false;
         }
     }
