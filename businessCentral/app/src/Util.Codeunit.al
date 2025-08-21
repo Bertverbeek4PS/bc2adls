@@ -8,6 +8,7 @@ codeunit 82564 "ADLSE Util"
         AlphabetsLowerTxt: Label 'abcdefghijklmnopqrstuvwxyz', Locked = true;
         AlphabetsUpperTxt: Label 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', Locked = true;
         NumeralsTxt: Label '1234567890', Locked = true;
+        SpecialCharsTxt: Label '%', Locked = true;
         FieldTypeNotSupportedErr: Label 'The field %1 of type %2 is not supported.', Comment = '%1 = field name, %2 = field type';
         ConcatNameIdTok: Label '%1-%2', Comment = '%1: Name, %2: ID', Locked = true;
         DateTimeExpandedFormatTok: Label '%1, %2 %3 %4 %5:%6:%7 GMT', Comment = '%1: weekday, %2: day, %3: month, %4: year, %5: hour, %6: minute, %7: second', Locked = true;
@@ -215,18 +216,25 @@ codeunit 82564 "ADLSE Util"
 
     procedure GetDataLakeCompliantName(Name: Text) Result: Text
     var
+        ADLSESetup: Record "ADLSE Setup";
         ResultBuilder: TextBuilder;
         Index: Integer;
         Letter: Text;
         AddToResult: Boolean;
     begin
+        ADLSESetup.GetSingleton();
         for Index := 1 to StrLen(Name) do begin
             Letter := CopyStr(Name, Index, 1);
             AddToResult := true;
             if StrPos(AlphabetsLowerTxt, Letter) = 0 then
                 if StrPos(AlphabetsUpperTxt, Letter) = 0 then
                     if StrPos(NumeralsTxt, Letter) = 0 then
-                        AddToResult := false;
+                        if ADLSESetup."Use IDs for Duplicates Only" then begin
+                            if StrPos(SpecialCharsTxt, Letter) = 0 then
+                                AddToResult := false;
+                        end
+                        else
+                            AddToResult := false;
             if AddToResult then
                 ResultBuilder.Append(Letter);
         end;
