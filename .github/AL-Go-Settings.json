@@ -3,7 +3,7 @@
   "ActionsRef": "main",
   "type": "PTE",
   "templateUrl": "https://github.com/microsoft/AL-Go-PTE@main",
-    "environments": [
+  "environments": [
     "Sandbox_Unger",
     "Production_Unger"
   ],
@@ -22,5 +22,5 @@
     ],
     "continuousDeployment": true
   },
-  "templateSha": "1ac0d953e1909925d7c7b06361f225f8883a9674"
+  "templateSha": "e2478819f6dda468d6716036ccdd2dc89dd458b6"
 }
