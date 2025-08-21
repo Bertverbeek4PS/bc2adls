@@ -1,4 +1,6 @@
 {
+  "ActionsRepo": "Dynapro-AS/bc2adls",
+  "ActionsRef": "main",
   "type": "PTE",
   "templateUrl": "https://github.com/microsoft/AL-Go-PTE@main",
     "environments": [
