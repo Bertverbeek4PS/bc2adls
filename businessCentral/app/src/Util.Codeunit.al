@@ -422,8 +422,6 @@ codeunit 82564 "ADLSE Util"
         ADLSESetup: Record "ADLSE Setup";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         FieldRef: FieldRef;
-        SystemCreatedAtNoFieldref: FieldRef;
-        SystemModifiedAtNoFieldref: FieldRef;
         CurrDateTime: DateTime;
         FieldID: Integer;
         FieldsAdded: Integer;
