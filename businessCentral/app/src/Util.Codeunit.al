@@ -466,14 +466,8 @@ codeunit 82564 "ADLSE Util"
             else
                 if Deletes then
                     Payload.Append(StrSubstNo(CommaPrefixedTok, '2'))
-                else begin
-                    SystemCreatedAtNoFieldref := RecordRef.Field(RecordRef.SystemCreatedAtNo());
-                    SystemModifiedAtNoFieldref := RecordRef.Field(RecordRef.SystemModifiedAtNo());
-                    if SystemCreatedAtNoFieldref.Value() = SystemModifiedAtNoFieldref.Value() then
-                        Payload.Append(StrSubstNo(CommaPrefixedTok, '4'))
-                    else
-                        Payload.Append(StrSubstNo(CommaPrefixedTok, '4'));
-                end;
+                else
+                    Payload.Append(StrSubstNo(CommaPrefixedTok, '4'));
 
         Payload.AppendLine();
 
