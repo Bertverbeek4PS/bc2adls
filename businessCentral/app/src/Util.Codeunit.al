@@ -459,6 +459,7 @@ codeunit 82564 "ADLSE Util"
             // 0- 	Insert
             // 1- 	Update
             // 2- 	Delete
+            // 4-   Upsert
             if ADLSETableLastTimestamp.GetUpdatedLastTimestamp(RecordRef.Number) = 0 then
                 //Because of an reset always 0 is sent for the first time
                 Payload.Append(StrSubstNo(CommaPrefixedTok, '0'))
@@ -469,9 +470,9 @@ codeunit 82564 "ADLSE Util"
                     SystemCreatedAtNoFieldref := RecordRef.Field(RecordRef.SystemCreatedAtNo());
                     SystemModifiedAtNoFieldref := RecordRef.Field(RecordRef.SystemModifiedAtNo());
                     if SystemCreatedAtNoFieldref.Value() = SystemModifiedAtNoFieldref.Value() then
-                        Payload.Append(StrSubstNo(CommaPrefixedTok, '0'))
+                        Payload.Append(StrSubstNo(CommaPrefixedTok, '4'))
                     else
-                        Payload.Append(StrSubstNo(CommaPrefixedTok, '1'));
+                        Payload.Append(StrSubstNo(CommaPrefixedTok, '4'));
                 end;
 
         Payload.AppendLine();
