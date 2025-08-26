@@ -430,8 +430,6 @@ codeunit 82564 "ADLSE Util"
         ADLSESetup: Record "ADLSE Setup";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         FieldRef: FieldRef;
-        SystemCreatedAtNoFieldref: FieldRef;
-        SystemModifiedAtNoFieldref: FieldRef;
         CurrDateTime: DateTime;
         FieldID: Integer;
         FieldsAdded: Integer;
@@ -467,20 +465,15 @@ codeunit 82564 "ADLSE Util"
             // 0- 	Insert
             // 1- 	Update
             // 2- 	Delete
+            // 4-   Upsert
             if ADLSETableLastTimestamp.GetUpdatedLastTimestamp(RecordRef.Number) = 0 then
                 //Because of an reset always 0 is sent for the first time
                 Payload.Append(StrSubstNo(CommaPrefixedTok, '0'))
             else
                 if Deletes then
                     Payload.Append(StrSubstNo(CommaPrefixedTok, '2'))
-                else begin
-                    SystemCreatedAtNoFieldref := RecordRef.Field(RecordRef.SystemCreatedAtNo());
-                    SystemModifiedAtNoFieldref := RecordRef.Field(RecordRef.SystemModifiedAtNo());
-                    if SystemCreatedAtNoFieldref.Value() = SystemModifiedAtNoFieldref.Value() then
-                        Payload.Append(StrSubstNo(CommaPrefixedTok, '0'))
-                    else
-                        Payload.Append(StrSubstNo(CommaPrefixedTok, '1'));
-                end;
+                else
+                    Payload.Append(StrSubstNo(CommaPrefixedTok, '4'));
 
         Payload.AppendLine();
 
