@@ -205,6 +205,7 @@ table 82561 "ADLSE Table"
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSESetup: Record "ADLSE Setup";
+        Company: Record Company;
         ADLSECommunication: Codeunit "ADLSE Communication";
         Counter: Integer;
     begin
@@ -236,8 +237,20 @@ table 82561 "ADLSE Table"
                         ADLSETableLastTimestamp.ModifyAll("Deleted Last Entry No.", 0);
                         ADLSETableLastTimestamp.SetRange("Table ID");
                     end;
-                ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");
-                ADLSEDeletedRecord.DeleteAll(false);
+                if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                    Company.Reset();
+                    if Company.FindSet() then
+                        repeat
+                            ADLSEDeletedRecord.Reset();
+                            ADLSEDeletedRecord.ChangeCompany(Company.Name);  // clear deletion table for all companies.
+                            ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");
+                            ADLSEDeletedRecord.DeleteAll(false);
+                        until Company.Next() < 1;
+                end
+                else begin
+                    ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");
+                    ADLSEDeletedRecord.DeleteAll(false);
+                end;
 
                 if (ADLSESetup."Delete Table") then
                     ADLSECommunication.ResetTableExport(Rec."Table ID", AllCompanies);
