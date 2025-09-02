@@ -251,6 +251,33 @@ page 82561 "ADLSE Setup Tables"
                     CurrPage.Update();
                 end;
             }
+            action(ReassignNumber)
+            {
+                ApplicationArea = All;
+                Caption = 'Reassign Number';
+                Image = Apply;
+                ToolTip = 'Reassign the number for the selected table. ';
+
+                trigger OnAction()
+                var
+                    ADLSESetup: Record "ADLSE Setup";
+                    SelectedADLSETable: Record "ADLSE Table";
+                    ReassignNumber: Page "Reassign Number";
+                    NewNumber: Integer;
+                begin
+                    ADLSESetup.GetSingleton();
+                    if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                        CurrPage.SetSelectionFilter(SelectedADLSETable);
+
+                        if ACTION::OK = ReassignNumber.RunModal() then begin
+                            ReassignNumber.GetValues(NewNumber);
+                            SelectedADLSETable.ExportFileNumber := NewNumber;
+                            SelectedADLSETable.Modify(true);
+                        end;
+                        CurrPage.Update(false);
+                    end;
+                end;
+            }
         }
     }
 
