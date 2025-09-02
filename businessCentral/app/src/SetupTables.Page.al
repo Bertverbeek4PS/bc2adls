@@ -267,12 +267,11 @@ page 82561 "ADLSE Setup Tables"
                 begin
                     ADLSESetup.GetSingleton();
                     if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
-                        CurrPage.SetSelectionFilter(SelectedADLSETable);
+                        //CurrPage.SetSelectionFilter(SelectedADLSETable);
 
                         if ACTION::OK = ReassignNumber.RunModal() then begin
                             ReassignNumber.GetValues(NewNumber);
-                            SelectedADLSETable.ExportFileNumber := NewNumber;
-                            SelectedADLSETable.Modify(true);
+                            SelectedADLSETable.ModifyAll(ExportFileNumber, NewNumber, true);
                         end;
                         CurrPage.Update(false);
                     end;

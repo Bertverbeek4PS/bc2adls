@@ -4,7 +4,7 @@
 table 82561 "ADLSE Table"
 #pragma warning restore
 {
-    Access = Internal;
+    //Access = Internal;
     Caption = 'ADLSE Table';
     DataClassification = CustomerContent;
     DataPerCompany = false;
