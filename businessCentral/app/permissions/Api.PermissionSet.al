@@ -11,7 +11,8 @@ permissionset 82563 "ADLSE - API"
 
     Permissions = table "ADLSE Setup" = x,
                   tabledata "ADLSE Table" = RMI,
-                  tabledata "ADLSE Setup" = R,
+                  tabledata "ADLSE Companies Table" = RIMD,
+                  tabledata "ADLSE Sync Companies" = RIMD,
                   tabledata "ADLSE Current Session" = R,
                   tabledata "ADLSE Run" = R,
                   tabledata "ADLSE Field" = RI,

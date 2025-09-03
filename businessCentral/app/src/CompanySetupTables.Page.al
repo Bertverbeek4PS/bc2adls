@@ -1,13 +1,11 @@
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
-page 82561 "ADLSE Setup Tables"
+page 82565 "ADLSE Company Setup Tables"
 {
-    Caption = 'Tables';
+    Caption = 'Company Tables';
     LinksAllowed = false;
+    UsageCategory = Administration;
     PageType = ListPart;
-    SourceTable = "ADLSE Table";
-    InsertAllowed = false;
-    DeleteAllowed = false;
+    SourceTable = "ADLSE Companies Table";
+
 
     layout
     {
@@ -15,8 +13,15 @@ page 82561 "ADLSE Setup Tables"
         {
             repeater(Control1)
             {
-                ShowCaption = false;
-
+                field("Sync Company"; Rec."Sync Company")
+                {
+                    ApplicationArea = All;
+                    ToolTip = 'Specifies the company this table is synced for.';
+                }
+                field("Table ID"; Rec."Table ID")
+                {
+                    ApplicationArea = All;
+                }
                 field("TableCaption"; TableCaptionValue)
                 {
                     ApplicationArea = All;
@@ -24,80 +29,91 @@ page 82561 "ADLSE Setup Tables"
                     Caption = 'Table';
                     ToolTip = 'Specifies the caption of the table whose data is to exported.';
                 }
-                field(Enabled; Rec.Enabled)
-                {
-                    ApplicationArea = All;
-                    Editable = true;
-                    Caption = 'Enabled';
-                }
                 field(FieldsChosen; NumberFieldsChosenValue)
                 {
                     ApplicationArea = All;
                     Editable = false;
                     Caption = '# Fields selected';
                     ToolTip = 'Specifies if any field has been chosen to be exported. Click on Choose Fields action to add fields to export.';
-
                     trigger OnDrillDown()
+                    var
+                        ADLSETable: Record "ADLSE Table";
                     begin
-                        Rec.DoChooseFields();
+                        ADLSETable.Get(Rec."Table ID");
+                        ADLSETable.DoChooseFields();
                         CurrPage.Update();
                     end;
                 }
-                field(ADLSTableName; ADLSEntityName)
+                field("No. of Records"; Rec.GetNoOfDatabaseRecordsText())
                 {
+                    Caption = 'No. of Records';
                     ApplicationArea = All;
                     Editable = false;
-                    Caption = 'Entity name';
-                    ToolTip = 'Specifies the name of the entity corresponding to this table on the data lake. The value at the end indicates the table number in Dynamics 365 Business Central.';
+                    ToolTip = 'Specifies the No. of Records for the table.';
                 }
-                field(Status; LastRunState)
+                field(Status; Rec."Last Run State")
                 {
                     ApplicationArea = All;
                     Caption = 'Last exported state';
                     Editable = false;
                     ToolTip = 'Specifies the status of the last export from this table in this company.';
                 }
-                field(LastRanAt; LastStarted)
+                field("Last Started"; Rec."Last Started")
                 {
                     ApplicationArea = All;
                     Caption = 'Last started at';
                     Editable = false;
                     ToolTip = 'Specifies the time of the last export from this table in this company.';
                 }
-                field(LastError; LastRunError)
+                field("Last Error"; Rec."Last Error")
                 {
                     ApplicationArea = All;
                     Caption = 'Last error';
                     Editable = false;
                     ToolTip = 'Specifies the error message from the last export of this table in this company.';
                 }
-                field(LastTimestamp; UpdatedLastTimestamp)
+                field("Updated Last Timestamp"; Rec."Updated Last Timestamp")
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the timestamp of the record in this table that was exported last.';
                     Caption = 'Last timestamp';
                     Visible = false;
                 }
-                field(LastTimestampDeleted; DeletedRecordLastEntryNo)
+                field("Last Timestamp Deleted"; Rec."Last Timestamp Deleted")
                 {
                     ApplicationArea = All;
                     ToolTip = 'Specifies the timestamp of the deleted records in this table that was exported last.';
                     Caption = 'Last timestamp deleted';
                     Visible = false;
                 }
-                field(ExportCategory; Rec.ExportCategory)
-                {
-                    Caption = 'Export Category';
-                    ApplicationArea = All;
-                }
             }
         }
+
     }
 
     actions
     {
         area(Processing)
         {
+
+            action(Refresh)
+            {
+                Image = Refresh;
+                ApplicationArea = All;
+                Caption = 'Refresh';
+                ToolTip = 'Refresh all Last Run State';
+
+                trigger OnAction()
+                var
+                    CurrADLSECompanySetupTable: record "ADLSE Companies Table";
+                begin
+                    if CurrADLSECompanySetupTable.FindSet() then
+                        repeat
+                            RefreshStatus(CurrADLSECompanySetupTable);
+                        until CurrADLSECompanySetupTable.Next() < 1;
+                    CurrPage.Update(true);
+                end;
+            }
             action(AddTable)
             {
                 ApplicationArea = All;
@@ -139,9 +155,12 @@ page 82561 "ADLSE Setup Tables"
                 Enabled = NoExportInProgress;
 
                 trigger OnAction()
+                var
+
+                    ADLSETable: Record "ADLSE Table";
                 begin
-                    Rec.DoChooseFields();
-                    CurrPage.Update();
+                    ADLSETable.Get(Rec."Table ID");
+                    ADLSETable.DoChooseFields();
                 end;
             }
 
@@ -255,6 +274,13 @@ page 82561 "ADLSE Setup Tables"
             }
         }
     }
+    trigger OnAfterGetRecord()
+    var
+        ADLSETable: Record "ADLSE Table";
+    begin
+        ADLSETable.Get(Rec."Table ID");
+        ADLSETable.IssueNotificationIfInvalidFieldsConfiguredToBeExported();
+    end;
 
     trigger OnInit()
     var
@@ -263,41 +289,24 @@ page 82561 "ADLSE Setup Tables"
         NoExportInProgress := not ADLSECurrentSession.AreAnySessionsActive();
     end;
 
-    trigger OnAfterGetRecord()
+    local procedure RefreshStatus(var CurrRec: Record "ADLSE Companies Table")
     var
         TableMetadata: Record "Table Metadata";
-        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
-        ADLSERun: Record "ADLSE Run";
-        ADLSEUtil: Codeunit "ADLSE Util";
+        ADLSETable: Record "ADLSE Table";
+        NewSessionId: Integer;
     begin
-        if TableMetadata.Get(Rec."Table ID") then begin
-            TableCaptionValue := ADLSEUtil.GetTableCaption(Rec."Table ID");
-            NumberFieldsChosenValue := Rec.FieldsChosen();
-            UpdatedLastTimestamp := ADLSETableLastTimestamp.GetUpdatedLastTimestamp(Rec."Table ID");
-            DeletedRecordLastEntryNo := ADLSETableLastTimestamp.GetDeletedLastEntryNo(Rec."Table ID");
-            ADLSEntityName := ADLSEUtil.GetDataLakeCompliantTableName(Rec."Table ID");
-        end else begin
-            TableCaptionValue := StrSubstNo(AbsentTableCaptionLbl, Rec."Table ID");
-            NumberFieldsChosenValue := 0;
-            UpdatedLastTimestamp := 0;
-            DeletedRecordLastEntryNo := 0;
-            ADLSEntityName := '';
-            Rec.Modify(true);
-        end;
-        ADLSERun.GetLastRunDetails(Rec."Table ID", LastRunState, LastStarted, LastRunError);
-
-        Rec.IssueNotificationIfInvalidFieldsConfiguredToBeExported();
+        if ADLSETable.Get(CurrRec."Table ID") then
+            if TableMetadata.Get(CurrRec."Table ID") then
+                NumberFieldsChosenValue := ADLSETable.FieldsChosen()
+            else
+                NumberFieldsChosenValue := 0;
+        Session.StartSession(NewSessionId, Codeunit::"ADLSE Company Run", CurrRec."Sync Company", CurrRec);
     end;
 
     var
         TableCaptionValue: Text;
-        NumberFieldsChosenValue: Integer;
-        ADLSEntityName: Text;
-        UpdatedLastTimestamp: BigInteger;
-        DeletedRecordLastEntryNo: BigInteger;
-        AbsentTableCaptionLbl: Label 'Table%1', Comment = '%1 = Table ID';
-        LastRunState: Enum "ADLSE Run State";
-        LastStarted: DateTime;
-        LastRunError: Text[2048];
         NoExportInProgress: Boolean;
+
+        NumberFieldsChosenValue: Integer;
+
 }
