@@ -91,6 +91,7 @@ table 82572 "ADLSE Companies Table"
         exit(Format(RecRef.Count()));
     end;
 
+
     local procedure UpsertAllTableIds(Rowmarker: Integer)
     var
         ADLSETable: Record "ADLSE Table";

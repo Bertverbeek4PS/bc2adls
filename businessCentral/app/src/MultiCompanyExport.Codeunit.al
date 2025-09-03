@@ -7,6 +7,8 @@ codeunit 82579 "ADLSE Multi Company Export"
         ADLSESyncCompanies: Record "ADLSE Sync Companies";
         SessionId: Integer;
     begin
+        if GuiAllowed then
+            Message('Export started');
         ADLSESyncCompanies.Reset();
         if Rec."Parameter String" <> '' then
             ADLSESyncCompanies.SetFilter("Sync Company", Rec."Parameter String");

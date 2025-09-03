@@ -6,7 +6,7 @@ page 82566 "ADLSE Company Setup"
     LinksAllowed = false;
     PageType = List;
     SourceTable = "ADLSE Sync Companies";
-
+    RefreshOnActivate = true;
     layout
     {
         area(Content)
@@ -14,7 +14,6 @@ page 82566 "ADLSE Company Setup"
             repeater(Control1)
             {
                 ShowCaption = false;
-
                 field("Sync Company"; Rec."Sync Company")
                 {
                     ToolTip = 'The company that is being Exported.';
@@ -38,6 +37,10 @@ page 82566 "ADLSE Company Setup"
                 Caption = 'Export All Companies';
                 ToolTip = 'Starts the export process by spawning different sessions for each table. The action is disabled in case there are export processes currently running, also in other companies.';
                 Image = Start;
+                Promoted = true;
+                PromotedIsBig = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
                 trigger OnAction()
                 var
                     NewSessionID: Integer;
@@ -52,6 +55,10 @@ page 82566 "ADLSE Company Setup"
                 Caption = 'Export Selected Company';
                 ToolTip = 'Starts the export process for the selected company.';
                 Image = Start;
+                Promoted = true;
+                PromotedIsBig = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
                 trigger OnAction()
                 var
                     // ADLSECompanySetupTable: Record "ADLSE Companies Table";
@@ -83,6 +90,10 @@ page 82566 "ADLSE Company Setup"
                 Caption = 'Stop export';
                 ToolTip = 'Tries to stop all sessions that are exporting data, including those that are running in other companies.';
                 Image = Stop;
+                Promoted = true;
+                PromotedIsBig = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
 
                 trigger OnAction()
                 var
@@ -98,6 +109,10 @@ page 82566 "ADLSE Company Setup"
                 Caption = 'Schema export';
                 ToolTip = 'This will export the schema of the tables selected in the setup to the lake. This is a one-time operation and should be done before the first export of data.';
                 Image = Start;
+                Promoted = true;
+                PromotedIsBig = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
 
                 trigger OnAction()
                 var
@@ -113,6 +128,10 @@ page 82566 "ADLSE Company Setup"
                 Caption = 'Clear schema export date';
                 ToolTip = 'This will clear the schema exported on field. If this is cleared you can change the schema and export it again.';
                 Image = ClearLog;
+                Promoted = true;
+                PromotedIsBig = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
 
                 trigger OnAction()
                 var
@@ -144,6 +163,10 @@ page 82566 "ADLSE Company Setup"
                 Caption = 'Clear tracked deleted records';
                 ToolTip = 'Removes the entries in the deleted record list that have already been exported. The codeunit ADLSE Clear Tracked Deletions may be invoked using a job queue entry for the same end.';
                 Image = ClearLog;
+                Promoted = true;
+                PromotedIsBig = true;
+                PromotedCategory = Process;
+                PromotedOnly = true;
 
                 trigger OnAction()
                 var
@@ -206,5 +229,12 @@ page 82566 "ADLSE Company Setup"
         //     }
         // }
     }
-
+    trigger OnInit()
+    begin
+        if not Rec.FindFirst() then begin
+            Rec.Init();
+            Rec."Sync Company" := CompanyName;
+            Rec.Insert(true);
+        end;
+    end;
 }

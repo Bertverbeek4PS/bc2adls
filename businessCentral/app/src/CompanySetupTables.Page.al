@@ -22,13 +22,11 @@ page 82565 "ADLSE Company Setup Tables"
                 {
                     ApplicationArea = All;
                 }
-                field("TableCaption"; TableCaptionValue)
+                field("Table Caption"; Rec."Table Caption")
                 {
                     ApplicationArea = All;
-                    Editable = false;
-                    Caption = 'Table';
-                    ToolTip = 'Specifies the caption of the table whose data is to exported.';
                 }
+
                 field(FieldsChosen; NumberFieldsChosenValue)
                 {
                     ApplicationArea = All;
@@ -218,6 +216,7 @@ page 82565 "ADLSE Company Setup Tables"
                     ADLSERun: Page "ADLSE Run";
                 begin
                     ADLSERun.SetDisplayForTable(Rec."Table ID");
+                    ADLSERun.SetCompanyName(Rec."Sync Company");
                     ADLSERun.Run();
                 end;
 
@@ -276,10 +275,16 @@ page 82565 "ADLSE Company Setup Tables"
     }
     trigger OnAfterGetRecord()
     var
+        TableMetadata: Record "Table Metadata";
         ADLSETable: Record "ADLSE Table";
     begin
-        ADLSETable.Get(Rec."Table ID");
-        ADLSETable.IssueNotificationIfInvalidFieldsConfiguredToBeExported();
+        if ADLSETable.Get(Rec."Table ID") then
+            if TableMetadata.Get(Rec."Table ID") then
+                NumberFieldsChosenValue := ADLSETable.FieldsChosen()
+            else
+                NumberFieldsChosenValue := 0;
+        if ADLSETable.Get(Rec."Table ID") then
+            ADLSETable.IssueNotificationIfInvalidFieldsConfiguredToBeExported();
     end;
 
     trigger OnInit()
@@ -291,20 +296,12 @@ page 82565 "ADLSE Company Setup Tables"
 
     local procedure RefreshStatus(var CurrRec: Record "ADLSE Companies Table")
     var
-        TableMetadata: Record "Table Metadata";
-        ADLSETable: Record "ADLSE Table";
         NewSessionId: Integer;
     begin
-        if ADLSETable.Get(CurrRec."Table ID") then
-            if TableMetadata.Get(CurrRec."Table ID") then
-                NumberFieldsChosenValue := ADLSETable.FieldsChosen()
-            else
-                NumberFieldsChosenValue := 0;
         Session.StartSession(NewSessionId, Codeunit::"ADLSE Company Run", CurrRec."Sync Company", CurrRec);
     end;
 
     var
-        TableCaptionValue: Text;
         NoExportInProgress: Boolean;
 
         NumberFieldsChosenValue: Integer;
