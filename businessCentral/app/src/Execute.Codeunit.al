@@ -150,6 +150,7 @@ codeunit 82561 "ADLSE Execute"
     local procedure SetFilterForUpdates(TableID: Integer; UpdatedLastTimeStamp: BigInteger; SkipTimestampSorting: Boolean; var RecordRef: RecordRef; var TimeStampFieldRef: FieldRef)
     begin
         RecordRef.Open(TableID);
+        RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
         if not SkipTimestampSorting then
             RecordRef.SetView(TimestampAscendingSortViewTxt);
         TimeStampFieldRef := RecordRef.Field(0); // 0 is the TimeStamp field
@@ -251,6 +252,7 @@ codeunit 82561 "ADLSE Execute"
 
     local procedure SetFilterForDeletes(TableID: Integer; DeletedLastEntryNo: BigInteger; var ADLSEDeletedRecord: Record "ADLSE Deleted Record")
     begin
+        ADLSEDeletedRecord.ReadIsolation := ADLSEDeletedRecord.ReadIsolation::ReadCommitted;
         ADLSEDeletedRecord.SetView(TimestampAscendingSortViewTxt);
         ADLSEDeletedRecord.SetRange("Table ID", TableID);
         ADLSEDeletedRecord.SetFilter("Entry No.", '>%1', DeletedLastEntryNo);
