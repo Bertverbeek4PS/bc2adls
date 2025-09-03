@@ -461,19 +461,15 @@ codeunit 82564 "ADLSE Util"
             Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertDateTimeToText(CurrDateTime)));
 
         if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
-            //https://learn.microsoft.com/en-us/fabric/database/mirrored-database/open-mirroring-landing-zone-format#data-file-and-format-in-the-landing-zone
-            // 0- 	Insert
-            // 1- 	Update
-            // 2- 	Delete
-            // 4-   Upsert
-            if ADLSETableLastTimestamp.GetUpdatedLastTimestamp(RecordRef.Number) = 0 then
-                //Because of an reset always 0 is sent for the first time
-                Payload.Append(StrSubstNo(CommaPrefixedTok, '0'))
+            if Deletes then
+                Payload.Append(StrSubstNo(CommaPrefixedTok, '2'))
             else
-                if Deletes then
-                    Payload.Append(StrSubstNo(CommaPrefixedTok, '2'))
-                else
-                    Payload.Append(StrSubstNo(CommaPrefixedTok, '4'));
+                Payload.Append(StrSubstNo(CommaPrefixedTok, '4'));
+        //https://learn.microsoft.com/en-us/fabric/database/mirrored-database/open-mirroring-landing-zone-format#data-file-and-format-in-the-landing-zone
+        // 0- 	Insert
+        // 1- 	Update
+        // 2- 	Delete
+        // 4-   Upsert
 
         Payload.AppendLine();
 
