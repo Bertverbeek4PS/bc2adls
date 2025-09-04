@@ -172,6 +172,7 @@ page 82565 "ADLSE Company Setup Tables"
 
                 trigger OnAction()
                 var
+                    SelectedADLSECompaniesTable: Record "ADLSE Companies Table";
                     SelectedADLSETable: Record "ADLSE Table";
                     ADLSESetup: Record "ADLSE Setup";
                     Options: Text[50];
@@ -189,7 +190,8 @@ page 82565 "ADLSE Company Setup Tables"
                             exit;
                     end else
                         ChosenOption := Dialog.StrMenu(Options, 1, ResetTablesQst);
-                    CurrPage.SetSelectionFilter(SelectedADLSETable);
+                    CurrPage.SetSelectionFilter(SelectedADLSECompaniesTable);
+                    SelectedADLSETable.SetFilter("Table ID", GetTableIDFilter(SelectedADLSECompaniesTable));
                     case ChosenOption of
                         0:
                             exit;
@@ -309,6 +311,17 @@ page 82565 "ADLSE Company Setup Tables"
         NewSessionId: Integer;
     begin
         Session.StartSession(NewSessionId, Codeunit::"ADLSE Company Run", CurrRec."Sync Company", CurrRec);
+    end;
+
+    local procedure GetTableIDFilter(var SelectedADLSECompaniesTable: Record "ADLSE Companies Table") TableIDFilter: Text
+    begin
+        if SelectedADLSECompaniesTable.FindSet(false) then
+            repeat
+                if TableIDFilter = '' then
+                    TableIDFilter := Format(SelectedADLSECompaniesTable."Table ID")
+                else
+                    TableIDFilter := TableIDFilter + '|' + Format(SelectedADLSECompaniesTable."Table ID");
+            until SelectedADLSECompaniesTable.Next() < 1;
     end;
 
     var
