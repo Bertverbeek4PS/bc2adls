@@ -119,6 +119,7 @@ codeunit 82561 "ADLSE Execute"
         ADLSESetup: Record "ADLSE Setup";
         ADLSECommunicationDeletions: Codeunit "ADLSE Communication";
         FieldIdList: List of [Integer];
+        DidUpserts: Boolean;
     begin
         FieldIdList := CreateFieldListForTable(TableID);
 
@@ -128,12 +129,12 @@ codeunit 82561 "ADLSE Execute"
         if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Open Mirroring" then //TODO is this really needed for open mirroring?
             ADLSECommunication.CheckEntity(CDMDataFormat, EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate, false);
 
-        ExportTableUpdates(TableID, FieldIdList, ADLSECommunication, UpdatedLastTimeStamp);
+        ExportTableUpdates(TableID, FieldIdList, ADLSECommunication, UpdatedLastTimeStamp, DidUpserts);
 
         // then export the deletes
         ADLSECommunicationDeletions.Init(TableID, FieldIdList, DeletedLastEntryNo, EmitTelemetry);
         // entity has been already checked above
-        ExportTableDeletes(TableID, ADLSECommunicationDeletions, DeletedLastEntryNo);
+        ExportTableDeletes(TableID, ADLSECommunicationDeletions, DeletedLastEntryNo, DidUpserts);
     end;
 
     procedure UpdatedRecordsExist(TableID: Integer; UpdatedLastTimeStamp: BigInteger): Boolean
@@ -149,13 +150,14 @@ codeunit 82561 "ADLSE Execute"
     local procedure SetFilterForUpdates(TableID: Integer; UpdatedLastTimeStamp: BigInteger; SkipTimestampSorting: Boolean; var RecordRef: RecordRef; var TimeStampFieldRef: FieldRef)
     begin
         RecordRef.Open(TableID);
+        RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
         if not SkipTimestampSorting then
             RecordRef.SetView(TimestampAscendingSortViewTxt);
         TimeStampFieldRef := RecordRef.Field(0); // 0 is the TimeStamp field
         TimeStampFieldRef.SetFilter('>%1', UpdatedLastTimeStamp);
     end;
 
-    local procedure ExportTableUpdates(TableID: Integer; FieldIdList: List of [Integer]; ADLSECommunication: Codeunit "ADLSE Communication"; var UpdatedLastTimeStamp: BigInteger)
+    local procedure ExportTableUpdates(TableID: Integer; FieldIdList: List of [Integer]; ADLSECommunication: Codeunit "ADLSE Communication"; var UpdatedLastTimeStamp: BigInteger; var DidUpserts: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSESeekData: Report "ADLSE Seek Data";
@@ -190,6 +192,7 @@ codeunit 82561 "ADLSE Execute"
 
         RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
         if ADLSESeekData.FindRecords(RecordRef) then begin
+            DidUpserts := true;
             if EmitTelemetry then begin
                 TableCaption := RecordRef.Caption();
                 EntityCount := Format(RecordRef.Count());
@@ -249,13 +252,14 @@ codeunit 82561 "ADLSE Execute"
 
     local procedure SetFilterForDeletes(TableID: Integer; DeletedLastEntryNo: BigInteger; var ADLSEDeletedRecord: Record "ADLSE Deleted Record")
     begin
+        ADLSEDeletedRecord.ReadIsolation := ADLSEDeletedRecord.ReadIsolation::ReadCommitted;
         ADLSEDeletedRecord.SetView(TimestampAscendingSortViewTxt);
         ADLSEDeletedRecord.SetRange("Table ID", TableID);
         ADLSEDeletedRecord.SetFilter("Entry No.", '>%1', DeletedLastEntryNo);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'r')]
-    local procedure ExportTableDeletes(TableID: Integer; ADLSECommunication: Codeunit "ADLSE Communication"; var DeletedLastEntryNo: BigInteger)
+    local procedure ExportTableDeletes(TableID: Integer; ADLSECommunication: Codeunit "ADLSE Communication"; var DeletedLastEntryNo: BigInteger; DidUpserts: Boolean)
     var
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
         ADLSESetup: Record "ADLSE Setup";
@@ -278,11 +282,12 @@ codeunit 82561 "ADLSE Execute"
         ADLSEDeletedRecord.ReadIsolation := ADLSEDeletedRecord.ReadIsolation::ReadCommitted;
         if ADLSESeekData.FindRecords(ADLSEDeletedRecord) then begin
             //Addin the number when open mirroring is used
-            if (ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring") then begin
-                ADLSETable.Get(TableID);
-                ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
-                ADLSETable.Modify(true);
-            end;
+            if DidUpserts then
+                if (ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring") then begin
+                    ADLSETable.Get(TableID);
+                    ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
+                    ADLSETable.Modify(true);
+                end;
             RecordRef.Open(ADLSEDeletedRecord."Table ID");
 
             FixDeletedRecordThatAreInTable(ADLSEDeletedRecord);
