@@ -43,9 +43,12 @@ page 82566 "ADLSE Company Setup"
                 PromotedOnly = true;
                 trigger OnAction()
                 var
-                    NewSessionID: Integer;
+                    TempJobQueueEntry: Record "Job Queue Entry" temporary;
+                    "ADLSE Multi Company Export": Codeunit "ADLSE Multi Company Export";
+                // NewSessionID: Integer;
                 begin
-                    Session.StartSession(NewSessionID, Codeunit::"ADLSE Multi Company Export");
+                    "ADLSE Multi Company Export".Run(TempJobQueueEntry);
+                    // Session.StartSession(NewSessionID, Codeunit::"ADLSE Multi Company Export");
                     CurrPage.Update();
                 end;
             }
@@ -64,7 +67,8 @@ page 82566 "ADLSE Company Setup"
                     // ADLSECompanySetupTable: Record "ADLSE Companies Table";
                     ADLSESyncCompanies: Record "ADLSE Sync Companies";
                     TempJobQueueEntry: Record "Job Queue Entry" temporary;
-                    NewSessionID: Integer;
+                    "ADLSE Multi Company Export": Codeunit "ADLSE Multi Company Export";
+                    // NewSessionID: Integer;
                     FilterString: Text;
                 begin
                     SetSelectionFilter(ADLSESyncCompanies);
@@ -79,7 +83,9 @@ page 82566 "ADLSE Company Setup"
                     TempJobQueueEntry.Init();
                     TempJobQueueEntry."Parameter String" := CopyStr(FilterString, 1, MaxStrLen(TempJobQueueEntry."Parameter String"));
                     TempJobQueueEntry.Insert(true);
-                    Session.StartSession(NewSessionID, Codeunit::"ADLSE Multi Company Export", '', TempJobQueueEntry);
+
+                    "ADLSE Multi Company Export".Run(TempJobQueueEntry);
+                    // Session.StartSession(NewSessionID, Codeunit::"ADLSE Multi Company Export", '', TempJobQueueEntry);
                     CurrPage.Update();
                 end;
             }
@@ -142,20 +148,20 @@ page 82566 "ADLSE Company Setup"
                 end;
             }
 
-            // action(Schedule)
-            // {
-            //     ApplicationArea = All;
-            //     Caption = 'Schedule export';
-            //     ToolTip = 'Schedules the export process as a job queue entry.';
-            //     Image = Timesheet;
+            action(Schedule)
+            {
+                ApplicationArea = All;
+                Caption = 'Schedule export';
+                ToolTip = 'Schedules the export process as a job queue entry.';
+                Image = Timesheet;
 
-            //     trigger OnAction()
-            //     var
-            //         ADLSEExecution: Codeunit "ADLSE Execution";
-            //     begin
-            //         ADLSEExecution.ScheduleExport();
-            //     end;
-            // }
+                trigger OnAction()
+                var
+                    ADLSEExecution: Codeunit "ADLSE Execution";
+                begin
+                    ADLSEExecution.ScheduleMultiExport();
+                end;
+            }
 
             action(ClearDeletedRecordsList)
             {
@@ -184,32 +190,32 @@ page 82566 "ADLSE Company Setup"
                 end;
             }
         }
-        // area(Navigation)
-        // {
-        //     action("Job Queue")
-        //     {
-        //         Caption = 'Job Queue';
-        //         ApplicationArea = All;
-        //         ToolTip = 'Specifies the scheduled Job Queues for the export to Datalake.';
-        //         Image = BulletList;
-        //         trigger OnAction()
-        //         var
-        //             JobQueueEntry: Record "Job Queue Entry";
-        //         begin
-        //             JobQueueEntry.ChangeCompany(Rec."Sync Company");
-        //             JobQueueEntry.SetFilter("Object ID to Run", '%1|%2', Codeunit::"ADLSE Execution", Report::"ADLSE Schedule Task Assignment");
-        //             Page.Run(Page::"Job Queue Entries", JobQueueEntry);
-        //         end;
-        //     }
-        //     action("Export Category")
-        //     {
-        //         Caption = 'Export Category';
-        //         ApplicationArea = All;
-        //         ToolTip = 'Specifies the Export Categories available for scheduling the export to Datalake.';
-        //         Image = Export;
-        //         RunObject = page "ADLSE Export Categories";
-        //     }
-        // }
+        area(Navigation)
+        {
+            action("Job Queue")
+            {
+                Caption = 'Job Queue';
+                ApplicationArea = All;
+                ToolTip = 'Specifies the scheduled Job Queues for the export to Datalake.';
+                Image = BulletList;
+                trigger OnAction()
+                var
+                    JobQueueEntry: Record "Job Queue Entry";
+                begin
+                    JobQueueEntry.ChangeCompany(Rec."Sync Company");
+                    JobQueueEntry.SetFilter("Object ID to Run", '%1|%2', Codeunit::"ADLSE Multi Company Export", Report::ADLSEScheduleMultiTaskAssign);
+                    Page.Run(Page::"Job Queue Entries", JobQueueEntry);
+                end;
+            }
+            action("Export Category")
+            {
+                Caption = 'Export Category';
+                ApplicationArea = All;
+                ToolTip = 'Specifies the Export Categories available for scheduling the export to Datalake.';
+                Image = Export;
+                RunObject = page "ADLSE Export Categories";
+            }
+        }
         // area(Promoted)
         // {
         //     group(Category_Process)

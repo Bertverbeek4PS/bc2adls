@@ -294,6 +294,16 @@ page 82565 "ADLSE Company Setup Tables"
         NoExportInProgress := not ADLSECurrentSession.AreAnySessionsActive();
     end;
 
+    trigger OnOpenPage()
+    var
+        CurrADLSECompanySetupTable: record "ADLSE Companies Table";
+    begin
+        if CurrADLSECompanySetupTable.FindSet() then
+            repeat
+                RefreshStatus(CurrADLSECompanySetupTable);
+            until CurrADLSECompanySetupTable.Next() < 1;
+    end;
+
     local procedure RefreshStatus(var CurrRec: Record "ADLSE Companies Table")
     var
         NewSessionId: Integer;

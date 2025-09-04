@@ -183,6 +183,36 @@ codeunit 82569 "ADLSE Execution"
         end;
     end;
 
+    internal procedure ScheduleMultiExport()
+    var
+        JobQueueEntry: Record "Job Queue Entry";
+        ADLSEScheduleMultiTaskAssign: Report ADLSEScheduleMultiTaskAssign;
+        SavedData: Text;
+        xmldata: Text;
+        Handled: Boolean;
+    begin
+        OnBeforeScheduleExport(Handled);
+        if Handled then
+            exit;
+
+        JobQueueEntry.SetFilter("User ID", UserId());
+        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
+        JobQueueEntry.SetRange("Object ID to Run", Report::ADLSEScheduleMultiTaskAssign);
+        JobQueueEntry.SetCurrentKey(SystemCreatedAt);
+        JobQueueEntry.SetAscending(SystemCreatedAt, false);
+
+        if JobQueueEntry.FindFirst() then
+            SavedData := JobQueueEntry.GetReportParameters();
+
+        xmldata := ADLSEScheduleMultiTaskAssign.RunRequestPage(SavedData);
+
+        if xmldata <> '' then begin
+            ADLSEScheduleMultiTaskAssign.CreateJobQueueEntry(JobQueueEntry);
+            JobQueueEntry.SetReportParameters(xmldata);
+            JobQueueEntry.Modify();
+        end;
+    end;
+
     internal procedure Log(EventId: Text; Message: Text; Verbosity: Verbosity)
     var
         CustomDimensions: Dictionary of [Text, Text];
