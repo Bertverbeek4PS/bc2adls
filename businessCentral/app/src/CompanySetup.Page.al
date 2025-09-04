@@ -19,6 +19,42 @@ page 82566 "ADLSE Company Setup"
                     ToolTip = 'The company that is being Exported.';
                     ApplicationArea = All;
                 }
+                field(JobObjectIDtoRun; JobObjectIDtoRun)
+                {
+                    Caption = 'Job Object ID';
+                    ToolTip = 'Object ID of the job queue entry assigned to schedule the export.';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field(JobObjectCaptiontoRun; JobObjectCaptiontoRun)
+                {
+                    Caption = 'Job Object Caption';
+                    ToolTip = 'Caption of the object executed by the scheduled job queue entry.';
+                    ApplicationArea = All;
+                    Editable = false;
+                    trigger OnDrillDown()
+                    var
+                        JobQueueEntry: Record "Job Queue Entry";
+                    begin
+                        JobQueueEntry.ChangeCompany(Rec."Sync Company");
+                        JobQueueEntry.SetRange("Object ID to Run", Report::ADLSEScheduleMultiTaskAssign);
+                        Page.Run(Page::"Job Queue Entries", JobQueueEntry);
+                    end;
+                }
+                field(JobStatus; JobStatus)
+                {
+                    Caption = 'Job Status';
+                    ToolTip = 'Current status of the scheduled export job for this company.';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field(JobEarliestStartDateTime; JobEarliestStartDateTime)
+                {
+                    Caption = 'Earliest Start';
+                    ToolTip = 'Shows the earliest start date/time of the scheduled job queue entry for this company.';
+                    ApplicationArea = All;
+                    Editable = false;
+                }
             }
             part("Company Tables"; "ADLSE Company Setup Tables")
             {
@@ -243,4 +279,36 @@ page 82566 "ADLSE Company Setup"
             Rec.Insert(true);
         end;
     end;
+
+
+    trigger OnAfterGetRecord()
+    var
+        JobQueueEntry: Record "Job Queue Entry";
+    begin
+        if JobQueueEntry.ChangeCompany(Rec."Sync Company") then begin
+            JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
+            JobQueueEntry.SetRange("Object ID to Run", Report::ADLSEScheduleMultiTaskAssign);
+            if JobQueueEntry.FindFirst() then begin
+                JobEarliestStartDateTime := JobQueueEntry."Earliest Start Date/Time";
+                JobStatus := JobQueueEntry.Status;
+                JobObjectIDtoRun := JobQueueEntry."Object ID to Run";
+                JobQueueEntry.CalcFields("Object Caption to Run");
+                JobObjectCaptiontoRun := JobQueueEntry."Object Caption to Run";
+            end
+            else begin
+                JobEarliestStartDateTime := 0DT;
+                JobStatus := JobStatus::" ";
+                JobObjectIDtoRun := 0;
+                JobObjectCaptiontoRun := '';
+            end;
+        end
+    end;
+
+
+
+    var
+        JobEarliestStartDateTime: DateTime;
+        JobStatus: Option Ready,"In Process",Error,"On Hold",Finished,"On Hold with Inactivity Timeout",Waiting," ";
+        JobObjectIDtoRun: Integer;
+        JobObjectCaptiontoRun: Text[250];
 }
