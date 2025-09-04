@@ -23,6 +23,9 @@ codeunit 82579 "ADLSE Multi Company Export"
                     Commit();// Commit after each company is done. To prevent rollback of everything
                 end;
             until ADLSESyncCompanies.Next() = 0;
+        repeat
+            Sleep(10000);
+        until not Session.IsSessionActive(SessionId);
     end;
 
 
