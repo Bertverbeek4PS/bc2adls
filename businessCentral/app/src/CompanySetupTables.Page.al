@@ -138,8 +138,11 @@ page 82565 "ADLSE Company Setup Tables"
                 Enabled = NoExportInProgress;
 
                 trigger OnAction()
+                var
+                    ADLSETable: Record "ADLSE Table";
                 begin
-                    Rec.Delete(true);
+                    ADLSETable.Get(Rec."Table ID");
+                    ADLSETable.Delete(true);
                     CurrPage.Update();
                 end;
             }
@@ -279,6 +282,7 @@ page 82565 "ADLSE Company Setup Tables"
     var
         TableMetadata: Record "Table Metadata";
         ADLSETable: Record "ADLSE Table";
+        ADLSECurrentSession: Record "ADLSE Current Session";
     begin
         if ADLSETable.Get(Rec."Table ID") then
             if TableMetadata.Get(Rec."Table ID") then
@@ -287,13 +291,8 @@ page 82565 "ADLSE Company Setup Tables"
                 NumberFieldsChosenValue := 0;
         if ADLSETable.Get(Rec."Table ID") then
             ADLSETable.IssueNotificationIfInvalidFieldsConfiguredToBeExported();
-    end;
-
-    trigger OnInit()
-    var
-        ADLSECurrentSession: Record "ADLSE Current Session";
-    begin
-        NoExportInProgress := not ADLSECurrentSession.AreAnySessionsActive();
+        if ADLSECurrentSession.ChangeCompany(Rec."Sync Company") then
+            NoExportInProgress := not ADLSECurrentSession.AreAnySessionsActive();
     end;
 
     trigger OnOpenPage()

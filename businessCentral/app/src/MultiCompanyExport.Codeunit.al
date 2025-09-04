@@ -6,6 +6,7 @@ codeunit 82579 "ADLSE Multi Company Export"
     var
         ADLSETable: Record "ADLSE Table";
         ADLSESyncCompanies: Record "ADLSE Sync Companies";
+        ADLSECurrentSession: Record "ADLSE Current Session";
         SessionId: Integer;
     begin
         ADLSESyncCompanies.Reset();
@@ -17,15 +18,13 @@ codeunit 82579 "ADLSE Multi Company Export"
             repeat
                 Clear(SessionId);
                 if session.StartSession(SessionId, Codeunit::"ADLSE Execution", ADLSESyncCompanies."Sync Company") then begin
+                    ADLSECurrentSession.ChangeCompany(ADLSESyncCompanies."Sync Company");
                     repeat
                         Sleep(10000);
-                    until not Session.IsSessionActive(SessionId);
+                    until (not Session.IsSessionActive(SessionId) And (not ADLSECurrentSession.AreAnySessionsActive()));
                     Commit();// Commit after each company is done. To prevent rollback of everything
                 end;
             until ADLSESyncCompanies.Next() = 0;
-        repeat
-            Sleep(10000);
-        until not Session.IsSessionActive(SessionId);
     end;
 
 
