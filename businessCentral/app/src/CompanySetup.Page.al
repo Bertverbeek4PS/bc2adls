@@ -2,7 +2,7 @@ page 82566 "ADLSE Company Setup"
 {
     Caption = 'Export Companies to Azure Data Lake Storage';
     ApplicationArea = all;
-    UsageCategory = Lists;
+    UsageCategory = Administration;
     LinksAllowed = false;
     PageType = List;
     SourceTable = "ADLSE Sync Companies";

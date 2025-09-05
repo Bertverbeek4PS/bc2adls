@@ -6,7 +6,6 @@ page 82565 "ADLSE Company Setup Tables"
     PageType = ListPart;
     SourceTable = "ADLSE Companies Table";
 
-
     layout
     {
         area(Content)
