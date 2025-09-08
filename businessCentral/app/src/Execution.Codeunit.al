@@ -41,8 +41,10 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup.CheckSetup(ADLSESetupRec);
         EmitTelemetry := ADLSESetupRec."Emit telemetry";
         ADLSECurrentSession.CleanupSessions();
-        if ADLSESyncCompanies.Get(CompanyName()) then  // Possible Multi Company export Create session So that is can be stopped.
+        if ADLSESyncCompanies.Get(CompanyName()) then begin// Possible Multi Company export Create session So that is can be stopped.
             ADLSECurrentSession.Start(ADLSESyncCompanies.RecordId.TableNo);
+            Commit();
+        end;
 
         if ADLSESetupRec.GetStorageType() = ADLSESetupRec."Storage Type"::"Azure Data Lake" then //Because Fabric doesn't have do create a container
             ADLSECommunication.SetupBlobStorage();
