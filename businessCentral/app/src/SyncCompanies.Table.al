@@ -1,6 +1,4 @@
-#pragma warning disable LC0015
 table 82573 "ADLSE Sync Companies"
-#pragma warning restore
 {
     Access = Internal;
     Caption = 'ADLSE Sync Companies';

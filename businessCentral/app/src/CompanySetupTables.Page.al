@@ -20,10 +20,12 @@ page 82565 "ADLSE Company Setup Tables"
                 field("Table ID"; Rec."Table ID")
                 {
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the ID of the table to be exported.';
                 }
                 field("Table Caption"; Rec."Table Caption")
                 {
                     ApplicationArea = All;
+                    ToolTip = 'Specifies the caption of the table to be exported.';
                 }
 
                 field(FieldsChosen; NumberFieldsChosenValue)

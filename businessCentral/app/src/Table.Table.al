@@ -355,7 +355,7 @@ table 82561 "ADLSE Table"
         // 1 = Modify -> update existing rows for this Sync Company across ALL table IDs (do not insert missing rows)
         // 2 = Delete -> remove ALL rows for this Sync Company across ALL table IDs (except current row already being deleted)
 
-        SyncCompany := CompanyName;
+        SyncCompany := CopyStr(CompanyName(), 1, MaxStrLen(SyncCompany));
         if SyncCompany = '' then
             exit;
 

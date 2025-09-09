@@ -97,7 +97,6 @@ table 82572 "ADLSE Companies Table"
         ADLSETable: Record "ADLSE Table";
         ADLSECompaniesTable: Record "ADLSE Companies Table";
         RenameADLSECompaniesTable: Record "ADLSE Companies Table";
-        ADLSESyncCompanies: Record "ADLSE Sync Companies";
         SyncCompany: Text[30];
         xSyncCompany: Text[30];
     begin

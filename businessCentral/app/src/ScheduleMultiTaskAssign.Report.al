@@ -1,6 +1,7 @@
 report 82562 "ADLSEScheduleMultiTaskAssign"
 {
     ApplicationArea = Basic, Suite;
+    UsageCategory = ReportsAndAnalysis;
     Caption = 'Schedule Multi Company Export';
     ProcessingOnly = true;
 
@@ -63,11 +64,11 @@ report 82562 "ADLSEScheduleMultiTaskAssign"
                                 Caption = 'Run On Mondays';
                                 ToolTip = 'Specifies that the job queue entry runs on Mondays.';
                             }
-                            field(RunOnTeusdaysControl; RunOnTeusdays)
+                            field(RunOnTuesdaysControl; RunOnTuesdays)
                             {
                                 ApplicationArea = All;
                                 Caption = 'Run On Tuesdays';
-                                ToolTip = 'Specifies that the job queue entry runs on Teusdays.';
+                                ToolTip = 'Specifies that the job queue entry runs on Tuesdays.';
                             }
                             field(RunOnWednesdayControl; RunOnWednesdays)
                             {
@@ -117,7 +118,7 @@ report 82562 "ADLSEScheduleMultiTaskAssign"
         NoofMinutesBetweenRuns: Integer;
         RunOnSundays: Boolean;
         RunOnMondays: Boolean;
-        RunOnTeusdays: Boolean;
+        RunOnTuesdays: Boolean;
         RunOnWednesdays: Boolean;
         RunOnThursdays: Boolean;
         RunOnFridays: Boolean;
@@ -137,7 +138,7 @@ report 82562 "ADLSEScheduleMultiTaskAssign"
         JobQueueEntry.Description := Description;
         JobQueueEntry."No. of Minutes between Runs" := NoofMinutesBetweenRuns;
         JobQueueEntry.Validate("Run on Mondays", RunOnMondays);
-        JobQueueEntry.Validate("Run on Tuesdays", RunOnTeusdays);
+        JobQueueEntry.Validate("Run on Tuesdays", RunOnTuesdays);
         JobQueueEntry.Validate("Run on Wednesdays", RunOnWednesdays);
         JobQueueEntry.Validate("Run on Thursdays", RunOnThursdays);
         JobQueueEntry.Validate("Run on Fridays", RunOnFridays);

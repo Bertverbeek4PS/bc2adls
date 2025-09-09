@@ -44,6 +44,7 @@ page 82566 "ADLSE Company Setup"
                 field(JobStatus; JobStatus)
                 {
                     Caption = 'Job Status';
+                    OptionCaption = 'Ready,In Process,Error,On Hold,Finished,On Hold with Inactivity Timeout,Waiting, ';
                     ToolTip = 'Current status of the scheduled export job for this company.';
                     ApplicationArea = All;
                     Editable = false;
@@ -246,30 +247,12 @@ page 82566 "ADLSE Company Setup"
                 RunObject = page "ADLSE Export Categories";
             }
         }
-        // area(Promoted)
-        // {
-        //     group(Category_Process)
-        //     {
-        //         Caption = 'Process';
-
-        //         group(Export)
-        //         {
-        //             ShowAs = SplitButton;
-        //             actionref(ExportNow_Promoted; ExportNow) { }
-        //             actionref(StopExport_Promoted; StopExport) { }
-        //             actionref(SchemaExport_Promoted; SchemaExport) { }
-        //             // actionref(Schedule_Promoted; Schedule) { }
-        //             actionref(ClearSchemaExported_Promoted; ClearSchemaExported) { }
-        //         }
-        //         actionref(ClearDeletedRecordsList_Promoted; ClearDeletedRecordsList) { }
-        //     }
-        // }
     }
     trigger OnInit()
     begin
         if not Rec.FindFirst() then begin
             Rec.Init();
-            Rec."Sync Company" := CompanyName;
+            Rec."Sync Company" := CopyStr(CompanyName(), 1, MaxStrLen(Rec."Sync Company"));
             Rec.Insert(true);
         end;
     end;
