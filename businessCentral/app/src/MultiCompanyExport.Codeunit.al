@@ -31,6 +31,8 @@ codeunit 82579 "ADLSE Multi Company Export"
     var
         ExportStartedTxt: Label 'Data export started for %1 tables in %2 Companies. Please refresh this page to see the latest export state for the tables. Only those tables that either have had changes since the last export or failed to export last time have been included. The tables for which the exports could not be started have been queued up for later.', Comment = '%1 = Total number of tables to start the export for. %2 = Total number of companies to export for.';
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'rd')]
+
     local procedure CheckAnyActiveSession(CurrentCompany: Text[30]): Boolean
     var
         ActiveSession: Record "Active Session";
@@ -38,6 +40,8 @@ codeunit 82579 "ADLSE Multi Company Export"
     begin
         SelectLatestVersion();
         ADLSECurrentSession.ReadIsolation := ADLSECurrentSession.ReadIsolation::ReadUncommitted;
+        // ADLSECurrentSession.ChangeCompany(CurrentCompany);
+        ADLSECurrentSession.SetRange("Company Name", CurrentCompany);
         if ADLSECurrentSession.FindSet(false) then
             repeat
                 ActiveSession.Reset();
