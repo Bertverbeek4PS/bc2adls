@@ -456,8 +456,7 @@ codeunit 82564 "ADLSE Util"
             FieldsAdded += 1;
         end;
         if IsTablePerCompany(RecordRef.Number) then
-            if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
-                Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertStringToText(CompanyName())));
+            Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertStringToText(CompanyName())));
         if ADLSESetup."Delivered DateTime" then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertDateTimeToText(CurrDateTime)));
 
