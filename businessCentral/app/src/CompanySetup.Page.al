@@ -216,7 +216,6 @@ page 82566 "ADLSE Company Setup"
                                 if not ADLSEDeletedRecord.IsEmpty() then
                                     Session.StartSession(NewSessionID, Codeunit::"ADLSE Clear Tracked Deletions", Rec."Sync Company");
                         until Rec.Next() < 1;
-                    // Codeunit.Run(Codeunit::"ADLSE Clear Tracked Deletions");
                     CurrPage.Update();
                 end;
             }

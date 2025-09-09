@@ -41,7 +41,6 @@ codeunit 82579 "ADLSE Multi Company Export"
     begin
         SelectLatestVersion();
         ADLSECurrentSession.ReadIsolation := ADLSECurrentSession.ReadIsolation::ReadUncommitted;
-        // ADLSECurrentSession.ChangeCompany(CurrentCompany);
         ADLSECurrentSession.SetRange("Company Name", CurrentCompany);
         if ADLSECurrentSession.FindSet(false) then
             repeat
