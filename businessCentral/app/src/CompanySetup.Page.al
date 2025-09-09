@@ -81,10 +81,8 @@ page 82566 "ADLSE Company Setup"
                 var
                     TempJobQueueEntry: Record "Job Queue Entry" temporary;
                     "ADLSE Multi Company Export": Codeunit "ADLSE Multi Company Export";
-                // NewSessionID: Integer;
                 begin
                     "ADLSE Multi Company Export".Run(TempJobQueueEntry);
-                    // Session.StartSession(NewSessionID, Codeunit::"ADLSE Multi Company Export");
                     CurrPage.Update();
                 end;
             }
@@ -100,11 +98,9 @@ page 82566 "ADLSE Company Setup"
                 PromotedOnly = true;
                 trigger OnAction()
                 var
-                    // ADLSECompanySetupTable: Record "ADLSE Companies Table";
                     ADLSESyncCompanies: Record "ADLSE Sync Companies";
                     TempJobQueueEntry: Record "Job Queue Entry" temporary;
                     "ADLSE Multi Company Export": Codeunit "ADLSE Multi Company Export";
-                    // NewSessionID: Integer;
                     FilterString: Text;
                 begin
                     SetSelectionFilter(ADLSESyncCompanies);
@@ -117,11 +113,9 @@ page 82566 "ADLSE Company Setup"
                                     FilterString := FilterString + '|' + ADLSESyncCompanies."Sync Company";
                         until ADLSESyncCompanies.Next() < 1;
                     TempJobQueueEntry.Init();
-                    TempJobQueueEntry."Parameter String" := CopyStr(FilterString, 1, MaxStrLen(TempJobQueueEntry."Parameter String"));
                     TempJobQueueEntry.Insert(true);
-
+                    "ADLSE Multi Company Export".SetCompanyFilter(FilterString);
                     "ADLSE Multi Company Export".Run(TempJobQueueEntry);
-                    // Session.StartSession(NewSessionID, Codeunit::"ADLSE Multi Company Export", '', TempJobQueueEntry);
                     CurrPage.Update();
                 end;
             }
