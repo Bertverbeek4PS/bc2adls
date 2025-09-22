@@ -467,6 +467,19 @@ codeunit 82562 "ADLSE Communication"
         ADLSEExecute.UpdateInProgressTableTimestamp(ADLSETable, Timestamp, Deletes);
     end;
     local procedure IncreaseExportFileNumber(TableIdToUpdate: integer)
+#if not CLEAN27
+    var
+        ADLSETable: Record "ADLSE Table";
+    begin
+        // commit in current session causes RecRef.Next() to request data rom SQL ignoring subset retrieved from FindSet() (???) - this causes drastic performance issues when dealing with big tables; file number increase is pushed to another session for that purpose.
+        if not ADLSETable.CheckIfNeedToCommitExternally(TableIdToUpdate) then
+            IncreaseExportFileNumber_InCurrSession(TableIdToUpdate)
+        else
+            IncreaseExportFileNumber_InBkgSession(TableIdToUpdate);
+    end;
+
+    procedure IncreaseExportFileNumber_InCurrSession(TableIdToUpdate: integer)
+#endif
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
@@ -478,4 +491,17 @@ codeunit 82562 "ADLSE Communication"
             Commit();
         end;
     end;
+
+#if not CLEAN27
+    local procedure IncreaseExportFileNumber_InBkgSession(TableIdToUpdate: integer)
+    var
+        SessionInstruction: Record "Session Instruction";
+    begin
+        SessionInstruction."Object Type" := SessionInstruction."Object Type"::Codeunit;
+        SessionInstruction."Object ID" := Codeunit::"ADLSE Communication";
+        SessionInstruction.Method := "ADLSE Session Method"::"Handle Export File Number Increase";
+        SessionInstruction.Params := format(TableIdToUpdate);
+        SessionInstruction.ExecuteInNewSession();
+    end;
+#endif
 }

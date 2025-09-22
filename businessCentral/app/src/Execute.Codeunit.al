@@ -152,9 +152,15 @@ codeunit 82561 "ADLSE Execute"
     local procedure SetFilterForUpdates(TableID: Integer; UpdatedLastTimeStamp: BigInteger; SkipTimestampSorting: Boolean; var RecordRef: RecordRef; var TimeStampFieldRef: FieldRef)
     var
         ADLSELastTimestamp: Record "ADLSE Table Last Timestamp";
+#if not CLEAN27
+        ADLSETable: Record "ADLSE Table";
+#endif
     begin
         RecordRef.Open(TableID);
-        RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
+#if not CLEAN27
+        if not ADLSETable.CheckIfNeedToIgnoreReadIsolation(TableID) then
+#endif
+            RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
         if not SkipTimestampSorting then
             RecordRef.SetView(TimestampAscendingSortViewTxt);
         TimeStampFieldRef := RecordRef.Field(0); // 0 is the TimeStamp field
@@ -167,6 +173,9 @@ codeunit 82561 "ADLSE Execute"
     local procedure ExportTableUpdates(TableID: Integer; FieldIdList: List of [Integer]; ADLSECommunication: Codeunit "ADLSE Communication"; var UpdatedLastTimeStamp: BigInteger; var DidUpserts: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
+#if not CLEAN27
+        ADLSETable: Record "ADLSE Table";
+#endif
         ADLSESeekData: Report "ADLSE Seek Data";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEUtil: Codeunit "ADLSE Util";
@@ -199,7 +208,10 @@ codeunit 82561 "ADLSE Execute"
         if not RecordRef.ReadPermission() then
             Error(InsufficientReadPermErr);
 
-        RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
+#if not CLEAN27
+        if not ADLSETable.CheckIfNeedToIgnoreReadIsolation(TableID) then
+#endif
+            RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
         if ADLSESeekData.FindRecords(RecordRef) then begin
             DidUpserts := true;
             if EmitTelemetry then begin
@@ -417,6 +429,9 @@ codeunit 82561 "ADLSE Execute"
     procedure UpdateInProgressTableTimestamp(var Rec: Record "ADLSE Table"; LastTimestamp: BigInteger; Deletes: Boolean)
     var
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+#if not CLEAN27
+        ADLSETable: Record "ADLSE Table";
+#endif
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEUtil: Codeunit "ADLSE Util";
         CustomDimensions: Dictionary of [Text, Text];
@@ -449,8 +464,12 @@ codeunit 82561 "ADLSE Execute"
                 CustomDimensions.Add('Entity', TableCaption);
                 ADLSEExecution.Log('ADLSE-006', 'Saved the timestamps into the database', Verbosity::Normal, CustomDimensions);
             end;
-        Commit(); // to save the last time stamps into the database.
+#if not CLEAN27
+        if not ADLSETable.CheckIfNeedToCommitExternally(Rec."Table ID") then
+#endif
+            Commit(); // to save the last time stamps into the database.
     end;
+
     procedure ExportSchema(tableId: Integer)
     var
         ADLSESetup: Record "ADLSE Setup";

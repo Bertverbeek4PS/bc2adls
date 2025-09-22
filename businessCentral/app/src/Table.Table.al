@@ -67,6 +67,22 @@ table 82561 "ADLSE Table"
             Caption = 'Export File Number';
             AllowInCustomizations = Always;
         }
+#if not CLEAN27
+        field(16; "Process Type"; Enum "ADLSE Process Type")
+        {
+            Caption = 'Process Type';
+            DataClassification = CustomerContent;
+            ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing, Ignore Read Isolation disables read isolation for performance, and Commit Externally uses external commit for large tables.';
+
+            trigger OnValidate()
+            var
+                ADLSESetup: Record "ADLSE Setup";
+            begin
+                ADLSESetup.GetSingleton();
+                ADLSESetup.TestField("Storage Type", ADLSESetup."Storage Type"::"Open Mirroring");
+            end;
+        }
+#endif
     }
 
     keys
@@ -361,6 +377,32 @@ table 82561 "ADLSE Table"
         CurrentSession.Stop(Rec."Table ID", false, ADLSEUtil.GetTableCaption(Rec."Table ID"));
         Run.CancelRun(Rec."Table ID");
     end;
+
+#if not CLEAN27
+    procedure CheckIfNeedToCommitExternally(TableIdToUpdate: integer): Boolean
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
+    begin
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Storage Type" <> ADLSESetup."Storage Type"::"Open Mirroring" then
+            exit(false);
+        ADLSETable.Get(TableIdToUpdate);
+        exit(ADLSETable."Process Type" = ADLSETable."Process Type"::"Commit Externally");
+    end;
+
+    procedure CheckIfNeedToIgnoreReadIsolation(TableIdToUpdate: integer): Boolean
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
+    begin
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Storage Type" <> ADLSESetup."Storage Type"::"Open Mirroring" then
+            exit(false);
+        ADLSETable.Get(TableIdToUpdate);
+        exit(ADLSETable."Process Type" = ADLSETable."Process Type"::"Ignore Read Isolation");
+    end;
+#endif
 
     local procedure AddPrimaryKeyFields()
     var

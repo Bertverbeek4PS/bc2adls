@@ -122,6 +122,18 @@ table 82564 "ADLSE Table Last Timestamp"
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'rmi')]
     local procedure RecordLastTimestamp(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
+#if not CLEAN27
+    var
+        ADLSETable: Record "ADLSE Table";
+    begin
+        if not ADLSETable.CheckIfNeedToCommitExternally(TableID) then
+            exit(RecordLastTimestamp_InCurrSession(TableID, Timestamp, Upsert))
+        else
+            exit(RecordLastTimestamp_InBkgSession(TableID, Timestamp, Upsert));
+    end;
+
+    procedure RecordLastTimestamp_InCurrSession(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
+#endif
     var
         Company: Text;
     begin
@@ -137,6 +149,24 @@ table 82564 "ADLSE Table Last Timestamp"
             exit(Rec.Insert(true));
         end;
     end;
+
+#if not CLEAN27
+    local procedure RecordLastTimestamp_InBkgSession(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
+    var
+        SessionInstruction: Record "Session Instruction";
+        ParamsJson: JsonObject;
+    begin
+        SessionInstruction."Object Type" := SessionInstruction."Object Type"::Table;
+        SessionInstruction."Object ID" := Database::"ADLSE Table Last Timestamp";
+        SessionInstruction.Method := "ADLSE Session Method"::"Handle Last Timestamp Update";
+        ParamsJson.Add('TableId', TableID);
+        ParamsJson.Add('Timestamp', Timestamp);
+        ParamsJson.Add('Upsert', Upsert);
+        SessionInstruction.Params := Format(ParamsJson);
+        SessionInstruction.ExecuteInNewSession();
+        exit(true);
+    end;
+#endif
 
     local procedure ChangeLastTimestamp(Timestamp: BigInteger; Upsert: Boolean)
     begin
@@ -157,12 +187,40 @@ table 82564 "ADLSE Table Last Timestamp"
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'rm')]
     procedure SetIsPartialSync(TableID: Integer; IsPartialSync: Boolean)
+#if not CLEAN27
+    var
+        ADLSETable: Record "ADLSE Table";
+    begin
+        if not ADLSETable.CheckIfNeedToCommitExternally(TableID) then
+            SetIsPartialSync_InCurrSession(TableID, IsPartialSync)
+        else
+            SetIsPartialSync_InBkgSession(TableID, IsPartialSync);
+    end;
+
+    procedure SetIsPartialSync_InCurrSession(TableID: Integer; IsPartialSync: Boolean)
+#endif
     begin
         if not Rec.Get(GetCompanyNameToLookFor(TableID), TableID) then
             exit;
         Rec."Partial Sync" := IsPartialSync;
         Rec.Modify(true);
     end;
+
+#if not CLEAN27
+    local procedure SetIsPartialSync_InBkgSession(TableID: Integer; IsPartialSync: Boolean)
+    var
+        SessionInstruction: Record "Session Instruction";
+        ParamsJson: JsonObject;
+    begin
+        SessionInstruction."Object Type" := SessionInstruction."Object Type"::Table;
+        SessionInstruction."Object ID" := Database::"ADLSE Table Last Timestamp";
+        SessionInstruction.Method := "ADLSE Session Method"::"Handle Set Is Partial Sync";
+        ParamsJson.Add('TableId', TableID);
+        ParamsJson.Add('IsPartialSync', IsPartialSync);
+        SessionInstruction.Params := Format(ParamsJson);
+        SessionInstruction.ExecuteInNewSession();
+    end;
+#endif
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'r')]
     procedure GetIsPartialSync(TableID: Integer) IsPartialSync: Boolean
