@@ -84,6 +84,7 @@ codeunit 82561 "ADLSE Execute"
                 CustomDimensions.Add('Entity', TableCaption);
                 ADLSEExecution.Log('ADLSE-006', 'Saved the timestamps into the database', Verbosity::Normal, CustomDimensions);
             end;
+            ADLSETableLastTimestamp.SetIsPartialSync(Rec."Table ID", not ExportSuccess);
             Commit(); // to save the last time stamps into the database.
         end;
 
@@ -149,13 +150,18 @@ codeunit 82561 "ADLSE Execute"
     end;
 
     local procedure SetFilterForUpdates(TableID: Integer; UpdatedLastTimeStamp: BigInteger; SkipTimestampSorting: Boolean; var RecordRef: RecordRef; var TimeStampFieldRef: FieldRef)
+    var
+        ADLSELastTimestamp: Record "ADLSE Table Last Timestamp";
     begin
         RecordRef.Open(TableID);
         RecordRef.ReadIsolation := RecordRef.ReadIsolation::ReadCommitted;
         if not SkipTimestampSorting then
             RecordRef.SetView(TimestampAscendingSortViewTxt);
         TimeStampFieldRef := RecordRef.Field(0); // 0 is the TimeStamp field
-        TimeStampFieldRef.SetFilter('>%1', UpdatedLastTimeStamp);
+        if not ADLSELastTimestamp.GetIsPartialSync(TableID) then
+            TimeStampFieldRef.SetFilter('>%1', UpdatedLastTimeStamp)
+        else
+            TimeStampFieldRef.SetFilter('>=%1', UpdatedLastTimeStamp);
     end;
 
     local procedure ExportTableUpdates(TableID: Integer; FieldIdList: List of [Integer]; ADLSECommunication: Codeunit "ADLSE Communication"; var UpdatedLastTimeStamp: BigInteger; var DidUpserts: Boolean)
@@ -252,11 +258,16 @@ codeunit 82561 "ADLSE Execute"
     end;
 
     local procedure SetFilterForDeletes(TableID: Integer; DeletedLastEntryNo: BigInteger; var ADLSEDeletedRecord: Record "ADLSE Deleted Record")
+    var
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
     begin
         ADLSEDeletedRecord.ReadIsolation := ADLSEDeletedRecord.ReadIsolation::ReadCommitted;
         ADLSEDeletedRecord.SetView(TimestampAscendingSortViewTxt);
         ADLSEDeletedRecord.SetRange("Table ID", TableID);
-        ADLSEDeletedRecord.SetFilter("Entry No.", '>%1', DeletedLastEntryNo);
+        if not ADLSETableLastTimestamp.GetIsPartialSync(TableID) then
+            ADLSEDeletedRecord.SetFilter("Entry No.", '>%1', DeletedLastEntryNo)
+        else
+            ADLSEDeletedRecord.SetFilter("Entry No.", '>=%1', DeletedLastEntryNo);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'r')]
@@ -394,6 +405,43 @@ codeunit 82561 "ADLSE Execute"
                 ADLSEExecution.Log('ADLSE-041', 'All exports are finished', Verbosity::Normal);
     end;
 
+    procedure UpdateInProgressTableTimestamp(var Rec: Record "ADLSE Table"; LastTimestamp: BigInteger; Deletes: Boolean)
+    var
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+        ADLSEExecution: Codeunit "ADLSE Execution";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        CustomDimensions: Dictionary of [Text, Text];
+        TableCaption: Text;
+        TimestampUpdated: Boolean;
+    begin
+        if EmitTelemetry then
+            TableCaption := ADLSEUtil.GetTableCaption(Rec."Table ID");
+
+        if not Deletes then begin
+            TimestampUpdated := LastTimestamp > ADLSETableLastTimestamp.GetUpdatedLastTimestamp(Rec."Table ID");
+            if TimestampUpdated then
+                if not ADLSETableLastTimestamp.TrySaveUpdatedLastTimestamp(Rec."Table ID", LastTimestamp, EmitTelemetry) then begin
+                    SetStateFinished(Rec, TableCaption);
+                    exit;
+                end;
+        end else begin
+            TimestampUpdated := LastTimestamp > ADLSETableLastTimestamp.GetDeletedLastEntryNo(Rec."Table ID");
+            if TimestampUpdated then
+                if not ADLSETableLastTimestamp.TrySaveDeletedLastEntryNo(Rec."Table ID", LastTimestamp, EmitTelemetry) then begin
+                    SetStateFinished(Rec, TableCaption);
+                    exit;
+                end;
+        end;
+        
+        ADLSETableLastTimestamp.SetIsPartialSync(Rec."Table ID", true);
+        if TimestampUpdated then
+            if EmitTelemetry then begin
+                Clear(CustomDimensions);
+                CustomDimensions.Add('Entity', TableCaption);
+                ADLSEExecution.Log('ADLSE-006', 'Saved the timestamps into the database', Verbosity::Normal, CustomDimensions);
+            end;
+        Commit(); // to save the last time stamps into the database.
+    end;
     procedure ExportSchema(tableId: Integer)
     var
         ADLSESetup: Record "ADLSE Setup";

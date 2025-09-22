@@ -36,6 +36,11 @@ table 82564 "ADLSE Table Last Timestamp"
             Editable = false;
             Caption = 'Entry no. of the last deleted record';
         }
+        field(5; "Partial Sync"; Boolean)
+        {
+            Editable = false;
+            Caption = 'Partial Sync';
+        }
     }
 
     keys
@@ -148,5 +153,22 @@ table 82564 "ADLSE Table Last Timestamp"
         if ADLSEUtil.IsTablePerCompany(TableID) then
             exit(CurrentCompany());
         // else it remains blank
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'rm')]
+    procedure SetIsPartialSync(TableID: Integer; IsPartialSync: Boolean)
+    begin
+        if not Rec.Get(GetCompanyNameToLookFor(TableID), TableID) then
+            exit;
+        Rec."Partial Sync" := IsPartialSync;
+        Rec.Modify(true);
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'r')]
+    procedure GetIsPartialSync(TableID: Integer) IsPartialSync: Boolean
+    begin
+        if not Rec.Get(GetCompanyNameToLookFor(TableID), TableID) then
+            exit;
+        IsPartialSync := Rec."Partial Sync";
     end;
 }

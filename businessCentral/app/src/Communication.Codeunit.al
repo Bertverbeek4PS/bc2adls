@@ -249,9 +249,11 @@ codeunit 82562 "ADLSE Communication"
 
     local procedure CollectAndSendRecord(RecordRef: RecordRef; RecordTimeStamp: BigInteger; DataBlobCreated: Boolean; Deletes: Boolean) LastTimestampExported: BigInteger
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
         RecordPayLoad: Text;
     begin
+        ADLSESetup.GetSingleton();
         if NumberOfFlushes = 50000 then // https://docs.microsoft.com/en-us/rest/api/storageservices/put-block#remarks
             Error(CannotAddedMoreBlocksErr);
 
@@ -266,6 +268,8 @@ codeunit 82562 "ADLSE Communication"
                 // the record alone exceeds the max payload size
                 Error(SingleRecordTooLargeErr);
             FlushPayload();
+            if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
+                UpdateInProgressTimeStampOnTable(RecordRef.Number, RecordTimeStamp, Deletes);
         end;
         LastTimestampExported := LastFlushedTimeStamp;
 
@@ -454,6 +458,14 @@ codeunit 82562 "ADLSE Communication"
         end;
     end;
 
+    local procedure UpdateInProgressTimeStampOnTable(TableIDToUpdate: Integer; Timestamp: BigInteger; Deletes: Boolean)
+    var
+        ADLSETable: Record "ADLSE Table";
+        ADLSEExecute: Codeunit "ADLSE Execute";
+    begin
+        ADLSETable.Get(TableIDToUpdate);
+        ADLSEExecute.UpdateInProgressTableTimestamp(ADLSETable, Timestamp, Deletes);
+    end;
     local procedure IncreaseExportFileNumber(TableIdToUpdate: integer)
     var
         ADLSESetup: Record "ADLSE Setup";
