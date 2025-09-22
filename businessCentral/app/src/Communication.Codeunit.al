@@ -164,6 +164,12 @@ codeunit 82562 "ADLSE Communication"
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
     local procedure CreateDataBlob() Created: Boolean
+    begin
+        exit(CreateDataBlob(false));
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
+    local procedure CreateDataBlob(CheckOnly: Boolean) Created: Boolean
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
@@ -190,12 +196,13 @@ codeunit 82562 "ADLSE Communication"
                 Created := true;
                 BlobContentLength := 0;
 
-                if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring") then begin
-                    ADLSETable.Get(TableID);
-                    ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
-                    ADLSETable.Modify(true);
-                    Commit(); // Because of multiple files in one session can be exported
-                end;
+                // this is too early to increment file number
+                // if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring") then begin
+                //     ADLSETable.Get(TableID);
+                //     ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
+                //     ADLSETable.Modify(true);
+                //     Commit(); // Because of multiple files in one session can be exported
+                // end;
             end;
 
         if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Open Mirroring" then
@@ -216,23 +223,27 @@ codeunit 82562 "ADLSE Communication"
         else
             DataBlobPath := StrSubstNo(DeltasFileCsvTok, EntityName, ADLSEUtil.ToText(FileIdentifer));
 
-        ADLSEGen2Util.CreateDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials);
+        if not CheckOnly then
+            ADLSEGen2Util.CreateDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials);
         Created := true;
-        if EmitTelemetry then begin
-            Clear(CustomDimension);
-            CustomDimension.Add('Entity', EntityName);
-            CustomDimension.Add('DataBlobPath', DataBlobPath);
-            ADLSEExecution.Log('ADLSE-012', 'Created new blob to hold the data to be exported', Verbosity::Normal, CustomDimension);
-        end;
+        if not CheckOnly then
+            if EmitTelemetry then begin
+                Clear(CustomDimension);
+                CustomDimension.Add('Entity', EntityName);
+                CustomDimension.Add('DataBlobPath', DataBlobPath);
+                ADLSEExecution.Log('ADLSE-012', 'Created new blob to hold the data to be exported', Verbosity::Normal, CustomDimension);
+            end;
     end;
 
     [TryFunction]
     procedure TryCollectAndSendRecord(RecordRef: RecordRef; RecordTimeStamp: BigInteger; var LastTimestampExported: BigInteger; Deletes: Boolean)
     var
+        ADLSESetup: Record "ADLSE Setup";
         DataBlobCreated: Boolean;
     begin
         ClearLastError();
-        DataBlobCreated := CreateDataBlob();
+        ADLSESetup.GetSingleton();
+        DataBlobCreated := CreateDataBlob(ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring");
         LastTimestampExported := CollectAndSendRecord(RecordRef, RecordTimeStamp, DataBlobCreated, Deletes);
     end;
 
@@ -270,7 +281,12 @@ codeunit 82562 "ADLSE Communication"
     end;
 
     local procedure Finish() LastTimestampExported: BigInteger
+    var
+        ADLSESetup: Record "ADLSE Setup";
     begin
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+            if DataBlobPath = '' then
+                CreateDataBlob();
         FlushPayload();
 
         LastTimestampExported := LastFlushedTimeStamp;
@@ -291,6 +307,7 @@ codeunit 82562 "ADLSE Communication"
     local procedure FlushPayload()
     var
         ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSE: Codeunit ADLSE;
@@ -322,6 +339,10 @@ codeunit 82562 "ADLSE Communication"
                 end;
             ADLSESetup."Storage Type"::"Microsoft Fabric", ADLSESetup."Storage Type"::"Open Mirroring":
                 begin
+                    if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                        DataBlobPath := '';
+                        CreateDataBlob();
+                    end;
                     ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), BlobContentLength, ADLSECredentials);
                     BlobContentLength := ADLSEGen2Util.GetBlobContentLength(GetBaseUrl() + DataBlobPath, ADLSECredentials);
                 end;
@@ -331,6 +352,9 @@ codeunit 82562 "ADLSE Communication"
         Payload.Clear();
         LastRecordOnPayloadTimeStamp := 0;
         NumberOfFlushes += 1;
+
+        // increase export file number of the table when open mirroring is used
+        IncreaseExportFileNumber(TableID);
 
         ADLSE.OnTableExported(TableID, LastFlushedTimeStamp);
         if EmitTelemetry then begin
@@ -427,6 +451,19 @@ codeunit 82562 "ADLSE Communication"
                 ADLSEGen2Util.RemoveDeltasFromDataLake(ADLSEUtil.GetDataLakeCompliantTableName(ltableId), ADLSECredentials, AllCompanies);
             "ADLSE Storage Type"::"Open Mirroring":
                 ADLSEGen2Util.DropTableFromOpenMirroring(ADLSEUtil.GetDataLakeCompliantTableName(ltableId), ADLSECredentials, AllCompanies);
+        end;
+    end;
+
+    local procedure IncreaseExportFileNumber(TableIdToUpdate: integer)
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
+    begin
+        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring") then begin
+            ADLSETable.Get(TableIdToUpdate);
+            ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
+            ADLSETable.Modify(true);
+            Commit();
         end;
     end;
 }
