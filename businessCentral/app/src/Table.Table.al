@@ -124,6 +124,7 @@ table 82561 "ADLSE Table"
         TableCannotBeExportedErr: Label 'The table %1 cannot be exported because of the following error. \%2', Comment = '%1: Table ID, %2: error text';
         TablesResetTxt: Label '%1 table(s) were reset %2', Comment = '%1 = number of tables that were reset, %2 = message if tables are exported';
         TableResetExportedTxt: Label 'and are exported to the lakehouse. Please run the notebook first.';
+        StoppedByUserLbl: Label 'Session stopped by user.';
 
     procedure FieldsChosen(): Integer
     var
@@ -313,6 +314,52 @@ table 82561 "ADLSE Table"
                     ADLSEFields.Modify(true);
                 end;
             until ADLSEFields.Next() = 0;
+    end;
+
+    procedure GetLastHeartbeat(): DateTime
+    var
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+    begin
+        ADLSETableLastTimestamp.ReadIsolation(ReadIsolation::ReadUncommitted);
+        if not ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(Rec."Table ID") then
+            exit;
+        exit(ADLSETableLastTimestamp.SystemModifiedAt)
+    end;
+
+    procedure GetActiveSessionId(): Integer
+    var
+        ExpSessionId: Integer;
+    begin
+        ExpSessionId := GetCurrentSessionId();
+        if ExpSessionId = 0 then
+            exit;
+        if IsSessionActive(ExpSessionId) then
+            exit(ExpSessionId);
+    end;
+
+    procedure GetCurrentSessionId(): Integer
+    var
+        CurrentSession: Record "ADLSE Current Session";
+    begin
+        CurrentSession.ReadIsolation(ReadIsolation::ReadUncommitted);
+        if CurrentSession.Get(Rec."Table ID", CompanyName()) then
+            exit(CurrentSession."Session ID");
+        exit(0);
+    end;
+
+    procedure StopActiveSession()
+    var
+        CurrentSession: Record "ADLSE Current Session";
+        Run: Record "ADLSE Run";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        ExpSessionId: Integer;
+    begin
+        ExpSessionId := GetActiveSessionId();
+        if ExpSessionId <> 0 then
+            if IsSessionActive(ExpSessionId) then
+                Session.StopSession(ExpSessionId, StoppedByUserLbl);
+        CurrentSession.Stop(Rec."Table ID", false, ADLSEUtil.GetTableCaption(Rec."Table ID"));
+        Run.CancelRun(Rec."Table ID");
     end;
 
     local procedure AddPrimaryKeyFields()

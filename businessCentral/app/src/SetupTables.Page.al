@@ -63,6 +63,27 @@ page 82561 "ADLSE Setup Tables"
                     Editable = false;
                     ToolTip = 'Specifies the time of the last export from this table in this company.';
                 }
+                field(ExportFileNumber; Rec.ExportFileNumber)
+                {
+                    ApplicationArea = All;
+                    Editable = false;
+                    ToolTip = 'Specifies last file number used when exporting data from this table.';
+                }
+                field(LastHartbeat; Rec.GetLastHeartbeat())
+                {
+                    ApplicationArea = All;
+                    Caption = 'Last heartbeat';
+                    Editable = false;
+                    ToolTip = 'Specifies the time of the last heartbeat received from an export session for this table in this company.';
+                }
+                field(ActiveSessionId; Rec.GetActiveSessionId())
+                {
+                    ApplicationArea = All;
+                    Caption = 'Active session ID';
+                    Editable = false;
+                    BlankZero = true;
+                    ToolTip = 'Specifies the ID of the active export session for this table in this company, if any.';
+                }
                 field(LastError; LastRunError)
                 {
                     ApplicationArea = All;
@@ -249,6 +270,18 @@ page 82561 "ADLSE Setup Tables"
                     if AssignExportCategory.RunModal() = Action::LookupOK then
                         ADLSETable.ModifyAll(ExportCategory, AssignExportCategory.GetExportCategoryCode());
                     CurrPage.Update();
+                end;
+            }
+            action(StopExportSession)
+            {
+                ApplicationArea = All;
+                Caption = 'Stop Export Session';
+                ToolTip = 'Stops the active export session for the selected table in the current company.';
+                Image = Stop;
+                trigger OnAction()
+                begin
+                    Rec.StopActiveSession();
+                    CurrPage.Update(false);
                 end;
             }
         }
