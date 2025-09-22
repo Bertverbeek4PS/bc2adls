@@ -182,6 +182,8 @@ codeunit 82561 "ADLSE Execute"
         ErrorMessage: ErrorInfo;
         CurrentDateTime: DateTime;
         RecordModifiedAt: DateTime;
+        CollectedAndSent: Boolean;
+        NoMoreToCollect: Boolean;
     begin
         ADLSESetup.GetSingleton();
 
@@ -225,7 +227,8 @@ codeunit 82561 "ADLSE Execute"
 
                 if ((ADLSESetup."Delayed Export" = 0) or (CurrentDateTime - RecordModifiedAt > (ADLSESetup."Delayed Export" * 1000))) then begin
 
-                    if ADLSECommunication.TryCollectAndSendRecord(RecordRef, TimeStampFieldRef.Value(), FlushedTimeStamp, false) then begin
+                    CollectedAndSent := ADLSECommunication.TryCollectAndSendRecord(RecordRef, TimeStampFieldRef.Value(), FlushedTimeStamp, false);
+                    if CollectedAndSent then begin
                         if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
                             UpdatedLastTimeStamp := FlushedTimeStamp;
                     end else
@@ -236,13 +239,19 @@ codeunit 82561 "ADLSE Execute"
                         ADLSEExecution.Log('ADLSE-023', 'Skipping record in delay window', Verbosity::Normal, CustomDimensions);
                     end;
 
-            until RecordRef.Next() = 0;
+                if CollectedAndSent then 
+                    NoMoreToCollect := RecordRef.Next() = 0;
+            until (not CollectedAndSent or NoMoreToCollect);
 
+            if ErrorMessage.Message <> '' then
+                Error(ErrorMessage);
             if ADLSECommunication.TryFinish(FlushedTimeStamp) then begin
                 if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
                     UpdatedLastTimeStamp := FlushedTimeStamp
             end else
                 ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+            if ErrorMessage.Message <> '' then
+                Error(ErrorMessage);
         end;
         if EmitTelemetry then
             ADLSEExecution.Log('ADLSE-009', 'Updated records exported', Verbosity::Normal);
