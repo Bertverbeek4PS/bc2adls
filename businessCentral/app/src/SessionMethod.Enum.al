@@ -20,10 +20,5 @@ enum 82581 "ADLSE Session Method" implements "ADLSE Session Method Interface"
         Caption = 'Handle Record Last Timestamp';
         Implementation = "ADLSE Session Method Interface" = "ADLSE Method Imp. RecLastTime";
     }
-    value(3; "Handle Set Is Partial Sync")
-    {
-        Caption = 'Handle Set Is Partial Sync';
-        Implementation = "ADLSE Session Method Interface" = "ADLSE Method Imp. SetIsPart.";
-    }
 }
 #endif
