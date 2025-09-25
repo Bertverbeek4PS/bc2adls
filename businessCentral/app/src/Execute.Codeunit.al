@@ -95,14 +95,6 @@ codeunit 82561 "ADLSE Execute"
             else
                 ADLSEExecution.Log('ADLSE-040', 'Export completed with errors', Verbosity::Warning, CustomDimensions);
 
-        // update file number at the time of export; incrementing file number here is too late.
-        // //Addin the number when open mirroring is used
-        // if (ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring") and (ExportSuccess) then begin
-        //     ADLSETable.Get(Rec."Table ID");
-        //     ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
-        //     ADLSETable.Modify(true);
-        // end;
-
         ADLSEExternalEvents.OnAllExportIsFinished(ADLSESetup);
     end;
 
