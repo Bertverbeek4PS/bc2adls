@@ -67,6 +67,14 @@ table 82561 "ADLSE Table"
             Caption = 'Export File Number';
             AllowInCustomizations = Always;
         }
+#if not CLEAN27
+        field(16; "Process Type"; Enum "ADLSE Process Type")
+        {
+            Caption = 'Process Type';
+            DataClassification = CustomerContent;
+            ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing, Ignore Read Isolation disables read isolation for performance, and Commit Externally uses external commit for large tables.';
+        }
+#endif
     }
 
     keys
@@ -124,6 +132,7 @@ table 82561 "ADLSE Table"
         TableCannotBeExportedErr: Label 'The table %1 cannot be exported because of the following error. \%2', Comment = '%1: Table ID, %2: error text';
         TablesResetTxt: Label '%1 table(s) were reset %2', Comment = '%1 = number of tables that were reset, %2 = message if tables are exported';
         TableResetExportedTxt: Label 'and are exported to the lakehouse. Please run the notebook first.';
+        StoppedByUserLbl: Label 'Session stopped by user.';
 
     procedure FieldsChosen(): Integer
     var
@@ -314,6 +323,70 @@ table 82561 "ADLSE Table"
                 end;
             until ADLSEFields.Next() = 0;
     end;
+
+    procedure GetLastHeartbeat(): DateTime
+    var
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+    begin
+        ADLSETableLastTimestamp.ReadIsolation(ReadIsolation::ReadUncommitted);
+        if not ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(Rec."Table ID") then
+            exit;
+        exit(ADLSETableLastTimestamp.SystemModifiedAt)
+    end;
+
+    procedure GetActiveSessionId(): Integer
+    var
+        ExpSessionId: Integer;
+    begin
+        ExpSessionId := GetCurrentSessionId();
+        if ExpSessionId = 0 then
+            exit;
+        if IsSessionActive(ExpSessionId) then
+            exit(ExpSessionId);
+    end;
+
+    procedure GetCurrentSessionId(): Integer
+    var
+        CurrentSession: Record "ADLSE Current Session";
+    begin
+        CurrentSession.ReadIsolation(ReadIsolation::ReadUncommitted);
+        if CurrentSession.Get(Rec."Table ID", CompanyName()) then
+            exit(CurrentSession."Session ID");
+        exit(0);
+    end;
+
+    procedure StopActiveSession()
+    var
+        CurrentSession: Record "ADLSE Current Session";
+        Run: Record "ADLSE Run";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        ExpSessionId: Integer;
+    begin
+        ExpSessionId := GetActiveSessionId();
+        if ExpSessionId <> 0 then
+            if IsSessionActive(ExpSessionId) then
+                Session.StopSession(ExpSessionId, StoppedByUserLbl);
+        CurrentSession.Stop(Rec."Table ID", false, ADLSEUtil.GetTableCaption(Rec."Table ID"));
+        Run.CancelRun(Rec."Table ID");
+    end;
+
+#if not CLEAN27
+    procedure CheckIfNeedToCommitExternally(TableIdToUpdate: integer): Boolean
+    var
+        ADLSETable: Record "ADLSE Table";
+    begin
+        ADLSETable.Get(TableIdToUpdate);
+        exit(ADLSETable."Process Type" = ADLSETable."Process Type"::"Commit Externally");
+    end;
+
+    procedure CheckIfNeedToIgnoreReadIsolation(TableIdToUpdate: integer): Boolean
+    var
+        ADLSETable: Record "ADLSE Table";
+    begin
+        ADLSETable.Get(TableIdToUpdate);
+        exit(ADLSETable."Process Type" = ADLSETable."Process Type"::"Ignore Read Isolation");
+    end;
+#endif
 
     local procedure AddPrimaryKeyFields()
     var
