@@ -53,10 +53,7 @@ page 82561 "ADLSE Setup Tables"
                 field("Process Type"; Rec."Process Type")
                 {
                     ApplicationArea = All;
-                    ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing. Only change this setting if you experience performance issues with exports. Ignore Read Isolation boosts performance by disabling read isolation (NB! make sure there is no write-activity on subject table; failure may compromise export data consistency; Commit Externally uses external commit session to commit process when working with for large tables. Both address pre BC27 read isolation issue.';
-                    Visible = IsOpenMirrorRelated;
-                    Enabled = IsOpenMirrorRelated;
-                    Editable = IsOpenMirrorRelated;
+                    ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing. Only change this setting if you experience performance issues with exports. Ignore Read Isolation boosts performance by disabling read isolation (NB! make sure there is no write-activity on subject table; failure may compromise export data consistency); Commit Externally uses external commit session to commit process when working with large tables. Both address Read Isolation in pre BC27 systems.';
 
                     trigger OnValidate()
                     begin
@@ -321,9 +318,6 @@ page 82561 "ADLSE Setup Tables"
         TableMetadata: Record "Table Metadata";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSERun: Record "ADLSE Run";
-#if not CLEAN27
-        ADLSESetup: Record "ADLSE Setup";
-#endif
         ADLSEUtil: Codeunit "ADLSE Util";
     begin
         if TableMetadata.Get(Rec."Table ID") then begin
@@ -342,11 +336,6 @@ page 82561 "ADLSE Setup Tables"
         end;
         ADLSERun.GetLastRunDetails(Rec."Table ID", LastRunState, LastStarted, LastRunError);
 
-#if not CLEAN27
-        ADLSESetup.GetSingleton();
-        IsOpenMirrorRelated := ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring";
-#endif
-        
         IssueNotificationIfInvalidFieldsConfiguredToBeExported();
     end;
 
@@ -361,14 +350,11 @@ page 82561 "ADLSE Setup Tables"
         LastStarted: DateTime;
         LastRunError: Text[2048];
         NoExportInProgress: Boolean;
-#if not CLEAN27
-        IsOpenMirrorRelated: Boolean;
-#endif
         InvalidFieldNotificationSent: List of [Integer];
         InvalidFieldConfiguredMsg: Label 'The following fields have been incorrectly enabled for exports in the table %1: %2', Comment = '%1 = table name; %2 = List of invalid field names';
         WarnOfSchemaChangeQst: Label 'Data may have been exported from this table before. Changing the export schema now may cause unexpected side- effects. You may reset the table first so all the data shall be exported afresh. Do you still wish to continue?';
 #if not CLEAN27
-        CommitExternallyWarningQst: Label 'Using this feature will cause export to use additional background session, which may fail if database is busy during export. It is recommended that such table export would happen via dedicated job queue and in isolated window. Do you wish to continue?';
+        CommitExternallyWarningQst: Label 'Using this feature will cause export to use an additional background session, which may fail if database is busy during export. It is recommended that such table export would happen via dedicated job queue and in isolated window. Do you wish to continue?';
         IgnoreReadIsolationWarningQst: Label 'This will disable read isolation to boost performance. Make sure there is no write activity on this table during export, as this may compromise data consistency. Do you wish to continue?';
 #endif
 

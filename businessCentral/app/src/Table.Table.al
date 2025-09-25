@@ -73,14 +73,6 @@ table 82561 "ADLSE Table"
             Caption = 'Process Type';
             DataClassification = CustomerContent;
             ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing, Ignore Read Isolation disables read isolation for performance, and Commit Externally uses external commit for large tables.';
-
-            trigger OnValidate()
-            var
-                ADLSESetup: Record "ADLSE Setup";
-            begin
-                ADLSESetup.GetSingleton();
-                ADLSESetup.TestField("Storage Type", ADLSESetup."Storage Type"::"Open Mirroring");
-            end;
         }
 #endif
     }
@@ -381,24 +373,16 @@ table 82561 "ADLSE Table"
 #if not CLEAN27
     procedure CheckIfNeedToCommitExternally(TableIdToUpdate: integer): Boolean
     var
-        ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
     begin
-        ADLSESetup.GetSingleton();
-        if ADLSESetup."Storage Type" <> ADLSESetup."Storage Type"::"Open Mirroring" then
-            exit(false);
         ADLSETable.Get(TableIdToUpdate);
         exit(ADLSETable."Process Type" = ADLSETable."Process Type"::"Commit Externally");
     end;
 
     procedure CheckIfNeedToIgnoreReadIsolation(TableIdToUpdate: integer): Boolean
     var
-        ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
     begin
-        ADLSESetup.GetSingleton();
-        if ADLSESetup."Storage Type" <> ADLSESetup."Storage Type"::"Open Mirroring" then
-            exit(false);
         ADLSETable.Get(TableIdToUpdate);
         exit(ADLSETable."Process Type" = ADLSETable."Process Type"::"Ignore Read Isolation");
     end;
