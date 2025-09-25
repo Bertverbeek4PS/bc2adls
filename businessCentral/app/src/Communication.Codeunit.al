@@ -358,7 +358,8 @@ codeunit 82562 "ADLSE Communication"
         NumberOfFlushes += 1;
 
         // increase export file number of the table when open mirroring is used
-        IncreaseExportFileNumber(TableID);
+        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring") then
+            IncreaseExportFileNumber(TableID);
 
         ADLSE.OnTableExported(TableID, LastFlushedTimeStamp);
         if EmitTelemetry then begin
