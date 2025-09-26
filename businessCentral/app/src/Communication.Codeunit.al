@@ -164,6 +164,12 @@ codeunit 82562 "ADLSE Communication"
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
     local procedure CreateDataBlob() Created: Boolean
+    begin
+        exit(CreateDataBlob(false));
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
+    local procedure CreateDataBlob(CheckOnly: Boolean) Created: Boolean
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
@@ -189,13 +195,6 @@ codeunit 82562 "ADLSE Communication"
                 end;
                 Created := true;
                 BlobContentLength := 0;
-
-                if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring") then begin
-                    ADLSETable.Get(TableID);
-                    ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
-                    ADLSETable.Modify(true);
-                    Commit(); // Because of multiple files in one session can be exported
-                end;
             end;
 
         if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Open Mirroring" then
@@ -216,31 +215,37 @@ codeunit 82562 "ADLSE Communication"
         else
             DataBlobPath := StrSubstNo(DeltasFileCsvTok, EntityName, ADLSEUtil.ToText(FileIdentifer));
 
-        ADLSEGen2Util.CreateDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials);
+        if not CheckOnly then
+            ADLSEGen2Util.CreateDataBlob(GetBaseUrl() + DataBlobPath, ADLSECredentials);
         Created := true;
-        if EmitTelemetry then begin
-            Clear(CustomDimension);
-            CustomDimension.Add('Entity', EntityName);
-            CustomDimension.Add('DataBlobPath', DataBlobPath);
-            ADLSEExecution.Log('ADLSE-012', 'Created new blob to hold the data to be exported', Verbosity::Normal, CustomDimension);
-        end;
+        if not CheckOnly then
+            if EmitTelemetry then begin
+                Clear(CustomDimension);
+                CustomDimension.Add('Entity', EntityName);
+                CustomDimension.Add('DataBlobPath', DataBlobPath);
+                ADLSEExecution.Log('ADLSE-012', 'Created new blob to hold the data to be exported', Verbosity::Normal, CustomDimension);
+            end;
     end;
 
     [TryFunction]
     procedure TryCollectAndSendRecord(RecordRef: RecordRef; RecordTimeStamp: BigInteger; var LastTimestampExported: BigInteger; Deletes: Boolean)
     var
+        ADLSESetup: Record "ADLSE Setup";
         DataBlobCreated: Boolean;
     begin
         ClearLastError();
-        DataBlobCreated := CreateDataBlob();
+        ADLSESetup.GetSingleton();
+        DataBlobCreated := CreateDataBlob(ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring");
         LastTimestampExported := CollectAndSendRecord(RecordRef, RecordTimeStamp, DataBlobCreated, Deletes);
     end;
 
     local procedure CollectAndSendRecord(RecordRef: RecordRef; RecordTimeStamp: BigInteger; DataBlobCreated: Boolean; Deletes: Boolean) LastTimestampExported: BigInteger
     var
+        ADLSESetup: Record "ADLSE Setup";
         ADLSEUtil: Codeunit "ADLSE Util";
         RecordPayLoad: Text;
     begin
+        ADLSESetup.GetSingleton();
         if NumberOfFlushes = 50000 then // https://docs.microsoft.com/en-us/rest/api/storageservices/put-block#remarks
             Error(CannotAddedMoreBlocksErr);
 
@@ -255,6 +260,8 @@ codeunit 82562 "ADLSE Communication"
                 // the record alone exceeds the max payload size
                 Error(SingleRecordTooLargeErr);
             FlushPayload();
+            if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
+                UpdateInProgressTimeStampOnTable(RecordRef.Number, RecordTimeStamp, Deletes);
         end;
         LastTimestampExported := LastFlushedTimeStamp;
 
@@ -270,7 +277,12 @@ codeunit 82562 "ADLSE Communication"
     end;
 
     local procedure Finish() LastTimestampExported: BigInteger
+    var
+        ADLSESetup: Record "ADLSE Setup";
     begin
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+            if DataBlobPath = '' then
+                CreateDataBlob();
         FlushPayload();
 
         LastTimestampExported := LastFlushedTimeStamp;
@@ -291,6 +303,7 @@ codeunit 82562 "ADLSE Communication"
     local procedure FlushPayload()
     var
         ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSE: Codeunit ADLSE;
@@ -322,6 +335,10 @@ codeunit 82562 "ADLSE Communication"
                 end;
             ADLSESetup."Storage Type"::"Microsoft Fabric", ADLSESetup."Storage Type"::"Open Mirroring":
                 begin
+                    if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                        DataBlobPath := '';
+                        CreateDataBlob();
+                    end;
                     ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), BlobContentLength, ADLSECredentials);
                     BlobContentLength := ADLSEGen2Util.GetBlobContentLength(GetBaseUrl() + DataBlobPath, ADLSECredentials);
                 end;
@@ -331,6 +348,10 @@ codeunit 82562 "ADLSE Communication"
         Payload.Clear();
         LastRecordOnPayloadTimeStamp := 0;
         NumberOfFlushes += 1;
+
+        // increase export file number of the table when open mirroring is used
+        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring") then
+            IncreaseExportFileNumber(TableID);
 
         ADLSE.OnTableExported(TableID, LastFlushedTimeStamp);
         if EmitTelemetry then begin
@@ -429,4 +450,51 @@ codeunit 82562 "ADLSE Communication"
                 ADLSEGen2Util.DropTableFromOpenMirroring(ADLSEUtil.GetDataLakeCompliantTableName(ltableId), ADLSECredentials, AllCompanies);
         end;
     end;
+
+    local procedure UpdateInProgressTimeStampOnTable(TableIDToUpdate: Integer; Timestamp: BigInteger; Deletes: Boolean)
+    var
+        ADLSETable: Record "ADLSE Table";
+        ADLSEExecute: Codeunit "ADLSE Execute";
+    begin
+        ADLSETable.Get(TableIDToUpdate);
+        ADLSEExecute.UpdateInProgressTableTimestamp(ADLSETable, Timestamp, Deletes);
+    end;
+    local procedure IncreaseExportFileNumber(TableIdToUpdate: integer)
+#if not CLEAN27
+    var
+        ADLSETable: Record "ADLSE Table";
+    begin
+        // commit in current session causes RecRef.Next() to request data rom SQL ignoring subset retrieved from FindSet() (???) - this causes drastic performance issues when dealing with big tables; file number increase is pushed to another session for that purpose.
+        if not ADLSETable.CheckIfNeedToCommitExternally(TableIdToUpdate) then
+            IncreaseExportFileNumber_InCurrSession(TableIdToUpdate)
+        else
+            IncreaseExportFileNumber_InBkgSession(TableIdToUpdate);
+    end;
+
+    procedure IncreaseExportFileNumber_InCurrSession(TableIdToUpdate: integer)
+#endif
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
+    begin
+        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring") then begin
+            ADLSETable.Get(TableIdToUpdate);
+            ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
+            ADLSETable.Modify(true);
+            Commit();
+        end;
+    end;
+
+#if not CLEAN27
+    local procedure IncreaseExportFileNumber_InBkgSession(TableIdToUpdate: integer)
+    var
+        SessionInstruction: Record "Session Instruction";
+    begin
+        SessionInstruction."Object Type" := SessionInstruction."Object Type"::Codeunit;
+        SessionInstruction."Object ID" := Codeunit::"ADLSE Communication";
+        SessionInstruction.Method := "ADLSE Session Method"::"Handle Export File Number Increase";
+        SessionInstruction.Params := format(TableIdToUpdate);
+        SessionInstruction.ExecuteInNewSession();
+    end;
+#endif
 }

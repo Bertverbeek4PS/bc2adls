@@ -177,6 +177,17 @@ table 82566 "ADLSE Run"
         Rec.ModifyAll(Error, ExportStoppedDueToCancelledSessionTxt, true);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'm')]
+    procedure CancelRun(TableID: Integer)
+    begin
+        if not FindLastRun(TableID) then
+            exit;
+        Rec.Validate(Ended, CurrentDateTime());
+        Rec.Validate(State, "ADLSE Run State"::Failed);
+        Rec.Validate(Error, ExportStoppedDueToCancelledSessionTxt);
+        Rec.Modify(true);
+    end;
+
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'r')]
     procedure OldRunsExist(): Boolean
     begin

@@ -43,6 +43,9 @@ codeunit 82570 "ADLSE Session Manager"
                     if (ADLSESetup."Export Company Database Tables" <> CompanyName()) then
                         exit;
 
+#if not CLEAN27
+            Sleep(500);  // to prevent throttling
+#endif
             Started := Session.StartSession(NewSessionID, Codeunit::"ADLSE Wrapper Execute", CompanyName(), ADLSETable);
             CustomDimensions.Add('Entity', ADLSEUtil.GetTableCaption(TableID));
             CustomDimensions.Add('ExportWasPending', Format(ExportWasPending));

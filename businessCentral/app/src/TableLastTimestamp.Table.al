@@ -117,6 +117,18 @@ table 82564 "ADLSE Table Last Timestamp"
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'rmi')]
     local procedure RecordLastTimestamp(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
+#if not CLEAN27
+    var
+        ADLSETable: Record "ADLSE Table";
+    begin
+        if not ADLSETable.CheckIfNeedToCommitExternally(TableID) then
+            exit(RecordLastTimestamp_InCurrSession(TableID, Timestamp, Upsert))
+        else
+            exit(RecordLastTimestamp_InBkgSession(TableID, Timestamp, Upsert));
+    end;
+
+    procedure RecordLastTimestamp_InCurrSession(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
+#endif
     var
         Company: Text;
     begin
@@ -132,6 +144,24 @@ table 82564 "ADLSE Table Last Timestamp"
             exit(Rec.Insert(true));
         end;
     end;
+
+#if not CLEAN27
+    local procedure RecordLastTimestamp_InBkgSession(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
+    var
+        SessionInstruction: Record "Session Instruction";
+        ParamsJson: JsonObject;
+    begin
+        SessionInstruction."Object Type" := SessionInstruction."Object Type"::Table;
+        SessionInstruction."Object ID" := Database::"ADLSE Table Last Timestamp";
+        SessionInstruction.Method := "ADLSE Session Method"::"Handle Last Timestamp Update";
+        ParamsJson.Add('TableId', TableID);
+        ParamsJson.Add('Timestamp', Timestamp);
+        ParamsJson.Add('Upsert', Upsert);
+        SessionInstruction.Params := Format(ParamsJson);
+        SessionInstruction.ExecuteInNewSession();
+        exit(true);
+    end;
+#endif
 
     local procedure ChangeLastTimestamp(Timestamp: BigInteger; Upsert: Boolean)
     begin
