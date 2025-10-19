@@ -449,7 +449,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             FieldType::Decimal:
                 exit('Double');
             FieldType::Duration:
-                exit('Int32');
+                exit(GetCDMDataFormat_String());
             FieldType::Integer:
                 exit('Int32');
             FieldType::Option:
