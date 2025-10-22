@@ -156,9 +156,9 @@ codeunit 82564 "ADLSE Util"
             AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
             AllObjWithCaption.SetFilter("Object ID", '<>%1', TableID);
             if ADLSESetup."Use Table Captions" then
-                AllObjWithCaption.SetFilter("Object Caption", OrigTableName)
+                AllObjWithCaption.SetRange("Object Caption", OrigTableName)
             else
-                AllObjWithCaption.SetFilter("Object Name", OrigTableName);
+                AllObjWithCaption.SetRange("Object Name", OrigTableName);
             if AllObjWithCaption.IsEmpty() then // there is not a duplicate table caption
                 exit(GetDataLakeCompliantName(OrigTableName))
             else
