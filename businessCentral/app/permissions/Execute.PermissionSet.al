@@ -12,7 +12,7 @@ permissionset 82561 "ADLSE - Execute"
     Permissions = table "ADLSE Setup" = x,
                   tabledata "ADLSE Setup" = RM,
                   tabledata "ADLSE Table" = RM,
-                  tabledata "ADLSE Field" = R,
+                  tabledata "ADLSE Companies Table" = RM,
                   tabledata "ADLSE Deleted Record" = R,
                   tabledata "ADLSE Current Session" = RIMD,
                   tabledata "ADLSE Table Last Timestamp" = RIMD,
@@ -20,6 +20,7 @@ permissionset 82561 "ADLSE - Execute"
                   tabledata "ADLSE Enum Translation" = RIMD,
                   tabledata "ADLSE Enum Translation Lang" = RIMD,
                   tabledata "Deleted Tables Not to Sync" = R,
+                  tabledata "ADLSE Sync Companies" = RIMD,
 #pragma warning disable AL0432
                   tabledata "ADLSE Export Category" = R,
 #pragma warning restore AL0432
