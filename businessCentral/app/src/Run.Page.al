@@ -73,6 +73,11 @@ page 82563 "ADLSE Run"
         Rec.SetAscending(Started, false); // the last log at the top
     end;
 
+    procedure SetCompanyName(parCompanyName: Text)
+    begin
+        Rec.SetRange("Company Name", parCompanyName);
+    end;
+
     trigger OnAfterGetRecord()
     var
         ADLSEUtil: Codeunit "ADLSE Util";
