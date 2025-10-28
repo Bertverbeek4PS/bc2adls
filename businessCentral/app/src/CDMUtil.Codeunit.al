@@ -456,7 +456,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                 begin
                     ADLSESetup.GetSingleton();
                     if ADLSESetup."Export Enum as Integer" then
-                        exit('Int16')
+                        exit('Int32')
                     else
                         exit(GetCDMDataFormat_String());
                 end;
