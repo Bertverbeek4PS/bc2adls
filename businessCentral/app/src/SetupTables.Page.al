@@ -129,6 +129,11 @@ page 82561 "ADLSE Setup Tables"
                     Caption = 'Export Category';
                     ApplicationArea = All;
                 }
+                field("Initial Load Start Date"; Rec."Initial Load Start Date")
+                {
+                    Caption = 'Initial Load Start Date';
+                    ApplicationArea = All;
+                }
             }
         }
     }

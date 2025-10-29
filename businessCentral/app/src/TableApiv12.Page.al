@@ -26,6 +26,9 @@ page 82575 "ADLSE Table API v12"
                 {
                     Editable = false;
                 }
+                field(initialLoadStartDate; Rec."Initial Load Start Date")
+                {
+                }
                 field(id; Rec.SystemId)
                 {
                     Editable = false;
