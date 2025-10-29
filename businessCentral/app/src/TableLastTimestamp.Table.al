@@ -64,19 +64,18 @@ table 82564 "ADLSE Table Last Timestamp"
         MinTimestamp: BigInteger;
     begin
         if ExistsUpdatedLastTimestamp(TableID) then
-            exit(Rec."Updated Last Timestamp");
+            if Rec."Updated Last Timestamp" <> 0 then
+                exit(Rec."Updated Last Timestamp");
 
-        // If no timestamp exists (initial load), check if Initial Load Start Date is set
-        if ADLSETable.Get(TableID) then
-            if ADLSETable."Initial Load Start Date" <> 0D then begin
-                InitialLoadStartDate := ADLSETable."Initial Load Start Date";
-                // Find the minimum timestamp for records >= Initial Load Start Date
-                MinTimestamp := GetMinTimestampFromDate(TableID, InitialLoadStartDate);
-                if MinTimestamp > 0 then
-                    exit(MinTimestamp - 1); // Return one less so the first record is included
-            end;
+        if ADLSETable.Get(TableID) then;
+        if ADLSETable."Initial Load Start Date" = 0D then
+            exit(0);
 
-        // Default behavior: return 0 to export all historical data
+        InitialLoadStartDate := ADLSETable."Initial Load Start Date";
+        MinTimestamp := GetMinTimestampFromDate(TableID, InitialLoadStartDate);
+        if MinTimestamp > 0 then
+            exit(MinTimestamp);
+
         exit(0);
     end;
 
@@ -86,22 +85,26 @@ table 82564 "ADLSE Table Last Timestamp"
         TimestampFieldRef: FieldRef;
         ModifiedAtFieldRef: FieldRef;
         MinTimestamp: BigInteger;
+        FilterDateTime: DateTime;
     begin
         RecordRef.Open(TableID);
-        if not RecordRef.FieldExist(RecordRef.SystemModifiedAtNo()) then begin
-            RecordRef.Close();
-            exit(0);
-        end;
+        FilterDateTime := CreateDateTime(StartDate, 0T);
 
         ModifiedAtFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
-        ModifiedAtFieldRef.SetFilter('>=%1', CreateDateTime(StartDate, 0T));
-
-        TimestampFieldRef := RecordRef.Field(0); // Timestamp field
-        RecordRef.SetView('Sorting(Timestamp) Order(Ascending)');
+        ModifiedAtFieldRef.SetFilter('>=%1', FilterDateTime);
 
         if RecordRef.FindFirst() then begin
             TimestampFieldRef := RecordRef.Field(0);
             MinTimestamp := TimestampFieldRef.Value();
+        end else begin
+            RecordRef.Reset();
+            ModifiedAtFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
+            ModifiedAtFieldRef.SetFilter('<%1', FilterDateTime);
+
+            if RecordRef.FindLast() then begin
+                TimestampFieldRef := RecordRef.Field(0);
+                MinTimestamp := TimestampFieldRef.Value();
+            end;
         end;
 
         RecordRef.Close();
