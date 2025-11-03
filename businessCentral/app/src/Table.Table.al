@@ -67,6 +67,11 @@ table 82561 "ADLSE Table"
             Caption = 'Export File Number';
             AllowInCustomizations = Always;
         }
+        field(17; "Initial Load Start Date"; Date)
+        {
+            Caption = 'Initial Load Start Date';
+            ToolTip = 'Specifies the starting date for the initial data load. Only records with SystemModifiedAt >= this date will be exported on the first export. Leave blank to export all historical data.';
+        }
 #if not CLEAN27
         field(16; "Process Type"; Enum "ADLSE Process Type")
         {

@@ -56,10 +56,59 @@ table 82564 "ADLSE Table Last Timestamp"
         exit(Rec.Get(GetCompanyNameToLookFor(TableID), TableID));
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     procedure GetUpdatedLastTimestamp(TableID: Integer): BigInteger
+    var
+        ADLSETable: Record "ADLSE Table";
+        InitialLoadStartDate: Date;
+        MinTimestamp: BigInteger;
     begin
         if ExistsUpdatedLastTimestamp(TableID) then
-            exit(Rec."Updated Last Timestamp");
+            if Rec."Updated Last Timestamp" <> 0 then
+                exit(Rec."Updated Last Timestamp");
+
+        if ADLSETable.Get(TableID) then;
+        if ADLSETable."Initial Load Start Date" = 0D then
+            exit(0);
+
+        InitialLoadStartDate := ADLSETable."Initial Load Start Date";
+        MinTimestamp := GetMinTimestampFromDate(TableID, InitialLoadStartDate);
+        if MinTimestamp > 0 then
+            exit(MinTimestamp);
+
+        exit(0);
+    end;
+
+    local procedure GetMinTimestampFromDate(TableID: Integer; StartDate: Date): BigInteger
+    var
+        RecordRef: RecordRef;
+        TimestampFieldRef: FieldRef;
+        ModifiedAtFieldRef: FieldRef;
+        MinTimestamp: BigInteger;
+        FilterDateTime: DateTime;
+    begin
+        RecordRef.Open(TableID);
+        FilterDateTime := CreateDateTime(StartDate, 0T);
+
+        ModifiedAtFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
+        ModifiedAtFieldRef.SetFilter('>=%1', FilterDateTime);
+
+        if RecordRef.FindFirst() then begin
+            TimestampFieldRef := RecordRef.Field(0);
+            MinTimestamp := TimestampFieldRef.Value();
+        end else begin
+            RecordRef.Reset();
+            ModifiedAtFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
+            ModifiedAtFieldRef.SetFilter('<%1', FilterDateTime);
+
+            if RecordRef.FindLast() then begin
+                TimestampFieldRef := RecordRef.Field(0);
+                MinTimestamp := TimestampFieldRef.Value();
+            end;
+        end;
+
+        RecordRef.Close();
+        exit(MinTimestamp);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'r')]
