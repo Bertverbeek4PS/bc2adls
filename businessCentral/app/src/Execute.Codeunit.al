@@ -94,8 +94,6 @@ codeunit 82561 "ADLSE Execute"
                 ADLSEExecution.Log('ADLSE-005', 'Export completed without error', Verbosity::Normal, CustomDimensions)
             else
                 ADLSEExecution.Log('ADLSE-040', 'Export completed with errors', Verbosity::Warning, CustomDimensions);
-
-        ADLSEExternalEvents.OnAllExportIsFinished(ADLSESetup);
     end;
 
     var
@@ -239,7 +237,7 @@ codeunit 82561 "ADLSE Execute"
                         ADLSEExecution.Log('ADLSE-023', 'Skipping record in delay window', Verbosity::Normal, CustomDimensions);
                     end;
 
-                if CollectedAndSent then 
+                if CollectedAndSent then
                     NoMoreToCollect := RecordRef.Next() = 0;
             until (not CollectedAndSent or NoMoreToCollect);
 
@@ -401,12 +399,15 @@ codeunit 82561 "ADLSE Execute"
         // batch. 
         ADLSESessionManager.StartExportFromPendingTables();
 
-        ADLSESetupRec.GetSingleton();
-        ADLSEExternalEvents.OnExportFinished(ADLSESetupRec, ADLSETable);
 
-        if not ADLSECurrentSession.AreAnySessionsActive() then
+
+        if not ADLSECurrentSession.AreAnySessionsActive() then begin
+            ADLSESetupRec.GetSingleton();
+            ADLSEExternalEvents.OnExportFinished(ADLSESetupRec, ADLSETable);
+
             if EmitTelemetry then
                 ADLSEExecution.Log('ADLSE-041', 'All exports are finished', Verbosity::Normal);
+        end;
     end;
 
     procedure UpdateInProgressTableTimestamp(var Rec: Record "ADLSE Table"; LastTimestamp: BigInteger; Deletes: Boolean)
@@ -439,7 +440,7 @@ codeunit 82561 "ADLSE Execute"
                     exit;
                 end;
         end;
-        
+
         if TimestampUpdated then
             if EmitTelemetry then begin
                 Clear(CustomDimensions);
