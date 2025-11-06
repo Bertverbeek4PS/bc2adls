@@ -16,7 +16,6 @@ table 82561 "ADLSE Table"
     {
         field(1; "Table ID"; Integer)
         {
-            AllowInCustomizations = Always;
             Editable = false;
             Caption = 'Table ID';
         }
@@ -31,7 +30,6 @@ table 82561 "ADLSE Table"
         {
             Editable = false;
             Caption = 'Enabled';
-            ToolTip = 'Specifies the state of the table. Set this checkmark to export this table, otherwise not.';
 
             trigger OnValidate()
             var
@@ -60,24 +58,20 @@ table 82561 "ADLSE Table"
         {
             TableRelation = "ADLSE Export Category Table";
             DataClassification = CustomerContent;
-            ToolTip = 'Specifies the Export Category which can be linked to tables which are part of the export to Azure Datalake. The Category can be used to schedule the export.';
         }
         field(15; ExportFileNumber; Integer)
         {
             Caption = 'Export File Number';
-            AllowInCustomizations = Always;
         }
         field(17; "Initial Load Start Date"; Date)
         {
             Caption = 'Initial Load Start Date';
-            ToolTip = 'Specifies the starting date for the initial data load. Only records with SystemModifiedAt >= this date will be exported on the first export. Leave blank to export all historical data.';
         }
 #if not CLEAN27
         field(16; "Process Type"; Enum "ADLSE Process Type")
         {
             Caption = 'Process Type';
             DataClassification = CustomerContent;
-            ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing, Ignore Read Isolation disables read isolation for performance, and Commit Externally uses external commit for large tables.';
         }
 #endif
     }
@@ -301,7 +295,11 @@ table 82561 "ADLSE Table"
             repeat
                 if not ADLSESetup.CanFieldBeExported(ADLSEField."Table ID", ADLSEField."Field ID") then begin
                     ADLSEField.CalcFields(FieldCaption);
-                    FieldList.Add(ADLSEField.FieldCaption <> '' ? ADLSEField.FieldCaption : StrSubstNo(RemovedFieldNameLbl, ADLSEField."Field ID"));
+                    //FieldList.Add(ADLSEField.FieldCaption <> '' ? ADLSEField.FieldCaption : StrSubstNo(RemovedFieldNameLbl, ADLSEField."Field ID"));
+                    if ADLSEField.FieldCaption <> '' then
+                        FieldList.Add(ADLSEField.FieldCaption)
+                    else
+                        FieldList.Add(StrSubstNo(RemovedFieldNameLbl, ADLSEField."Field ID"));                    
                 end;
             until ADLSEField.Next() = 0;
 

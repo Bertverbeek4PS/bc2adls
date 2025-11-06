@@ -12,6 +12,7 @@ page 82564 "Deleted Tables Not To Sync"
             {
                 field(TableId; rec.TableId)
                 {
+                    ToolTip = 'Specify the ID of the table that should not be tracked for deletes.';
                     trigger OnLookup(var Text: Text): Boolean
                     var
                         TableMetadata: Record "Table Metadata";
@@ -21,7 +22,10 @@ page 82564 "Deleted Tables Not To Sync"
                             rec.TableId := TableMetadata.ID;
                     end;
                 }
-                field("Table Caption"; rec."Table Caption") { }
+                field("Table Caption"; rec."Table Caption")
+                {
+                    ToolTip = 'Specifies the caption of the table whose data is to exported.';
+                }
             }
         }
     }

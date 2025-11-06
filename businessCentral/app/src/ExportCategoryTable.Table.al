@@ -11,14 +11,12 @@ table 82571 "ADLSE Export Category Table"
         {
             Caption = 'Code';
             DataClassification = CustomerContent;
-            ToolTip = 'Specifies the Unique Code of a Export Category which can be linked to tables which are part of the export to Azure Datalake.';
             NotBlank = true;
         }
         field(10; Description; Text[250])
         {
             Caption = 'Description';
             DataClassification = CustomerContent;
-            ToolTip = 'Specifies the Description of the Export Category.';
         }
     }
     keys

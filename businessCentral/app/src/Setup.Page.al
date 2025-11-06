@@ -51,15 +51,15 @@ page 82560 "ADLSE Setup"
                     Editable = not AzureDataLake;
                     field(Workspace; Rec.Workspace)
                     {
-                        Editable = not this.FabricOpenMirroring;
+                        Editable = not FabricOpenMirroring;
                     }
                     field(Lakehouse; Rec.Lakehouse)
                     {
-                        Editable = not this.FabricOpenMirroring;
+                        Editable = not FabricOpenMirroring;
                     }
                     field(LandingZone; Rec.LandingZone)
                     {
-                        Editable = this.FabricOpenMirroring;
+                        Editable = FabricOpenMirroring;
                     }
                 }
                 group(Access)
@@ -151,7 +151,7 @@ page 82560 "ADLSE Setup"
                     }
                     field("Delete Table"; Rec."Delete Table")
                     {
-                        Editable = not this.FabricOpenMirroring;
+                        Editable = not FabricOpenMirroring;
                     }
                     field("Delivered DateTime"; Rec."Delivered DateTime") { }
                     field("Export Company Database Tables"; Rec."Export Company Database Tables")

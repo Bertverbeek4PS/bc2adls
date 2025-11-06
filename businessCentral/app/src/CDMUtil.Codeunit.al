@@ -66,7 +66,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         SystemIdFieldRef := RecordRef.Field(2000000000);
         Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(SystemIdFieldRef));
         if ADLSEUtil.IsTablePerCompany(TableID) then
-            Imports.Add(this.GetCompanyFieldName());
+            Imports.Add(GetCompanyFieldName());
         Content.Add('keyColumns', Imports);
         Content.Add('fileDetectionStrategy', 'LastUpdateTimeFileDetection');
 
