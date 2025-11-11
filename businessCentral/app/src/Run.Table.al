@@ -13,20 +13,20 @@ table 82566 "ADLSE Run"
     {
         field(1; ID; Integer)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'ID';
             AutoIncrement = true;
         }
         field(2; "Table ID"; Integer)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'Table ID';
         }
         field(3; "Company Name"; Text[30])
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'Company name';
         }
