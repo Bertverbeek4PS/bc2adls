@@ -16,7 +16,7 @@ table 82561 "ADLSE Table"
     {
         field(1; "Table ID"; Integer)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'Table ID';
         }
@@ -65,7 +65,7 @@ table 82561 "ADLSE Table"
         field(15; ExportFileNumber; Integer)
         {
             Caption = 'Export File Number';
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
         }
         field(17; "Initial Load Start Date"; Date)
         {

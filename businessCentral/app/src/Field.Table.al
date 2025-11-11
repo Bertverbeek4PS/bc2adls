@@ -14,7 +14,7 @@ table 82562 "ADLSE Field"
     {
         field(1; "Table ID"; Integer)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'Table ID';
             TableRelation = "ADLSE Table"."Table ID";
