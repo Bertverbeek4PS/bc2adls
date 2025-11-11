@@ -4,7 +4,7 @@ table 82580 "Session Instruction"
     Caption = 'Session Instruction';
     DataClassification = CustomerContent;
     ObsoleteState = Pending;
-    ObsoleteReason = 'This field will be removed in a future release because readuncommited will be the default behavior because of performance.';
+    ObsoleteReason = 'This field will be removed in a future release because readuncommitted will be the default behavior because of performance.';
     fields
     {
         field(1; "Session Id"; Integer)

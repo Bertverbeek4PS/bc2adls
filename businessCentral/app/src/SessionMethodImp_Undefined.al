@@ -3,7 +3,7 @@
 codeunit 82581 "ADLSE Method Imp. Undefined" implements "ADLSE Session Method Interface"
 {
     ObsoleteState = Pending;
-    ObsoleteReason = 'This field will be removed in a future release because readuncommited will be the default behavior because of performance.';
+    ObsoleteReason = 'This field will be removed in a future release because readuncommitted will be the default behavior because of performance.';
 
     var
         UndefinedMethodErr: Label 'Method not defined';
