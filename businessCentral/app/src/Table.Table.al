@@ -72,14 +72,14 @@ table 82561 "ADLSE Table"
             Caption = 'Initial Load Start Date';
             ToolTip = 'Specifies the starting date for the initial data load. Only records with SystemModifiedAt >= this date will be exported on the first export. Leave blank to export all historical data.';
         }
-#if not CLEAN27
         field(16; "Process Type"; Enum "ADLSE Process Type")
         {
             Caption = 'Process Type';
             DataClassification = CustomerContent;
+            ObsoleteState = Pending;
+            ObsoleteReason = 'This field will be removed in a future release because readuncommited will be the default behavior because of performance.';
             ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing, Ignore Read Isolation disables read isolation for performance, and Commit Externally uses external commit for large tables.';
         }
-#endif
     }
 
     keys
@@ -374,24 +374,6 @@ table 82561 "ADLSE Table"
         CurrentSession.Stop(Rec."Table ID", false, ADLSEUtil.GetTableCaption(Rec."Table ID"));
         Run.CancelRun(Rec."Table ID");
     end;
-
-#if not CLEAN27
-    procedure CheckIfNeedToCommitExternally(TableIdToUpdate: integer): Boolean
-    var
-        ADLSETable: Record "ADLSE Table";
-    begin
-        ADLSETable.Get(TableIdToUpdate);
-        exit(ADLSETable."Process Type" = ADLSETable."Process Type"::"Commit Externally");
-    end;
-
-    procedure CheckIfNeedToIgnoreReadIsolation(TableIdToUpdate: integer): Boolean
-    var
-        ADLSETable: Record "ADLSE Table";
-    begin
-        ADLSETable.Get(TableIdToUpdate);
-        exit(ADLSETable."Process Type" = ADLSETable."Process Type"::"Ignore Read Isolation");
-    end;
-#endif
 
     local procedure AddPrimaryKeyFields()
     var
