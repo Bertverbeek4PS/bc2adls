@@ -202,7 +202,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         if (RecordRef.Number() = 17) and (ADLSESetup."Export Ultimo column") then begin
             GetCDMAttributeDetails(FieldType::Boolean, DataFormat, AppliedTraits);
             Result.Add(
-                CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetUltimoFieldName(), AppliedTraits, FieldRef.Length(), false));
+                CreateAttributeJson(GetUltimoFieldName(), DataFormat, GetUltimoFieldName(), AppliedTraits, FieldRef.Length(), false));
         end;
 
         if ADLSESetup."Delivered DateTime" then begin
