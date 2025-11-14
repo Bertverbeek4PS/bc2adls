@@ -199,7 +199,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                 CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, GetCompanyFieldNameLength(), false));
         end;
 
-        if (RecordRef.Number() = 17) and (ADLSESetup."Export Ultimo column") then begin
+        if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Ultimo column") then begin
             GetCDMAttributeDetails(FieldType::Boolean, DataFormat, AppliedTraits);
             Result.Add(
                 CreateAttributeJson(GetUltimoFieldName(), DataFormat, GetUltimoFieldName(), AppliedTraits, FieldRef.Length(), false));
