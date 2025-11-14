@@ -8,6 +8,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         BlankArray: JsonArray;
         CompanyFieldNameLbl: Label '$Company', Locked = true;
         DeliveredDateTimeFieldNameLbl: Label '$DeliveredDateTime', Locked = true;
+        UltimoFieldNameLbl: Label '$Ultimo', Locked = true;
         ExistingFieldCannotBeRemovedErr: Label 'The field %1 in the entity %2 is already present in the data lake and cannot be removed.', Comment = '%1: field name, %2: entity name';
         FieldDataTypeCannotBeChangedErr: Label 'The data type for the field %1 in the entity %2 cannot be changed.', Comment = '%1: field name, %2: entity name';
         RepresentsTableTxt: Label 'Represents the table %1', Comment = '%1: table caption';
@@ -197,10 +198,17 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             Result.Add(
                 CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, GetCompanyFieldNameLength(), false));
         end;
+
+        if (RecordRef.Number() = 17) and (ADLSESetup."Export Ultimo column") then begin
+            GetCDMAttributeDetails(FieldType::Boolean, DataFormat, AppliedTraits);
+            Result.Add(
+                CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetUltimoFieldName(), AppliedTraits, FieldRef.Length(), false));
+        end;
+
         if ADLSESetup."Delivered DateTime" then begin
             GetCDMAttributeDetails(FieldType::DateTime, DataFormat, AppliedTraits);
             Result.Add(
-                CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetDeliveredDateTimeFieldName(), AppliedTraits, FieldRef.Length, false));
+                CreateAttributeJson(GetDeliveredDateTimeFieldName(), DataFormat, GetDeliveredDateTimeFieldName(), AppliedTraits, FieldRef.Length(), false));
         end;
     end;
 
@@ -219,6 +227,11 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
     procedure GetDeliveredDateTimeFieldName(): Text
     begin
         exit(DeliveredDateTimeFieldNameLbl);
+    end;
+
+    procedure GetUltimoFieldName(): Text
+    begin
+        exit(UltimoFieldNameLbl);
     end;
 
     procedure IsPrimaryKeyField(TableId: Integer; FieldId: Integer): Boolean
