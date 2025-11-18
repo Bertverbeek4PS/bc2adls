@@ -238,8 +238,8 @@ codeunit 82568 "ADLSE Gen 2 Util"
         ADLSEHttp.SetUrl(TargetBlobPath);
 
         //we just need the value past the DFS domain, i.e.: /{workspace_id}/{lakehouse_id}/Files/LandingZone/...
-        SourceName := CopysTr(SourceBlobPath, 9); //drop "https://"        
-        SourceName := CopysTr(SourceName, StrPos(SourceName, '/'));
+        SourceName := CopyStr(SourceBlobPath, 9); //drop "https://"
+        SourceName := CopyStr(SourceName, StrPos(SourceName, '/'));
         ADLSEHttp.AddHeader('x-ms-rename-source', SourceName);
 
         ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);

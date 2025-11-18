@@ -154,10 +154,6 @@ page 82560 "ADLSE Setup"
                         Editable = not this.FabricOpenMirroring;
                     }
                     field("Delivered DateTime"; Rec."Delivered DateTime") { }
-                    field("Temp. F. for Open Mirror Sync."; Rec."Temp. F. for Open Mirror Sync.")
-                    {
-                        Enabled = Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring";
-                    }
                     field("Export Company Database Tables"; Rec."Export Company Database Tables")
                     {
                         Lookup = true;

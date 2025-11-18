@@ -213,12 +213,8 @@ codeunit 82562 "ADLSE Communication"
         end;
 
         if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then begin
-            if ADLSESetup."Temp. F. for Open Mirror Sync." then begin
-                DataBlobPath := StrSubstNo(FileCsvTempTok, EntityName, FileIdentiferTxt);
-                DataBlobPathComplete := StrSubstNo(FileCsvTok, EntityName, FileIdentiferTxt);
-            end else begin
-                DataBlobPath := StrSubstNo(FileCsvTok, EntityName, FileIdentiferTxt);
-            end;
+            DataBlobPath := StrSubstNo(FileCsvTempTok, EntityName, FileIdentiferTxt);
+            DataBlobPathComplete := StrSubstNo(FileCsvTok, EntityName, FileIdentiferTxt);
         end else
             DataBlobPath := StrSubstNo(DeltasFileCsvTok, EntityName, ADLSEUtil.ToText(FileIdentifer));
 
@@ -377,8 +373,7 @@ codeunit 82562 "ADLSE Communication"
                     end;
                     ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), BlobContentLength, ADLSECredentials);
                     BlobContentLength := ADLSEGen2Util.GetBlobContentLength(GetBaseUrl() + DataBlobPath, ADLSECredentials);
-                    if ADLSESetup."Temp. F. for Open Mirror Sync." then
-                        RenameDataBlob();
+                    RenameDataBlob();
                 end;
         end;
 

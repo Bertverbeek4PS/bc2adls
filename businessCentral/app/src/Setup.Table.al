@@ -240,12 +240,6 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies if the captions of Tables will be used instead of names.';
             InitValue = false;
         }
-        field(110; "Temp. F. for Open Mirror Sync."; Boolean)
-        {
-            Caption = 'Temporary File for Open Mirroring Sync.';
-            ToolTip = 'Specifies if a temporary file should be used for Open Mirroring exports. If specified, the data file is uploaded as a temporary file first and then renamed. This ensures that the file is fully uploaded before it gets picked up by Fabric synchronization process.';
-            InitValue = false;
-        }
     }
 
     keys
