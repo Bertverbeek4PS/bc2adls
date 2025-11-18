@@ -373,7 +373,8 @@ codeunit 82562 "ADLSE Communication"
                     end;
                     ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), BlobContentLength, ADLSECredentials);
                     BlobContentLength := ADLSEGen2Util.GetBlobContentLength(GetBaseUrl() + DataBlobPath, ADLSECredentials);
-                    RenameDataBlob();
+                    if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+                        RenameDataBlob();
                 end;
         end;
 
