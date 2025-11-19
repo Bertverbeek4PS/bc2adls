@@ -213,8 +213,6 @@ table 82560 "ADLSE Setup"
             Caption = 'Export Company Database Tables';
             ToolTip = 'Specifies the company for the export of the database tables.';
             TableRelation = Company.Name;
-
-
         }
         field(70; "Delayed Export"; Integer)
         {
@@ -238,6 +236,12 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Use Table Captions';
             ToolTip = 'Specifies if the captions of Tables will be used instead of names.';
+            InitValue = false;
+        }
+        field(100; "Export Closing Date column"; Boolean)
+        {
+            Caption = 'Export Closing Date column';
+            ToolTip = 'Specifies if you want to export the closing date column in G/L Entries.';
             InitValue = false;
         }
     }
