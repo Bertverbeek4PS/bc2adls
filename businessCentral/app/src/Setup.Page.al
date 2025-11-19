@@ -152,7 +152,7 @@ page 82560 "ADLSE Setup"
                 {
                     Importance = Additional;
                 }
-                field("Export Ultimo column"; Rec."Export Ultimo column")
+                field("Export Closing Date column"; Rec."Export Closing Date column")
                 {
                     Importance = Additional;
                 }

@@ -238,10 +238,10 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies if the captions of Tables will be used instead of names.';
             InitValue = false;
         }
-        field(100; "Export Ultimo column"; Boolean)
+        field(100; "Export Closing Date column"; Boolean)
         {
-            Caption = 'Export Ultimo column';
-            ToolTip = 'Specifies if you want to export the ultimo column in G/L Entries.';
+            Caption = 'Export Closing Date column';
+            ToolTip = 'Specifies if you want to export the closing date column in G/L Entries.';
             InitValue = false;
         }
     }

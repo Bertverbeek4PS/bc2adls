@@ -415,8 +415,8 @@ codeunit 82564 "ADLSE Util"
         if IsTablePerCompany(RecordRef.Number) then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetCompanyFieldName()));
 
-        if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Ultimo column") then
-            Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetUltimoFieldName()));
+        if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Closing Date column") then
+            Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetClosingDateFieldName()));
 
         if ADLSESetup."Delivered DateTime" then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetDeliveredDateTimeFieldName()));
@@ -461,7 +461,7 @@ codeunit 82564 "ADLSE Util"
         if IsTablePerCompany(RecordRef.Number) then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertStringToText(CompanyName())));
 
-        if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Ultimo column") then begin
+        if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Closing Date column") then begin
             //Field 4 is Posting Date
             FieldRef := RecordRef.Field(4);
             PostingDate := FieldRef.Value();

@@ -8,7 +8,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         BlankArray: JsonArray;
         CompanyFieldNameLbl: Label '$Company', Locked = true;
         DeliveredDateTimeFieldNameLbl: Label '$DeliveredDateTime', Locked = true;
-        UltimoFieldNameLbl: Label '$Ultimo', Locked = true;
+        ClosingDateFieldNameLbl: Label '$ClosingDate', Locked = true;
         ExistingFieldCannotBeRemovedErr: Label 'The field %1 in the entity %2 is already present in the data lake and cannot be removed.', Comment = '%1: field name, %2: entity name';
         FieldDataTypeCannotBeChangedErr: Label 'The data type for the field %1 in the entity %2 cannot be changed.', Comment = '%1: field name, %2: entity name';
         RepresentsTableTxt: Label 'Represents the table %1', Comment = '%1: table caption';
@@ -199,10 +199,10 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                 CreateAttributeJson(GetCompanyFieldName(), DataFormat, GetCompanyFieldName(), AppliedTraits, GetCompanyFieldNameLength(), false));
         end;
 
-        if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Ultimo column") then begin
+        if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Closing Date column") then begin
             GetCDMAttributeDetails(FieldType::Boolean, DataFormat, AppliedTraits);
             Result.Add(
-                CreateAttributeJson(GetUltimoFieldName(), DataFormat, GetUltimoFieldName(), AppliedTraits, FieldRef.Length(), false));
+                CreateAttributeJson(GetClosingDateFieldName(), DataFormat, GetClosingDateFieldName(), AppliedTraits, FieldRef.Length(), false));
         end;
 
         if ADLSESetup."Delivered DateTime" then begin
@@ -229,9 +229,9 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         exit(DeliveredDateTimeFieldNameLbl);
     end;
 
-    procedure GetUltimoFieldName(): Text
+    procedure GetClosingDateFieldName(): Text
     begin
-        exit(UltimoFieldNameLbl);
+        exit(ClosingDateFieldNameLbl);
     end;
 
     procedure IsPrimaryKeyField(TableId: Integer; FieldId: Integer): Boolean
