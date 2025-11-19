@@ -76,12 +76,33 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             FieldRef := RecordRef.Field(FieldId);
             Clear(Column);
             Column.Add('Name', ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
-            if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
-                Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type));
-                if (FieldRef.Number <> RecordRef.SystemIdNo()) then
-                    Column.Add('IsNullable', true);
-            end else
-                Column.Add('DataType', GetFabricDataFormat(FieldRef.Type));
+            Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type));
+            if (FieldRef.Number <> RecordRef.SystemIdNo()) then
+                Column.Add('IsNullable', true);
+            Columns.Add(Column);
+        end;
+
+        if ADLSEUtil.IsTablePerCompany(TableID) then begin
+            Clear(Column);
+            Column.Add('Name', GetCompanyFieldName());
+            Column.Add('DataType', GetOpenMirrorDataFormat(FieldType::Text));
+            Column.Add('IsNullable', true);
+            Columns.Add(Column);
+        end;
+
+        if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Closing Date column") then begin
+            Clear(Column);
+            Column.Add('Name', GetClosingDateFieldName());
+            Column.Add('DataType', GetOpenMirrorDataFormat(FieldType::Boolean));
+            Column.Add('IsNullable', true);
+            Columns.Add(Column);
+        end;
+
+        if ADLSESetup."Delivered DateTime" then begin
+            Clear(Column);
+            Column.Add('Name', GetDeliveredDateTimeFieldName());
+            Column.Add('DataType', GetOpenMirrorDataFormat(FieldType::DateTime));
+            Column.Add('IsNullable', true);
             Columns.Add(Column);
         end;
 
