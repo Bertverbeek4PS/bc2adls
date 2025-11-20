@@ -86,7 +86,6 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
             Clear(Column);
             Column.Add('Name', GetCompanyFieldName());
             Column.Add('DataType', GetOpenMirrorDataFormat(FieldType::Text));
-            Column.Add('IsNullable', true);
             Columns.Add(Column);
         end;
 
