@@ -13,42 +13,43 @@ page 82560 "ADLSE Setup"
     {
         area(Content)
         {
-            group(Setup)
+            group(ConnectionSettings)
             {
-                Caption = 'Setup';
-                group(General)
-                {
-                    Caption = 'Account';
-                    field(StorageType; Rec."Storage Type")
-                    {
-                        trigger OnValidate()
-                        begin
-                            CurrPage.Update(true);
-                        end;
-                    }
-                    field("Tenant ID"; StorageTenantID)
-                    {
-                        Caption = 'Tenant ID';
-                        ToolTip = 'Specifies the tenant ID which holds the app registration as well as the storage account. Note that they have to be on the same tenant.';
+                Caption = 'Connection';
 
-                        trigger OnValidate()
-                        begin
-                            ADLSECredentials.SetTenantID(StorageTenantID);
-                        end;
-                    }
+                field(StorageType; Rec."Storage Type")
+                {
+                    trigger OnValidate()
+                    begin
+                        CurrPage.Update(true);
+                    end;
                 }
 
-                group(Account)
+                field("Tenant ID"; StorageTenantID)
+                {
+                    Caption = 'Tenant ID';
+                    ToolTip = 'Specifies the tenant ID which holds the app registration as well as the storage account. Note that they have to be on the same tenant.';
+
+                    trigger OnValidate()
+                    begin
+                        ADLSECredentials.SetTenantID(StorageTenantID);
+                    end;
+                }
+
+                group(AzureDataLakeSettings)
                 {
                     Caption = 'Azure Data Lake';
-                    Editable = AzureDataLake;
+                    Visible = AzureDataLake;
+
                     field(Container; Rec.Container) { }
                     field(AccountName; Rec."Account Name") { }
                 }
-                group(MSFabric)
+
+                group(MSFabricSettings)
                 {
                     Caption = 'Microsoft Fabric';
-                    Editable = not AzureDataLake;
+                    Visible = not AzureDataLake;
+
                     field(Workspace; Rec.Workspace)
                     {
                         Editable = not this.FabricOpenMirroring;
@@ -62,9 +63,11 @@ page 82560 "ADLSE Setup"
                         Editable = this.FabricOpenMirroring;
                     }
                 }
-                group(Access)
+
+                group(AppRegistration)
                 {
-                    Caption = 'App registration';
+                    Caption = 'App Registration';
+
                     field("Client ID"; ClientID)
                     {
                         Caption = 'Client ID';
@@ -88,80 +91,101 @@ page 82560 "ADLSE Setup"
                         end;
                     }
                 }
-                group(Execution)
+            }
+
+            group(ExportSettings)
+            {
+                Caption = 'Export Settings';
+
+                field(MaxPayloadSize; Rec.MaxPayloadSizeMiB)
                 {
-                    Caption = 'Execution';
-                    field(MaxPayloadSize; Rec.MaxPayloadSizeMiB)
-                    {
-                        Editable = AzureDataLake or FabricOpenMirroring;
-                    }
-
-                    field("CDM data format"; Rec.DataFormat)
-                    {
-                        Editable = AzureDataLake;
-                    }
-
-                    field("Skip Timestamp Sorting On Recs"; Rec."Skip Timestamp Sorting On Recs")
-                    {
-                        Enabled = not ExportInProgress;
-
-                    }
-                    field("Delayed Export"; Rec."Delayed Export")
-                    {
-                        Enabled = not ExportInProgress;
-
-                    }
-                    field("Emit telemetry"; Rec."Emit telemetry") { }
-                    field("Translations"; Rec.Translations)
-                    {
-
-
-                        trigger OnAssistEdit()
-                        var
-                            Language: Record Language;
-                            Languages: Page "Languages";
-                            RecRef: RecordRef;
-                        begin
-                            Languages.LookupMode(true);
-                            if Languages.RunModal() = Action::LookupOK then begin
-                                Rec.Translations := '';
-                                Languages.SetSelectionFilter(Language);
-                                RecRef.GetTable(Language);
-
-                                if Language.FindSet() then
-                                    repeat
-                                        if Language.Code <> '' then
-                                            Rec.Translations += Language.Code + ';';
-                                    until Language.Next() = 0;
-                                //Remove last semicolon
-                                Rec.Translations := CopyStr(CopyStr(Rec.Translations, 1, StrLen(Rec.Translations) - 1), 1, 250);
-                                CurrPage.Update();
-                            end;
-                        end;
-                    }
-                    field("Export Enum as Integer"; Rec."Export Enum as Integer") { }
-                    field("Use Field Captions"; Rec."Use Field Captions")
-                    {
-                    }
-                    field("Use Table Captions"; Rec."Use Table Captions")
-                    {
-                    }
-                    field("Use IDs for Duplicates Only"; Rec."Use IDs for Duplicates Only")
-                    {
-                    }
-                    field("Delete Table"; Rec."Delete Table")
-                    {
-                        Editable = not this.FabricOpenMirroring;
-                    }
-                    field("Delivered DateTime"; Rec."Delivered DateTime") { }
-                    field("Export Company Database Tables"; Rec."Export Company Database Tables")
-                    {
-                        Lookup = true;
-                    }
+                    Editable = AzureDataLake or FabricOpenMirroring;
+                }
+                field("Skip Timestamp Sorting On Recs"; Rec."Skip Timestamp Sorting On Recs")
+                {
+                    Importance = Additional;
+                    Enabled = not ExportInProgress;
+                }
+                field("Delayed Export"; Rec."Delayed Export")
+                {
+                    Importance = Additional;
+                    Enabled = not ExportInProgress;
+                }
+                field("Export Company Database Tables"; Rec."Export Company Database Tables")
+                {
+                    Lookup = true;
+                }
+                field("Emit telemetry"; Rec."Emit telemetry")
+                {
+                    Importance = Additional;
+                }
+                field("Delete Table"; Rec."Delete Table")
+                {
+                    Importance = Additional;
+                    Editable = not this.FabricOpenMirroring;
+                }
+                field("Delivered DateTime"; Rec."Delivered DateTime")
+                {
+                    Importance = Additional;
                 }
             }
+
+            group(DataFormatSettings)
+            {
+                Caption = 'Data Format';
+
+                field("CDM data format"; Rec.DataFormat)
+                {
+                    Importance = Additional;
+                    Editable = AzureDataLake;
+                }
+                field("Export Enum as Integer"; Rec."Export Enum as Integer") { }
+                field("Use Field Captions"; Rec."Use Field Captions")
+                {
+                    Importance = Additional;
+                }
+                field("Use Table Captions"; Rec."Use Table Captions")
+                {
+                    Importance = Additional;
+                }
+                field("Use IDs for Duplicates Only"; Rec."Use IDs for Duplicates Only")
+                {
+                    Importance = Additional;
+                }
+                field("Export Closing Date column"; Rec."Export Closing Date column")
+                {
+                    Importance = Additional;
+                }
+                field("Translations"; Rec.Translations)
+                {
+                    trigger OnAssistEdit()
+                    var
+                        Language: Record Language;
+                        Languages: Page "Languages";
+                        RecRef: RecordRef;
+                    begin
+                        Languages.LookupMode(true);
+                        if Languages.RunModal() = Action::LookupOK then begin
+                            Rec.Translations := '';
+                            Languages.SetSelectionFilter(Language);
+                            RecRef.GetTable(Language);
+
+                            if Language.FindSet() then
+                                repeat
+                                    if Language.Code <> '' then
+                                        Rec.Translations += Language.Code + ';';
+                                until Language.Next() = 0;
+                            //Remove last semicolon
+                            Rec.Translations := CopyStr(CopyStr(Rec.Translations, 1, StrLen(Rec.Translations) - 1), 1, 250);
+                            CurrPage.Update();
+                        end;
+                    end;
+                }
+            }
+
             part(Tables; "ADLSE Setup Tables")
             {
+                Caption = 'Tables';
                 UpdatePropagation = Both;
             }
         }

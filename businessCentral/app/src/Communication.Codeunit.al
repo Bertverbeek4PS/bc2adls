@@ -9,6 +9,7 @@ codeunit 82562 "ADLSE Communication"
         TableID: Integer;
         FieldIdList: List of [Integer];
         DataBlobPath: Text;
+        DataBlobPathComplete: Text;
         DataBlobBlockIDs: List of [Text];
         BlobContentLength: Integer;
         LastRecordOnPayloadTimeStamp: BigInteger;
@@ -29,6 +30,7 @@ codeunit 82562 "ADLSE Communication"
         SingleRecordTooLargeErr: Label 'A single record payload exceeded the max payload size. Please adjust the payload size or reduce the fields to be exported for the record.';
         DeltasFileCsvTok: Label '/deltas/%1/%2.csv', Comment = '%1: Entity, %2: File identifier guid', Locked = true;
         FileCsvTok: Label '/%1/%2.csv', Comment = '%1: Entity, %2: File identifier guid', Locked = true;
+        FileCsvTempTok: Label '/%1/%2.csv.tmp', Comment = '%1: Entity, %2: File identifier guid', Locked = true;
         ExportOfSchemaNotPerformendTxt: Label 'Please export the schema first before trying to export the data.';
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
@@ -210,9 +212,10 @@ codeunit 82562 "ADLSE Communication"
             FileIdentiferTxt := FileIdentiferTxt.PadLeft(20, '0');
         end;
 
-        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
-            DataBlobPath := StrSubstNo(FileCsvTok, EntityName, FileIdentiferTxt)
-        else
+        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+            DataBlobPath := StrSubstNo(FileCsvTempTok, EntityName, FileIdentiferTxt);
+            DataBlobPathComplete := StrSubstNo(FileCsvTok, EntityName, FileIdentiferTxt);
+        end else
             DataBlobPath := StrSubstNo(DeltasFileCsvTok, EntityName, ADLSEUtil.ToText(FileIdentifer));
 
         if not CheckOnly then
@@ -225,6 +228,35 @@ codeunit 82562 "ADLSE Communication"
                 CustomDimension.Add('DataBlobPath', DataBlobPath);
                 ADLSEExecution.Log('ADLSE-012', 'Created new blob to hold the data to be exported', Verbosity::Normal, CustomDimension);
             end;
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
+    local procedure RenameDataBlob() RenameOK: Boolean
+    var
+        ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
+        ADLSEExecution: Codeunit "ADLSE Execution";
+        CustomDimensions: Dictionary of [Text, Text];
+        SourcePath, TargetPath : Text;
+        RenameParametersErr: Label 'Attempt to rename non existing blob or target blob. From: %1, to: %2', Comment = '%1 = source blob path, %2 = target blob path';
+    begin
+        if (DataBlobPath = '') or (DataBlobPathComplete = '') then
+            Error(RenameParametersErr, DataBlobPath, DataBlobPathComplete);
+
+        SourcePath := GetBaseUrl() + DataBlobPath;
+        TargetPath := GetBaseUrl() + DataBlobPathComplete;
+
+        ADLSEGen2Util.RenameDataBlob(SourcePath, TargetPath, ADLSECredentials);
+
+        if EmitTelemetry then begin
+            Clear(CustomDimensions);
+            CustomDimensions.Add('Source', DataBlobPath);
+            CustomDimensions.Add('Destination', DataBlobPathComplete);
+            ADLSEExecution.Log('ADLSE-040', 'Successfully renamed temporary blob to final name', Verbosity::Normal, CustomDimensions);
+        end;
+
+        // just in case some code depends on this
+        DataBlobPath := DataBlobPathComplete;
+        exit(true);
     end;
 
     [TryFunction]
@@ -341,6 +373,8 @@ codeunit 82562 "ADLSE Communication"
                     end;
                     ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), BlobContentLength, ADLSECredentials);
                     BlobContentLength := ADLSEGen2Util.GetBlobContentLength(GetBaseUrl() + DataBlobPath, ADLSECredentials);
+                    if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
+                        RenameDataBlob();
                 end;
         end;
 
@@ -459,20 +493,13 @@ codeunit 82562 "ADLSE Communication"
         ADLSETable.Get(TableIDToUpdate);
         ADLSEExecute.UpdateInProgressTableTimestamp(ADLSETable, Timestamp, Deletes);
     end;
+
     local procedure IncreaseExportFileNumber(TableIdToUpdate: integer)
-#if not CLEAN27
-    var
-        ADLSETable: Record "ADLSE Table";
     begin
-        // commit in current session causes RecRef.Next() to request data rom SQL ignoring subset retrieved from FindSet() (???) - this causes drastic performance issues when dealing with big tables; file number increase is pushed to another session for that purpose.
-        if not ADLSETable.CheckIfNeedToCommitExternally(TableIdToUpdate) then
-            IncreaseExportFileNumber_InCurrSession(TableIdToUpdate)
-        else
-            IncreaseExportFileNumber_InBkgSession(TableIdToUpdate);
+        IncreaseExportFileNumber_InCurrSession(TableIdToUpdate);
     end;
 
     procedure IncreaseExportFileNumber_InCurrSession(TableIdToUpdate: integer)
-#endif
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
@@ -484,17 +511,4 @@ codeunit 82562 "ADLSE Communication"
             Commit();
         end;
     end;
-
-#if not CLEAN27
-    local procedure IncreaseExportFileNumber_InBkgSession(TableIdToUpdate: integer)
-    var
-        SessionInstruction: Record "Session Instruction";
-    begin
-        SessionInstruction."Object Type" := SessionInstruction."Object Type"::Codeunit;
-        SessionInstruction."Object ID" := Codeunit::"ADLSE Communication";
-        SessionInstruction.Method := "ADLSE Session Method"::"Handle Export File Number Increase";
-        SessionInstruction.Params := format(TableIdToUpdate);
-        SessionInstruction.ExecuteInNewSession();
-    end;
-#endif
 }

@@ -56,10 +56,59 @@ table 82564 "ADLSE Table Last Timestamp"
         exit(Rec.Get(GetCompanyNameToLookFor(TableID), TableID));
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     procedure GetUpdatedLastTimestamp(TableID: Integer): BigInteger
+    var
+        ADLSETable: Record "ADLSE Table";
+        InitialLoadStartDate: Date;
+        MinTimestamp: BigInteger;
     begin
         if ExistsUpdatedLastTimestamp(TableID) then
-            exit(Rec."Updated Last Timestamp");
+            if Rec."Updated Last Timestamp" <> 0 then
+                exit(Rec."Updated Last Timestamp");
+
+        if ADLSETable.Get(TableID) then;
+        if ADLSETable."Initial Load Start Date" = 0D then
+            exit(0);
+
+        InitialLoadStartDate := ADLSETable."Initial Load Start Date";
+        MinTimestamp := GetMinTimestampFromDate(TableID, InitialLoadStartDate);
+        if MinTimestamp > 0 then
+            exit(MinTimestamp);
+
+        exit(0);
+    end;
+
+    local procedure GetMinTimestampFromDate(TableID: Integer; StartDate: Date): BigInteger
+    var
+        RecordRef: RecordRef;
+        TimestampFieldRef: FieldRef;
+        ModifiedAtFieldRef: FieldRef;
+        MinTimestamp: BigInteger;
+        FilterDateTime: DateTime;
+    begin
+        RecordRef.Open(TableID);
+        FilterDateTime := CreateDateTime(StartDate, 0T);
+
+        ModifiedAtFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
+        ModifiedAtFieldRef.SetFilter('>=%1', FilterDateTime);
+
+        if RecordRef.FindFirst() then begin
+            TimestampFieldRef := RecordRef.Field(0);
+            MinTimestamp := TimestampFieldRef.Value();
+        end else begin
+            RecordRef.Reset();
+            ModifiedAtFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
+            ModifiedAtFieldRef.SetFilter('<%1', FilterDateTime);
+
+            if RecordRef.FindLast() then begin
+                TimestampFieldRef := RecordRef.Field(0);
+                MinTimestamp := TimestampFieldRef.Value();
+            end;
+        end;
+
+        RecordRef.Close();
+        exit(MinTimestamp);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'r')]
@@ -117,18 +166,11 @@ table 82564 "ADLSE Table Last Timestamp"
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'rmi')]
     local procedure RecordLastTimestamp(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
-#if not CLEAN27
-    var
-        ADLSETable: Record "ADLSE Table";
     begin
-        if not ADLSETable.CheckIfNeedToCommitExternally(TableID) then
-            exit(RecordLastTimestamp_InCurrSession(TableID, Timestamp, Upsert))
-        else
-            exit(RecordLastTimestamp_InBkgSession(TableID, Timestamp, Upsert));
+        exit(RecordLastTimestamp_InCurrSession(TableID, Timestamp, Upsert))
     end;
 
     procedure RecordLastTimestamp_InCurrSession(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
-#endif
     var
         Company: Text;
     begin
@@ -144,24 +186,6 @@ table 82564 "ADLSE Table Last Timestamp"
             exit(Rec.Insert(true));
         end;
     end;
-
-#if not CLEAN27
-    local procedure RecordLastTimestamp_InBkgSession(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
-    var
-        SessionInstruction: Record "Session Instruction";
-        ParamsJson: JsonObject;
-    begin
-        SessionInstruction."Object Type" := SessionInstruction."Object Type"::Table;
-        SessionInstruction."Object ID" := Database::"ADLSE Table Last Timestamp";
-        SessionInstruction.Method := "ADLSE Session Method"::"Handle Last Timestamp Update";
-        ParamsJson.Add('TableId', TableID);
-        ParamsJson.Add('Timestamp', Timestamp);
-        ParamsJson.Add('Upsert', Upsert);
-        SessionInstruction.Params := Format(ParamsJson);
-        SessionInstruction.ExecuteInNewSession();
-        exit(true);
-    end;
-#endif
 
     local procedure ChangeLastTimestamp(Timestamp: BigInteger; Upsert: Boolean)
     begin

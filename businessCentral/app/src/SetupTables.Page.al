@@ -49,25 +49,6 @@ page 82561 "ADLSE Setup Tables"
                     Caption = 'Entity name';
                     ToolTip = 'Specifies the name of the entity corresponding to this table on the data lake. The value at the end indicates the table number in Dynamics 365 Business Central.';
                 }
-#if not CLEAN27
-                field("Process Type"; Rec."Process Type")
-                {
-                    ApplicationArea = All;
-                    ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing. Only change this setting if you experience performance issues with exports. Ignore Read Isolation boosts performance by disabling read isolation (NB! make sure there is no write-activity on subject table; failure may compromise export data consistency); Commit Externally uses external commit session to commit process when working with large tables. Both address Read Isolation in pre BC27 systems.';
-
-                    trigger OnValidate()
-                    begin
-                        case Rec."Process Type" of
-                            Rec."Process Type"::"Ignore Read Isolation":
-                                if not Confirm(IgnoreReadIsolationWarningQst, false) then
-                                    Error('');
-                            Rec."Process Type"::"Commit Externally":
-                                if not Confirm(CommitExternallyWarningQst, false) then
-                                    Error('');
-                        end;
-                    end;
-                }
-#endif
                 field(Status; LastRunState)
                 {
                     ApplicationArea = All;
@@ -127,6 +108,11 @@ page 82561 "ADLSE Setup Tables"
                 field(ExportCategory; Rec.ExportCategory)
                 {
                     Caption = 'Export Category';
+                    ApplicationArea = All;
+                }
+                field("Initial Load Start Date"; Rec."Initial Load Start Date")
+                {
+                    Caption = 'Initial Load Start Date';
                     ApplicationArea = All;
                 }
             }
@@ -195,6 +181,7 @@ page 82561 "ADLSE Setup Tables"
                 var
                     SelectedADLSETable: Record "ADLSE Table";
                     ADLSESetup: Record "ADLSE Setup";
+                    ADLSEExecution: Codeunit "ADLSE Execution";
                     Options: Text[50];
                     OptionStringLbl: Label 'Current Company,All Companies';
                     ResetTablesForAllCompaniesQst: Label 'Do you want to reset the selected tables for all companies?';
@@ -221,6 +208,9 @@ page 82561 "ADLSE Setup Tables"
                         else
                             Error('Chosen option is not valid');
                     end;
+                    if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
+                        ADLSEExecution.ClearSchemaExportedOn();
+
                     CurrPage.Update();
                 end;
             }
@@ -353,10 +343,6 @@ page 82561 "ADLSE Setup Tables"
         InvalidFieldNotificationSent: List of [Integer];
         InvalidFieldConfiguredMsg: Label 'The following fields have been incorrectly enabled for exports in the table %1: %2', Comment = '%1 = table name; %2 = List of invalid field names';
         WarnOfSchemaChangeQst: Label 'Data may have been exported from this table before. Changing the export schema now may cause unexpected side- effects. You may reset the table first so all the data shall be exported afresh. Do you still wish to continue?';
-#if not CLEAN27
-        CommitExternallyWarningQst: Label 'Using this feature will cause export to use an additional background session, which may fail if database is busy during export. It is recommended that such table export would happen via dedicated job queue and in isolated window. Do you wish to continue?';
-        IgnoreReadIsolationWarningQst: Label 'This will disable read isolation to boost performance. Make sure there is no write activity on this table during export, as this may compromise data consistency. Do you wish to continue?';
-#endif
 
     local procedure DoChooseFields()
     var
