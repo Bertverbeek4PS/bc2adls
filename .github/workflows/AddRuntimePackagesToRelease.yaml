@@ -191,7 +191,7 @@ jobs:
                 
                 # Create runtime package
                 # Note: This creates a copy without source code embedded
-                Get-AppRuntimePackage -appFile $appFile.FullName -runtimePackageFile $runtimeFilePath
+                Get-BcAppRuntimePackage -appFile $appFile.FullName -runtimePackageFile $runtimeFilePath
                 
                 Write-Host "    Created: $runtimeFileName"
               }
