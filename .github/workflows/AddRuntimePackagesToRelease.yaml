@@ -103,11 +103,14 @@ jobs:
             }
           }
           
-          # Write outputs - each on separate line to handle special characters
-          "tag=$tag" >> $env:GITHUB_OUTPUT
-          "releaseId=$releaseId" >> $env:GITHUB_OUTPUT
-          "shouldProcess=$shouldProcess" >> $env:GITHUB_OUTPUT
-          "targetCommitish=$targetCommitish" >> $env:GITHUB_OUTPUT
+          # Write outputs - use Set-Content to avoid quoting issues
+          $outputs = @(
+            "tag=$tag"
+            "releaseId=$releaseId"
+            "shouldProcess=$shouldProcess"
+            "targetCommitish=$targetCommitish"
+          )
+          $outputs | Add-Content -Path $env:GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
 
