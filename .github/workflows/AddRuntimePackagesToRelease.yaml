@@ -103,14 +103,11 @@ jobs:
             }
           }
           
-          # Write outputs - use Set-Content to avoid quoting issues
-          $outputs = @(
-            "tag=$tag"
-            "releaseId=$releaseId"
-            "shouldProcess=$shouldProcess"
-            "targetCommitish=$targetCommitish"
-          )
-          $outputs | Add-Content -Path $env:GITHUB_OUTPUT
+          # Write outputs using format string to avoid interpolation issues
+          'tag={0}' -f $tag | Add-Content -Path $env:GITHUB_OUTPUT
+          'releaseId={0}' -f $releaseId | Add-Content -Path $env:GITHUB_OUTPUT
+          'shouldProcess={0}' -f $shouldProcess | Add-Content -Path $env:GITHUB_OUTPUT
+          'targetCommitish={0}' -f $targetCommitish | Add-Content -Path $env:GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ github.token }}
 
