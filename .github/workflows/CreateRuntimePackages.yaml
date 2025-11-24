@@ -71,7 +71,7 @@ jobs:
           New-Item -ItemType Directory -Path $appDir -Force | Out-Null
           
           Get-ChildItem -Path $tempDir -Filter "*.zip" | ForEach-Object {
-            Write-Host "Extracting {0}..." -f $_.Name
+            Write-Host ("Extracting {0}..." -f $_.Name)
             Expand-Archive -Path $_.FullName -DestinationPath $appDir -Force
           }
           
