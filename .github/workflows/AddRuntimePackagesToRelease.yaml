@@ -90,17 +90,18 @@ jobs:
           } else {
             foreach ($pattern in $allowedBranches) {
               if ($targetCommitish -like $pattern) {
-                Write-Host "✓ Release is from allowed branch: $targetCommitish"
+                Write-Host "Release is from allowed branch: $targetCommitish"
                 $shouldProcess = $true
                 break
               }
             }
             
             if (-not $shouldProcess) {
-              Write-Host "Release is from branch $targetCommitish which is not in the allowed list"
-              Write-Host "Allowed branches: $($allowedBranches -join ', ')"
-              Write-Host "Skipping runtime package generation for this release."
-              Write-Host "To process this release anyway, manually trigger this workflow with Skip branch check enabled."
+              Write-Host "Release branch does not match allowed patterns"
+              Write-Host ("Branch: {0}" -f $targetCommitish)
+              Write-Host ("Allowed: {0}" -f ($allowedBranches -join ', '))
+              Write-Host "Skipping runtime package generation for this release"
+              Write-Host "To process anyway, manually trigger with Skip branch check enabled"
             }
           }
           
