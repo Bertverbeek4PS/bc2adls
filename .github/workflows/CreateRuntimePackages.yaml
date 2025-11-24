@@ -195,8 +195,10 @@ jobs:
               Write-Host "  Generating runtime package..."
               Get-BcContainerAppRuntimePackage `
                 -containerName $containerName `
-                -appFile $appFile.FullName `
-                -runtimePackageFile $runtimeFilePath
+                -appName $appName `
+                -publisher $appInfo.Publisher `
+                -appVersion $appVersion `
+                -appFile $runtimeFilePath
               
               if (Test-Path $runtimeFilePath) {
                 $fileSize = (Get-Item $runtimeFilePath).Length / 1KB
