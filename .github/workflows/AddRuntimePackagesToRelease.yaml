@@ -103,10 +103,11 @@ jobs:
             }
           }
           
-          Add-Content -Path $env:GITHUB_OUTPUT -Value "tag=$tag"
-          Add-Content -Path $env:GITHUB_OUTPUT -Value "releaseId=$releaseId"
-          Add-Content -Path $env:GITHUB_OUTPUT -Value "shouldProcess=$shouldProcess"
-          Add-Content -Path $env:GITHUB_OUTPUT -Value "targetCommitish=$targetCommitish"
+          # Use multiline format to avoid escaping issues
+          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "releaseId=$releaseId" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "shouldProcess=$shouldProcess" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "targetCommitish=$targetCommitish" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         env:
           GH_TOKEN: ${{ github.token }}
 
