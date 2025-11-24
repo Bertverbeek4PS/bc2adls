@@ -149,6 +149,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         id: download
 
+      - name: Install BcContainerHelper
+        if: steps.release.outputs.shouldProcess == 'true'
+        run: |
+          Write-Host "Installing BcContainerHelper module..."
+          Install-Module -Name BcContainerHelper -Force -AllowClobber
+          Write-Host "BcContainerHelper installed successfully"
+
       - name: Extract and Generate Runtime Packages
         if: steps.release.outputs.shouldProcess == 'true'
         run: |
@@ -177,11 +184,6 @@ jobs:
               Write-Host "  Converting: $($appFile.Name)"
               
               try {
-                # Import BcContainerHelper if not already loaded
-                if (-not (Get-Module -Name BcContainerHelper)) {
-                  Import-Module BcContainerHelper -Force
-                }
-                
                 # Extract app info to get name for runtime package
                 $appInfo = Get-AppJsonFromAppFile -appFilePath $appFile.FullName
                 $runtimeFileName = "$($appInfo.name)_$($appInfo.version)_runtime.app"
