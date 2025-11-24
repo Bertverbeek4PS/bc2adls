@@ -185,7 +185,7 @@ jobs:
               
               try {
                 # Extract app info to get name for runtime package
-                $appInfo = Get-AppJsonFromAppFile -appFilePath $appFile.FullName
+                $appInfo = Get-AppJsonFromAppFile -Path $appFile.FullName
                 $runtimeFileName = "$($appInfo.name)_$($appInfo.version)_runtime.app"
                 $runtimeFilePath = Join-Path $runtimePath $runtimeFileName
                 
