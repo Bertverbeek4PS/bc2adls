@@ -103,11 +103,13 @@ jobs:
             }
           }
           
-          # Use multiline format to avoid escaping issues
-          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          "releaseId=$releaseId" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          "shouldProcess=$shouldProcess" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          "targetCommitish=$targetCommitish" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          # Write outputs using heredoc to avoid escaping issues
+          @"
+          tag=$tag
+          releaseId=$releaseId
+          shouldProcess=$shouldProcess
+          targetCommitish=$targetCommitish
+          "@ | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         env:
           GH_TOKEN: ${{ github.token }}
 
