@@ -89,29 +89,16 @@ jobs:
             $shouldProcess = $true
           } else {
             # Determine the branch to check
+            # First try to infer from the tag name (e.g., 27.43.0 -> release/27.43)
             $branchToCheck = $targetCommitish
-            
-            # If targetCommitish looks like a SHA (40 hex chars), find the branch
-            if ($targetCommitish -match '^[0-9a-f]{40}$') {
-              Write-Host "Commit SHA detected, finding associated branch..."
-              $branches = gh api "repos/${{ github.repository }}/commits/$targetCommitish/branches-where-head" --jq '.[].name' | Out-String
-              $branchList = $branches.Trim() -split "`n"
-              Write-Host "Branches containing this commit: $($branchList -join ', ')"
-              
-              # Try to find a release branch first, otherwise use first branch
-              $releaseBranch = $branchList | Where-Object { $_ -like 'release/*' } | Select-Object -First 1
-              if ($releaseBranch) {
-                $branchToCheck = $releaseBranch
-              } elseif ($branchList.Count -gt 0) {
-                $branchToCheck = $branchList[0]
-              }
-              Write-Host "Using branch: $branchToCheck"
+            if ($tag -match '^(\d+)\.(\d+)\.\d+$') {
+              $inferredBranch = "release/$($Matches[1]).$($Matches[2])"
+              Write-Host "Inferred branch from tag $tag : $inferredBranch"
+              $branchToCheck = $inferredBranch
             }
-            # If it's a version tag pattern, convert to release branch
-            elseif ($targetCommitish -match '^(\d+)\.(\d+)\.\d+$') {
-              $possibleBranch = "release/$($Matches[1]).$($Matches[2])"
-              Write-Host "Tag detected: $targetCommitish, checking against branch: $possibleBranch"
-              $branchToCheck = $possibleBranch
+            # If targetCommitish is already a branch name, use it
+            elseif ($targetCommitish -notmatch '^[0-9a-f]{40}$') {
+              $branchToCheck = $targetCommitish
             }
             
             foreach ($pattern in $allowedBranches) {
