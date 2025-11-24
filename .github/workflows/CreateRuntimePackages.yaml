@@ -167,11 +167,31 @@ jobs:
             Write-Host "  Copied: $($appFile.Name)"
           }
           
-          Write-Host "`nGenerating runtime packages..."
-          Write-Host "Source directory: $sharedAppDir"
+          Write-Host "`n=== Publishing Apps to Container ==="
+          $sharedAppFiles = Get-ChildItem -Path $sharedAppDir -Filter "*.app"
+          
+          foreach ($appFile in $sharedAppFiles) {
+            Write-Host "`nPublishing: $($appFile.Name)"
+            try {
+              # Publish app to container (required before extracting runtime package)
+              Publish-BcContainerApp `
+                -containerName $containerName `
+                -appFile $appFile.FullName `
+                -skipVerification `
+                -sync `
+                -install
+              
+              Write-Host "  ✓ Published successfully"
+            } catch {
+              Write-Warning "  ✗ Failed to publish: $_"
+              Write-Error "Cannot continue without publishing apps. Fix the error and try again."
+              exit 1
+            }
+          }
+          
+          Write-Host "`n=== Generating Runtime Packages ==="
           Write-Host "Output directory: $sharedRuntimeDir"
           
-          $sharedAppFiles = Get-ChildItem -Path $sharedAppDir -Filter "*.app"
           $successCount = 0
           $failCount = 0
           
@@ -185,14 +205,15 @@ jobs:
               $appVersion = $appInfo.Version
               
               Write-Host "  App: $appName"
+              Write-Host "  Publisher: $($appInfo.Publisher)"
               Write-Host "  Version: $appVersion"
               
               # Generate runtime package name
               $runtimeFileName = [System.IO.Path]::GetFileNameWithoutExtension($appFile.Name) + ".runtime.app"
               $runtimeFilePath = Join-Path $sharedRuntimeDir $runtimeFileName
               
-              # Generate runtime package
-              Write-Host "  Generating runtime package..."
+              # Generate runtime package from published app
+              Write-Host "  Extracting runtime package from published app..."
               Get-BcContainerAppRuntimePackage `
                 -containerName $containerName `
                 -appName $appName `
@@ -210,6 +231,7 @@ jobs:
               }
             } catch {
               Write-Warning "  ✗ Error processing $($appFile.Name): $_"
+              Write-Warning "  Error details: $($_.Exception.Message)"
               $failCount++
             }
           }
