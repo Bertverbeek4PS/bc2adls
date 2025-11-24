@@ -99,7 +99,7 @@ jobs:
             if (-not $shouldProcess) {
               Write-Warning "Release is from branch '$targetCommitish' which is not in the allowed list: $($allowedBranches -join ', ')"
               Write-Host "Skipping runtime package generation for this release."
-              Write-Host "To process this release anyway, manually trigger this workflow with ``Skip branch check`` enabled."
+              Write-Host "To process this release anyway, manually trigger this workflow with Skip branch check enabled."
             }
           }
           
