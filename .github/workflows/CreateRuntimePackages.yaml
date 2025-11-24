@@ -153,18 +153,29 @@ jobs:
           
           $containerName = $env:CONTAINER_NAME
           $appDir = $env:APP_DIR
-          $runtimeDir = Join-Path $env:TEMP_DIR "runtime"
-          New-Item -ItemType Directory -Path $runtimeDir -Force | Out-Null
           
-          Write-Host "Generating runtime packages..."
-          Write-Host "Source directory: $appDir"
-          Write-Host "Output directory: $runtimeDir"
+          # Create shared folders that the container can access
+          $sharedAppDir = "c:\programdata\bccontainerhelper\apps"
+          $sharedRuntimeDir = "c:\programdata\bccontainerhelper\runtime"
+          New-Item -ItemType Directory -Path $sharedAppDir -Force | Out-Null
+          New-Item -ItemType Directory -Path $sharedRuntimeDir -Force | Out-Null
           
+          Write-Host "Copying apps to shared directory..."
           $appFiles = Get-ChildItem -Path $appDir -Filter "*.app" -Recurse
+          foreach ($appFile in $appFiles) {
+            Copy-Item -Path $appFile.FullName -Destination $sharedAppDir -Force
+            Write-Host "  Copied: $($appFile.Name)"
+          }
+          
+          Write-Host "`nGenerating runtime packages..."
+          Write-Host "Source directory: $sharedAppDir"
+          Write-Host "Output directory: $sharedRuntimeDir"
+          
+          $sharedAppFiles = Get-ChildItem -Path $sharedAppDir -Filter "*.app"
           $successCount = 0
           $failCount = 0
           
-          foreach ($appFile in $appFiles) {
+          foreach ($appFile in $sharedAppFiles) {
             try {
               Write-Host "`nProcessing: $($appFile.Name)"
               
@@ -178,7 +189,7 @@ jobs:
               
               # Generate runtime package name
               $runtimeFileName = [System.IO.Path]::GetFileNameWithoutExtension($appFile.Name) + ".runtime.app"
-              $runtimeFilePath = Join-Path $runtimeDir $runtimeFileName
+              $runtimeFilePath = Join-Path $sharedRuntimeDir $runtimeFileName
               
               # Generate runtime package
               Write-Host "  Generating runtime package..."
@@ -213,7 +224,7 @@ jobs:
           }
           
           # Save runtime directory for next step
-          echo "RUNTIME_DIR=$runtimeDir" >> $env:GITHUB_ENV
+          echo "RUNTIME_DIR=$sharedRuntimeDir" >> $env:GITHUB_ENV
 
       - name: Create runtime package archive
         shell: pwsh
@@ -294,6 +305,7 @@ jobs:
         if: always()
         shell: pwsh
         run: |
+          # Cleanup temp directory
           if ($env:TEMP_DIR -and (Test-Path $env:TEMP_DIR)) {
             Write-Host "Cleaning up temporary files..."
             try {
@@ -301,5 +313,18 @@ jobs:
               Write-Host "✓ Temporary files removed"
             } catch {
               Write-Warning "Failed to remove temp files: $_"
+            }
+          }
+          
+          # Cleanup shared directories
+          $sharedDirs = @("c:\programdata\bccontainerhelper\apps", "c:\programdata\bccontainerhelper\runtime")
+          foreach ($dir in $sharedDirs) {
+            if (Test-Path $dir) {
+              try {
+                Remove-Item -Path $dir -Recurse -Force -ErrorAction SilentlyContinue
+                Write-Host "✓ Cleaned up: $dir"
+              } catch {
+                Write-Warning "Failed to remove $dir : $_"
+              }
             }
           }
