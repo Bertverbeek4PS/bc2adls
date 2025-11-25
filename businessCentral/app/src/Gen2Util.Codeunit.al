@@ -24,6 +24,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         CouldNotCreateBlobErr: Label 'Could not create blob %1. %2', Comment = '%1: blob path, %2: error text';
         CouldNotReadDataInBlobErr: Label 'Could not read data on %1. %2', Comment = '%1: blob path, %2: Http respomse';
         CouldNotReadResponseHeaderErr: Label 'Could not read %1 from %2.', Comment = '%1: content header value , %2: blob path';
+        CouldNotRenameDataBlobErr: Label 'Could not rename blob from %1 to %2: %3', Comment = '%1: source blob path, %2: target blob path, %3 - HTTP response message';
         LatestBlockTagTok: Label '<Latest>%1</Latest>', Comment = '%1: block ID', Locked = true;
 
     procedure ContainerExists(ContainerPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"): Boolean
@@ -224,6 +225,27 @@ codeunit 82568 "ADLSE Gen 2 Util"
         ADLSEHttp.SetBody(Body.ToText());
         if not ADLSEHttp.InvokeRestApi(Response) then
             Error(CouldNotCommitBlocksToDataBlobErr, BlobPath, Response);
+    end;
+
+    procedure RenameDataBlob(SourceBlobPath: Text; TargetBlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
+    var
+        ADLSEHttp: Codeunit "ADLSE Http";
+        Response: Text;
+        SourceName: Text;
+    begin
+        // https://learn.microsoft.com/en-us/rest/api/storageservices/datalakestoragegen2/path/create?view=rest-storageservices-datalakestoragegen2-2019-12-12
+        ADLSEHttp.SetMethod("ADLSE Http Method"::Put);
+        ADLSEHttp.SetUrl(TargetBlobPath);
+
+        //we just need the value past the DFS domain, i.e.: /{workspace_id}/{lakehouse_id}/Files/LandingZone/...
+        SourceName := CopyStr(SourceBlobPath, 9); //drop "https://"
+        SourceName := CopyStr(SourceName, StrPos(SourceName, '/'));
+        ADLSEHttp.AddHeader('x-ms-rename-source', SourceName);
+
+        ADLSEHttp.SetAuthorizationCredentials(ADLSECredentials);
+
+        if not ADLSEHttp.InvokeRestApi(Response) then
+            Error(CouldNotRenameDataBlobErr, SourceBlobPath, TargetBlobPath, Response);
     end;
 
     procedure AcquireLease(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; var BlobExists: Boolean) LeaseID: Text

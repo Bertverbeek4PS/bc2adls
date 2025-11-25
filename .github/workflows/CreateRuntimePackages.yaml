@@ -1,0 +1,354 @@
+name: 'Create Runtime Packages'
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag to add runtime packages to (e.g., 27.43.0)'
+        required: true
+        type: string
+      bc_version:
+        description: 'Business Central version to use for container (e.g., 27.0 or latest)'
+        required: false
+        default: 'latest'
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  create-runtime-packages:
+    runs-on: windows-latest
+    name: Create Runtime Packages for Release
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate release exists
+        shell: pwsh
+        run: |
+          $tag = "${{ github.event.inputs.release_tag }}"
+          Write-Host "Checking if release $tag exists..."
+          
+          try {
+            $release = gh release view $tag --json tagName,assets
+            if (-not $release) {
+              throw "Release $tag not found"
+            }
+            Write-Host "✓ Release $tag found"
+          } catch {
+            Write-Error "Failed to find release $tag : $_"
+            exit 1
+          }
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Download app files from release
+        shell: pwsh
+        run: |
+          $tag = "${{ github.event.inputs.release_tag }}"
+          $tempDir = Join-Path $env:TEMP "release-apps-$tag"
+          New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
+          
+          Write-Host "Downloading app files from release $tag..."
+          
+          # Get all .app files from the release
+          $assets = gh release view $tag --json assets --jq '.assets[] | select(.name | endswith(".zip")) | .name' | Where-Object { $_ -match "Apps.*\.zip$" -and $_ -notmatch "TestApps" }
+          
+          if (-not $assets) {
+            Write-Error "No app packages found in release $tag"
+            exit 1
+          }
+          
+          foreach ($asset in $assets) {
+            Write-Host "Downloading $asset..."
+            gh release download $tag --pattern $asset --dir $tempDir
+          }
+          
+          # Extract .app files from zip
+          $appDir = Join-Path $tempDir "apps"
+          New-Item -ItemType Directory -Path $appDir -Force | Out-Null
+          
+          Get-ChildItem -Path $tempDir -Filter "*.zip" | ForEach-Object {
+            Write-Host ("Extracting {0}..." -f $_.Name)
+            Expand-Archive -Path $_.FullName -DestinationPath $appDir -Force
+          }
+          
+          # Find all .app files
+          $appFiles = Get-ChildItem -Path $appDir -Filter "*.app" -Recurse
+          
+          if ($appFiles.Count -eq 0) {
+            Write-Error "No .app files found in the downloaded packages"
+            exit 1
+          }
+          
+          Write-Host "Found $($appFiles.Count) app file(s):"
+          $appFiles | ForEach-Object { Write-Host "  - $($_.Name)" }
+          
+          # Save paths for next step
+          echo "TEMP_DIR=$tempDir" >> $env:GITHUB_ENV
+          echo "APP_DIR=$appDir" >> $env:GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Install BcContainerHelper
+        shell: pwsh
+        run: |
+          Write-Host "Installing BcContainerHelper..."
+          Install-Module -Name BcContainerHelper -Force -AllowClobber
+          Import-Module BcContainerHelper
+          Write-Host "BcContainerHelper version: $((Get-Module BcContainerHelper).Version)"
+
+      - name: Create BC Container
+        shell: pwsh
+        run: |
+          Import-Module BcContainerHelper
+          
+          $containerName = "bcserver"
+          $bcVersion = "${{ github.event.inputs.bc_version }}"
+          
+          Write-Host "Creating Business Central container..."
+          Write-Host "Container name: $containerName"
+          Write-Host "BC version: $bcVersion"
+          
+          # Determine artifact URL based on version
+          if ($bcVersion -eq "latest") {
+            $artifactUrl = Get-BCArtifactUrl -type Sandbox -country w1 -select Latest
+          } else {
+            $artifactUrl = Get-BCArtifactUrl -type Sandbox -country w1 -version $bcVersion -select Latest
+          }
+          
+          Write-Host "Using artifact: $artifactUrl"
+          
+          # Create container parameters
+          $params = @{
+            accept_eula = $true
+            containerName = $containerName
+            artifactUrl = $artifactUrl
+            auth = "UserPassword"
+            Credential = New-Object PSCredential("admin", (ConvertTo-SecureString "P@ssw0rd!" -AsPlainText -Force))
+            updateHosts = $true
+            memoryLimit = "8G"
+            doNotExportObjectsToText = $true
+            shortcuts = "None"
+            includeTestLibrariesOnly = $false
+          }
+          
+          try {
+            New-BcContainer @params
+            Write-Host "✓ Container created successfully"
+            
+            # Save container name for later steps
+            echo "CONTAINER_NAME=$containerName" >> $env:GITHUB_ENV
+          } catch {
+            Write-Error "Failed to create container: $_"
+            exit 1
+          }
+
+      - name: Generate Runtime Packages
+        shell: pwsh
+        run: |
+          Import-Module BcContainerHelper
+          
+          $containerName = $env:CONTAINER_NAME
+          $appDir = $env:APP_DIR
+          
+          # Create shared folders that the container can access
+          $sharedAppDir = "c:\programdata\bccontainerhelper\apps"
+          $sharedRuntimeDir = "c:\programdata\bccontainerhelper\runtime"
+          New-Item -ItemType Directory -Path $sharedAppDir -Force | Out-Null
+          New-Item -ItemType Directory -Path $sharedRuntimeDir -Force | Out-Null
+          
+          Write-Host "Copying apps to shared directory..."
+          $appFiles = Get-ChildItem -Path $appDir -Filter "*.app" -Recurse
+          foreach ($appFile in $appFiles) {
+            Copy-Item -Path $appFile.FullName -Destination $sharedAppDir -Force
+            Write-Host "  Copied: $($appFile.Name)"
+          }
+          
+          Write-Host "`n=== Publishing Apps to Container ==="
+          $sharedAppFiles = Get-ChildItem -Path $sharedAppDir -Filter "*.app"
+          
+          foreach ($appFile in $sharedAppFiles) {
+            Write-Host "`nPublishing: $($appFile.Name)"
+            try {
+              # Publish app to container (required before extracting runtime package)
+              Publish-BcContainerApp `
+                -containerName $containerName `
+                -appFile $appFile.FullName `
+                -skipVerification `
+                -sync `
+                -install
+              
+              Write-Host "  ✓ Published successfully"
+            } catch {
+              Write-Warning "  ✗ Failed to publish: $_"
+              Write-Error "Cannot continue without publishing apps. Fix the error and try again."
+              exit 1
+            }
+          }
+          
+          Write-Host "`n=== Generating Runtime Packages ==="
+          Write-Host "Output directory: $sharedRuntimeDir"
+          
+          $successCount = 0
+          $failCount = 0
+          
+          foreach ($appFile in $sharedAppFiles) {
+            try {
+              Write-Host "`nProcessing: $($appFile.Name)"
+              
+              # Get app info
+              $appInfo = Get-BcContainerAppInfo -containerName $containerName -appFile $appFile.FullName
+              $appName = $appInfo.Name
+              $appVersion = $appInfo.Version
+              
+              Write-Host "  App: $appName"
+              Write-Host "  Publisher: $($appInfo.Publisher)"
+              Write-Host "  Version: $appVersion"
+              
+              # Generate runtime package name
+              $runtimeFileName = [System.IO.Path]::GetFileNameWithoutExtension($appFile.Name) + ".runtime.app"
+              $runtimeFilePath = Join-Path $sharedRuntimeDir $runtimeFileName
+              
+              # Generate runtime package from published app
+              Write-Host "  Extracting runtime package from published app..."
+              Get-BcContainerAppRuntimePackage `
+                -containerName $containerName `
+                -appName $appName `
+                -publisher $appInfo.Publisher `
+                -appVersion $appVersion `
+                -appFile $runtimeFilePath
+              
+              if (Test-Path $runtimeFilePath) {
+                $fileSize = (Get-Item $runtimeFilePath).Length / 1KB
+                Write-Host "  ✓ Created: $runtimeFileName ($([math]::Round($fileSize, 2)) KB)"
+                $successCount++
+              } else {
+                Write-Warning "  ✗ Failed to create runtime package"
+                $failCount++
+              }
+            } catch {
+              Write-Warning "  ✗ Error processing $($appFile.Name): $_"
+              Write-Warning "  Error details: $($_.Exception.Message)"
+              $failCount++
+            }
+          }
+          
+          Write-Host "`n========================================="
+          Write-Host "Runtime Package Generation Summary:"
+          Write-Host "  Success: $successCount"
+          Write-Host "  Failed: $failCount"
+          Write-Host "========================================="
+          
+          if ($successCount -eq 0) {
+            Write-Error "No runtime packages were generated successfully"
+            exit 1
+          }
+          
+          # Save runtime directory for next step
+          echo "RUNTIME_DIR=$sharedRuntimeDir" >> $env:GITHUB_ENV
+
+      - name: Create runtime package archive
+        shell: pwsh
+        run: |
+          $runtimeDir = $env:RUNTIME_DIR
+          $tag = "${{ github.event.inputs.release_tag }}"
+          $archiveName = "bc2adls-main-RuntimePackages-{0}.zip" -f $tag
+          $archivePath = Join-Path $env:TEMP_DIR $archiveName
+          
+          Write-Host "Creating archive: $archiveName"
+          
+          $runtimeFiles = Get-ChildItem -Path $runtimeDir -Filter "*.runtime.app"
+          
+          if ($runtimeFiles.Count -eq 0) {
+            Write-Error "No runtime packages found to archive"
+            exit 1
+          }
+          
+          # Create zip archive
+          Compress-Archive -Path "$runtimeDir\*.runtime.app" -DestinationPath $archivePath -Force
+          
+          $archiveSize = (Get-Item $archivePath).Length / 1MB
+          Write-Host "✓ Archive created: $archiveName ($([math]::Round($archiveSize, 2)) MB)"
+          Write-Host "  Contains $($runtimeFiles.Count) runtime package(s)"
+          
+          # Save archive info for upload
+          echo "ARCHIVE_PATH=$archivePath" >> $env:GITHUB_ENV
+          echo "ARCHIVE_NAME=$archiveName" >> $env:GITHUB_ENV
+
+      - name: Upload runtime packages to release
+        shell: pwsh
+        run: |
+          $tag = "${{ github.event.inputs.release_tag }}"
+          $archivePath = $env:ARCHIVE_PATH
+          $archiveName = $env:ARCHIVE_NAME
+          
+          Write-Host "Uploading $archiveName to release $tag..."
+          
+          try {
+            # Check if asset already exists
+            $existingAsset = gh release view $tag --json assets --jq ".assets[] | select(.name == `"$archiveName`") | .name"
+            
+            if ($existingAsset) {
+              Write-Host "⚠ Asset $archiveName already exists, deleting old version..."
+              gh release delete-asset $tag $archiveName --yes
+            }
+            
+            # Upload new asset
+            gh release upload $tag $archivePath --clobber
+            
+            Write-Host "✓ Runtime packages uploaded successfully to release $tag"
+            Write-Host "`nYou can view the release at:"
+            Write-Host "  https://github.com/${{ github.repository }}/releases/tag/$tag"
+          } catch {
+            Write-Error "Failed to upload runtime packages: $_"
+            exit 1
+          }
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Cleanup container
+        if: always()
+        shell: pwsh
+        run: |
+          Import-Module BcContainerHelper -ErrorAction SilentlyContinue
+          
+          if ($env:CONTAINER_NAME) {
+            Write-Host "Cleaning up container: $env:CONTAINER_NAME"
+            try {
+              Remove-BcContainer -containerName $env:CONTAINER_NAME
+              Write-Host "✓ Container removed"
+            } catch {
+              Write-Warning "Failed to remove container: $_"
+            }
+          }
+
+      - name: Cleanup temp files
+        if: always()
+        shell: pwsh
+        run: |
+          # Cleanup temp directory
+          if ($env:TEMP_DIR -and (Test-Path $env:TEMP_DIR)) {
+            Write-Host "Cleaning up temporary files..."
+            try {
+              Remove-Item -Path $env:TEMP_DIR -Recurse -Force -ErrorAction SilentlyContinue
+              Write-Host "✓ Temporary files removed"
+            } catch {
+              Write-Warning "Failed to remove temp files: $_"
+            }
+          }
+          
+          # Cleanup shared directories
+          $sharedDirs = @("c:\programdata\bccontainerhelper\apps", "c:\programdata\bccontainerhelper\runtime")
+          foreach ($dir in $sharedDirs) {
+            if (Test-Path $dir) {
+              try {
+                Remove-Item -Path $dir -Recurse -Force -ErrorAction SilentlyContinue
+                Write-Host "✓ Cleaned up: $dir"
+              } catch {
+                Write-Warning "Failed to remove $dir : $_"
+              }
+            }
+          }

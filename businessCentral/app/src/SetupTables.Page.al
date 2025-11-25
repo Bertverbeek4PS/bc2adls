@@ -63,6 +63,27 @@ page 82561 "ADLSE Setup Tables"
                     Editable = false;
                     ToolTip = 'Specifies the time of the last export from this table in this company.';
                 }
+                field(ExportFileNumber; Rec.ExportFileNumber)
+                {
+                    ApplicationArea = All;
+                    Editable = false;
+                    ToolTip = 'Specifies last file number used when exporting data from this table.';
+                }
+                field(LastHartbeat; Rec.GetLastHeartbeat())
+                {
+                    ApplicationArea = All;
+                    Caption = 'Last heartbeat';
+                    Editable = false;
+                    ToolTip = 'Specifies the time of the last heartbeat received from an export session for this table in this company.';
+                }
+                field(ActiveSessionId; Rec.GetActiveSessionId())
+                {
+                    ApplicationArea = All;
+                    Caption = 'Active session ID';
+                    Editable = false;
+                    BlankZero = true;
+                    ToolTip = 'Specifies the ID of the active export session for this table in this company, if any.';
+                }
                 field(LastError; LastRunError)
                 {
                     ApplicationArea = All;
@@ -87,6 +108,11 @@ page 82561 "ADLSE Setup Tables"
                 field(ExportCategory; Rec.ExportCategory)
                 {
                     Caption = 'Export Category';
+                    ApplicationArea = All;
+                }
+                field("Initial Load Start Date"; Rec."Initial Load Start Date")
+                {
+                    Caption = 'Initial Load Start Date';
                     ApplicationArea = All;
                 }
             }
@@ -155,6 +181,7 @@ page 82561 "ADLSE Setup Tables"
                 var
                     SelectedADLSETable: Record "ADLSE Table";
                     ADLSESetup: Record "ADLSE Setup";
+                    ADLSEExecution: Codeunit "ADLSE Execution";
                     Options: Text[50];
                     OptionStringLbl: Label 'Current Company,All Companies';
                     ResetTablesForAllCompaniesQst: Label 'Do you want to reset the selected tables for all companies?';
@@ -181,6 +208,9 @@ page 82561 "ADLSE Setup Tables"
                         else
                             Error('Chosen option is not valid');
                     end;
+                    if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
+                        ADLSEExecution.ClearSchemaExportedOn();
+
                     CurrPage.Update();
                 end;
             }
@@ -249,6 +279,18 @@ page 82561 "ADLSE Setup Tables"
                     if AssignExportCategory.RunModal() = Action::LookupOK then
                         ADLSETable.ModifyAll(ExportCategory, AssignExportCategory.GetExportCategoryCode());
                     CurrPage.Update();
+                end;
+            }
+            action(StopExportSession)
+            {
+                ApplicationArea = All;
+                Caption = 'Stop Export Session';
+                ToolTip = 'Stops the active export session for the selected table in the current company.';
+                Image = Stop;
+                trigger OnAction()
+                begin
+                    Rec.StopActiveSession();
+                    CurrPage.Update(false);
                 end;
             }
         }

@@ -14,7 +14,7 @@ table 82560 "ADLSE Setup"
     {
         field(1; "Primary Key"; Integer)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Caption = 'Primary Key';
             Editable = false;
         }
@@ -115,13 +115,9 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies the type of storage type to use.';
 
             trigger OnValidate()
-            var
-                OpenMirroringPreviewLbl: label 'Microsoft Fabric - Open Mirroring connection in bc2adls is still in preview. Please use it with caution.';
             begin
-                if Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring" then begin
+                if Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring" then
                     Rec."Delete Table" := true;
-                    Message(OpenMirroringPreviewLbl);
-                end;
             end;
         }
 
@@ -162,7 +158,7 @@ table 82560 "ADLSE Setup"
         }
         field(35; "Schema Exported On"; DateTime)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Caption = 'Schema exported on';
         }
         field(40; "Translations"; Text[250])
@@ -187,7 +183,7 @@ table 82560 "ADLSE Setup"
         }
         field(55; "Maximum Retries"; Integer)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Caption = 'Maximum retries';
             InitValue = 0;
 
@@ -213,8 +209,6 @@ table 82560 "ADLSE Setup"
             Caption = 'Export Company Database Tables';
             ToolTip = 'Specifies the company for the export of the database tables.';
             TableRelation = Company.Name;
-
-
         }
         field(70; "Delayed Export"; Integer)
         {
@@ -224,7 +218,7 @@ table 82560 "ADLSE Setup"
         }
         field(75; "Use Field Captions"; Boolean)
         {
-            Caption = 'Use Captions';
+            Caption = 'Use Field Captions';
             ToolTip = 'Specifies if the captions of fields will be used instead of names.';
             InitValue = false;
         }
@@ -232,6 +226,18 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'IDs for Duplicates Only';
             ToolTip = 'Specifies that table and field IDs will only be used in names if duplicates exist.';
+            InitValue = false;
+        }
+        field(95; "Use Table Captions"; Boolean)
+        {
+            Caption = 'Use Table Captions';
+            ToolTip = 'Specifies if the captions of Tables will be used instead of names.';
+            InitValue = false;
+        }
+        field(100; "Export Closing Date column"; Boolean)
+        {
+            Caption = 'Export Closing Date column';
+            ToolTip = 'Specifies if you want to export the closing date column in G/L Entries.';
             InitValue = false;
         }
     }

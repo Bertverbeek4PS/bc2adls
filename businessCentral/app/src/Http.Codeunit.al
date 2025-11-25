@@ -116,7 +116,9 @@ codeunit 82563 "ADLSE Http"
         if not AddAuthorization(HttpClient, Response) then
             exit(false);
 
-        if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake" then
+        if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Azure Data Lake")
+            or (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring")
+        then
             if AdditionalRequestHeaders.Count() > 0 then begin
                 Headers := HttpClient.DefaultRequestHeaders();
                 foreach HeaderKey in AdditionalRequestHeaders.Keys do begin

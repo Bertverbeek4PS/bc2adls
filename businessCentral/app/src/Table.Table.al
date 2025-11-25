@@ -16,7 +16,7 @@ table 82561 "ADLSE Table"
     {
         field(1; "Table ID"; Integer)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'Table ID';
         }
@@ -65,7 +65,20 @@ table 82561 "ADLSE Table"
         field(15; ExportFileNumber; Integer)
         {
             Caption = 'Export File Number';
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
+        }
+        field(17; "Initial Load Start Date"; Date)
+        {
+            Caption = 'Initial Load Start Date';
+            ToolTip = 'Specifies the starting date for the initial data load. Only records with SystemModifiedAt >= this date will be exported on the first export. Leave blank to export all historical data.';
+        }
+        field(16; "Process Type"; Enum "ADLSE Process Type")
+        {
+            Caption = 'Process Type';
+            DataClassification = CustomerContent;
+            ObsoleteState = Pending;
+            ObsoleteReason = 'This field will be removed in a future release because readuncommitted will be the default behavior because of performance.';
+            ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing, Ignore Read Isolation disables read isolation for performance, and Commit Externally uses external commit for large tables.';
         }
     }
 
@@ -124,6 +137,7 @@ table 82561 "ADLSE Table"
         TableCannotBeExportedErr: Label 'The table %1 cannot be exported because of the following error. \%2', Comment = '%1: Table ID, %2: error text';
         TablesResetTxt: Label '%1 table(s) were reset %2', Comment = '%1 = number of tables that were reset, %2 = message if tables are exported';
         TableResetExportedTxt: Label 'and are exported to the lakehouse. Please run the notebook first.';
+        StoppedByUserLbl: Label 'Session stopped by user.';
 
     procedure FieldsChosen(): Integer
     var
@@ -214,20 +228,31 @@ table 82561 "ADLSE Table"
                     Rec.Enabled := true;
                     Rec.Modify(true);
                 end;
+                ADLSESetup.GetSingleton();
 
                 if not AllCompanies then begin
-                    ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Rec."Table ID", 0);
-                    ADLSETableLastTimestamp.SaveDeletedLastEntryNo(Rec."Table ID", 0);
-                end else begin
-                    ADLSETableLastTimestamp.SetRange("Table ID", rec."Table ID");
-                    ADLSETableLastTimestamp.ModifyAll("Updated Last Timestamp", 0);
-                    ADLSETableLastTimestamp.ModifyAll("Deleted Last Entry No.", 0);
-                    ADLSETableLastTimestamp.SetRange("Table ID");
-                end;
+                    if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                        if ADLSETableLastTimestamp.Get(CompanyName, Rec."Table ID") then
+                            ADLSETableLastTimestamp.Delete();
+                    end
+                    else begin
+                        ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Rec."Table ID", 0);
+                        ADLSETableLastTimestamp.SaveDeletedLastEntryNo(Rec."Table ID", 0);
+                    end;
+                end else
+                    if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                        ADLSETableLastTimestamp.SetRange("Table ID", rec."Table ID");
+                        ADLSETableLastTimestamp.DeleteAll();
+                    end
+                    else begin
+                        ADLSETableLastTimestamp.SetRange("Table ID", rec."Table ID");
+                        ADLSETableLastTimestamp.ModifyAll("Updated Last Timestamp", 0);
+                        ADLSETableLastTimestamp.ModifyAll("Deleted Last Entry No.", 0);
+                        ADLSETableLastTimestamp.SetRange("Table ID");
+                    end;
                 ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");
                 ADLSEDeletedRecord.DeleteAll(false);
 
-                ADLSESetup.GetSingleton();
                 if (ADLSESetup."Delete Table") then
                     ADLSECommunication.ResetTableExport(Rec."Table ID", AllCompanies);
 
@@ -302,6 +327,52 @@ table 82561 "ADLSE Table"
                     ADLSEFields.Modify(true);
                 end;
             until ADLSEFields.Next() = 0;
+    end;
+
+    procedure GetLastHeartbeat(): DateTime
+    var
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+    begin
+        ADLSETableLastTimestamp.ReadIsolation(ReadIsolation::ReadUncommitted);
+        if not ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(Rec."Table ID") then
+            exit;
+        exit(ADLSETableLastTimestamp.SystemModifiedAt)
+    end;
+
+    procedure GetActiveSessionId(): Integer
+    var
+        ExpSessionId: Integer;
+    begin
+        ExpSessionId := GetCurrentSessionId();
+        if ExpSessionId = 0 then
+            exit;
+        if IsSessionActive(ExpSessionId) then
+            exit(ExpSessionId);
+    end;
+
+    procedure GetCurrentSessionId(): Integer
+    var
+        CurrentSession: Record "ADLSE Current Session";
+    begin
+        CurrentSession.ReadIsolation(ReadIsolation::ReadUncommitted);
+        if CurrentSession.Get(Rec."Table ID", CompanyName()) then
+            exit(CurrentSession."Session ID");
+        exit(0);
+    end;
+
+    procedure StopActiveSession()
+    var
+        CurrentSession: Record "ADLSE Current Session";
+        Run: Record "ADLSE Run";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        ExpSessionId: Integer;
+    begin
+        ExpSessionId := GetActiveSessionId();
+        if ExpSessionId <> 0 then
+            if IsSessionActive(ExpSessionId) then
+                Session.StopSession(ExpSessionId, StoppedByUserLbl);
+        CurrentSession.Stop(Rec."Table ID", false, ADLSEUtil.GetTableCaption(Rec."Table ID"));
+        Run.CancelRun(Rec."Table ID");
     end;
 
     local procedure AddPrimaryKeyFields()

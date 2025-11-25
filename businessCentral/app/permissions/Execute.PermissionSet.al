@@ -24,6 +24,9 @@ permissionset 82561 "ADLSE - Execute"
                   tabledata "ADLSE Export Category" = R,
 #pragma warning restore AL0432
                   tabledata "ADLSE Export Category Table" = R,
+#if not CLEAN27
+                  tabledata "Session Instruction" = RIMD,
+#endif
                   codeunit "ADLSE UpgradeTagNewCompanySubs" = X,
                   codeunit "ADLSE Upgrade" = X,
                   codeunit "ADLSE Util" = X,

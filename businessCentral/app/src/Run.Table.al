@@ -13,20 +13,20 @@ table 82566 "ADLSE Run"
     {
         field(1; ID; Integer)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'ID';
             AutoIncrement = true;
         }
         field(2; "Table ID"; Integer)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'Table ID';
         }
         field(3; "Company Name"; Text[30])
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'Company name';
         }
@@ -175,6 +175,17 @@ table 82566 "ADLSE Run"
         Rec.ModifyAll(Ended, CurrentDateTime, true);
         Rec.ModifyAll(State, "ADLSE Run State"::Failed, true);
         Rec.ModifyAll(Error, ExportStoppedDueToCancelledSessionTxt, true);
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'm')]
+    procedure CancelRun(TableID: Integer)
+    begin
+        if not FindLastRun(TableID) then
+            exit;
+        Rec.Validate(Ended, CurrentDateTime());
+        Rec.Validate(State, "ADLSE Run State"::Failed);
+        Rec.Validate(Error, ExportStoppedDueToCancelledSessionTxt);
+        Rec.Modify(true);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE run", 'r')]
