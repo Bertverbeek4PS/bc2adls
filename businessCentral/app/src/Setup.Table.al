@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 #pragma warning disable LC0015
-table 82560 "ADLSE Setup"
+table 80039 "ADLSE Setup"
 #pragma warning restore
 {
     Access = Internal;

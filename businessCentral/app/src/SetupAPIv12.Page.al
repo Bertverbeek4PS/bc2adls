@@ -1,6 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
-page 82572 "ADLSE Setup API v12"
+page 97001 "ADLSE Setup API v12"
 {
     PageType = API;
     APIPublisher = 'bc2adlsTeamMicrosoft';

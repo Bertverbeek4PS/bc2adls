@@ -21,8 +21,8 @@
   },
   "idRanges": [
     {
-      "from": 82560,
-      "to": 82585
+      "from": 50000,
+      "to": 99000
     }
   ],
   "internalsVisibleTo": [
