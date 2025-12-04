@@ -1,3 +1,7 @@
+namespace bc2adls;
+
+using System.Threading;
+
 report 82561 "ADLSE Schedule Task Assignment"
 {
     ApplicationArea = Basic, Suite;

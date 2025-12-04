@@ -1,5 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+
+using System.Reflection;
+
 #pragma warning disable LC0015
 table 82561 "ADLSE Table"
 #pragma warning restore

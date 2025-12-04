@@ -1,3 +1,5 @@
+namespace bc2adls;
+
 codeunit 82577 "ADLSE Wrapper Execute"
 {
     Access = Internal;

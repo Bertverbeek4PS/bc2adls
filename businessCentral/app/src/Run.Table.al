@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+
 #pragma warning disable LC0004, LC0015
 table 82566 "ADLSE Run"
 #pragma warning restore

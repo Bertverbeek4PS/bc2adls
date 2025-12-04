@@ -1,3 +1,5 @@
+namespace bc2adls;
+
 enum 82563 "ADLSE Storage Type"
 {
     Access = Internal;

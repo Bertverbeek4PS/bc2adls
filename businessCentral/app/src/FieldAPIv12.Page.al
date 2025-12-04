@@ -1,3 +1,5 @@
+namespace bc2adls;
+
 // Create an API page for table and field
 
 page 82573 "ADLSE Field API v12"

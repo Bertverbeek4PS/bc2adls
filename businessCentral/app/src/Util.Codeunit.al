@@ -1,5 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+
+using System.Reflection;
+using Microsoft.Finance.GeneralLedger.Ledger;
+
 codeunit 82564 "ADLSE Util"
 {
     Access = Internal;

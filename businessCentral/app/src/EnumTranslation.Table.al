@@ -1,3 +1,8 @@
+namespace bc2adls;
+
+using System.Reflection;
+using System.IO;
+
 #pragma warning disable LC0015
 table 82567 "ADLSE Enum Translation"
 #pragma warning restore

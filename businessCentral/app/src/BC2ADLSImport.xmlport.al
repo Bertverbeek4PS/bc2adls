@@ -1,3 +1,7 @@
+namespace bc2adls;
+
+using System.Utilities;
+
 xmlport 82560 "BC2ADLS Import"
 {
     Caption = 'BC2ADLS Import';

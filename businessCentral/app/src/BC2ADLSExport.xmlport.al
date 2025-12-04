@@ -1,3 +1,5 @@
+namespace bc2adls;
+
 xmlport 82561 "BC2ADLS Export"
 {
     Caption = 'BC2ADLS Export';

@@ -1,3 +1,7 @@
+namespace bc2adls;
+
+using System.Environment;
+
 codeunit 82576 "ADLSE External Events Helper"
 {
     Access = Internal;
