@@ -30,6 +30,7 @@ page 82564 "ADLSE Deleted Table Filter"
             }
         }
     }
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     local procedure GetTableId(var TableMetadata: Record "Table Metadata")
     var
         ADLSETable: Record "ADLSE Table";

@@ -184,6 +184,7 @@ table 82564 "ADLSE Table Last Timestamp"
         exit(RecordLastTimestamp_InCurrSession(TableID, Timestamp, Upsert))
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'rm')]
     procedure RecordLastTimestamp_InCurrSession(TableID: Integer; Timestamp: BigInteger; Upsert: Boolean): Boolean
     var
         Company: Text;

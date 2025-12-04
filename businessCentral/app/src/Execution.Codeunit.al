@@ -70,6 +70,9 @@ codeunit 82569 "ADLSE Execution"
             Log('ADLSE-001', StrSubstNo(ExportStartedTxt, Started, Counter), Verbosity::Normal);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'rd')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Run", 'm')]
     internal procedure StopExport()
     var
         ADLSESetup: Record "ADLSE Setup";

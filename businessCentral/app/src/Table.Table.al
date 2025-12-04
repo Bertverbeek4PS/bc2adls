@@ -48,7 +48,6 @@ table 82561 "ADLSE Table"
         field(10; ExportCategory; Code[50])
         {
             TableRelation = "ADLSE Export Category Table";
-            DataClassification = CustomerContent;
             ToolTip = 'Specifies the Export Category which can be linked to tables which are part of the export to Azure Datalake. The Category can be used to schedule the export.';
         }
         field(15; ExportFileNumber; Integer)
@@ -321,6 +320,7 @@ table 82561 "ADLSE Table"
             until ADLSEFields.Next() = 0;
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'r')]
     procedure GetLastHeartbeat(): DateTime
     var
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
@@ -342,6 +342,7 @@ table 82561 "ADLSE Table"
             exit(ExpSessionId);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'r')]
     procedure GetCurrentSessionId(): Integer
     var
         CurrentSession: Record "ADLSE Current Session";
@@ -352,6 +353,8 @@ table 82561 "ADLSE Table"
         exit(0);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'd')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Run", 'm')]
     procedure StopActiveSession()
     var
         CurrentSession: Record "ADLSE Current Session";
@@ -367,6 +370,7 @@ table 82561 "ADLSE Table"
         Run.CancelRun(Rec."Table ID");
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'ri')]
     local procedure AddPrimaryKeyFields()
     var
         Field: Record Field;

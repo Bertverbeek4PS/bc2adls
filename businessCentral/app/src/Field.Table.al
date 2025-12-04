@@ -151,7 +151,7 @@ table 82562 "ADLSE Field"
         if Rec.Enabled then exit;
         if not Field.Get(Rec."Table ID", Rec."Field ID") then exit;
         if Field.IsPartOfPrimaryKey then
-            error(FieldCannotBeDisabledErr)
+            Error(FieldCannotBeDisabledErr)
     end;
 
     [TryFunction]

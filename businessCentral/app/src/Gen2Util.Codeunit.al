@@ -416,12 +416,12 @@ codeunit 82568 "ADLSE Gen 2 Util"
     begin
     end;
 
-    [Integrationevent(false, false)]
+    [IntegrationEvent(false, false)]
     local procedure OnBeforeRemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean; var IsHandled: Boolean)
     begin
     end;
 
-    [Integrationevent(false, false)]
+    [IntegrationEvent(false, false)]
     local procedure OnBeforeDropTableFromOpenMirroring(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean; var IsHandled: Boolean)
     begin
     end;

@@ -5,6 +5,7 @@ table 82571 "ADLSE Export Category Table"
     Caption = 'Export Category Table';
     DataClassification = ToBeClassified;
     LookupPageId = "ADLSE Export Categories";
+    DrillDownPageId = "ADLSE Export Categories";
     DataPerCompany = false;
 
     fields

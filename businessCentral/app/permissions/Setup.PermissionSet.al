@@ -14,6 +14,7 @@ permissionset 82560 "ADLSE - Setup"
     Permissions = table "ADLSE Deleted Table Filter" = x,
                   table "ADLSE Export Category Table" = x,
                   table "ADLSE Setup" = x,
+                  table "ADLSE Table Last Timestamp" = x,
                   tabledata "ADLSE Setup" = RIMD,
                   tabledata "ADLSE Table" = RIMD,
                   tabledata "ADLSE Field" = RIMD,

@@ -211,7 +211,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
                 CreateAttributeJson(
                     ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef),
                     DataFormat,
-                    FieldRef.Name,
+                    FieldRef.Name(),
                     AppliedTraits,
                     FieldLength,
                     IsPrimaryKeyField(RecordRef.Number(), FieldRef.Number())

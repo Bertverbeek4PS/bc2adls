@@ -486,6 +486,7 @@ codeunit 82562 "ADLSE Communication"
         end;
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     local procedure UpdateInProgressTimeStampOnTable(TableIDToUpdate: Integer; Timestamp: BigInteger; Deletes: Boolean)
     var
         ADLSETable: Record "ADLSE Table";
@@ -500,6 +501,7 @@ codeunit 82562 "ADLSE Communication"
         IncreaseExportFileNumber_InCurrSession(TableIdToUpdate);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
     procedure IncreaseExportFileNumber_InCurrSession(TableIdToUpdate: Integer)
     var
         ADLSESetup: Record "ADLSE Setup";
