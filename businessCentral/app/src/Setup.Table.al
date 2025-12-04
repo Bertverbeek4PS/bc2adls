@@ -226,6 +226,16 @@ table 82560 "ADLSE Setup"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; Container, "Account Name")
+        {
+        }
+        fieldgroup(Brick; Container, "Account Name", DataFormat)
+        {
+        }
+    }
+
     var
         MaxReqErrorInfo: ErrorInfo;
         ContainerNameIncorrectFormatErr: Label 'The container name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_';

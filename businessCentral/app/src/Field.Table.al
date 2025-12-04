@@ -73,6 +73,16 @@ table 82562 "ADLSE Field"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Table ID", "Field ID", "FieldCaption")
+        {
+        }
+        fieldgroup(Brick; "Table ID", "Field ID", "FieldCaption", Enabled)
+        {
+        }
+    }
+
     trigger OnInsert()
     var
         ADLSESetup: Record "ADLSE Setup";

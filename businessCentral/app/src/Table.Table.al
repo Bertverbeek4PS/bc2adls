@@ -71,6 +71,16 @@ table 82561 "ADLSE Table"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Table ID")
+        {
+        }
+        fieldgroup(Brick; "Table ID", Enabled, ExportCategory)
+        {
+        }
+    }
+
     trigger OnInsert()
     var
         ADLSESetup: Record "ADLSE Setup";

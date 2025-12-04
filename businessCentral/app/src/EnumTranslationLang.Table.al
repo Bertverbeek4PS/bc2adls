@@ -64,6 +64,16 @@ table 82568 "ADLSE Enum Translation Lang"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Language Code", "Table Id", "Field Id")
+        {
+        }
+        fieldgroup(Brick; "Language Code", "Compliant Table Name", "Compliant Field Name", "Enum Value Caption")
+        {
+        }
+    }
+
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Enum Translation Lang", 'i')]
     procedure InsertEnumLanguage(LanguageCode: Code[10]; TableId: Integer; FieldNo: Integer; FieldName: Text[30]; EnumValueOrdinal: Integer; EnumValueName: Text)
     var

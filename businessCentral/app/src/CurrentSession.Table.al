@@ -49,6 +49,16 @@ table 82565 "ADLSE Current Session"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Table ID", "Company Name")
+        {
+        }
+        fieldgroup(Brick; "Table ID", "Company Name", "Session ID")
+        {
+        }
+    }
+
     var
         SessionTerminatedMsg: Label 'Export to data lake session for table %1 terminated by user.', Comment = '%1 is the table name corresponding to the session';
         ExportDataInProgressErr: Label 'An export data process is already running. Please wait for it to finish.';

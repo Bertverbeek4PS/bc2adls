@@ -46,6 +46,16 @@ table 82563 "ADLSE Deleted Record"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Entry No.", "Table ID")
+        {
+        }
+        fieldgroup(Brick; "Entry No.", "Table ID", "System ID")
+        {
+        }
+    }
+
     procedure TrackDeletedRecord(RecordRef: RecordRef)
     var
         ADLSESetup: Record "ADLSE Setup";

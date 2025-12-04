@@ -35,4 +35,14 @@ table 82569 "ADLSE Deleted Table Filter"
             Clustered = true;
         }
     }
+
+    fieldgroups
+    {
+        fieldgroup(DropDown; TableId)
+        {
+        }
+        fieldgroup(Brick; TableId)
+        {
+        }
+    }
 }

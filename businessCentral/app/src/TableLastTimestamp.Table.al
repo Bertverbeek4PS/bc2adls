@@ -50,6 +50,16 @@ table 82564 "ADLSE Table Last Timestamp"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Company Name", "Table ID")
+        {
+        }
+        fieldgroup(Brick; "Company Name", "Table ID", "Updated Last Timestamp")
+        {
+        }
+    }
+
     var
         SaveUpsertLastTimestampFailedErr: Label 'Could not save the last time stamp for the upserts on table %1.', Comment = '%1: table caption';
         SaveDeletionLastTimestampFailedErr: Label 'Could not save the last time stamp for the deletions on table %1.', Comment = '%1: table caption';

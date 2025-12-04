@@ -49,6 +49,16 @@ table 82567 "ADLSE Enum Translation"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Table Id", "Field Id")
+        {
+        }
+        fieldgroup(Brick; "Table Id", "Compliant Table Name", "Field Id", "Compliant Field Name")
+        {
+        }
+    }
+
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Enum Translation", 'i')]
     local procedure InsertEnum(TableId: Integer; FieldNo: Integer; FieldName: Text[30])
     var

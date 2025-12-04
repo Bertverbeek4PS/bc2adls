@@ -72,6 +72,16 @@ table 82566 "ADLSE Run"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; ID, "Table ID", "Company Name")
+        {
+        }
+        fieldgroup(Brick; ID, "Table ID", "Company Name", State, Started)
+        {
+        }
+    }
+
     var
         ExportRunNotFoundErr: Label 'No export process running for table.';
         ExportStoppedDueToCancelledSessionTxt: Label 'Export stopped as session was cancelled. Please check state of the export on the data lake before enabling this.';

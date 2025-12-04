@@ -30,4 +30,14 @@ table 82571 "ADLSE Export Category Table"
             Clustered = true;
         }
     }
+
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Code", Description)
+        {
+        }
+        fieldgroup(Brick; "Code", Description)
+        {
+        }
+    }
 }
