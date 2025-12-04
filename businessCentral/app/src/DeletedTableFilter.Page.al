@@ -7,6 +7,7 @@ page 82564 "ADLSE Deleted Table Filter"
     PageType = List;
     ApplicationArea = All;
     SourceTable = "ADLSE Deleted Table Filter";
+    Caption = 'Deleted Table Filter';
 
     layout
     {
@@ -14,7 +15,7 @@ page 82564 "ADLSE Deleted Table Filter"
         {
             repeater(GroupName)
             {
-                field(TableId; rec.TableId)
+                field(TableId; Rec.TableId)
                 {
                     trigger OnLookup(var Text: Text): Boolean
                     var
@@ -22,10 +23,10 @@ page 82564 "ADLSE Deleted Table Filter"
                     begin
                         GetTableId(TableMetadata);
                         if Page.RunModal(Page::"Available Table Selection List", TableMetadata) = Action::LookupOK then
-                            rec.TableId := TableMetadata.ID;
+                            Rec.TableId := TableMetadata.ID;
                     end;
                 }
-                field("Table Caption"; rec."Table Caption") { }
+                field("Table Caption"; Rec."Table Caption") { }
             }
         }
     }
