@@ -1,7 +1,7 @@
 {
     "supportedCountries": [
-        "en-US",
-        "nl-NL"
+        "US",
+        "NL"
     ],
     "mandatorySuffix": "ADLSE"
 }

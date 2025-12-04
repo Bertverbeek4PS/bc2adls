@@ -39,5 +39,15 @@
   ],
   "target": "Cloud",
   "runtime": "16.0",
-  "features": ["TranslationFile"]
+  "features": [
+          "TranslationFile"
+              ],
+  "supportedLocales": [
+                        "en-US", 
+                        "nl-NL",                        
+                        "en-GB", 
+                        "en-AU",
+                        "en-CA",
+                        "en-NZ"
+                      ]
 }

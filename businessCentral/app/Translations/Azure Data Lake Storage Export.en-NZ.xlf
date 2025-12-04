@@ -1,0 +1,2097 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-NZ" target-language="en-NZ" original="Azure Data Lake Storage Export.g.xlf">
+    <body>
+      <group id="body">
+        <trans-unit id="Table 4003818636 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Current Session</source>
+          <target>ADLSE Current Session</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Current Session - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4003818636 - NamedType 3437631353" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not delete the export table session %1 for table on company %2.</source>
+          <target>Could not delete the export table session %1 for table on company %2.</target>
+          <note from="Developer" annotates="general" priority="2">%1: session id, %2: company name</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Current Session - NamedType CouldNotStopSessionErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4003818636 - NamedType 2663260909" size-unit="char" translate="yes" xml:space="preserve">
+          <source>An export data process is already running. Please wait for it to finish.</source>
+          <target>An export data process is already running. Please wait for it to finish.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Current Session - NamedType ExportDataInProgressErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4003818636 - NamedType 3713913427" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not start the export as there is already an active export running for the table %1. If this is not so, please stop all exports and try again.</source>
+          <target>Could not start the export as there is already an active export running for the table %1. If this is not so, please stop all exports and try again.</target>
+          <note from="Developer" annotates="general" priority="2">%1 = table caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Current Session - NamedType InsertFailedErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4003818636 - NamedType 242728078" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export to data lake session for table %1 terminated by user.</source>
+          <target>Export to data lake session for table %1 terminated by user.</target>
+          <note from="Developer" annotates="general" priority="2">%1 is the table name corresponding to the session</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Current Session - NamedType SessionTerminatedMsg</note>
+        </trans-unit>
+        <trans-unit id="Table 4003818636 - Field 3997336476 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Company name</source>
+          <target>Company name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Current Session - Field Company Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4003818636 - Field 1829104285 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Session ID</source>
+          <target>Session ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Current Session - Field Session ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4003818636 - Field 1196097820 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Session unique ID</source>
+          <target>Session unique ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Current Session - Field Session Unique ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4003818636 - Field 3135334477 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table ID</source>
+          <target>Table ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Current Session - Field Table ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2785369961 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Deleted Record</source>
+          <target>ADLSE Deleted Record</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Record - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2785369961 - Field 2279916462 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Deletion Timestamp</source>
+          <target>Deletion Timestamp</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Record - Field Deletion Timestamp - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2785369961 - Field 883711285 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Entry No.</source>
+          <target>Entry No.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Record - Field Entry No. - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2785369961 - Field 3076185996 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>System ID</source>
+          <target>System ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Record - Field System ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2785369961 - Field 3135334477 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table ID</source>
+          <target>Table ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Record - Field Table ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 870237544 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Deleted Table Filter</source>
+          <target>ADLSE Deleted Table Filter</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Table Filter - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 870237544 - Field 1393533604 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the caption of the table whose data is to exported.</source>
+          <target>Specifies the caption of the table whose data is to exported.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Table Filter - Field Table Caption - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 870237544 - Field 1393533604 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table Caption</source>
+          <target>Table Caption</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Table Filter - Field Table Caption - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 870237544 - Field 1359954629 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specify the ID of the table that should not be tracked for deletes.</source>
+          <target>Specify the ID of the table that should not be tracked for deletes.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Table Filter - Field TableId - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 870237544 - Field 1359954629 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table ID</source>
+          <target>Table ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Deleted Table Filter - Field TableId - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1001288161 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Enum Translation</source>
+          <target>ADLSE Enum Translation</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1001288161 - Field 1634532550 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the compliant field name of the field that is compliant with Data Lake standards.</source>
+          <target>Specifies the compliant field name of the field that is compliant with Data Lake standards.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation - Field Compliant Field Name - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 1001288161 - Field 1634532550 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Compliant Object Name</source>
+          <target>Compliant Object Name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation - Field Compliant Field Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1001288161 - Field 1153821034 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the Compliant table Name of the table that is compliant with Data Lake standards.</source>
+          <target>Specifies the Compliant table Name of the table that is compliant with Data Lake standards.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation - Field Compliant Table Name - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 1001288161 - Field 1153821034 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Compliant Table Name</source>
+          <target>Compliant Table Name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation - Field Compliant Table Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1001288161 - Field 4095765489 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field Id</source>
+          <target>Field Id</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation - Field Field Id - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 1001288161 - Field 2066789741 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table Id</source>
+          <target>Table Id</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation - Field Table Id - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Enum Translation Language</source>
+          <target>ADLSE Enum Translation Language</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 1634532550 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the compliant field name of the field that is compliant with Data Lake standards.</source>
+          <target>Specifies the compliant field name of the field that is compliant with Data Lake standards.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Compliant Field Name - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 1634532550 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Compliant Object Name</source>
+          <target>Compliant Object Name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Compliant Field Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 1153821034 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the compliant table name of the table that is compliant with Data Lake standards.</source>
+          <target>Specifies the compliant table name of the table that is compliant with Data Lake standards.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Compliant Table Name - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 1153821034 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Compliant Table Name</source>
+          <target>Compliant Table Name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Compliant Table Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 1802100194 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the caption of the enum value.</source>
+          <target>Specifies the caption of the enum value.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Enum Value Caption - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 1802100194 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enum Caption</source>
+          <target>Enum Caption</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Enum Value Caption - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 2662692343 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enum Index</source>
+          <target>Enum Index</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Enum Value Id - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 4095765489 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field Id</source>
+          <target>Field Id</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Field Id - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 2273653569 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the language code.</source>
+          <target>Specifies the language code.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Language Code - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 2273653569 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Language Code</source>
+          <target>Language Code</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Language Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 461144037 - Field 2066789741 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table Id</source>
+          <target>Table Id</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Enum Translation Lang - Field Table Id - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2541521783 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export Category Table</source>
+          <target>Export Category Table</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Export Category Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2541521783 - Field 3004954119 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the Unique Code of a Export Category which can be linked to tables which are part of the export to Azure Datalake.</source>
+          <target>Specifies the Unique Code of a Export Category which can be linked to tables which are part of the export to Azure Datalake.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Export Category Table - Field Code - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 2541521783 - Field 3004954119 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Code</source>
+          <target>Code</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Export Category Table - Field Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 2541521783 - Field 3461834954 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the Description of the Export Category.</source>
+          <target>Specifies the Description of the Export Category.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Export Category Table - Field Description - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 2541521783 - Field 3461834954 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Description</source>
+          <target>Description</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Export Category Table - Field Description - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Field</source>
+          <target>ADLSE Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - NamedType 424748964" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table with ID %1 has not been set to be exported.</source>
+          <target>Table with ID %1 has not been set to be exported.</target>
+          <note from="Developer" annotates="general" priority="2">%1 is the table ID</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - NamedType TableDoesNotExistErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - Method 119259710 - NamedType 1973318843" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table field is part of the Primary Key, Field cannot be disabled.</source>
+          <target>Table field is part of the Primary Key, Field cannot be disabled.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - Method CheckNotPrimaryKeyField - NamedType FieldCannotBeDisabledErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - Field 2891538263 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if the field will be exported.</source>
+          <target>Specifies if the field will be exported.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - Field Enabled - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - Field 2891538263 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enabled</source>
+          <target>Enabled</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - Field Enabled - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - Field 869342929 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the ID of the field to be exported.</source>
+          <target>Specifies the ID of the field to be exported.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - Field Field ID - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - Field 869342929 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field ID</source>
+          <target>Field ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - Field Field ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - Field 2780874720 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the name of the field to be exported.</source>
+          <target>Specifies the name of the field to be exported.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - Field FieldCaption - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - Field 2780874720 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Field</source>
+          <target>Field</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - Field FieldCaption - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4088819015 - Field 3135334477 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table ID</source>
+          <target>Table ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Field - Field Table ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Run</source>
+          <target>ADLSE Run</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - NamedType 392019747" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not update the status of the export run for table to %1.</source>
+          <target>Could not update the status of the export run for table to %1.</target>
+          <note from="Developer" annotates="general" priority="2">%1: New status</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - NamedType CouldNotUpdateExportRunStatusErr</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - NamedType 928042365" size-unit="char" translate="yes" xml:space="preserve">
+          <source>No export process running for table.</source>
+          <target>No export process running for table.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - NamedType ExportRunNotFoundErr</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - NamedType 2617401609" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export stopped as session was cancelled. Please check state of the export on the data lake before enabling this.</source>
+          <target>Export stopped as session was cancelled. Please check state of the export on the data lake before enabling this.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - NamedType ExportStoppedDueToCancelledSessionTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 3997336476 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Company name</source>
+          <target>Company name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field Company Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 4241106586 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies when the export was started.</source>
+          <target>Specifies when the export was started.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field Ended - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 4241106586 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Ended</source>
+          <target>Ended</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field Ended - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 2248886284 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the error if the execution had any.</source>
+          <target>Specifies the error if the execution had any.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field Error - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 2248886284 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Error</source>
+          <target>Error</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field Error - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 3641927271 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ID</source>
+          <target>ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 816905803 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies when the export was started.</source>
+          <target>Specifies when the export was started.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field Started - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 816905803 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Started</source>
+          <target>Started</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field Started - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 269761521 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the state of the execution of export.</source>
+          <target>Specifies the state of the execution of export.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field State - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 269761521 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>State</source>
+          <target>State</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field State - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 938701546 - Field 3135334477 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table ID</source>
+          <target>Table ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Run - Field Table ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Setup</source>
+          <target>ADLSE Setup</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - NamedType 2394985851" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The account name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890</source>
+          <target>The account name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - NamedType AccountNameIncorrectFormatErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - NamedType 2795128801" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The container name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_</source>
+          <target>The container name is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - NamedType ContainerNameIncorrectFormatErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - NamedType 2516915036" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The lakehouse is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID</source>
+          <target>The lakehouse is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - NamedType LakehouseIncorrectFormatErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - NamedType 102026637" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Please enter a value that is equal or smaller than 10 for the maximum retries.</source>
+          <target>Please enter a value that is equal or smaller than 10 for the maximum retries.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - NamedType MaximumRetriesErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - NamedType 1965763300" size-unit="char" translate="yes" xml:space="preserve">
+          <source>No schema has been exported yet. Please export schema first before exporting the data.</source>
+          <target>No schema has been exported yet. Please export schema first before exporting the data.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - NamedType NoSchemaExportedErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - NamedType 3086330205" size-unit="char" translate="yes" xml:space="preserve">
+          <source>No record on this table exists.</source>
+          <target>No record on this table exists.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - NamedType RecordDoesNotExistErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - NamedType 2818560441" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Schema already exported. Please perform the action "clear schema export date" before changing the schema.</source>
+          <target>Schema already exported. Please perform the action "clear schema export date" before changing the schema.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - NamedType SchemaAlreadyExportedErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - NamedType 2352920294" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The workspace is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID</source>
+          <target>The workspace is in an incorrect format. Please only use abcdefghijklmnopqrstuvwxyz1234567890_ or a valid GUID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - NamedType WorkspaceIncorrectFormatErr</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Method 4237346240 - NamedType 3655709774" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Clear schema export date</source>
+          <target>Clear schema export date</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Method SchemaExported - NamedType ClearSchemaExportDateLbl</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2588032914 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the name of the storage account.</source>
+          <target>Specifies the name of the storage account.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Account Name - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2588032914 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Account Name</source>
+          <target>Account Name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Account Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 394351785 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the container name where data will be uploaded. Container names must be 3-63 characters, lowercase letters, numbers, and dashes only.</source>
+          <target>Specifies the container name where data will be uploaded. Container names must be 3-63 characters, lowercase letters, numbers, and dashes only.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Container - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 394351785 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Container</source>
+          <target>Container</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Container - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3801871525 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the format in which to store the exported data in the 'data' CDM folder. The Parquet format is recommended for storing the data with the best fidelity.</source>
+          <target>Specifies the format in which to store the exported data in the 'data' CDM folder. The Parquet format is recommended for storing the data with the best fidelity.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field DataFormat - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3801871525 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>CDM data format</source>
+          <target>CDM data format</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field DataFormat - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2986454676 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the delayed export time in seconds (0 = No delay).</source>
+          <target>Specifies the delayed export time in seconds (0 = No delay).</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Delayed Export - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2986454676 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Delayed Export</source>
+          <target>Delayed Export</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Delayed Export - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 921554209 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if the table will be deleted if a reset of the table is done.</source>
+          <target>Specifies if the table will be deleted if a reset of the table is done.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Delete Table - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 921554209 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Delete table</source>
+          <target>Delete table</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Delete Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2670080655 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if the column DeliveredDateTime will be added to the CSV export file.</source>
+          <target>Specifies if the column DeliveredDateTime will be added to the CSV export file.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Delivered DateTime - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2670080655 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Add delivered DateTime</source>
+          <target>Add delivered DateTime</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Delivered DateTime - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2183130790 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if operational telemetry will be emitted to this extension publisher's telemetry pipeline. You will have to configure a telemetry account for this extension first.</source>
+          <target>Specifies if operational telemetry will be emitted to this extension publisher's telemetry pipeline. You will have to configure a telemetry account for this extension first.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Emit telemetry - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2183130790 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Emit telemetry</source>
+          <target>Emit telemetry</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Emit telemetry - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3066144503 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if you want to export the closing date column in G/L Entries.</source>
+          <target>Specifies if you want to export the closing date column in G/L Entries.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Export Closing Date column - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3066144503 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export Closing Date column</source>
+          <target>Export Closing Date column</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Export Closing Date column - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3705643805 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the company for the export of the database tables.</source>
+          <target>Specifies the company for the export of the database tables.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Export Company Database Tables - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3705643805 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export Company Database Tables</source>
+          <target>Export Company Database Tables</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Export Company Database Tables - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 373671349 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if the enums will be exported as integers instead of strings. This is useful if you want to use the enums in Power BI.</source>
+          <target>Specifies if the enums will be exported as integers instead of strings. This is useful if you want to use the enums in Power BI.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Export Enum as Integer - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 373671349 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export Enum as Integer</source>
+          <target>Export Enum as Integer</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Export Enum as Integer - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3312182529 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID.</source>
+          <target>Specifies the name of the Lakehouse where the data is going to be uploaded. This can be a name or a GUID.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Lakehouse - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3312182529 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Lakehouse</source>
+          <target>Lakehouse</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Lakehouse - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3302704947 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the name of the Landing Zone where the data is going to be uploaded. This Landing Zone you can find at the Replication Status page in Microsoft Fabric.</source>
+          <target>Specifies the name of the Landing Zone where the data is going to be uploaded. This Landing Zone you can find at the Replication Status page in Microsoft Fabric.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field LandingZone - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3302704947 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Landing Zone</source>
+          <target>Landing Zone</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field LandingZone - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 1328486690 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Maximum retries</source>
+          <target>Maximum retries</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Maximum Retries - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 710554475 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies maximum upload size per data block in MiBs. Larger values reduce iterations but may affect other processes.</source>
+          <target>Specifies maximum upload size per data block in MiBs. Larger values reduce iterations but may affect other processes.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field MaxPayloadSizeMiB - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 710554475 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Max payload size (MiBs)</source>
+          <target>Max payload size (MiBs)</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field MaxPayloadSizeMiB - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 1663593181 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Primary Key</source>
+          <target>Primary Key</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Primary Key - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 1702737111 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Schema exported on</source>
+          <target>Schema exported on</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Schema Exported On - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 864596981 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies that records are not sorted by row version before export. May affect incremental data export.</source>
+          <target>Specifies that records are not sorted by row version before export. May affect incremental data export.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Skip Timestamp Sorting On Recs - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 864596981 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Skip row version sorting</source>
+          <target>Skip row version sorting</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Skip Timestamp Sorting On Recs - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 613473307 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the type of storage type to use.</source>
+          <target>Specifies the type of storage type to use.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Storage Type - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 613473307 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Storage type</source>
+          <target>Storage type</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Storage Type - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2653012956 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the translations for the enums used in the selected tables.</source>
+          <target>Specifies the translations for the enums used in the selected tables.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Translations - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2653012956 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Translations</source>
+          <target>Translations</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Translations - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3808103248 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if the captions of fields will be used instead of names. Be aware that the user of the export in all companies must have the same language.</source>
+          <target>Specifies if the captions of fields will be used instead of names. Be aware that the user of the export in all companies must have the same language.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Use Field Captions - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3808103248 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Use Field Captions</source>
+          <target>Use Field Captions</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Use Field Captions - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2224467258 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies that table and field IDs will only be used in names if duplicates exist.</source>
+          <target>Specifies that table and field IDs will only be used in names if duplicates exist.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Use IDs for Duplicates Only - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 2224467258 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>IDs for Duplicates Only</source>
+          <target>IDs for Duplicates Only</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Use IDs for Duplicates Only - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 334359692 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if the captions of Tables will be used instead of names. Be aware that the user of the export in all companies must have the same language.</source>
+          <target>Specifies if the captions of Tables will be used instead of names. Be aware that the user of the export in all companies must have the same language.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Use Table Captions - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 334359692 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Use Table Captions</source>
+          <target>Use Table Captions</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Use Table Captions - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3663515799 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the name of the Workspace where the data is going to be uploaded. This can be a name or a GUID.</source>
+          <target>Specifies the name of the Workspace where the data is going to be uploaded. This can be a name or a GUID.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Workspace - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 4249570476 - Field 3663515799 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Workspace</source>
+          <target>Workspace</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Setup - Field Workspace - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Table</source>
+          <target>ADLSE Table</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - NamedType 2570556267" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Session stopped by user.</source>
+          <target>Session stopped by user.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - NamedType StoppedByUserLbl</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - NamedType 386156436" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The table %1 cannot be exported because of the following error. \%2</source>
+          <target>The table %1 cannot be exported because of the following error. \%2</target>
+          <note from="Developer" annotates="general" priority="2">%1: Table ID, %2: error text</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - NamedType TableCannotBeExportedErr</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - NamedType 2277257241" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Data is being executed for table %1. Please wait for the export to finish before making changes.</source>
+          <target>Data is being executed for table %1. Please wait for the export to finish before making changes.</target>
+          <note from="Developer" annotates="general" priority="2">%1: table caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - NamedType TableExportingDataErr</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - NamedType 132660943" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table %1 is not a normal table.</source>
+          <target>Table %1 is not a normal table.</target>
+          <note from="Developer" annotates="general" priority="2">%1: caption of table</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - NamedType TableNotNormalErr</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - NamedType 688718946" size-unit="char" translate="yes" xml:space="preserve">
+          <source>and are exported to the lakehouse. Please run the notebook first.</source>
+          <target>and are exported to the lakehouse. Please run the notebook first.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - NamedType TableResetExportedTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - NamedType 222943332" size-unit="char" translate="yes" xml:space="preserve">
+          <source>%1 table(s) were reset %2</source>
+          <target>%1 table(s) were reset %2</target>
+          <note from="Developer" annotates="general" priority="2">%1 = number of tables that were reset, %2 = message if tables are exported</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - NamedType TablesResetTxt</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Field 2891538263 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the state of the table. Set this checkmark to export this table, otherwise not.</source>
+          <target>Specifies the state of the table. Set this checkmark to export this table, otherwise not.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Field Enabled - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Field 2891538263 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enabled</source>
+          <target>Enabled</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Field Enabled - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Field 2891538263 - Method 2126772001 - NamedType 1652289272" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The ADLSE Table table cannot be disabled.</source>
+          <target>The ADLSE Table table cannot be disabled.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Field Enabled - Method OnValidate - NamedType ADLSETableErr</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Field 2174822216 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the Export Category which can be linked to tables which are part of the export to Azure Datalake. The Category can be used to schedule the export.</source>
+          <target>Specifies the Export Category which can be linked to tables which are part of the export to Azure Datalake. The Category can be used to schedule the export.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Field ExportCategory - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Field 2174822216 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ExportCategory</source>
+          <target>ExportCategory</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Field ExportCategory - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Field 2472325059 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export File Number</source>
+          <target>Export File Number</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Field ExportFileNumber - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Field 3887527536 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the starting date for the initial data load. Only records with SystemModifiedAt &gt;= this date will be exported on the first export. Leave blank to export all historical data.</source>
+          <target>Specifies the starting date for the initial data load. Only records with SystemModifiedAt &gt;= this date will be exported on the first export. Leave blank to export all historical data.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Field Initial Load Start Date - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Field 3887527536 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Initial Load Start Date</source>
+          <target>Initial Load Start Date</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Field Initial Load Start Date - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 3041034051 - Field 3135334477 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table ID</source>
+          <target>Table ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table - Field Table ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 842758815 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Table Last Timestamp</source>
+          <target>ADLSE Table Last Timestamp</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table Last Timestamp - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 842758815 - NamedType 786871201" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not save the last time stamp for the deletions on table %1.</source>
+          <target>Could not save the last time stamp for the deletions on table %1.</target>
+          <note from="Developer" annotates="general" priority="2">%1: table caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table Last Timestamp - NamedType SaveDeletionLastTimestampFailedErr</note>
+        </trans-unit>
+        <trans-unit id="Table 842758815 - NamedType 3417664514" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not save the last time stamp for the upserts on table %1.</source>
+          <target>Could not save the last time stamp for the upserts on table %1.</target>
+          <note from="Developer" annotates="general" priority="2">%1: table caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table Last Timestamp - NamedType SaveUpsertLastTimestampFailedErr</note>
+        </trans-unit>
+        <trans-unit id="Table 842758815 - Field 3997336476 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Company name</source>
+          <target>Company name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table Last Timestamp - Field Company Name - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 842758815 - Field 68953080 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Entry no. of the last deleted record</source>
+          <target>Entry no. of the last deleted record</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table Last Timestamp - Field Deleted Last Entry No. - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 842758815 - Field 3135334477 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table ID</source>
+          <target>Table ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table Last Timestamp - Field Table ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Table 842758815 - Field 3406449795 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Last timestamp exported for an updated record</source>
+          <target>Last timestamp exported for an updated record</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Table ADLSE Table Last Timestamp - Field Updated Last Timestamp - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 3632231771 - NamedType 3442112924" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The field %1 in the entity %2 is already present in the data lake and cannot be removed.</source>
+          <target>The field %1 in the entity %2 is already present in the data lake and cannot be removed.</target>
+          <note from="Developer" annotates="general" priority="2">%1: field name, %2: entity name</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE CDM Util - NamedType ExistingFieldCannotBeRemovedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 3632231771 - NamedType 1450646149" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The data type for the field %1 in the entity %2 cannot be changed.</source>
+          <target>The data type for the field %1 in the entity %2 cannot be changed.</target>
+          <note from="Developer" annotates="general" priority="2">%1: field name, %2: entity name</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE CDM Util - NamedType FieldDataTypeCannotBeChangedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 3632231771 - NamedType 2691861956" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The attribute value for %1 at index %2 is different. First: %3, Second: %4</source>
+          <target>The attribute value for %1 at index %2 is different. First: %3, Second: %4</target>
+          <note from="Developer" annotates="general" priority="2">%1 = field, %2 = index, %3 = value of the first, %4 = value of the second</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE CDM Util - NamedType MismatchedValueInAttributeErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 3632231771 - NamedType 2137219851" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Represents the table %1</source>
+          <target>Represents the table %1</target>
+          <note from="Developer" annotates="general" priority="2">%1: table caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE CDM Util - NamedType RepresentsTableTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 3632231771 - NamedType 78431063" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Unequal number of attributes</source>
+          <target>Unequal number of attributes</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE CDM Util - NamedType UnequalAttributeCountErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 295484353 - NamedType 1206251898" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Representations of deleted records that have been exported previously have been deleted.</source>
+          <target>Representations of deleted records that have been exported previously have been deleted.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Clear Tracked Deletions - NamedType TrackedDeletedRecordsRemovedMsg</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2022498929 - NamedType 2180020837" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The number of blocks that can be added to the blob has reached its maximum limit.</source>
+          <target>The number of blocks that can be added to the blob has reached its maximum limit.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Communication - NamedType CannotAddedMoreBlocksErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2022498929 - NamedType 1523564648" size-unit="char" translate="yes" xml:space="preserve">
+          <source>There may have been a change in the tables to export. %1</source>
+          <target>There may have been a change in the tables to export. %1</target>
+          <note from="Developer" annotates="general" priority="2">%1 = NotAllowedOnSimultaneousExportTxt</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Communication - NamedType CdmSchemaChangedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2022498929 - NamedType 2556343343" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The schema of the table %1 has changed. %2</source>
+          <target>The schema of the table %1 has changed. %2</target>
+          <note from="Developer" annotates="general" priority="2">%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Communication - NamedType EntitySchemaChangedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2022498929 - NamedType 3094360097" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Please export the schema first before trying to export the data.</source>
+          <target>Please export the schema first before trying to export the data.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Communication - NamedType ExportOfSchemaNotPerformendTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2022498929 - NamedType 2251668501" size-unit="char" translate="yes" xml:space="preserve">
+          <source>A single record payload exceeded the max payload size. Please adjust the payload size or reduce the fields to be exported for the record.</source>
+          <target>A single record payload exceeded the max payload size. Please adjust the payload size or reduce the fields to be exported for the record.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Communication - NamedType SingleRecordTooLargeErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2022498929 - Method 1586616589 - NamedType 2612532889" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Attempt to rename non existing blob or target blob. From: %1, to: %2</source>
+          <target>Attempt to rename non existing blob or target blob. From: %1, to: %2</target>
+          <note from="Developer" annotates="general" priority="2">%1 = source blob path, %2 = target blob path</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Communication - Method RenameDataBlob - NamedType RenameParametersErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 800849361 - NamedType 1606060615" size-unit="char" translate="yes" xml:space="preserve">
+          <source>No value found for %1.</source>
+          <target>No value found for %1.</target>
+          <note from="Developer" annotates="general" priority="2">%1 = name of the key</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Credentials - NamedType ValueNotFoundErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 3183127436 - NamedType 4248840524" size-unit="char" translate="yes" xml:space="preserve">
+          <source>You do not have sufficient permissions to read from the table.</source>
+          <target>You do not have sufficient permissions to read from the table.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Execute - NamedType InsufficientReadPermErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 1271087839 - NamedType 1291026159" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The schema export date has been cleared.</source>
+          <target>The schema export date has been cleared.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Execution - NamedType ClearSchemaExportedOnMsg</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 1271087839 - NamedType 1611599047" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Data export started for %1 out of %2 tables. Please refresh this page to see the latest export state for the tables. Only those tables that either have had changes since the last export or failed to export last time have been included. The tables for which the exports could not be started have been queued up for later.</source>
+          <target>Data export started for %1 out of %2 tables. Please refresh this page to see the latest export state for the tables. Only those tables that either have had changes since the last export or failed to export last time have been included. The tables for which the exports could not be started have been queued up for later.</target>
+          <note from="Developer" annotates="general" priority="2">%1 = number of tables to start the export for. %2 = total number of tables enabled for export.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Execution - NamedType ExportStartedTxt</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 1271087839 - NamedType 2174952215" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The export process was stopped successfully.</source>
+          <target>The export process was stopped successfully.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Execution - NamedType SuccessfulStopMsg</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 1271087839 - Method 438010895 - NamedType 122221351" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Current Table:           #1##########\</source>
+          <target>Current Table:           #1##########\</target>
+          <note from="Developer" annotates="general" priority="2">#1: table caption</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Execution - Method SchemaExport - NamedType Progress1Msg</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 248301327 - NamedType 2611328953" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not append data to %1. %2</source>
+          <target>Could not append data to %1. %2</target>
+          <note from="Developer" annotates="general" priority="2">%1: blob path, %2: Http response.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Gen 2 Util - NamedType CouldNotAppendDataToBlobErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 248301327 - NamedType 4199198014" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not commit blocks to %1. %2</source>
+          <target>Could not commit blocks to %1. %2</target>
+          <note from="Developer" annotates="general" priority="2">%1: Blob path, %2: Http Response</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Gen 2 Util - NamedType CouldNotCommitBlocksToDataBlobErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 248301327 - NamedType 2221752466" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not create blob %1. %2</source>
+          <target>Could not create blob %1. %2</target>
+          <note from="Developer" annotates="general" priority="2">%1: blob path, %2: error text</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Gen 2 Util - NamedType CouldNotCreateBlobErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 248301327 - NamedType 1732890337" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not read data on %1. %2</source>
+          <target>Could not read data on %1. %2</target>
+          <note from="Developer" annotates="general" priority="2">%1: blob path, %2: Http respomse</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Gen 2 Util - NamedType CouldNotReadDataInBlobErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 248301327 - NamedType 1534800161" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not read %1 from %2.</source>
+          <target>Could not read %1 from %2.</target>
+          <note from="Developer" annotates="general" priority="2">%1: content header value , %2: blob path</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Gen 2 Util - NamedType CouldNotReadResponseHeaderErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 248301327 - NamedType 612618259" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not release lock on blob %1. %2</source>
+          <target>Could not release lock on blob %1. %2</target>
+          <note from="Developer" annotates="general" priority="2">%1: blob name, %2: Http response.</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Gen 2 Util - NamedType CouldNotReleaseLockOnBlobErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 248301327 - NamedType 4025550862" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not rename blob from %1 to %2: %3</source>
+          <target>Could not rename blob from %1 to %2: %3</target>
+          <note from="Developer" annotates="general" priority="2">%1: source blob path, %2: target blob path, %3 - HTTP response message</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Gen 2 Util - NamedType CouldNotRenameDataBlobErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 248301327 - NamedType 2852131100" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Could not create container %1. %2</source>
+          <target>Could not create container %1. %2</target>
+          <note from="Developer" annotates="general" priority="2">%1: container name; %2: error text</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Gen 2 Util - NamedType CoundNotCreateContainerErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 248301327 - NamedType 1419622901" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Timed out waiting to acquire lease on blob %1 after %2 seconds. %3</source>
+          <target>Timed out waiting to acquire lease on blob %1 after %2 seconds. %3</target>
+          <note from="Developer" annotates="general" priority="2">%1: blob name, %2: total waiting time in seconds, %3: Http Response</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Gen 2 Util - NamedType TimedOutWaitingForLockOnBlobErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 582512233 - NamedType 4177342769" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Unsupported method: %1</source>
+          <target>Unsupported method: %1</target>
+          <note from="Developer" annotates="general" priority="2">%1: http method name</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Http - NamedType UnsupportedMethodErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 4249570476 - NamedType 3126772150" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The field %1 of class %2 is not supported.</source>
+          <target>The field %1 of class %2 is not supported.</target>
+          <note from="Developer" annotates="general" priority="2">%1 = field name, %2 = field class</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Setup - NamedType FieldClassNotSupportedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 4249570476 - NamedType 1690176712" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The field %1 is disabled</source>
+          <target>The field %1 is disabled</target>
+          <note from="Developer" annotates="general" priority="2">%1 = field name</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Setup - NamedType FieldDisabledNotSupportedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 4249570476 - NamedType 325617535" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The field %1 is obsolete</source>
+          <target>The field %1 is obsolete</target>
+          <note from="Developer" annotates="general" priority="2">%1 = field name</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Setup - NamedType FieldObsoleteNotSupportedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 4249570476 - NamedType 3541618648" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Select the tables to be exported</source>
+          <target>Select the tables to be exported</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Setup - NamedType SelectTableLbl</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 4249570476 - Method 3321239466 - NamedType 4202851246" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Incorrect data has been removed from the table. Please export the schema again and reset all tables.</source>
+          <target>Incorrect data has been removed from the table. Please export the schema again and reset all tables.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Setup - Method FixIncorrectData - NamedType ShowMessageLbl</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 4249570476 - Method 3321239466 - NamedType 1273762815" size-unit="char" translate="yes" xml:space="preserve">
+          <source>With this action you will remove all fields that cannot be exported and all obsolete tables (pending / removed). Do you want to continue?</source>
+          <target>With this action you will remove all fields that cannot be exported and all obsolete tables (pending / removed). Do you want to continue?</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Setup - Method FixIncorrectData - NamedType ConfirmQuestionMsg</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 2326138305 - NamedType 3331393249" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The following table fields cannot be exported. Please disable them. %1</source>
+          <target>The following table fields cannot be exported. Please disable them. %1</target>
+          <note from="Developer" annotates="general" priority="2">%1 = List of table - field pairs</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Upgrade - NamedType InvalidFieldsBeingExportedErr</note>
+        </trans-unit>
+        <trans-unit id="Codeunit 1215622789 - NamedType 1674307088" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The field %1 of type %2 is not supported.</source>
+          <target>The field %1 of type %2 is not supported.</target>
+          <note from="Developer" annotates="general" priority="2">%1 = field name, %2 = field type</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Codeunit ADLSE Util - NamedType FieldTypeNotSupportedErr</note>
+        </trans-unit>
+        <trans-unit id="Page 1610181246 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Assign Export Category</source>
+          <target>Assign Export Category</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Assign Export Category - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1610181246 - Control 4028359056 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies Unique Code of an Export Category which can be linked to tables which are part of the export to Azure Datalake.</source>
+          <target>Specifies Unique Code of an Export Category which can be linked to tables which are part of the export to Azure Datalake.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Assign Export Category - Control Export Category - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 1610181246 - Control 4028359056 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export Catgory</source>
+          <target>Export Catgory</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Assign Export Category - Control Export Category - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 870237544 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Deleted Table Filter</source>
+          <target>Deleted Table Filter</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Deleted Table Filter - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 97365624 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE Enum Translations</source>
+          <target>ADLSE Enum Translations</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Enum Translations - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 97365624 - Action 2653012956 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>View the translations of the enum fields.</source>
+          <target>View the translations of the enum fields.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Enum Translations - Action Translations - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 97365624 - Action 2653012956 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Translations</source>
+          <target>Translations</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Enum Translations - Action Translations - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 97365624 - Action 3117171503 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Refresh the options of the enum fields.</source>
+          <target>Refresh the options of the enum fields.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Enum Translations - Action RefreshOptions - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 97365624 - Action 3117171503 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Refresh Options</source>
+          <target>Refresh Options</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Enum Translations - Action RefreshOptions - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 97365624 - Action 3383493608 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Process</source>
+          <target>Process</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Enum Translations - Action Category_Process - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 1288508980 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enum Translations Language</source>
+          <target>Enum Translations Language</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Enum Translations Lang - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3781775775 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export Catgories</source>
+          <target>Export Catgories</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Export Categories - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3781775775 - Control 3004954119 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Code</source>
+          <target>Code</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Export Categories - Control Code - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3781775775 - Control 3461834954 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Description</source>
+          <target>Description</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Export Categories - Control Description - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 938701546 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Execution logs for exports to Azure Data Lake Storage</source>
+          <target>Execution logs for exports to Azure Data Lake Storage</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Run - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 938701546 - Control 1637095154 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies how long export has run.</source>
+          <target>Specifies how long export has run.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Run - Control Duration - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 938701546 - Control 1637095154 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Duration</source>
+          <target>Duration</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Run - Control Duration - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 938701546 - Control 1595823452 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the caption of the table whose data was exported.</source>
+          <target>Specifies the caption of the table whose data was exported.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Run - Control TableCaption - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 938701546 - Control 1595823452 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table</source>
+          <target>Table</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Run - Control TableCaption - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 938701546 - Action 2457075619 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Removes the history of the export executions. This should be done periodically to free up storage space.</source>
+          <target>Removes the history of the export executions. This should be done periodically to free up storage space.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Run - Action Clear - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 938701546 - Action 2457075619 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Clear execution log</source>
+          <target>Clear execution log</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Run - Action Clear - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export to Azure Data Lake Storage</source>
+          <target>Export to Azure Data Lake Storage</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - NamedType 366675938" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ID not shown</source>
+          <target>ID not shown</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - NamedType ClientIdLbl</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - NamedType 792247639" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Secret not shown</source>
+          <target>Secret not shown</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - NamedType ClientSecretLbl</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - NamedType 2350067108" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Data from one or more tables failed to export on the last run. Please check the tables below to see the error(s).</source>
+          <target>Data from one or more tables failed to export on the last run. Please check the tables below to see the error(s).</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - NamedType ExportFailureNotificationMsg</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 4143327229 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Connection</source>
+          <target>Connection</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control ConnectionSettings - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 1703233268 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>App Registration</source>
+          <target>App Registration</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control AppRegistration - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 652819368 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the application client ID for the Azure App Registration that accesses the storage account.</source>
+          <target>Specifies the application client ID for the Azure App Registration that accesses the storage account.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control Client ID - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 652819368 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Client ID</source>
+          <target>Client ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control Client ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 2002479657 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the client secret for the Azure App Registration that accesses the storage account.</source>
+          <target>Specifies the client secret for the Azure App Registration that accesses the storage account.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control Client secret - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 2002479657 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Client secret</source>
+          <target>Client secret</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control Client secret - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 3994632457 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Azure Data Lake</source>
+          <target>Azure Data Lake</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control AzureDataLakeSettings - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 3583511546 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Microsoft Fabric</source>
+          <target>Microsoft Fabric</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control MSFabricSettings - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 1656975091 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the tenant ID which holds the app registration as well as the storage account. Note that they have to be on the same tenant.</source>
+          <target>Specifies the tenant ID which holds the app registration as well as the storage account. Note that they have to be on the same tenant.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control Tenant ID - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 1656975091 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tenant ID</source>
+          <target>Tenant ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control Tenant ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 3266712818 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Data Format</source>
+          <target>Data Format</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control DataFormatSettings - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 858049707 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export Settings</source>
+          <target>Export Settings</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control ExportSettings - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Control 1061736343 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tables</source>
+          <target>Tables</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Control Tables - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 1213376883 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Shows all the tables that are specified not to be tracked for deletes.</source>
+          <target>Shows all the tables that are specified not to be tracked for deletes.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action DeletedTablesNotToSync - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 1213376883 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Deleted tables not to sync</source>
+          <target>Deleted tables not to sync</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action DeletedTablesNotToSync - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 549706965 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Show the translations for the enums used in the selected tables.</source>
+          <target>Show the translations for the enums used in the selected tables.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action EnumTranslations - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 549706965 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enum translations</source>
+          <target>Enum translations</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action EnumTranslations - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 4028359056 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the Export Categories available for scheduling the export to Datalake.</source>
+          <target>Specifies the Export Categories available for scheduling the export to Datalake.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action Export Category - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 4028359056 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export Category</source>
+          <target>Export Category</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action Export Category - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 4219020610 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the scheduled Job Queues for the export to Datalake.</source>
+          <target>Specifies the scheduled Job Queues for the export to Datalake.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action Job Queue - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 4219020610 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Job Queue</source>
+          <target>Job Queue</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action Job Queue - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 1894152308 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Removes the entries in the deleted record list that have already been exported. The codeunit ADLSE Clear Tracked Deletions may be invoked using a job queue entry for the same end.</source>
+          <target>Removes the entries in the deleted record list that have already been exported. The codeunit ADLSE Clear Tracked Deletions may be invoked using a job queue entry for the same end.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action ClearDeletedRecordsList - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 1894152308 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Clear tracked deleted records</source>
+          <target>Clear tracked deleted records</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action ClearDeletedRecordsList - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 4030820591 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This will clear the schema exported on field. If this is cleared you can change the schema and export it again.</source>
+          <target>This will clear the schema exported on field. If this is cleared you can change the schema and export it again.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action ClearSchemaExported - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 4030820591 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Clear schema export date</source>
+          <target>Clear schema export date</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action ClearSchemaExported - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 3413831632 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Removes the history of the export executions. This should be done periodically to free up storage space.</source>
+          <target>Removes the history of the export executions. This should be done periodically to free up storage space.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action DeleteOldRuns - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 3413831632 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Clear execution log</source>
+          <target>Clear execution log</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action DeleteOldRuns - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 3248599582 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Starts the export process by spawning different sessions for each table. The action is disabled in case there are export processes currently running, also in other companies.</source>
+          <target>Starts the export process by spawning different sessions for each table. The action is disabled in case there are export processes currently running, also in other companies.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action ExportNow - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 3248599582 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export</source>
+          <target>Export</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action ExportNow - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 3321239466 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Fixes incorrect tables and fields in the setup. This should be done if you have deleted some tables and fields and you cannot disable them.</source>
+          <target>Fixes incorrect tables and fields in the setup. This should be done if you have deleted some tables and fields and you cannot disable them.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action FixIncorrectData - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 3321239466 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Fix incorrect data</source>
+          <target>Fix incorrect data</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action FixIncorrectData - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 2019212495 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Schedules the export process as a job queue entry.</source>
+          <target>Schedules the export process as a job queue entry.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action Schedule - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 2019212495 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Schedule export</source>
+          <target>Schedule export</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action Schedule - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 438010895 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>This will export the schema of the tables selected in the setup to the lake. This is a one-time operation and should be done before the first export of data.</source>
+          <target>This will export the schema of the tables selected in the setup to the lake. This is a one-time operation and should be done before the first export of data.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action SchemaExport - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 438010895 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Schema export</source>
+          <target>Schema export</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action SchemaExport - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 222153392 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tries to stop all sessions that are exporting data, including those that are running in other companies.</source>
+          <target>Tries to stop all sessions that are exporting data, including those that are running in other companies.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action StopExport - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 222153392 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Stop export</source>
+          <target>Stop export</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action StopExport - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 4249570476 - Action 3383493608 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Process</source>
+          <target>Process</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup - Action Category_Process - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Select the fields to be exported</source>
+          <target>Select the fields to be exported</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - NamedType 3347478790" size-unit="char" translate="yes" xml:space="preserve">
+          <source>One or more fields could not be enabled.</source>
+          <target>One or more fields could not be enabled.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - NamedType SomeFieldsCouldNotBeEnabledMsg</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 3597848481 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the name of the field for this entity in the data lake.</source>
+          <target>Specifies the name of the field for this entity in the data lake.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control ADLSFieldName - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 3597848481 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Attribute name</source>
+          <target>Attribute name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control ADLSFieldName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 1409525680 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the field class.</source>
+          <target>Specifies the field class.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control Field Class - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 1409525680 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Class</source>
+          <target>Class</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control Field Class - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 1409525680 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Normal,FlowField,FlowFilter</source>
+          <target>Normal,FlowField,FlowFilter</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control Field Class - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 869342929 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Number</source>
+          <target>Number</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control Field ID - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 4079677382 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the field type.</source>
+          <target>Specifies the field type.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control Field Type - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 4079677382 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Type</source>
+          <target>Type</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control Field Type - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 3909250225 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if the the field is part of the primary key.</source>
+          <target>Specifies if the the field is part of the primary key.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control IsPartOfPrimaryKey - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 3909250225 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Part of Primary Key</source>
+          <target>Part of Primary Key</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control IsPartOfPrimaryKey - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 2990557594 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the Obsolete State of the field.</source>
+          <target>Specifies the Obsolete State of the field.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control Obsolete State - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 2990557594 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Obsolete State</source>
+          <target>Obsolete State</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control Obsolete State - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Control 2990557594 - Property 62802879" size-unit="char" translate="yes" xml:space="preserve">
+          <source>No,Pending,Removed</source>
+          <target>No,Pending,Removed</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Control Obsolete State - Property OptionCaption</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Action 2223207931 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enables all fields of the table that can be enabled.</source>
+          <target>Enables all fields of the table that can be enabled.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Action SelectAll - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 2467644067 - Action 2223207931 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enable all valid fields</source>
+          <target>Enable all valid fields</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Fields - Action SelectAll - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Tables</source>
+          <target>Tables</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - NamedType 704878071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table%1</source>
+          <target>Table%1</target>
+          <note from="Developer" annotates="general" priority="2">%1 = Table ID</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - NamedType AbsentTableCaptionLbl</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - NamedType 1170006682" size-unit="char" translate="yes" xml:space="preserve">
+          <source>The following fields have been incorrectly enabled for exports in the table %1: %2</source>
+          <target>The following fields have been incorrectly enabled for exports in the table %1: %2</target>
+          <note from="Developer" annotates="general" priority="2">%1 = table name; %2 = List of invalid field names</note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - NamedType InvalidFieldConfiguredMsg</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - NamedType 814265038" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Data may have been exported from this table before. Changing the export schema now may cause unexpected side- effects. You may reset the table first so all the data shall be exported afresh. Do you still wish to continue?</source>
+          <target>Data may have been exported from this table before. Changing the export schema now may cause unexpected side- effects. You may reset the table first so all the data shall be exported afresh. Do you still wish to continue?</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - NamedType WarnOfSchemaChangeQst</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 2740688609 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the ID of the active export session for this table in this company, if any.</source>
+          <target>Specifies the ID of the active export session for this table in this company, if any.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control ActiveSessionId - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 2740688609 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Active session ID</source>
+          <target>Active session ID</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control ActiveSessionId - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 488224429 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the name of the entity corresponding to this table on the data lake. The value at the end indicates the table number in Dynamics 365 Business Central.</source>
+          <target>Specifies the name of the entity corresponding to this table on the data lake. The value at the end indicates the table number in Dynamics 365 Business Central.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control ADLSTableName - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 488224429 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Entity name</source>
+          <target>Entity name</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control ADLSTableName - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 2891538263 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Enabled</source>
+          <target>Enabled</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control Enabled - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 2174822216 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export Category</source>
+          <target>Export Category</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control ExportCategory - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 2472325059 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies last file number used when exporting data from this table.</source>
+          <target>Specifies last file number used when exporting data from this table.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control ExportFileNumber - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 3126421183 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies if any field has been chosen to be exported. Click on Choose Fields action to add fields to export.</source>
+          <target>Specifies if any field has been chosen to be exported. Click on Choose Fields action to add fields to export.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control FieldsChosen - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 3126421183 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source># Fields selected</source>
+          <target># Fields selected</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control FieldsChosen - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 3887527536 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Initial Load Start Date</source>
+          <target>Initial Load Start Date</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control Initial Load Start Date - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 2101400894 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the error message from the last export of this table in this company.</source>
+          <target>Specifies the error message from the last export of this table in this company.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastError - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 2101400894 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Last error</source>
+          <target>Last error</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastError - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 2379783881 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the time of the last heartbeat received from an export session for this table in this company.</source>
+          <target>Specifies the time of the last heartbeat received from an export session for this table in this company.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastHartbeat - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 2379783881 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Last heartbeat</source>
+          <target>Last heartbeat</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastHartbeat - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 4069281574 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the time of the last export from this table in this company.</source>
+          <target>Specifies the time of the last export from this table in this company.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastRanAt - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 4069281574 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Last started at</source>
+          <target>Last started at</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastRanAt - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 1739627064 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the timestamp of the record in this table that was exported last.</source>
+          <target>Specifies the timestamp of the record in this table that was exported last.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastTimestamp - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 1739627064 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Last timestamp</source>
+          <target>Last timestamp</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastTimestamp - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 1929334827 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the timestamp of the deleted records in this table that was exported last.</source>
+          <target>Specifies the timestamp of the deleted records in this table that was exported last.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastTimestampDeleted - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 1929334827 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Last timestamp deleted</source>
+          <target>Last timestamp deleted</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control LastTimestampDeleted - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 513339096 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the status of the last export from this table in this company.</source>
+          <target>Specifies the status of the last export from this table in this company.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control Status - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 513339096 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Last exported state</source>
+          <target>Last exported state</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control Status - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 1595823452 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the caption of the table whose data is to exported.</source>
+          <target>Specifies the caption of the table whose data is to exported.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control TableCaption - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Control 1595823452 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Table</source>
+          <target>Table</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Control TableCaption - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 3293503457 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Add a table to be exported.</source>
+          <target>Add a table to be exported.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action AddTable - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 3293503457 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Add</source>
+          <target>Add</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action AddTable - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 1150345799 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Assign an Export Category to the Table.</source>
+          <target>Assign an Export Category to the Table.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action AssignExportCategory - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 1150345799 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Assign Export Category</source>
+          <target>Assign Export Category</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action AssignExportCategory - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 4207383944 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Select the fields of this table to be exported.</source>
+          <target>Select the fields of this table to be exported.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action ChooseFields - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 4207383944 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Choose fields</source>
+          <target>Choose fields</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action ChooseFields - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 2159590881 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Removes a table that had been added to the list meant for export.</source>
+          <target>Removes a table that had been added to the list meant for export.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action DeleteTable - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 2159590881 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Delete</source>
+          <target>Delete</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action DeleteTable - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 3017859583 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Exports a file with BC2ADLS tables and fields.</source>
+          <target>Exports a file with BC2ADLS tables and fields.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action ExportBC2ADLS - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 3017859583 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Export</source>
+          <target>Export</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action ExportBC2ADLS - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 3624488056 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Import a file with BC2ADLS tables and fields.</source>
+          <target>Import a file with BC2ADLS tables and fields.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action ImportBC2ADLS - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 3624488056 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Import</source>
+          <target>Import</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action ImportBC2ADLS - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 447668913 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>View the execution logs for this table in the currently opened company.</source>
+          <target>View the execution logs for this table in the currently opened company.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action Logs - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 447668913 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Execution logs</source>
+          <target>Execution logs</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action Logs - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 685580383 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Set the selected tables to export all of its data again.</source>
+          <target>Set the selected tables to export all of its data again.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action Reset - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 685580383 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Reset</source>
+          <target>Reset</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action Reset - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 685580383 - Method 1377591017 - NamedType 170709568" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Current Company,All Companies</source>
+          <target>Current Company,All Companies</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action Reset - Method OnAction - NamedType OptionStringLbl</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 685580383 - Method 1377591017 - NamedType 3685235527" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Do you want to reset the selected tables for all companies?</source>
+          <target>Do you want to reset the selected tables for all companies?</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action Reset - Method OnAction - NamedType ResetTablesForAllCompaniesQst</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 685580383 - Method 1377591017 - NamedType 3768686394" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Do you want to reset the selected tables for the current company or all companies?</source>
+          <target>Do you want to reset the selected tables for the current company or all companies?</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action Reset - Method OnAction - NamedType ResetTablesQst</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 2384486830 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Stops the active export session for the selected table in the current company.</source>
+          <target>Stops the active export session for the selected table in the current company.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action StopExportSession - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Page 3887871207 - Action 2384486830 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Stop Export Session</source>
+          <target>Stop Export Session</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Page ADLSE Setup Tables - Action StopExportSession - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Schedule Export</source>
+          <target>Schedule Export</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 2346885236 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Options</source>
+          <target>Options</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control Options - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 1857404785 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the date and time when the job queue must be executed for the first time.</source>
+          <target>Specifies the date and time when the job queue must be executed for the first time.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control EarliestStartDateTimeControl - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 1857404785 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Earliest Start Date / Time </source>
+          <target>Earliest Start Date / Time </target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control EarliestStartDateTimeControl - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3072426636 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the description that is displayed in the job queue.</source>
+          <target>Specifies the description that is displayed in the job queue.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control JobQueueDescription - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3072426636 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Description</source>
+          <target>Description</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control JobQueueDescription - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3432288156 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies the minimum number of minutes that are to elapse between runs of a job queue entry. The value cannot be less than one minute.</source>
+          <target>Specifies the minimum number of minutes that are to elapse between runs of a job queue entry. The value cannot be less than one minute.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control NoofMinutesBetweeenRuns - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3432288156 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>No of minutes between runs</source>
+          <target>No of minutes between runs</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control NoofMinutesBetweeenRuns - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 1963606369 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Recurrence</source>
+          <target>Recurrence</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control Daysgrid - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3378722424 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies that the job queue entry runs on Mondays.</source>
+          <target>Specifies that the job queue entry runs on Mondays.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnMondaysControl - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3378722424 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Run On Mondays</source>
+          <target>Run On Mondays</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnMondaysControl - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3447647897 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies that the job queue entry runs on Teusdays.</source>
+          <target>Specifies that the job queue entry runs on Teusdays.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnTeusdaysControl - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3447647897 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Run On Tuesdays</source>
+          <target>Run On Tuesdays</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnTeusdaysControl - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 927317389 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies that the job queue entry runs on Thursdays.</source>
+          <target>Specifies that the job queue entry runs on Thursdays.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnThursdayControl - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 927317389 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Run On Thursdays</source>
+          <target>Run On Thursdays</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnThursdayControl - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 744271359 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies that the job queue entry runs on Wednesdays.</source>
+          <target>Specifies that the job queue entry runs on Wednesdays.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnWednesdayControl - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 744271359 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Run On Wednesdays</source>
+          <target>Run On Wednesdays</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnWednesdayControl - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 2512501250 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies that the job queue entry runs on Fridays.</source>
+          <target>Specifies that the job queue entry runs on Fridays.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnFridayControl - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 2512501250 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Run On Fridays</source>
+          <target>Run On Fridays</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnFridayControl - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3456145774 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies that the job queue entry runs on Saturdays.</source>
+          <target>Specifies that the job queue entry runs on Saturdays.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnSaturdayControl - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 3456145774 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Run On Saturdays</source>
+          <target>Run On Saturdays</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnSaturdayControl - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 2622257132 - Property 1295455071" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Specifies that the job queue entry runs on Sundays.</source>
+          <target>Specifies that the job queue entry runs on Sundays.</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnSundaysControl - Property ToolTip</note>
+        </trans-unit>
+        <trans-unit id="Report 2964824200 - Control 2622257132 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Run On Sundays</source>
+          <target>Run On Sundays</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Report ADLSE Schedule Task Assignment - Control RunOnSundaysControl - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 2135416054 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE BC2ADLS Export</source>
+          <target>ADLSE BC2ADLS Export</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort ADLSE BC2ADLS Export - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 925572789 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLSE BC2ADLS Import</source>
+          <target>ADLSE BC2ADLS Import</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort ADLSE BC2ADLS Import - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="XmlPort 925572789 - Method 24927850 - NamedType 1273762815" size-unit="char" translate="yes" xml:space="preserve">
+          <source>With the import all existing ADLSE Tables and Fields will be deleted. Do you want to continue?</source>
+          <target>With the import all existing ADLSE Tables and Fields will be deleted. Do you want to continue?</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">XmlPort ADLSE BC2ADLS Import - Method OnPreXmlPort - NamedType ConfirmQuestionMsg</note>
+        </trans-unit>
+        <trans-unit id="Enum 740672858 - EnumValue 3621274610 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>CSV</source>
+          <target>CSV</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum ADLSE CDM Format - EnumValue Csv - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 740672858 - EnumValue 1240813378 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Parquet</source>
+          <target>Parquet</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum ADLSE CDM Format - EnumValue Parquet - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 1350856771 - EnumValue 3826689261 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Failed</source>
+          <target>Failed</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum ADLSE Run State - EnumValue Failed - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 1350856771 - EnumValue 1675045056 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>In process</source>
+          <target>In process</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum ADLSE Run State - EnumValue InProcess - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 1350856771 - EnumValue 3371220206 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Never run</source>
+          <target>Never run</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum ADLSE Run State - EnumValue None - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 1350856771 - EnumValue 3878926381 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Success</source>
+          <target>Success</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum ADLSE Run State - EnumValue Success - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 1220829098 - EnumValue 109158254 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Azure Data Lake</source>
+          <target>Azure Data Lake</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum ADLSE Storage Type - EnumValue Azure Data Lake - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 1220829098 - EnumValue 1008758011 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Microsoft Fabric</source>
+          <target>Microsoft Fabric</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum ADLSE Storage Type - EnumValue Microsoft Fabric - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="Enum 1220829098 - EnumValue 633746631 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve">
+          <source>Microsoft Fabric - Open Mirroring</source>
+          <target>Microsoft Fabric - Open Mirroring</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">Enum ADLSE Storage Type - EnumValue Open Mirroring - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="EnumExtension 1199832413 - EnumValue 2799543553 - Property 2879900210" size-unit="char" translate="yes" xml:space="preserve" al-object-target="Enum 1178123344">
+          <source>Azure Data Lake Storage Export</source>
+          <target>Azure Data Lake Storage Export</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">EnumExtension ADLSE EventCategory - EnumValue ADLSE - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PermissionSet 2512935310 - Property 2879900210" maxwidth="30" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLS - Api</source>
+          <target>ADLS - Api</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PermissionSet ADLSE - API - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PermissionSet 1935226167 - Property 2879900210" maxwidth="30" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLS - Execute</source>
+          <target>ADLS - Execute</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PermissionSet ADLSE - Execute - Property Caption</note>
+        </trans-unit>
+        <trans-unit id="PermissionSet 2508606743 - Property 2879900210" maxwidth="30" size-unit="char" translate="yes" xml:space="preserve">
+          <source>ADLS - Setup</source>
+          <target>ADLS - Setup</target>
+          <note from="Developer" annotates="general" priority="2"></note>
+          <note from="Xliff Generator" annotates="general" priority="3">PermissionSet ADLSE - Setup - Property Caption</note>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
