@@ -2,10 +2,10 @@ namespace bc2adls;
 
 using System.Reflection;
 
-table 82569 "Deleted Tables Not to Sync"
+table 82569 "ADLSE Deleted Table Filter"
 {
     DataClassification = ToBeClassified;
-    Caption = 'Deleted Tables Not to Sync';
+    Caption = 'ADLSE Deleted Table Filter';
 
     fields
     {

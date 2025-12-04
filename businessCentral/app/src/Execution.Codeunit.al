@@ -214,16 +214,16 @@ codeunit 82569 "ADLSE Execution"
 
     [InherentPermissions(PermissionObjectType::Table, Database::"ADLSE Table Last Timestamp", 'X')]
     [InherentPermissions(PermissionObjectType::Table, Database::"ADLSE Deleted Record", 'X')]
-    [InherentPermissions(PermissionObjectType::Table, Database::"Deleted Tables Not to Sync", 'X')]
+    [InherentPermissions(PermissionObjectType::Table, Database::"ADLSE Deleted Table Filter", 'X')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'R')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'RI')]
-    [InherentPermissions(PermissionObjectType::TableData, Database::"Deleted Tables Not to Sync", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Table Filter", 'r')]
     [EventSubscriber(ObjectType::Codeunit, Codeunit::GlobalTriggerManagement, OnAfterOnDatabaseDelete, '', false, false)]
     local procedure OnAfterOnDatabaseDelete(RecRef: RecordRef)
     var
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
-        DeletedTablesNottoSync: Record "Deleted Tables Not to Sync";
+        DeletedTablesNottoSync: Record "ADLSE Deleted Table Filter";
     begin
         if RecRef.Number() = Database::"ADLSE Deleted Record" then
             exit;

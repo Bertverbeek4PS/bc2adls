@@ -2,9 +2,9 @@ namespace bc2adls;
 
 using System.Utilities;
 
-xmlport 82560 "BC2ADLS Import"
+xmlport 82560 "ADLSE BC2ADLS Import"
 {
-    Caption = 'BC2ADLS Import';
+    Caption = 'ADLSE BC2ADLS Import';
     UseRequestPage = false;
     Direction = Import;
     Permissions = tabledata "ADLSE Field" = rmi,

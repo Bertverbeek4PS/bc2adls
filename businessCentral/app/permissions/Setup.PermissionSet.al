@@ -11,7 +11,7 @@ permissionset 82560 "ADLSE - Setup"
     Assignable = true;
     Caption = 'ADLS - Setup', MaxLength = 30;
 
-    Permissions = table "Deleted Tables Not to Sync" = x,
+    Permissions = table "ADLSE Deleted Table Filter" = x,
                   table "ADLSE Export Category Table" = x,
                   table "ADLSE Setup" = x,
                   tabledata "ADLSE Setup" = RIMD,
@@ -23,7 +23,7 @@ permissionset 82560 "ADLSE - Setup"
                   tabledata "ADLSE Run" = RD,
                   tabledata "ADLSE Enum Translation" = RIMD,
                   tabledata "ADLSE Enum Translation Lang" = RIMD,
-                  tabledata "Deleted Tables Not to Sync" = RIMD,
+                  tabledata "ADLSE Deleted Table Filter" = RIMD,
                   tabledata "ADLSE Export Category Table" = RIMD,
                   codeunit "ADLSE Clear Tracked Deletions" = X,
                   codeunit "ADLSE Credentials" = X,
@@ -37,7 +37,7 @@ permissionset 82560 "ADLSE - Setup"
                   page "ADLSE Enum Translations Lang" = X,
                   page "ADLSE Export Categories" = X,
                   page "ADLSE Assign Export Category" = X,
-                  page "Deleted Tables Not To Sync" = X,
+                  page "ADLSE Deleted Table Filter" = X,
                   report "ADLSE Schedule Task Assignment" = X,
-                  xmlport "BC2ADLS Import" = X;
+                  xmlport "ADLSE BC2ADLS Import" = X;
 }

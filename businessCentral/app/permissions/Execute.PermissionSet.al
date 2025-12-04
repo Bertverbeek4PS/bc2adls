@@ -21,7 +21,7 @@ permissionset 82561 "ADLSE - Execute"
                   tabledata "ADLSE Run" = RIMD,
                   tabledata "ADLSE Enum Translation" = RIMD,
                   tabledata "ADLSE Enum Translation Lang" = RIMD,
-                  tabledata "Deleted Tables Not to Sync" = R,
+                  tabledata "ADLSE Deleted Table Filter" = R,
                   tabledata "ADLSE Export Category Table" = R,
                   codeunit "ADLSE UpgradeTagNewCompanySubs" = X,
                   codeunit "ADLSE Upgrade" = X,
@@ -36,5 +36,5 @@ permissionset 82561 "ADLSE - Execute"
                   codeunit "ADLSE Execution" = X,
                   codeunit "ADLSE Wrapper Execute" = X,
                   report "ADLSE Seek Data" = X,
-                  xmlport "BC2ADLS Export" = X;
+                  xmlport "ADLSE BC2ADLS Export" = X;
 }

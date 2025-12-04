@@ -341,7 +341,7 @@ page 82560 "ADLSE Setup"
                 Caption = 'Deleted tables not to sync';
                 ToolTip = 'Shows all the tables that are specified not to be tracked for deletes.';
                 Image = Delete;
-                RunObject = page "Deleted Tables Not To Sync";
+                RunObject = page "ADLSE Deleted Table Filter";
             }
             action("Job Queue")
             {

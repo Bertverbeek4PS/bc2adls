@@ -2,11 +2,11 @@ namespace bc2adls;
 
 using System.Reflection;
 
-page 82564 "Deleted Tables Not To Sync"
+page 82564 "ADLSE Deleted Table Filter"
 {
     PageType = List;
     ApplicationArea = All;
-    SourceTable = "Deleted Tables Not to Sync";
+    SourceTable = "ADLSE Deleted Table Filter";
 
     layout
     {
