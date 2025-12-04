@@ -167,7 +167,7 @@ codeunit 82562 "ADLSE Communication"
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
-    local procedure CreateDataBlob() Created: Boolean
+    local procedure CreateDataBlob(): Boolean
     begin
         exit(CreateDataBlob(false));
     end;
@@ -205,7 +205,7 @@ codeunit 82562 "ADLSE Communication"
             FileIdentifer := CreateGuid()
         else begin
             //https://learn.microsoft.com/en-us/fabric/database/mirrored-database/open-mirroring-landing-zone-format#data-file-and-format-in-the-landing-zone
-            ADLSETable.Get(TableID);
+            if ADLSETable.Get(TableID) then;
             if ADLSETable.ExportFileNumber = 0 then begin
                 ADLSETable.ExportFileNumber := 1;
                 ADLSETable.Modify(true);
@@ -233,7 +233,7 @@ codeunit 82562 "ADLSE Communication"
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
-    local procedure RenameDataBlob() RenameOK: Boolean
+    local procedure RenameDataBlob(): Boolean
     var
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
@@ -337,7 +337,6 @@ codeunit 82562 "ADLSE Communication"
     local procedure FlushPayload()
     var
         ADLSESetup: Record "ADLSE Setup";
-        ADLSETable: Record "ADLSE Table";
         ADLSEGen2Util: Codeunit "ADLSE Gen 2 Util";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSE: Codeunit ADLSE;
@@ -496,12 +495,12 @@ codeunit 82562 "ADLSE Communication"
         ADLSEExecute.UpdateInProgressTableTimestamp(ADLSETable, Timestamp, Deletes);
     end;
 
-    local procedure IncreaseExportFileNumber(TableIdToUpdate: integer)
+    local procedure IncreaseExportFileNumber(TableIdToUpdate: Integer)
     begin
         IncreaseExportFileNumber_InCurrSession(TableIdToUpdate);
     end;
 
-    procedure IncreaseExportFileNumber_InCurrSession(TableIdToUpdate: integer)
+    procedure IncreaseExportFileNumber_InCurrSession(TableIdToUpdate: Integer)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
@@ -510,7 +509,7 @@ codeunit 82562 "ADLSE Communication"
             ADLSETable.Get(TableIdToUpdate);
             ADLSETable.ExportFileNumber := ADLSETable.ExportFileNumber + 1;
             ADLSETable.Modify(true);
-            Commit();
+            Commit(); //Needs to be committed right away to be visible for other sessions
         end;
     end;
 }

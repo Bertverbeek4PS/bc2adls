@@ -195,6 +195,7 @@ table 82561 "ADLSE Table"
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rm')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table Last Timestamp", 'rm')]
     procedure ResetSelected(AllCompanies: Boolean)
     var
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
@@ -222,13 +223,13 @@ table 82561 "ADLSE Table"
                     end;
                 end else
                     if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
-                        ADLSETableLastTimestamp.SetRange("Table ID", rec."Table ID");
+                        ADLSETableLastTimestamp.SetRange("Table ID", Rec."Table ID");
                         ADLSETableLastTimestamp.DeleteAll();
                     end
                     else begin
-                        ADLSETableLastTimestamp.SetRange("Table ID", rec."Table ID");
-                        ADLSETableLastTimestamp.ModifyAll("Updated Last Timestamp", 0);
-                        ADLSETableLastTimestamp.ModifyAll("Deleted Last Entry No.", 0);
+                        ADLSETableLastTimestamp.SetRange("Table ID", Rec."Table ID");
+                        ADLSETableLastTimestamp.ModifyAll("Updated Last Timestamp", 0, true);
+                        ADLSETableLastTimestamp.ModifyAll("Deleted Last Entry No.", 0, true);
                         ADLSETableLastTimestamp.SetRange("Table ID");
                     end;
                 ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");

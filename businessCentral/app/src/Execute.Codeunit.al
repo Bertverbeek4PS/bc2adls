@@ -12,13 +12,11 @@ codeunit 82561 "ADLSE Execute"
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSERun: Record "ADLSE Run";
-        ADLSETable: Record "ADLSE Table";
         ADLSECurrentSession: Record "ADLSE Current Session";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSECommunication: Codeunit "ADLSE Communication";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEUtil: Codeunit "ADLSE Util";
-        ADLSEExternalEvents: Codeunit "ADLSE External Events";
         CustomDimensions: Dictionary of [Text, Text];
         TableCaption: Text;
         UpdatedLastTimestamp: BigInteger;

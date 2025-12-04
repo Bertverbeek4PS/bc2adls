@@ -138,7 +138,7 @@ table 82565 "ADLSE Current Session"
         ActiveSession: Record "Active Session";
     begin
         ActiveSession.SetLoadFields("Session Unique ID");
-        ActiveSession.Get(ServiceInstanceId(), SessId);
+        if ActiveSession.Get(ServiceInstanceId(), SessId) then;
         exit(ActiveSession."Session Unique ID");
     end;
 }

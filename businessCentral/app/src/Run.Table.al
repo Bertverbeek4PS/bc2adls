@@ -174,7 +174,7 @@ table 82566 "ADLSE Run"
     procedure CancelAllRuns()
     begin
         Rec.SetRange(State, "ADLSE Run State"::InProcess);
-        Rec.ModifyAll(Ended, CurrentDateTime, true);
+        Rec.ModifyAll(Ended, CurrentDateTime(), true);
         Rec.ModifyAll(State, "ADLSE Run State"::Failed, true);
         Rec.ModifyAll(Error, ExportStoppedDueToCancelledSessionTxt, true);
     end;

@@ -196,19 +196,19 @@ codeunit 82564 "ADLSE Util"
             NameToUse := FieldRef.Name();
         if ADLSESetup."Use IDs for Duplicates Only" then begin
             RecRef := FieldRef.Record();
-            TableFields.SetRange(TableNo, RecRef.Number);
+            TableFields.SetRange(TableNo, RecRef.Number());
             if ADLSESetup."Use Field Captions" then
                 TableFields.SetRange("Field Caption", NameToUse)
             else
                 exit(GetDataLakeCompliantName(NameToUse));
 
-            TableFields.SetFilter("No.", '<>%1', FieldRef.Number);
+            TableFields.SetFilter("No.", '<>%1', FieldRef.Number());
             if TableFields.IsEmpty() then // there is not a duplicate field name/caption
                 exit(GetDataLakeCompliantName(NameToUse))
             else
-                exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number));
+                exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number()));
         end else
-            exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number));
+            exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number()));
     end;
 
     procedure GetTableName(TableID: Integer) TableName: Text
@@ -273,7 +273,7 @@ codeunit 82564 "ADLSE Util"
         DateTimeValue: DateTime;
         TimeValue: Time;
     begin
-        case FieldRef.Type of
+        case FieldRef.Type() of
             FieldRef.Type::BigInteger,
             FieldRef.Type::Date,
             FieldRef.Type::DateFormula,

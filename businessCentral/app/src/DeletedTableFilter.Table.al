@@ -6,6 +6,8 @@ table 82569 "ADLSE Deleted Table Filter"
 {
     DataClassification = ToBeClassified;
     Caption = 'ADLSE Deleted Table Filter';
+    LookupPageId = "ADLSE Deleted Table Filter";
+    DrillDownPageId = "ADLSE Deleted Table Filter";
 
     fields
     {
@@ -14,6 +16,7 @@ table 82569 "ADLSE Deleted Table Filter"
             TableRelation = "ADLSE Table"."Table ID";
             Caption = 'Table ID';
             ToolTip = 'Specify the ID of the table that should not be tracked for deletes.';
+            DataClassification = CustomerContent;
         }
         field(5; "Table Caption"; Text[100])
         {

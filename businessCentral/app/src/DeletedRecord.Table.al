@@ -77,7 +77,7 @@ table 82563 "ADLSE Deleted Record"
         // in the next run.   
 
         Init();
-        "Table ID" := RecordRef.Number;
+        "Table ID" := RecordRef.Number();
         "System ID" := SystemIdFieldRef.Value();
         TimestampFieldRef := RecordRef.Field(0);
         "Deletion Timestamp" := TimestampFieldRef.Value();

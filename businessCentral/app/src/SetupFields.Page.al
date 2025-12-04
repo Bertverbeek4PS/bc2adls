@@ -39,11 +39,10 @@ page 82562 "ADLSE Setup Fields"
                 }
                 field(IsPartOfPrimaryKey; IsPartOfPrimaryKey)
                 {
-                    ApplicationArea = All;
                     Caption = 'Part of Primary Key';
                     Editable = false;
                     StyleExpr = StyleExprAsText;
-                    ToolTip = 'Specifies if the the field is part of the primary key';
+                    ToolTip = 'Specifies if the the field is part of the primary key.';
                 }
                 field(ADLSFieldName; ADLSFieldName)
                 {

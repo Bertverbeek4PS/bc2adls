@@ -87,7 +87,7 @@ table 82562 "ADLSE Field"
     begin
         ADLSESetup.SchemaExported();
 
-        ADLSETable.Get(Rec."Table ID");
+        if ADLSETable.Get(Rec."Table ID") then;
         ADLSETable.CheckNotExporting();
     end;
 
