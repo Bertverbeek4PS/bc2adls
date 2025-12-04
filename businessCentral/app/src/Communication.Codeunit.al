@@ -295,7 +295,7 @@ codeunit 82562 "ADLSE Communication"
                 Error(SingleRecordTooLargeErr);
             FlushPayload();
             if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
-                UpdateInProgressTimeStampOnTable(RecordRef.Number, RecordTimeStamp, Deletes);
+                UpdateInProgressTimeStampOnTable(RecordRef.Number(), RecordTimeStamp, Deletes);
         end;
         LastTimestampExported := LastFlushedTimeStamp;
 
