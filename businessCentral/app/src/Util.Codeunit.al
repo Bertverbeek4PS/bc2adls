@@ -308,7 +308,7 @@ codeunit 82564 "ADLSE Util"
             FieldRef.Type::Text:
                 exit(ConvertStringToText(FieldRef.Value()));
             else
-                Error(FieldTypeNotSupportedErr, FieldRef.Name(), FieldRef.Type);
+                Error(FieldTypeNotSupportedErr, FieldRef.Name(), FieldRef.Type());
         end;
     end;
 

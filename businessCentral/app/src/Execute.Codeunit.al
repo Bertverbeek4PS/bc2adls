@@ -225,14 +225,14 @@ codeunit 82561 "ADLSE Execute"
                     NoMoreToCollect := RecordRef.Next() = 0;
             until (not CollectedAndSent or NoMoreToCollect);
 
-            if ErrorMessage.Message <> '' then
+            if ErrorMessage.Message() <> '' then
                 Error(ErrorMessage);
             if ADLSECommunication.TryFinish(FlushedTimeStamp) then begin
                 if UpdatedLastTimeStamp < FlushedTimeStamp then // sample the highest timestamp, to cater to the eventuality that the records do not appear sorted per timestamp
                     UpdatedLastTimeStamp := FlushedTimeStamp
             end else
                 ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
-            if ErrorMessage.Message <> '' then
+            if ErrorMessage.Message() <> '' then
                 Error(ErrorMessage);
         end;
         if EmitTelemetry then

@@ -135,12 +135,12 @@ page 82562 "ADLSE Setup Fields"
         end;
 
         if IsPartOfPrimaryKey then
-            StyleExprAsText := 'StrongAccent'
+            StyleExprAsText := Format(PageStyle::StrongAccent)
         else
-            StyleExprAsText := 'Standard';
+            StyleExprAsText := Format(PageStyle::Standard);
 
         if FieldObsoleteState <> Field.ObsoleteState::No then
-            StyleExprAsText := 'Attention';
+            StyleExprAsText := Format(PageStyle::Attention);
     end;
 
     var
