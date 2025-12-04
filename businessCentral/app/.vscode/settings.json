@@ -4,6 +4,7 @@
     "${CodeCop}",
     "${UICop}",
     "${PerTenantExtensionCop}",
+    "${AppSourceCop}",
     "${analyzerFolder}BusinessCentral.LinterCop.dll"
   ],
   "al.ruleSetPath": "./.vscode/custom.ruleset.json",

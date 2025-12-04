@@ -10,7 +10,6 @@ permissionset 82560 "ADLSE - Setup"
     Caption = 'ADLS - Setup', MaxLength = 30;
 
     Permissions = table "Deleted Tables Not to Sync" = x,
-                  table "ADLSE Export Category" = x,
                   table "ADLSE Export Category Table" = x,
                   table "ADLSE Setup" = x,
                   tabledata "ADLSE Setup" = RIMD,
@@ -23,9 +22,6 @@ permissionset 82560 "ADLSE - Setup"
                   tabledata "ADLSE Enum Translation" = RIMD,
                   tabledata "ADLSE Enum Translation Lang" = RIMD,
                   tabledata "Deleted Tables Not to Sync" = RIMD,
-#pragma warning disable AL0432
-                  tabledata "ADLSE Export Category" = RIMD,
-#pragma warning restore AL0432
                   tabledata "ADLSE Export Category Table" = RIMD,
                   codeunit "ADLSE Clear Tracked Deletions" = X,
                   codeunit "ADLSE Credentials" = X,

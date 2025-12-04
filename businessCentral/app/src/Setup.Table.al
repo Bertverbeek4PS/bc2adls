@@ -67,39 +67,11 @@ table 82560 "ADLSE Setup"
             InitValue = Parquet;
         }
 
-        field(10; Running; Boolean)
-        {
-            Caption = 'Exporting data';
-            Editable = false;
-            ObsoleteReason = 'Use ADLSE Current Session::AreAnySessionsActive() instead';
-            ObsoleteTag = '1.2.2.0';
-            ObsoleteState = Removed;
-        }
-
         field(11; "Emit telemetry"; Boolean)
         {
             Caption = 'Emit telemetry';
             InitValue = true;
             ToolTip = 'Specifies if operational telemetry will be emitted to this extension publisher''s telemetry pipeline. You will have to configure a telemetry account for this extension first.';
-        }
-
-        field(15; "Multi- Company Export"; Boolean)
-        {
-            Caption = 'Multi- company export';
-            InitValue = false;
-            ObsoleteState = Pending;
-            ObsoleteReason = 'Schema update and export of data is now seperated.';
-
-            trigger OnValidate()
-            var
-                ADLSECurrentSession: Record "ADLSE Current Session";
-            begin
-                if Rec."Multi- Company Export" = xRec."Multi- Company Export" then
-                    exit;
-
-                // ensure that no current export sessions running
-                ADLSECurrentSession.CheckForNoActiveSessions();
-            end;
         }
 
         field(20; "Skip Timestamp Sorting On Recs"; Boolean)

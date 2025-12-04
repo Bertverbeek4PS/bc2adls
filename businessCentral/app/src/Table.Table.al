@@ -20,13 +20,6 @@ table 82561 "ADLSE Table"
             Editable = false;
             Caption = 'Table ID';
         }
-        field(2; State; Integer)
-        {
-            Caption = 'State';
-            ObsoleteReason = 'Use ADLSE Run table instead';
-            ObsoleteTag = '1.2.2.0';
-            ObsoleteState = Removed;
-        }
         field(3; Enabled; Boolean)
         {
             Editable = false;
@@ -48,14 +41,6 @@ table 82561 "ADLSE Table"
                 ADLSEExternalEvents.OnEnableTableChanged(Rec);
             end;
         }
-        field(5; LastError; Text[2048])
-        {
-            Editable = false;
-            Caption = 'Last error';
-            ObsoleteReason = 'Use ADLSE Run table instead';
-            ObsoleteTag = '1.2.2.0';
-            ObsoleteState = Removed;
-        }
         field(10; ExportCategory; Code[50])
         {
             TableRelation = "ADLSE Export Category Table";
@@ -71,14 +56,6 @@ table 82561 "ADLSE Table"
         {
             Caption = 'Initial Load Start Date';
             ToolTip = 'Specifies the starting date for the initial data load. Only records with SystemModifiedAt >= this date will be exported on the first export. Leave blank to export all historical data.';
-        }
-        field(16; "Process Type"; Enum "ADLSE Process Type")
-        {
-            Caption = 'Process Type';
-            DataClassification = CustomerContent;
-            ObsoleteState = Pending;
-            ObsoleteReason = 'This field will be removed in a future release because readuncommitted will be the default behavior because of performance.';
-            ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing, Ignore Read Isolation disables read isolation for performance, and Commit Externally uses external commit for large tables.';
         }
     }
 

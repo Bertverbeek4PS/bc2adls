@@ -24,8 +24,6 @@ codeunit 82572 "ADLSE Upgrade"
     begin
         RetenPolLogEntryAdded();
         ContainerFieldFromIsolatedStorageToSetupField();
-        SeperateSchemaAndData();
-        CopyValuesFromExportCategoryToExportcategoryTable();
     end;
 
     var
@@ -85,58 +83,6 @@ codeunit 82572 "ADLSE Upgrade"
         ADLSESetup.Modify(true);
 
         IsolatedStorage.Delete(StorageAccountKeyNameTok, DataScope::Module);
-    end;
-
-    local procedure SeperateSchemaAndData()
-    var
-        UpgradeTag: Codeunit "Upgrade Tag";
-    begin
-        if UpgradeTag.HasUpgradeTag(GetSeperateSchemaAndDataUpgradeTag()) then
-            exit;
-        DoGetSeperateSchemaAndData();
-        UpgradeTag.SetUpgradeTag(GetSeperateSchemaAndDataUpgradeTag());
-    end;
-
-    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'm')]
-    local procedure DoGetSeperateSchemaAndData()
-    var
-        ADLSESetup: Record "ADLSE Setup";
-    begin
-        if not ADLSESetup.Exists() then
-            exit;
-        ADLSESetup.GetSingleton();
-
-        if ADLSESetup."Multi- Company Export" then begin
-            ADLSESetup."Schema Exported On" := CurrentDateTime();
-            ADLSESetup.Modify(true);
-        end;
-    end;
-
-
-    local procedure CopyValuesFromExportCategoryToExportcategoryTable()
-    var
-        UpgradeTag: Codeunit "Upgrade Tag";
-    begin
-        if UpgradeTag.HasUpgradeTag(GetCopyValuesFromExportCategoryToExportcategoryTableUpgradeTag()) then
-            exit;
-        DoCopyValuesFromExportCategoryToExportcategoryTable();
-        UpgradeTag.SetUpgradeTag(GetCopyValuesFromExportCategoryToExportcategoryTableUpgradeTag());
-    end;
-
-    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Export Category Table", 'm')]
-    local procedure DoCopyValuesFromExportCategoryToExportcategoryTable()
-    var
-        ExportCategory: Record "ADLSE Export Category";
-        ExportCategoryTable: Record "ADLSE Export Category Table";
-    begin
-        if ExportCategory.FindSet() then
-            repeat
-                if not ExportCategoryTable.Get(ExportCategory.Code) then begin
-                    ExportCategoryTable.Init();
-                    ExportCategoryTable.TransferFields(ExportCategory);
-                    ExportCategoryTable.Insert();
-                end;
-            until ExportCategory.Next() = 0;
     end;
 
     procedure GetRetenPolLogEntryAddedUpgradeTag(): Code[250]

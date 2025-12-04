@@ -38,5 +38,6 @@
     }
   ],
   "target": "Cloud",
-  "runtime": "16.0"
+  "runtime": "16.0",
+  "features": ["TranslationFile"]
 }
