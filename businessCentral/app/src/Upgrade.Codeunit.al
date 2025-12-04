@@ -98,14 +98,4 @@ codeunit 82572 "ADLSE Upgrade"
     begin
         exit('GITHUB-22-ADLSEContainerFieldFromIsolatedStorageToSetupField-20230906');
     end;
-
-    procedure GetSeperateSchemaAndDataUpgradeTag(): Code[250]
-    begin
-        exit('GITHUB-35-ADLSESeperateSchemaAndData-20230922');
-    end;
-
-    procedure GetCopyValuesFromExportCategoryToExportcategoryTableUpgradeTag(): Code[250]
-    begin
-        exit('GITHUB-225-CopyValuesFromExportCategoryToExportcategoryTable-20250121');
-    end;
 }

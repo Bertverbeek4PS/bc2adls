@@ -214,8 +214,8 @@ table 82561 "ADLSE Table"
 
                 if not AllCompanies then begin
                     if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
-                        if ADLSETableLastTimestamp.Get(CompanyName, Rec."Table ID") then
-                            ADLSETableLastTimestamp.Delete();
+                        if ADLSETableLastTimestamp.Get(CompanyName(), Rec."Table ID") then
+                            ADLSETableLastTimestamp.Delete(true);
                     end
                     else begin
                         ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Rec."Table ID", 0);

@@ -314,7 +314,7 @@ codeunit 82564 "ADLSE Util"
 
     procedure ConvertOptionFieldToValueText(FieldRef: FieldRef): Text
     begin
-        case FieldRef.Type of
+        case FieldRef.Type() of
             FieldRef.Type::Option:
                 exit(ConvertNumberToText(FieldRef.Value()));
         end;
@@ -417,7 +417,7 @@ codeunit 82564 "ADLSE Util"
                 Payload.Append(StrSubstNo(CommaPrefixedTok, FieldTextValue));
             FieldsAdded += 1;
         end;
-        if IsTablePerCompany(RecordRef.Number) then
+        if IsTablePerCompany(RecordRef.Number()) then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetCompanyFieldName()));
 
         if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Closing Date column") then
@@ -463,7 +463,7 @@ codeunit 82564 "ADLSE Util"
                 Payload.Append(StrSubstNo(CommaPrefixedTok, FieldTextValue));
             FieldsAdded += 1;
         end;
-        if IsTablePerCompany(RecordRef.Number) then
+        if IsTablePerCompany(RecordRef.Number()) then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertStringToText(CompanyName())));
 
         if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Closing Date column") then begin
