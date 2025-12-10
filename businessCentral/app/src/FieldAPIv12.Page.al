@@ -2,7 +2,7 @@ namespace bc2adls;
 
 // Create an API page for table and field
 
-page 82573 "ADLSE Field API v12"
+page 11344443 "ADLSE Field API v12"
 {
     PageType = API;
     APIPublisher = 'bc2adlsTeamMicrosoft';

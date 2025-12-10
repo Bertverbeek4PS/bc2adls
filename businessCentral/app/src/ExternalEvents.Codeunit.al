@@ -4,7 +4,7 @@ namespace bc2adls;
 
 using System.Integration;
 
-codeunit 82574 "ADLSE External Events"
+codeunit 11344444 "ADLSE External Events"
 {
     SingleInstance = true;
 

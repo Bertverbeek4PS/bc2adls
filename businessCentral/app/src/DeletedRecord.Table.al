@@ -3,7 +3,7 @@
 namespace bc2adls;
 
 #pragma warning disable LC0015
-table 82563 "ADLSE Deleted Record"
+table 11344438 "ADLSE Deleted Record"
 #pragma warning restore
 {
     Access = Internal;

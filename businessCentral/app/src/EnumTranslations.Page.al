@@ -1,7 +1,7 @@
 namespace bc2adls;
 
 //A list page that is build on table Enum Translation
-page 82569 "ADLSE Enum Translations"
+page 11344440 "ADLSE Enum Translations"
 {
     PageType = List;
     ApplicationArea = All;

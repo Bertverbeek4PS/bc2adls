@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
 
-enum 82560 "ADLSE Run State"
+enum 11344439 "ADLSE Run State"
 {
     Access = Internal;
     Extensible = false;

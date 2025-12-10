@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
 
-permissionset 82563 "ADLSE - API"
+permissionset 11344437 "ADLSE - API"
 {
     /// <summary>
     /// The permission set to be used when using the API.

@@ -5,7 +5,7 @@ namespace bc2adls;
 using System.Reflection;
 using System.Utilities;
 
-codeunit 82560 "ADLSE Setup"
+codeunit 11344446 "ADLSE Setup"
 {
     Access = Internal;
 

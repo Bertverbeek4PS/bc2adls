@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
 
-page 82571 "ADLSE CurrentSession API"
+page 11344438 "ADLSE CurrentSession API"
 {
     PageType = API;
     APIPublisher = 'bc2adlsTeamMicrosoft';

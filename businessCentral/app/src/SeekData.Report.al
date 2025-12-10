@@ -4,7 +4,7 @@ namespace bc2adls;
 
 using System.Utilities;
 
-report 82560 "ADLSE Seek Data"
+report 11344440 "ADLSE Seek Data"
 {
     ProcessingOnly = true;
     DataAccessIntent = ReadOnly;

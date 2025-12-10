@@ -1,7 +1,7 @@
 namespace bc2adls;
 
 #pragma warning disable LC0015
-table 82568 "ADLSE Enum Translation Lang"
+table 11344441 "ADLSE Enum Translation Lang"
 #pragma warning restore
 {
     DataClassification = ToBeClassified;

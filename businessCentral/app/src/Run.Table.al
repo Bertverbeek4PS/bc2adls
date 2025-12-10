@@ -3,7 +3,7 @@
 namespace bc2adls;
 
 #pragma warning disable LC0004, LC0015
-table 82566 "ADLSE Run"
+table 11344444 "ADLSE Run"
 #pragma warning restore
 {
     Access = Internal;

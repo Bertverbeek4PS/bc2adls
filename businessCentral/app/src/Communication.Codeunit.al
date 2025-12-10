@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
 
-codeunit 82562 "ADLSE Communication"
+codeunit 11344440 "ADLSE Communication"
 {
     Access = Internal;
 

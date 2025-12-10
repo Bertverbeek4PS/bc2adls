@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
 
-codeunit 82563 "ADLSE Http"
+codeunit 11344450 "ADLSE Http"
 {
     Access = Internal;
 

@@ -4,7 +4,7 @@ namespace bc2adls;
 
 using System.Upgrade;
 
-codeunit 82575 "ADLSE UpgradeTagNewCompanySubs"
+codeunit 11344453 "ADLSE UpgradeTagNewCompanySubs"
 {
     Access = Internal;
 

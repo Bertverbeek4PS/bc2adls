@@ -4,7 +4,7 @@ namespace bc2adls;
 
 using System.Reflection;
 
-page 82562 "ADLSE Setup Fields"
+page 11344449 "ADLSE Setup Fields"
 {
     PageType = List;
     ApplicationArea = All;

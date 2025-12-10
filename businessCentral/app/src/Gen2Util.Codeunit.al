@@ -4,7 +4,7 @@ namespace bc2adls;
 
 using System.Text;
 
-codeunit 82568 "ADLSE Gen 2 Util"
+codeunit 11344449 "ADLSE Gen 2 Util"
 {
     Access = Internal;
     SingleInstance = true;

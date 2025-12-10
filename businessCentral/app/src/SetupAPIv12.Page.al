@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
 
-page 82572 "ADLSE Setup API v12"
+page 11344448 "ADLSE Setup API v12"
 {
     PageType = API;
     APIPublisher = 'bc2adlsTeamMicrosoft';

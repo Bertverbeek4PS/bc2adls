@@ -4,7 +4,7 @@ namespace bc2adls;
 
 using System.Environment;
 
-table 82564 "ADLSE Table Last Timestamp"
+table 11344451 "ADLSE Table Last Timestamp"
 {
     /// <summary>
     /// Keeps track of the last exported timestamps of different tables.

@@ -4,7 +4,7 @@ namespace bc2adls;
 
 using System.Reflection;
 
-page 82561 "ADLSE Setup Tables"
+page 11344451 "ADLSE Setup Tables"
 {
     Caption = 'Tables';
     LinksAllowed = false;

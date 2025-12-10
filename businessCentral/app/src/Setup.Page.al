@@ -5,7 +5,7 @@ namespace bc2adls;
 using System.Globalization;
 using System.Threading;
 
-page 82560 "ADLSE Setup"
+page 11344447 "ADLSE Setup"
 {
     PageType = Card;
     ApplicationArea = All;

@@ -1,6 +1,6 @@
 namespace bc2adls;
 
-codeunit 82577 "ADLSE Wrapper Execute"
+codeunit 11344455 "ADLSE Wrapper Execute"
 {
     Access = Internal;
     TableNo = "ADLSE Table";

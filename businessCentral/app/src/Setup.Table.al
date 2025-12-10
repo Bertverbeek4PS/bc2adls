@@ -5,7 +5,7 @@ namespace bc2adls;
 using System.Environment;
 
 #pragma warning disable LC0015
-table 82560 "ADLSE Setup"
+table 11344446 "ADLSE Setup"
 #pragma warning restore
 {
     Access = Internal;

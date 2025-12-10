@@ -2,7 +2,7 @@ namespace bc2adls;
 
 using System.Environment;
 
-codeunit 82576 "ADLSE External Events Helper"
+codeunit 11344445 "ADLSE External Events Helper"
 {
     Access = Internal;
     procedure CreateLink(url: Text; Id: Guid): Text[250]

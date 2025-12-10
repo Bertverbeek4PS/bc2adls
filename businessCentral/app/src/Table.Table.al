@@ -5,7 +5,7 @@ namespace bc2adls;
 using System.Reflection;
 
 #pragma warning disable LC0015
-table 82561 "ADLSE Table"
+table 11344450 "ADLSE Table"
 #pragma warning restore
 {
     Access = Internal;
@@ -47,6 +47,7 @@ table 82561 "ADLSE Table"
         }
         field(10; ExportCategory; Code[50])
         {
+            Caption = 'Export Category';
             TableRelation = "ADLSE Export Category Table";
             ToolTip = 'Specifies the Export Category which can be linked to tables which are part of the export to Azure Datalake. The Category can be used to schedule the export.';
         }

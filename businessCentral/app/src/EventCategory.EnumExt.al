@@ -2,9 +2,9 @@ namespace bc2adls;
 
 using System.Integration;
 
-enumextension 82560 "ADLSE EventCategory" extends EventCategory
+enumextension 11344437 "ADLSE EventCategory" extends EventCategory
 {
-    value(82560; ADLSE)
+    value(11344437; ADLSE)
     {
         Caption = 'Azure Data Lake Storage Export';
     }

@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
 
-codeunit 82570 "ADLSE Session Manager"
+codeunit 11344447 "ADLSE Session Manager"
 {
     Access = Internal;
 

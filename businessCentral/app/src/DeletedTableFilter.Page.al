@@ -2,7 +2,7 @@ namespace bc2adls;
 
 using System.Reflection;
 
-page 82564 "ADLSE Deleted Table Filter"
+page 11344439 "ADLSE Deleted Table Filter"
 {
     PageType = List;
     ApplicationArea = All;

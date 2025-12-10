@@ -5,7 +5,7 @@ namespace bc2adls;
 using System.Reflection;
 using Microsoft.Finance.GeneralLedger.Ledger;
 
-codeunit 82564 "ADLSE Util"
+codeunit 11344454 "ADLSE Util"
 {
     Access = Internal;
 

@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
 
-codeunit 82561 "ADLSE Execute"
+codeunit 11344442 "ADLSE Execute"
 {
     Access = Internal;
     TableNo = "ADLSE Table";

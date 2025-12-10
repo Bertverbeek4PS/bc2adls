@@ -4,7 +4,7 @@ namespace bc2adls;
 
 using System.Upgrade;
 
-codeunit 82572 "ADLSE Upgrade"
+codeunit 11344452 "ADLSE Upgrade"
 {
     Subtype = Upgrade;
     Access = Internal;

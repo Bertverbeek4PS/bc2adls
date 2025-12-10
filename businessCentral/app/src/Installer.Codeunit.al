@@ -4,7 +4,7 @@ namespace bc2adls;
 
 using System.DataAdministration;
 
-codeunit 82571 "ADLSE Installer"
+codeunit 11344448 "ADLSE Installer"
 {
     Subtype = Install;
     Access = Internal;

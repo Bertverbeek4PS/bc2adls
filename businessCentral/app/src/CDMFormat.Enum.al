@@ -5,7 +5,7 @@ namespace bc2adls;
 /// <summary>
 /// The formats in which data is stored on the data lake
 /// </summary>
-enum 82562 "ADLSE CDM Format"
+enum 11344437 "ADLSE CDM Format"
 {
     Access = Internal;
     Extensible = false;

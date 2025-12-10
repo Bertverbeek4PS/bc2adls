@@ -2,7 +2,7 @@ namespace bc2adls;
 
 using System.Reflection;
 
-table 82569 "ADLSE Deleted Table Filter"
+table 11344439 "ADLSE Deleted Table Filter"
 {
     DataClassification = ToBeClassified;
     Caption = 'ADLSE Deleted Table Filter';

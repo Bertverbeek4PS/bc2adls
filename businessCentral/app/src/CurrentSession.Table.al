@@ -5,7 +5,7 @@ namespace bc2adls;
 using System.Environment;
 
 #pragma warning disable LC0015
-table 82565 "ADLSE Current Session"
+table 11344437 "ADLSE Current Session"
 #pragma warning restore
 {
     Access = Internal;

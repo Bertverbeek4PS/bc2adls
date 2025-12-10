@@ -19,10 +19,11 @@
     "allowDownloadingSource": true,
     "includeSourceInSymbolFile": true
   },
+  "applicationInsightsConnectionString": "InstrumentationKey=616da95e-ebb7-425e-97c2-3fb20a2b7a2c;IngestionEndpoint=https://northeurope-2.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/;ApplicationId=73864054-3efe-4089-a51f-1dd006298a7f",
   "idRanges": [
     {
-      "from": 82560,
-      "to": 82585
+      "from": 11344437,
+      "to": 11344456
     }
   ],
   "internalsVisibleTo": [

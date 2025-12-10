@@ -5,7 +5,7 @@ namespace bc2adls;
 using System.Environment;
 using System.Reflection;
 using Microsoft.Finance.GeneralLedger.Ledger;
-codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsoft.com/en-us/common-data-model/sdk/overview
+codeunit 11344438 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsoft.com/en-us/common-data-model/sdk/overview
 {
     Access = Internal;
 

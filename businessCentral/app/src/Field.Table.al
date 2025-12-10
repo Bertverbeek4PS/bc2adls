@@ -5,7 +5,7 @@ namespace bc2adls;
 using System.Reflection;
 
 #pragma warning disable LC0015
-table 82562 "ADLSE Field"
+table 11344443 "ADLSE Field"
 #pragma warning restore
 {
     Access = Internal;

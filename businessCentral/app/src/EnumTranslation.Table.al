@@ -4,7 +4,7 @@ using System.Reflection;
 using System.IO;
 
 #pragma warning disable LC0015
-table 82567 "ADLSE Enum Translation"
+table 11344440 "ADLSE Enum Translation"
 #pragma warning restore
 {
     DataClassification = ToBeClassified;
