@@ -20,6 +20,10 @@ xmlport 82561 "BC2ADLS Export"
                 {
                     Occurrence = Required;
                 }
+                fieldattribute(ExportCategory; ADLSETable.ExportCategory)
+                {
+                    Occurrence = Required;
+                }
 
                 tableelement(ADLSEField; "ADLSE Field")
                 {

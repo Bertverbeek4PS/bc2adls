@@ -21,6 +21,10 @@ xmlport 82560 "BC2ADLS Import"
                 {
                     Occurrence = Required;
                 }
+                fieldattribute(ExportCategory; ADLSETable.ExportCategory)
+                {
+                    Occurrence = Required;
+                }
 
                 tableelement(ADLSEField; "ADLSE Field")
                 {
@@ -51,6 +55,7 @@ xmlport 82560 "BC2ADLS Import"
                     begin
                         if not ADLSETableRec.Get(ADLSEField."Table ID") then begin
                             ADLSETableRec.Validate("Table ID", ADLSEField."Table ID");
+                            ADLSETableRec.Validate(ExportCategory, ADLSETable.ExportCategory);
                             ADLSETableRec.Enabled := true;
                             ADLSETableRec.Insert(true);
                             ADLSEFieldRec.SetRange("Table ID", ADLSEField."Table ID");
