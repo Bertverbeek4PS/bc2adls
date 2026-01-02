@@ -362,3 +362,4 @@ rad.json
 .alcache/
 .altemplates/
 cache_*
+.serena/
