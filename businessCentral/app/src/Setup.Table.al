@@ -77,6 +77,14 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies if operational telemetry will be emitted to this extension publisher''s telemetry pipeline. You will have to configure a telemetry account for this extension first.';
         }
 
+        field(15; "Multi- Company Export"; Boolean)
+        {
+            Caption = 'Multi- company export';
+            InitValue = false;
+            ObsoleteState = Removed;
+            ObsoleteReason = 'Schema update and export of data is now seperated.';
+        }
+
         field(20; "Skip Timestamp Sorting On Recs"; Boolean)
         {
             Caption = 'Skip row version sorting';
