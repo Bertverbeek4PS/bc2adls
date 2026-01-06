@@ -1,3 +1,4 @@
+namespace bc2adls;
 table 82570 "ADLSE Export Category"
 {
     Caption = 'Export Category';

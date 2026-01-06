@@ -1,5 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+
+using System.Reflection;
 #pragma warning disable LC0015
 table 82561 "ADLSE Table"
 #pragma warning restore
@@ -19,13 +22,6 @@ table 82561 "ADLSE Table"
             AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'Table ID';
-        }
-        field(2; State; Integer)
-        {
-            Caption = 'State';
-            ObsoleteReason = 'Use ADLSE Run table instead';
-            ObsoleteTag = '1.2.2.0';
-            ObsoleteState = Removed;
         }
         field(3; Enabled; Boolean)
         {
@@ -48,14 +44,6 @@ table 82561 "ADLSE Table"
                 ADLSEExternalEvents.OnEnableTableChanged(Rec);
             end;
         }
-        field(5; LastError; Text[2048])
-        {
-            Editable = false;
-            Caption = 'Last error';
-            ObsoleteReason = 'Use ADLSE Run table instead';
-            ObsoleteTag = '1.2.2.0';
-            ObsoleteState = Removed;
-        }
         field(10; ExportCategory; Code[50])
         {
             TableRelation = "ADLSE Export Category Table";
@@ -76,7 +64,7 @@ table 82561 "ADLSE Table"
         {
             Caption = 'Process Type';
             DataClassification = CustomerContent;
-            ObsoleteState = Pending;
+            ObsoleteState = Removed;
             ObsoleteReason = 'This field will be removed in a future release because readuncommitted will be the default behavior because of performance.';
             ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing, Ignore Read Isolation disables read isolation for performance, and Commit Externally uses external commit for large tables.';
         }
@@ -87,6 +75,16 @@ table 82561 "ADLSE Table"
         key(Key1; "Table ID")
         {
             Clustered = true;
+        }
+    }
+
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Table ID")
+        {
+        }
+        fieldgroup(Brick; "Table ID", Enabled, ExportCategory)
+        {
         }
     }
 
@@ -232,8 +230,8 @@ table 82561 "ADLSE Table"
 
                 if not AllCompanies then begin
                     if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
-                        if ADLSETableLastTimestamp.Get(CompanyName, Rec."Table ID") then
-                            ADLSETableLastTimestamp.Delete();
+                        if ADLSETableLastTimestamp.Get(CompanyName(), Rec."Table ID") then
+                            ADLSETableLastTimestamp.Delete(true);
                     end
                     else begin
                         ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Rec."Table ID", 0);
@@ -245,9 +243,9 @@ table 82561 "ADLSE Table"
                         ADLSETableLastTimestamp.DeleteAll();
                     end
                     else begin
-                        ADLSETableLastTimestamp.SetRange("Table ID", rec."Table ID");
-                        ADLSETableLastTimestamp.ModifyAll("Updated Last Timestamp", 0);
-                        ADLSETableLastTimestamp.ModifyAll("Deleted Last Entry No.", 0);
+                        ADLSETableLastTimestamp.SetRange("Table ID", Rec."Table ID");
+                        ADLSETableLastTimestamp.ModifyAll("Updated Last Timestamp", 0, true);
+                        ADLSETableLastTimestamp.ModifyAll("Deleted Last Entry No.", 0, true);
                         ADLSETableLastTimestamp.SetRange("Table ID");
                     end;
                 ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");

@@ -1,3 +1,6 @@
+namespace bc2adls;
+
+using System.Utilities;
 xmlport 82560 "BC2ADLS Import"
 {
     Caption = 'BC2ADLS Import';
@@ -84,8 +87,8 @@ xmlport 82560 "BC2ADLS Import"
         ConfirmManagement: Codeunit "Confirm Management";
         ConfirmQuestionMsg: Label 'With the import all existing ADLSE Tables and Fields will be deleted. Do you want to continue?';
     begin
-        if not ADLSETableRec.IsEmpty then
-            if GuiAllowed then begin
+        if not ADLSETableRec.IsEmpty() then
+            if GuiAllowed() then begin
                 if ConfirmManagement.GetResponse(ConfirmQuestionMsg, true) then
                     ADLSETableRec.DeleteAll(true)
                 else

@@ -1,5 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+using System.Environment;
 #pragma warning disable LC0015
 table 82565 "ADLSE Current Session"
 #pragma warning restore
@@ -41,6 +43,16 @@ table 82565 "ADLSE Current Session"
         }
 
         key(SessionID; "Session ID")
+        {
+        }
+    }
+
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Table ID", "Company Name")
+        {
+        }
+        fieldgroup(Brick; "Table ID", "Company Name", "Session ID")
         {
         }
     }
@@ -134,7 +146,7 @@ table 82565 "ADLSE Current Session"
         ActiveSession: Record "Active Session";
     begin
         ActiveSession.SetLoadFields("Session Unique ID");
-        ActiveSession.Get(ServiceInstanceId(), SessId);
+        if ActiveSession.Get(ServiceInstanceId(), SessId) then;
         exit(ActiveSession."Session Unique ID");
     end;
 }

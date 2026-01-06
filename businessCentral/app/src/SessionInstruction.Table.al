@@ -1,9 +1,10 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
 table 82580 "Session Instruction"
 {
     Caption = 'Session Instruction';
     DataClassification = CustomerContent;
-    ObsoleteState = Pending;
+    ObsoleteState = Removed;
     ObsoleteReason = 'This field will be removed in a future release because readuncommitted will be the default behavior because of performance.';
     fields
     {
