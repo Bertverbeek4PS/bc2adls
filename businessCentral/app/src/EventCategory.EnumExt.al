@@ -1,3 +1,6 @@
+namespace bc2adls;
+
+using System.Integration;
 enumextension 82560 "ADLSE EventCategory" extends EventCategory
 {
     value(82560; ADLSE)

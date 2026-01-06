@@ -1,3 +1,6 @@
+namespace bc2adls;
+
+using System.Reflection;
 page 82564 "Deleted Tables Not To Sync"
 {
     PageType = List;

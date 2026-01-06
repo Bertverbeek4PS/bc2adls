@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
 codeunit 82563 "ADLSE Http"
 {
     Access = Internal;
@@ -121,7 +122,7 @@ codeunit 82563 "ADLSE Http"
         then
             if AdditionalRequestHeaders.Count() > 0 then begin
                 Headers := HttpClient.DefaultRequestHeaders();
-                foreach HeaderKey in AdditionalRequestHeaders.Keys do begin
+                foreach HeaderKey in AdditionalRequestHeaders.Keys() do begin
                     AdditionalRequestHeaders.Get(HeaderKey, HeaderValue);
                     Headers.Add(HeaderKey, HeaderValue);
                 end;
