@@ -1,5 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+
+using System.Environment;
 #pragma warning disable LC0015
 table 82560 "ADLSE Setup"
 #pragma warning restore
@@ -37,7 +40,7 @@ table 82560 "ADLSE Setup"
         field(2; Container; Text[63])
         {
             Caption = 'Container';
-            ToolTip = 'Specifies the name of the container where the data is going to be uploaded. Please refer to constraints on container names at https://docs.microsoft.com/en-us/rest/api/storageservices/naming-and-referencing-containers--blobs--and-metadata.';
+            ToolTip = 'Specifies the container name where data will be uploaded. Container names must be 3-63 characters, lowercase letters, numbers, and dashes only.';
 
             trigger OnValidate()
             begin
@@ -53,7 +56,7 @@ table 82560 "ADLSE Setup"
         field(3; MaxPayloadSizeMiB; Integer)
         {
             Caption = 'Max payload size (MiBs)';
-            ToolTip = 'Specifies the maximum size of the upload for each block of data in MiBs. A large value will reduce the number of iterations to upload the data but may interfear with the performance of other processes running on this environment.';
+            ToolTip = 'Specifies maximum upload size per data block in MiBs. Larger values reduce iterations but may affect other processes.';
             InitValue = 4;
             // Refer max limit for put block calls (https://docs.microsoft.com/en-us/rest/api/storageservices/put-block#remarks)
             MaxValue = 4000;
@@ -67,15 +70,6 @@ table 82560 "ADLSE Setup"
             InitValue = Parquet;
         }
 
-        field(10; Running; Boolean)
-        {
-            Caption = 'Exporting data';
-            Editable = false;
-            ObsoleteReason = 'Use ADLSE Current Session::AreAnySessionsActive() instead';
-            ObsoleteTag = '1.2.2.0';
-            ObsoleteState = Removed;
-        }
-
         field(11; "Emit telemetry"; Boolean)
         {
             Caption = 'Emit telemetry';
@@ -87,26 +81,15 @@ table 82560 "ADLSE Setup"
         {
             Caption = 'Multi- company export';
             InitValue = false;
-            ObsoleteState = Pending;
+            ObsoleteState = Removed;
             ObsoleteReason = 'Schema update and export of data is now seperated.';
-
-            trigger OnValidate()
-            var
-                ADLSECurrentSession: Record "ADLSE Current Session";
-            begin
-                if Rec."Multi- Company Export" = xRec."Multi- Company Export" then
-                    exit;
-
-                // ensure that no current export sessions running
-                ADLSECurrentSession.CheckForNoActiveSessions();
-            end;
         }
 
         field(20; "Skip Timestamp Sorting On Recs"; Boolean)
         {
             Caption = 'Skip row version sorting';
             InitValue = false;
-            ToolTip = 'Specifies that the records are not sorted as per their row version before exporting them to the lake. Enabling this may interfear with how incremental data is pushed to the lake in subsequent export runs- please refer to the documentation.';
+            ToolTip = 'Specifies that records are not sorted by row version before export. May affect incremental data export.';
         }
 
         field(25; "Storage Type"; Enum "ADLSE Storage Type")
@@ -247,6 +230,16 @@ table 82560 "ADLSE Setup"
         key(Key1; "Primary Key")
         {
             Clustered = true;
+        }
+    }
+
+    fieldgroups
+    {
+        fieldgroup(DropDown; Container, "Account Name")
+        {
+        }
+        fieldgroup(Brick; Container, "Account Name", DataFormat)
+        {
         }
     }
 

@@ -1,3 +1,4 @@
+namespace bc2adls;
 page 82577 "ADLSE Export Categories"
 {
     ApplicationArea = Basic, Suite;
