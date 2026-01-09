@@ -21,6 +21,7 @@ codeunit 82564 "ADLSE Util"
         CommaSuffixedTok: Label '%1, ', Comment = '%1: text to be suffixed', Locked = true;
         WholeSecondsTok: Label ':%1Z', Comment = '%1: seconds', Locked = true;
         FractionSecondsTok: Label ':%1.%2Z', Comment = '%1: seconds, %2: milliseconds', Locked = true;
+        UnknownTok: Label 'Unknown', Locked = true;
 
     procedure ToText(GuidValue: Guid): Text
     begin
@@ -173,12 +174,23 @@ codeunit 82564 "ADLSE Util"
 
     procedure GetDataLakeCompliantFieldName(TableID: Integer; FieldID: Integer): Text
     var
+        FieldName: Text;
+    begin
+        if TryToGetDataLakeCompliantFieldName(TableID, FieldID, FieldName) then
+            exit(FieldName);
+        FieldName := StrSubstNo(ConcatNameIdTok, UnknownTok, FieldID);
+        exit(FieldName);
+    end;
+
+    [TryFunction]
+    local procedure TryToGetDataLakeCompliantFieldName(TableID: Integer; FieldID: Integer; var FieldName: Text)
+    var
         RecRef: RecordRef;
         FieldRef: FieldRef;
     begin
         RecRef.Open(TableID);
         FieldRef := RecRef.Field(FieldID);
-        exit(GetDataLakeCompliantFieldName(FieldRef));
+        FieldName := GetDataLakeCompliantFieldName(FieldRef);
     end;
 
     procedure GetDataLakeCompliantFieldName(FieldRef: FieldRef): Text
