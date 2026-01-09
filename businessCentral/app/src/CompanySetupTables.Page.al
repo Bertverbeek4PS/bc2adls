@@ -97,7 +97,7 @@ page 82565 "ADLSE Company Setup Tables"
                     if CurrADLSECompanySetupTable.FindSet() then
                         repeat
                             RefreshStatus(CurrADLSECompanySetupTable);
-                        until CurrADLSECompanySetupTable.Next() < 1;
+                        until CurrADLSECompanySetupTable.Next() = 0;
                     CurrPage.Update(true);
                 end;
             }
@@ -301,7 +301,7 @@ page 82565 "ADLSE Company Setup Tables"
                     TableIDFilter := Format(SelectedADLSECompaniesTable."Table ID")
                 else
                     TableIDFilter := TableIDFilter + '|' + Format(SelectedADLSECompaniesTable."Table ID");
-            until SelectedADLSECompaniesTable.Next() < 1;
+            until SelectedADLSECompaniesTable.Next() = 0;
     end;
 
     var

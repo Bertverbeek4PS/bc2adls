@@ -108,7 +108,7 @@ page 82566 "ADLSE Company Setup"
                                     FilterString := ADLSESyncCompanies."Sync Company"
                                 else
                                     FilterString := FilterString + '|' + ADLSESyncCompanies."Sync Company";
-                        until ADLSESyncCompanies.Next() < 1;
+                        until ADLSESyncCompanies.Next() = 0;
                     TempJobQueueEntry.Init();
                     TempJobQueueEntry.Insert(false);
                     "ADLSE Multi Company Export".SetCompanyFilter(FilterString);
@@ -206,7 +206,7 @@ page 82566 "ADLSE Company Setup"
                             if ADLSEDeletedRecord.ChangeCompany(Rec."Sync Company") then
                                 if not ADLSEDeletedRecord.IsEmpty() then
                                     Session.StartSession(NewSessionID, Codeunit::"ADLSE Clear Tracked Deletions", Rec."Sync Company");
-                        until Rec.Next() < 1;
+                        until Rec.Next() = 0;
                     CurrPage.Update();
                 end;
             }

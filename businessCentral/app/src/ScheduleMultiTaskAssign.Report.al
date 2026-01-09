@@ -45,7 +45,7 @@ report 82562 "ADLSEScheduleMultiTaskAssign"
                         Caption = 'Earliest Start Date / Time ';
                         ToolTip = 'Specifies the date and time when the job queue must be executed for the first time.';
                     }
-                    field(NoofMinutesBetweeenRuns; NoofMinutesBetweenRuns)
+                    field(NoofMinutesBetweenRuns; NoofMinutesBetweenRuns)
                     {
                         ApplicationArea = All;
                         Caption = 'No of minutes between runs';

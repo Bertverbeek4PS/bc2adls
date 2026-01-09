@@ -46,6 +46,7 @@ permissionset 82560 "ADLSE - Setup"
                   page "ADLSE Assign Export Category" = X,
                   page "Deleted Tables Not To Sync" = X,
                   page "ADLSE Company Setup" = X,
+                  page "ADLSE Company Setup Tables" = X,
                   report "ADLSE Schedule Task Assignment" = X,
                   report "ADLSEScheduleMultiTaskAssign" = X,
                   xmlport "BC2ADLS Import" = X;

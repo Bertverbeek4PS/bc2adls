@@ -53,7 +53,7 @@ codeunit 82579 "ADLSE Multi Company Export"
                 ActiveSession.SetRange("Client Type", ActiveSession."Client Type"::Background);
                 if not ActiveSession.IsEmpty() then
                     exit(true);
-            until ADLSECurrentSession.Next() < 1;
+            until ADLSECurrentSession.Next() = 0;
     end;
 
 

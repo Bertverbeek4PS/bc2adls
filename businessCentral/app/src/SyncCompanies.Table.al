@@ -45,25 +45,20 @@ table 82573 "ADLSE Sync Companies"
     }
 
     trigger OnInsert()
-    var
     begin
         UpsertAllTableIds(0);
     end;
 
     trigger OnDelete()
-    var
     begin
         UpsertAllTableIds(2);
     end;
 
     trigger OnModify()
-    var
     begin
         UpsertAllTableIds(1);
     end;
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Companies Table", 'rimd')]
-    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'rimd')]
     local procedure UpsertAllTableIds(Rowmarker: Integer)
     var
         ADLSETable: Record "ADLSE Table";
@@ -89,7 +84,7 @@ table 82573 "ADLSE Sync Companies"
                     repeat
                         if RenameADLSECompaniesTable.Get(ADLSETable."Table ID", SyncCompany) then
                             RenameADLSECompaniesTable.Delete(true);
-                    until ADLSETable.Next() < 1;
+                    until ADLSETable.Next() = 0;
             0: // Insert: add missing rows only
 
                 if ADLSETable.FindSet() then
@@ -103,14 +98,16 @@ table 82573 "ADLSE Sync Companies"
             1: // Modify: update existing rows only
                 begin
 
-                    if xSyncCompany = SyncCompany then
-                        exit;
-                    ADLSECompaniesTable.SetRange("Sync Company", xSyncCompany);
-                    if ADLSECompaniesTable.FindSet() then
-                        repeat
-                            if RenameADLSECompaniesTable.Get(ADLSECompaniesTable."Table ID", ADLSECompaniesTable."Sync Company") then
-                                RenameADLSECompaniesTable.Rename(ADLSECompaniesTable."Table ID", SyncCompany);
-                        until ADLSECompaniesTable.Next() < 1;
+                    if not ADLSECompaniesTable.Get(ADLSETable."Table ID", SyncCompany) then begin
+                        ADLSECompaniesTable.Init();
+                        ADLSECompaniesTable."Table ID" := ADLSETable."Table ID";
+                        ADLSECompaniesTable."Sync Company" := SyncCompany;
+                        ADLSECompaniesTable.Insert(true);
+                    end;
+                    repeat
+                        if RenameADLSECompaniesTable.Get(ADLSECompaniesTable."Table ID", ADLSECompaniesTable."Sync Company") then
+                            RenameADLSECompaniesTable.Rename(ADLSECompaniesTable."Table ID", SyncCompany);
+                    until ADLSECompaniesTable.Next() = 0;
                 end;
         end;
     end;
