@@ -364,6 +364,14 @@ page 82560 "ADLSE Setup"
                 Image = Export;
                 RunObject = page "ADLSE Export Categories";
             }
+            action("Multi Company Export Setup")
+            {
+                Caption = 'Multi Company Export Setup';
+                ApplicationArea = All;
+                ToolTip = 'Specifies the company setup for exporting data from multiple companies.';
+                Image = Export;
+                RunObject = page "ADLSE Company Setup";
+            }
         }
         area(Promoted)
         {
