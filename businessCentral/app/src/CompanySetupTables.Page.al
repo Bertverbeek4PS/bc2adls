@@ -8,6 +8,9 @@ page 82565 "ADLSE Company Setup Tables"
     LinksAllowed = false;
     UsageCategory = Administration;
     PageType = ListPart;
+    InsertAllowed = false;
+    ModifyAllowed = false;
+    DeleteAllowed = false;
     SourceTable = "ADLSE Companies Table";
 
     layout
