@@ -25,6 +25,8 @@ permissionset 82561 "ADLSE - Execute"
                   tabledata "ADLSE Export Category" = R,
 #pragma warning restore AL0432
                   tabledata "ADLSE Export Category Table" = R,
+                  tabledata "ADLSE Companies Table" = R,
+                  tabledata "ADLSE Sync Companies" = R,
                   codeunit "ADLSE UpgradeTagNewCompanySubs" = X,
                   codeunit "ADLSE Upgrade" = X,
                   codeunit "ADLSE Util" = X,
@@ -37,6 +39,9 @@ permissionset 82561 "ADLSE - Execute"
                   codeunit "ADLSE Execute" = X,
                   codeunit "ADLSE Execution" = X,
                   codeunit "ADLSE Wrapper Execute" = X,
+                  codeunit "ADLSE Company Run" = X,
+                  codeunit "ADLSE Multi Company Export" = X,
                   report "ADLSE Seek Data" = X,
+                  report "ADLSEScheduleMultiTaskAssign" = X,
                   xmlport "BC2ADLS Export" = X;
 }
