@@ -82,24 +82,6 @@ table 82572 "ADLSE Companies Table"
         }
     }
 
-    trigger OnInsert()
-    var
-    begin
-        UpsertAllTableIds(0);
-    end;
-
-    trigger OnDelete()
-    var
-    begin
-        UpsertAllTableIds(2);
-    end;
-
-    trigger OnModify()
-    var
-    begin
-        UpsertAllTableIds(1);
-    end;
-
     procedure GetNoOfDatabaseRecordsText(): Text
     var
         RecRef: RecordRef;
@@ -110,57 +92,5 @@ table 82572 "ADLSE Companies Table"
 
         RecRef.Open(Rec."Table ID", false, Rec."Sync Company");
         exit(Format(RecRef.Count()));
-    end;
-
-
-    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Companies Table", 'rimd')]
-    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'rimd')]
-    local procedure UpsertAllTableIds(Rowmarker: Integer)
-    var
-        ADLSETable: Record "ADLSE Table";
-        ADLSECompaniesTable: Record "ADLSE Companies Table";
-        RenameADLSECompaniesTable: Record "ADLSE Companies Table";
-        SyncCompany: Text[30];
-        xSyncCompany: Text[30];
-    begin
-        // Rowmarker semantics used here:
-        // 0 = Insert -> add missing rows for this Sync Company across ALL table IDs (do not update existing rows)
-        // 1 = Modify -> update existing rows for this Sync Company across ALL table IDs (do not insert missing rows)
-        // 2 = Delete -> remove ALL rows for this Sync Company across ALL table IDs (except current row already being deleted)
-
-        SyncCompany := Rec."Sync Company";
-        xSyncCompany := xRec."Sync Company";
-        if SyncCompany = '' then
-            exit;
-
-        case Rowmarker of
-            2: // Delete: remove this company entry for all other tables (current one is already being deleted)
-                begin
-                    ADLSETable.Get(Rec."Table ID");
-                    ADLSETable.Delete(true);
-                end;
-
-            0: // Insert: add missing rows only
-                begin
-                    ADLSETable.Init();
-                    ADLSETable."Table ID" := Rec."Table ID";
-                    ADLSETable.Enabled := true;
-                    ADLSETable.Insert(true);
-                end;
-            1: // modify: 
-                begin
-
-                    if xSyncCompany = SyncCompany then
-                        exit;
-
-                    ADLSECompaniesTable.SetFilter("Table ID", '<>%1', Rec."Table ID");
-                    ADLSECompaniesTable.SetRange("Sync Company", xSyncCompany);
-                    if ADLSECompaniesTable.FindSet() then
-                        repeat
-                            if RenameADLSECompaniesTable.Get(ADLSECompaniesTable."Table ID", ADLSECompaniesTable."Sync Company") then
-                                RenameADLSECompaniesTable.Rename(ADLSECompaniesTable."Table ID", SyncCompany);
-                        until ADLSECompaniesTable.Next() < 1;
-                end;
-        end;
     end;
 }
