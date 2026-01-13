@@ -1,3 +1,6 @@
+namespace bc2adls;
+
+using System.Reflection;
 table 82569 "Deleted Tables Not to Sync"
 {
     DataClassification = ToBeClassified;

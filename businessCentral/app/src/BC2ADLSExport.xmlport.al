@@ -1,3 +1,4 @@
+namespace bc2adls;
 xmlport 82561 "BC2ADLS Export"
 {
     Caption = 'BC2ADLS Export';
@@ -17,6 +18,10 @@ xmlport 82561 "BC2ADLS Export"
                 SourceTableView = where(Enabled = const(true));
 
                 fieldattribute(TableId; ADLSETable."Table ID")
+                {
+                    Occurrence = Required;
+                }
+                fieldattribute(ExportCategory; ADLSETable.ExportCategory)
                 {
                     Occurrence = Required;
                 }

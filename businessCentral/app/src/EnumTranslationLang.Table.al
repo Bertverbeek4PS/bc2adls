@@ -1,3 +1,5 @@
+namespace bc2adls;
+
 #pragma warning disable LC0015
 table 82568 "ADLSE Enum Translation Lang"
 #pragma warning restore
@@ -59,6 +61,16 @@ table 82568 "ADLSE Enum Translation Lang"
         key(Key1; "Language Code", "Table Id", "Field Id", "Enum Value Id")
         {
             Clustered = true;
+        }
+    }
+
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Language Code", "Table Id", "Field Id")
+        {
+        }
+        fieldgroup(Brick; "Language Code", "Compliant Table Name", "Compliant Field Name", "Enum Value Caption")
+        {
         }
     }
 

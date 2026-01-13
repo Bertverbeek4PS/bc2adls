@@ -1,11 +1,13 @@
 namespace bc2adls;
+
 using System.Threading;
-report 82561 "ADLSE Schedule Task Assignment"
+report 82562 "ADLSEScheduleMultiTaskAssign"
 {
     ApplicationArea = Basic, Suite;
-    Caption = 'Schedule Export';
+    UsageCategory = ReportsAndAnalysis;
+    Caption = 'Schedule Multi Company Export';
     ProcessingOnly = true;
-
+    Extensible = false;
 
     dataset
     {
@@ -14,9 +16,10 @@ report 82561 "ADLSE Schedule Task Assignment"
             RequestFilterFields = ExportCategory;
             trigger OnPreDataItem()
             var
-                ADLSEExecution: Codeunit "ADLSE Execution";
+                JobQueueEntry: Record "Job Queue Entry";
+                ADLSEMultiCompanyExport: Codeunit "ADLSE Multi Company Export";
             begin
-                ADLSEExecution.StartExport(ADLSETable);
+                ADLSEMultiCompanyExport.Run(JobQueueEntry);
             end;
         }
     }
@@ -42,7 +45,7 @@ report 82561 "ADLSE Schedule Task Assignment"
                         Caption = 'Earliest Start Date / Time ';
                         ToolTip = 'Specifies the date and time when the job queue must be executed for the first time.';
                     }
-                    field(NoofMinutesBetweeenRuns; NoofMinutesBetweenRuns)
+                    field(NoofMinutesBetweenRuns; NoofMinutesBetweenRuns)
                     {
                         ApplicationArea = All;
                         Caption = 'No of minutes between runs';
@@ -64,11 +67,11 @@ report 82561 "ADLSE Schedule Task Assignment"
                                 Caption = 'Run On Mondays';
                                 ToolTip = 'Specifies that the job queue entry runs on Mondays.';
                             }
-                            field(RunOnTeusdaysControl; RunOnTeusdays)
+                            field(RunOnTuesdaysControl; RunOnTuesdays)
                             {
                                 ApplicationArea = All;
                                 Caption = 'Run On Tuesdays';
-                                ToolTip = 'Specifies that the job queue entry runs on Teusdays.';
+                                ToolTip = 'Specifies that the job queue entry runs on Tuesdays.';
                             }
                             field(RunOnWednesdayControl; RunOnWednesdays)
                             {
@@ -118,7 +121,7 @@ report 82561 "ADLSE Schedule Task Assignment"
         NoofMinutesBetweenRuns: Integer;
         RunOnSundays: Boolean;
         RunOnMondays: Boolean;
-        RunOnTeusdays: Boolean;
+        RunOnTuesdays: Boolean;
         RunOnWednesdays: Boolean;
         RunOnThursdays: Boolean;
         RunOnFridays: Boolean;
@@ -132,13 +135,13 @@ report 82561 "ADLSE Schedule Task Assignment"
         JobQueueCategory.InsertRec(JobCategoryCodeTxt, Description);
         JobQueueEntry.Init();
         JobQueueEntry.Validate("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
-        JobQueueEntry.Validate("Object ID to Run", Report::"ADLSE Schedule Task Assignment");
+        JobQueueEntry.Validate("Object ID to Run", Report::ADLSEScheduleMultiTaskAssign);
         JobQueueEntry.Insert(true);
 
         JobQueueEntry.Description := Description;
         JobQueueEntry."No. of Minutes between Runs" := NoofMinutesBetweenRuns;
         JobQueueEntry.Validate("Run on Mondays", RunOnMondays);
-        JobQueueEntry.Validate("Run on Tuesdays", RunOnTeusdays);
+        JobQueueEntry.Validate("Run on Tuesdays", RunOnTuesdays);
         JobQueueEntry.Validate("Run on Wednesdays", RunOnWednesdays);
         JobQueueEntry.Validate("Run on Thursdays", RunOnThursdays);
         JobQueueEntry.Validate("Run on Fridays", RunOnFridays);
@@ -150,4 +153,3 @@ report 82561 "ADLSE Schedule Task Assignment"
         JobQueueEntry.Modify(true);
     end;
 }
-

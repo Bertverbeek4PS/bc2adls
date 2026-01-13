@@ -1,6 +1,7 @@
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Bertverbeek4PS/bc2adls/badge)](https://scorecard.dev/viewer/?uri=github.com/Bertverbeek4PS/bc2adls)
+If you want to use the extension in your Business Central environment, you can install it from Microsoft Appsource:
+[Microsoft Appsource App](https://marketplace.microsoft.com/en-us/product/dynamics-365-business-central/PUBID.bc2adls01%7CAID.bc2adls%7CPAPPID.7a4530b3-2449-40ad-9779-97f4663ce51f?tab=Overview)
 
-![](.assets/bc2adls_banner.png)
+![](.assets/bc2adls_logo_90x90.png)
 # Starting update
 **The original repository "[microsoft/bc2adls](https://github.com/microsoft/bc2adls)" is in read-only mode. But since a lot of partners are using this tool, we want to develop it further as open source software. A special thanks to the creators of this tool: [Soumya Dutta](https://www.linkedin.com/in/soumya-dutta-07813a5/) and [Henri Schulte](https://www.linkedin.com/in/henrischulte/), who put a lot of effort into it!**
 

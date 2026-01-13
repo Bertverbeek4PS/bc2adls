@@ -1,5 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+
+using System.Reflection;
+using System.Threading;
+using System.Environment;
 codeunit 82569 "ADLSE Execution"
 {
     trigger OnRun()
@@ -25,11 +30,13 @@ codeunit 82569 "ADLSE Execution"
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Sync Companies", 'r')]
     internal procedure StartExport(var AdlseTable: Record "ADLSE Table")
     var
         ADLSESetupRec: Record "ADLSE Setup";
         ADLSEField: Record "ADLSE Field";
         ADLSECurrentSession: Record "ADLSE Current Session";
+        ADLSESyncCompanies: Record "ADLSE Sync Companies";
         ADLSESetup: Codeunit "ADLSE Setup";
         ADLSECommunication: Codeunit "ADLSE Communication";
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
@@ -40,6 +47,12 @@ codeunit 82569 "ADLSE Execution"
         ADLSESetup.CheckSetup(ADLSESetupRec);
         EmitTelemetry := ADLSESetupRec."Emit telemetry";
         ADLSECurrentSession.CleanupSessions();
+
+        if ADLSESyncCompanies.Get(CompanyName()) then begin// Possible Multi Company export Create session So that is can be stopped.
+            ADLSECurrentSession.Start(ADLSESyncCompanies.RecordId.TableNo);
+            Commit(); //To make sure session is stored before starting exports
+        end;
+
         if ADLSESetupRec.GetStorageType() = ADLSESetupRec."Storage Type"::"Azure Data Lake" then //Because Fabric doesn't have do create a container
             ADLSECommunication.SetupBlobStorage();
         ADLSESessionManager.Init();
@@ -64,6 +77,9 @@ codeunit 82569 "ADLSE Execution"
             Log('ADLSE-001', StrSubstNo(ExportStartedTxt, Started, Counter), Verbosity::Normal);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'rd')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Run", 'm')]
     internal procedure StopExport()
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -174,6 +190,36 @@ codeunit 82569 "ADLSE Execution"
 
         if xmldata <> '' then begin
             ADLSEScheduleTaskAssignment.CreateJobQueueEntry(JobQueueEntry);
+            JobQueueEntry.SetReportParameters(xmldata);
+            JobQueueEntry.Modify();
+        end;
+    end;
+
+    internal procedure ScheduleMultiExport()
+    var
+        JobQueueEntry: Record "Job Queue Entry";
+        ADLSEScheduleMultiTaskAssign: Report ADLSEScheduleMultiTaskAssign;
+        SavedData: Text;
+        xmldata: Text;
+        Handled: Boolean;
+    begin
+        OnBeforeScheduleExport(Handled);
+        if Handled then
+            exit;
+
+        JobQueueEntry.SetFilter("User ID", UserId());
+        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
+        JobQueueEntry.SetRange("Object ID to Run", Report::ADLSEScheduleMultiTaskAssign);
+        JobQueueEntry.SetCurrentKey(SystemCreatedAt);
+        JobQueueEntry.SetAscending(SystemCreatedAt, false);
+
+        if JobQueueEntry.FindFirst() then
+            SavedData := JobQueueEntry.GetReportParameters();
+
+        xmldata := ADLSEScheduleMultiTaskAssign.RunRequestPage(SavedData);
+
+        if xmldata <> '' then begin
+            ADLSEScheduleMultiTaskAssign.CreateJobQueueEntry(JobQueueEntry);
             JobQueueEntry.SetReportParameters(xmldata);
             JobQueueEntry.Modify();
         end;

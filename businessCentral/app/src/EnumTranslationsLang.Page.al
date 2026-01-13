@@ -1,3 +1,5 @@
+namespace bc2adls;
+
 //A list page that is build on table Enum Translation
 page 82570 "ADLSE Enum Translations Lang"
 {

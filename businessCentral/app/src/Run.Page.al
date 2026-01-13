@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
 page 82563 "ADLSE Run"
 {
     PageType = List;
@@ -71,6 +72,11 @@ page 82563 "ADLSE Run"
         Rec.SetRange("Company Name", CompanyName());
         Rec.SetCurrentKey(Started);
         Rec.SetAscending(Started, false); // the last log at the top
+    end;
+
+    procedure SetCompanyName(parCompanyName: Text)
+    begin
+        Rec.SetRange("Company Name", parCompanyName);
     end;
 
     trigger OnAfterGetRecord()

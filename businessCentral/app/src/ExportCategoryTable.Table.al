@@ -1,8 +1,10 @@
+namespace bc2adls;
 table 82571 "ADLSE Export Category Table"
 {
     Caption = 'Export Category Table';
     DataClassification = ToBeClassified;
     LookupPageId = "ADLSE Export Categories";
+    DrillDownPageId = "ADLSE Export Categories";
     DataPerCompany = false;
 
     fields
@@ -26,6 +28,16 @@ table 82571 "ADLSE Export Category Table"
         key(PK; "Code")
         {
             Clustered = true;
+        }
+    }
+
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Code", Description)
+        {
+        }
+        fieldgroup(Brick; "Code", Description)
+        {
         }
     }
 }

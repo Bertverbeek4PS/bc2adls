@@ -1,5 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+
+using System.Reflection;
 #pragma warning disable LC0015
 table 82561 "ADLSE Table"
 #pragma warning restore
@@ -19,13 +22,6 @@ table 82561 "ADLSE Table"
             AllowInCustomizations = AsReadOnly;
             Editable = false;
             Caption = 'Table ID';
-        }
-        field(2; State; Integer)
-        {
-            Caption = 'State';
-            ObsoleteReason = 'Use ADLSE Run table instead';
-            ObsoleteTag = '1.2.2.0';
-            ObsoleteState = Removed;
         }
         field(3; Enabled; Boolean)
         {
@@ -48,14 +44,6 @@ table 82561 "ADLSE Table"
                 ADLSEExternalEvents.OnEnableTableChanged(Rec);
             end;
         }
-        field(5; LastError; Text[2048])
-        {
-            Editable = false;
-            Caption = 'Last error';
-            ObsoleteReason = 'Use ADLSE Run table instead';
-            ObsoleteTag = '1.2.2.0';
-            ObsoleteState = Removed;
-        }
         field(10; ExportCategory; Code[50])
         {
             TableRelation = "ADLSE Export Category Table";
@@ -76,7 +64,7 @@ table 82561 "ADLSE Table"
         {
             Caption = 'Process Type';
             DataClassification = CustomerContent;
-            ObsoleteState = Pending;
+            ObsoleteState = Removed;
             ObsoleteReason = 'This field will be removed in a future release because readuncommitted will be the default behavior because of performance.';
             ToolTip = 'Specifies how this table should be processed during export. Standard uses normal processing, Ignore Read Isolation disables read isolation for performance, and Commit Externally uses external commit for large tables.';
         }
@@ -90,6 +78,16 @@ table 82561 "ADLSE Table"
         }
     }
 
+    fieldgroups
+    {
+        fieldgroup(DropDown; "Table ID")
+        {
+        }
+        fieldgroup(Brick; "Table ID", Enabled, ExportCategory)
+        {
+        }
+    }
+
     trigger OnInsert()
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -97,6 +95,8 @@ table 82561 "ADLSE Table"
         ADLSESetup.SchemaExported();
 
         CheckTableOfTypeNormal(Rec."Table ID");
+
+        UpsertAllTableIds(0);
     end;
 
     trigger OnDelete()
@@ -131,6 +131,11 @@ table 82561 "ADLSE Table"
         end;
     end;
 
+    trigger OnRename()
+    begin
+        UpsertAllTableIds(8);
+    end;
+
     var
         TableNotNormalErr: Label 'Table %1 is not a normal table.', Comment = '%1: caption of table';
         TableExportingDataErr: Label 'Data is being executed for table %1. Please wait for the export to finish before making changes.', Comment = '%1: table caption';
@@ -138,6 +143,9 @@ table 82561 "ADLSE Table"
         TablesResetTxt: Label '%1 table(s) were reset %2', Comment = '%1 = number of tables that were reset, %2 = message if tables are exported';
         TableResetExportedTxt: Label 'and are exported to the lakehouse. Please run the notebook first.';
         StoppedByUserLbl: Label 'Session stopped by user.';
+        InvalidFieldNotificationSent: List of [Integer];
+        InvalidFieldConfiguredMsg: Label 'The following fields have been incorrectly enabled for exports in the table %1: %2', Comment = '%1 = table name; %2 = List of invalid field names';
+        WarnOfSchemaChangeQst: Label 'Data may have been exported from this table before. Changing the export schema now may cause unexpected side- effects. You may reset the table first so all the data shall be exported afresh. Do you still wish to continue?';
 
     procedure FieldsChosen(): Integer
     var
@@ -232,8 +240,8 @@ table 82561 "ADLSE Table"
 
                 if not AllCompanies then begin
                     if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then begin
-                        if ADLSETableLastTimestamp.Get(CompanyName, Rec."Table ID") then
-                            ADLSETableLastTimestamp.Delete();
+                        if ADLSETableLastTimestamp.Get(CompanyName(), Rec."Table ID") then
+                            ADLSETableLastTimestamp.Delete(true);
                     end
                     else begin
                         ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Rec."Table ID", 0);
@@ -245,9 +253,9 @@ table 82561 "ADLSE Table"
                         ADLSETableLastTimestamp.DeleteAll();
                     end
                     else begin
-                        ADLSETableLastTimestamp.SetRange("Table ID", rec."Table ID");
-                        ADLSETableLastTimestamp.ModifyAll("Updated Last Timestamp", 0);
-                        ADLSETableLastTimestamp.ModifyAll("Deleted Last Entry No.", 0);
+                        ADLSETableLastTimestamp.SetRange("Table ID", Rec."Table ID");
+                        ADLSETableLastTimestamp.ModifyAll("Updated Last Timestamp", 0, true);
+                        ADLSETableLastTimestamp.ModifyAll("Deleted Last Entry No.", 0, true);
                         ADLSETableLastTimestamp.SetRange("Table ID");
                     end;
                 ADLSEDeletedRecord.SetRange("Table ID", Rec."Table ID");
@@ -391,6 +399,72 @@ table 82561 "ADLSE Table"
                     ADLSEField.Insert();
                 end;
             until Field.Next() = 0;
+    end;
+
+    local procedure UpsertAllTableIds(Rowmarker: Integer)
+    var
+        ADLSECompaniesTable: Record "ADLSE Companies Table";
+        ADLSESyncCompanies: Record "ADLSE Sync Companies";
+        SyncCompany: Text[30];
+    begin
+        // Rowmarker semantics used here:
+        // 0 = Insert -> add missing rows for this Sync Company across ALL table IDs (do not update existing rows)
+        // 1 = Modify -> update existing rows for this Sync Company across ALL table IDs (do not insert missing rows)
+        // 2 = Delete -> remove ALL rows for this Sync Company across ALL table IDs (except current row already being deleted)
+
+        SyncCompany := CopyStr(CompanyName(), 1, MaxStrLen(SyncCompany));
+        if SyncCompany = '' then
+            exit;
+
+        case Rowmarker of
+            2: // Delete: remove this company entry for all other tables (current one is already being deleted)
+                begin
+                    ADLSECompaniesTable.SetRange("Table ID", Rec."Table ID");
+                    ADLSECompaniesTable.DeleteAll(false);
+                end;
+
+            0: // Insert: add missing rows only
+                if ADLSESyncCompanies.FindSet() then
+                    repeat
+                        ADLSECompaniesTable.Init();
+                        ADLSECompaniesTable."Table ID" := Rec."Table ID";
+                        ADLSECompaniesTable."Sync Company" := ADLSESyncCompanies."Sync Company";
+                        if ADLSECompaniesTable.Insert(false) then;
+                    until ADLSESyncCompanies.Next() = 0;
+            8: // Rename: 
+                begin
+                    UpsertAllTableIds(2);
+                    UpsertAllTableIds(0);
+                end;
+        end;
+    end;
+
+    procedure DoChooseFields()
+    var
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+        ADLSESetup: Codeunit "ADLSE Setup";
+    begin
+        if ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(Rec."Table ID") then
+            if not Confirm(WarnOfSchemaChangeQst, false) then
+                exit;
+        ADLSESetup.ChooseFieldsToExport(Rec);
+    end;
+
+    procedure IssueNotificationIfInvalidFieldsConfiguredToBeExported()
+    var
+        ADLSEUtil: Codeunit "ADLSE Util";
+        InvalidFieldNotification: Notification;
+        InvalidFieldList: List of [Text];
+    begin
+        if InvalidFieldNotificationSent.Contains(Rec."Table ID") then
+            exit;
+        InvalidFieldList := Rec.ListInvalidFieldsBeingExported();
+        if InvalidFieldList.Count() = 0 then
+            exit;
+        InvalidFieldNotification.Message := StrSubstNo(InvalidFieldConfiguredMsg, ADLSEUtil.GetTableCaption(Rec."Table ID"), ADLSEUtil.Concatenate(InvalidFieldList));
+        InvalidFieldNotification.Scope := NotificationScope::LocalScope;
+        InvalidFieldNotification.Send();
+        InvalidFieldNotificationSent.Add(Rec."Table ID");
     end;
 
     [IntegrationEvent(false, false)]

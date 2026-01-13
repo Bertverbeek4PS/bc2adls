@@ -1,4 +1,5 @@
 #if not CLEAN27
+namespace bc2adls;
 codeunit 82582 "ADLSE Method Imp. IncFileName" implements "ADLSE Session Method Interface"
 {
     ObsoleteState = Pending;

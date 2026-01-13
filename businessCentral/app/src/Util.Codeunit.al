@@ -1,5 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+
+using System.Reflection;
+using Microsoft.Finance.GeneralLedger.Ledger;
 codeunit 82564 "ADLSE Util"
 {
     Access = Internal;
@@ -17,6 +21,7 @@ codeunit 82564 "ADLSE Util"
         CommaSuffixedTok: Label '%1, ', Comment = '%1: text to be suffixed', Locked = true;
         WholeSecondsTok: Label ':%1Z', Comment = '%1: seconds', Locked = true;
         FractionSecondsTok: Label ':%1.%2Z', Comment = '%1: seconds, %2: milliseconds', Locked = true;
+        UnknownTok: Label 'Unknown', Locked = true;
 
     procedure ToText(GuidValue: Guid): Text
     begin
@@ -169,12 +174,23 @@ codeunit 82564 "ADLSE Util"
 
     procedure GetDataLakeCompliantFieldName(TableID: Integer; FieldID: Integer): Text
     var
+        FieldName: Text;
+    begin
+        if TryToGetDataLakeCompliantFieldName(TableID, FieldID, FieldName) then
+            exit(FieldName);
+        FieldName := StrSubstNo(ConcatNameIdTok, UnknownTok, FieldID);
+        exit(FieldName);
+    end;
+
+    [TryFunction]
+    local procedure TryToGetDataLakeCompliantFieldName(TableID: Integer; FieldID: Integer; var FieldName: Text)
+    var
         RecRef: RecordRef;
         FieldRef: FieldRef;
     begin
         RecRef.Open(TableID);
         FieldRef := RecRef.Field(FieldID);
-        exit(GetDataLakeCompliantFieldName(FieldRef));
+        FieldName := GetDataLakeCompliantFieldName(FieldRef);
     end;
 
     procedure GetDataLakeCompliantFieldName(FieldRef: FieldRef): Text
@@ -191,19 +207,19 @@ codeunit 82564 "ADLSE Util"
             NameToUse := FieldRef.Name();
         if ADLSESetup."Use IDs for Duplicates Only" then begin
             RecRef := FieldRef.Record();
-            TableFields.SetRange(TableNo, RecRef.Number);
+            TableFields.SetRange(TableNo, RecRef.Number());
             if ADLSESetup."Use Field Captions" then
                 TableFields.SetRange("Field Caption", NameToUse)
             else
                 exit(GetDataLakeCompliantName(NameToUse));
 
-            TableFields.SetFilter("No.", '<>%1', FieldRef.Number);
+            TableFields.SetFilter("No.", '<>%1', FieldRef.Number());
             if TableFields.IsEmpty() then // there is not a duplicate field name/caption
                 exit(GetDataLakeCompliantName(NameToUse))
             else
-                exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number));
+                exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number()));
         end else
-            exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number));
+            exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(NameToUse), FieldRef.Number()));
     end;
 
     procedure GetTableName(TableID: Integer) TableName: Text
@@ -268,7 +284,7 @@ codeunit 82564 "ADLSE Util"
         DateTimeValue: DateTime;
         TimeValue: Time;
     begin
-        case FieldRef.Type of
+        case FieldRef.Type() of
             FieldRef.Type::BigInteger,
             FieldRef.Type::Date,
             FieldRef.Type::DateFormula,
@@ -303,13 +319,13 @@ codeunit 82564 "ADLSE Util"
             FieldRef.Type::Text:
                 exit(ConvertStringToText(FieldRef.Value()));
             else
-                Error(FieldTypeNotSupportedErr, FieldRef.Name(), FieldRef.Type);
+                Error(FieldTypeNotSupportedErr, FieldRef.Name(), FieldRef.Type());
         end;
     end;
 
     procedure ConvertOptionFieldToValueText(FieldRef: FieldRef): Text
     begin
-        case FieldRef.Type of
+        case FieldRef.Type() of
             FieldRef.Type::Option:
                 exit(ConvertNumberToText(FieldRef.Value()));
         end;
@@ -412,7 +428,7 @@ codeunit 82564 "ADLSE Util"
                 Payload.Append(StrSubstNo(CommaPrefixedTok, FieldTextValue));
             FieldsAdded += 1;
         end;
-        if IsTablePerCompany(RecordRef.Number) then
+        if IsTablePerCompany(RecordRef.Number()) then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetCompanyFieldName()));
 
         if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Closing Date column") then
@@ -458,7 +474,7 @@ codeunit 82564 "ADLSE Util"
                 Payload.Append(StrSubstNo(CommaPrefixedTok, FieldTextValue));
             FieldsAdded += 1;
         end;
-        if IsTablePerCompany(RecordRef.Number) then
+        if IsTablePerCompany(RecordRef.Number()) then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertStringToText(CompanyName())));
 
         if (RecordRef.Number() = Database::"G/L Entry") and (ADLSESetup."Export Closing Date column") then begin

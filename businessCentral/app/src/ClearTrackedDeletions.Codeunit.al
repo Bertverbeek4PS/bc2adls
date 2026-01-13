@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
 codeunit 82573 "ADLSE Clear Tracked Deletions"
 {
     /// This codeunit removes the tracked deleted records- those that track deletions of records from tables being exported, so 

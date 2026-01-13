@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
 permissionset 82560 "ADLSE - Setup"
 {
     /// <summary>
@@ -27,10 +28,14 @@ permissionset 82560 "ADLSE - Setup"
                   tabledata "ADLSE Export Category" = RIMD,
 #pragma warning restore AL0432
                   tabledata "ADLSE Export Category Table" = RIMD,
+                  tabledata "ADLSE Companies Table" = RIMD,
+                  tabledata "ADLSE Sync Companies" = RIMD,
                   codeunit "ADLSE Clear Tracked Deletions" = X,
                   codeunit "ADLSE Credentials" = X,
                   codeunit "ADLSE Setup" = X,
                   codeunit "ADLSE Installer" = X,
+                  codeunit "ADLSE Company Run" = X,
+                  codeunit "ADLSE Multi Company Export" = X,
                   page "ADLSE Setup Tables" = X,
                   page "ADLSE Setup Fields" = X,
                   page "ADLSE Setup" = X,
@@ -40,6 +45,9 @@ permissionset 82560 "ADLSE - Setup"
                   page "ADLSE Export Categories" = X,
                   page "ADLSE Assign Export Category" = X,
                   page "Deleted Tables Not To Sync" = X,
+                  page "ADLSE Company Setup" = X,
+                  page "ADLSE Company Setup Tables" = X,
                   report "ADLSE Schedule Task Assignment" = X,
+                  report "ADLSEScheduleMultiTaskAssign" = X,
                   xmlport "BC2ADLS Import" = X;
 }

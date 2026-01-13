@@ -1,5 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
+namespace bc2adls;
+
+using System.Reflection;
+using System.Utilities;
 codeunit 82560 "ADLSE Setup"
 {
     Access = Internal;
