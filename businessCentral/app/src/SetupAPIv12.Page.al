@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
+
+using System.Threading;
+
 page 82572 "ADLSE Setup API v12"
 {
     PageType = API;
@@ -95,6 +98,16 @@ page 82572 "ADLSE Setup API v12"
         ADLSEEnumTranslation: Record "ADLSE Enum Translation";
     begin
         ADLSEEnumTranslation.RefreshOptions();
+        SetActionResponse(ActionContext, Rec."SystemId");
+    end;
+
+    [ServiceEnabled]
+    procedure StartMultiCompanyExport(var ActionContext: WebServiceActionContext)
+    var
+        TempJobQueueEntry: Record "Job Queue Entry" temporary;
+        ADLSEMultiCompanyExport: Codeunit "ADLSE Multi Company Export";
+    begin
+        ADLSEMultiCompanyExport.Run(TempJobQueueEntry);
         SetActionResponse(ActionContext, Rec."SystemId");
     end;
 
