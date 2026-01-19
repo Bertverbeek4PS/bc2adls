@@ -107,6 +107,8 @@ page 82572 "ADLSE Setup API v12"
         TempJobQueueEntry: Record "Job Queue Entry" temporary;
         ADLSEMultiCompanyExport: Codeunit "ADLSE Multi Company Export";
     begin
+        TempJobQueueEntry.Init();
+        TempJobQueueEntry.Insert(false);
         ADLSEMultiCompanyExport.Run(TempJobQueueEntry);
         SetActionResponse(ActionContext, Rec."SystemId");
     end;
