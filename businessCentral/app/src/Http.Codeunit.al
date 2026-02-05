@@ -20,6 +20,7 @@ codeunit 82563 "ADLSE Http"
         OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id', Locked = true;
         BearerTok: Label 'Bearer %1', Comment = '%1: access token', Locked = true;
         AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret', Locked = true;
+        HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error request: %1.', Comment = '%1: error message';
 
     procedure SetMethod(HttpMethodValue: Enum "ADLSE Http Method")
     begin
@@ -111,7 +112,6 @@ codeunit 82563 "ADLSE Http"
         HeaderKey: Text;
         HeaderValue: Text;
         HttpRequestSucceeded: Boolean;
-        HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error request: %1. Make sure you are connecting to a valid endpoint.', Comment = '%1: error message';
     begin
         ADLSESetup.GetSingleton();
 
@@ -238,7 +238,6 @@ codeunit 82563 "ADLSE Http"
         Json: JsonObject;
         ScopeUrlEncoded: Text;
         HttpRequestFailed: Boolean;
-        HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error request: %1', Comment = '%1: error message';
     begin
         case ADLSESetup.GetStorageType() of
             ADLSESetup."Storage Type"::"Azure Data Lake":
