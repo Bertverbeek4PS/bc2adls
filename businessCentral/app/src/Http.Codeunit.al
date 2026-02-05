@@ -111,7 +111,7 @@ codeunit 82563 "ADLSE Http"
         HeaderKey: Text;
         HeaderValue: Text;
         HttpRequestSucceeded: Boolean;
-        HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error request: %1. Make sure you are connecting to a valid endpoint.', Comment = '%1: error message';
+        HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error message: %1. Make sure you are connecting to a valid endpoint.', Comment = '%1: error message';
     begin
         ADLSESetup.GetSingleton();
 
