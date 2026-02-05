@@ -238,7 +238,7 @@ codeunit 82563 "ADLSE Http"
         Json: JsonObject;
         ScopeUrlEncoded: Text;
         HttpRequestFailed: Boolean;
-        HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error request: %1', Comment = '%1: error message';
+        HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error message: %1', Comment = '%1: error message';
     begin
         case ADLSESetup.GetStorageType() of
             ADLSESetup."Storage Type"::"Azure Data Lake":
