@@ -20,6 +20,7 @@ codeunit 82563 "ADLSE Http"
         OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id', Locked = true;
         BearerTok: Label 'Bearer %1', Comment = '%1: access token', Locked = true;
         AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret', Locked = true;
+        HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error request: %1.', Comment = '%1: error message';
 
     procedure SetMethod(HttpMethodValue: Enum "ADLSE Http Method")
     begin
@@ -219,18 +220,25 @@ codeunit 82563 "ADLSE Http"
     local procedure AcquireTokenOAuth2(var AuthError: Text) AccessToken: Text
     var
         ADLSESetup: Record "ADLSE Setup";
-        ADSEUtil: Codeunit "ADLSE Util";
+        ADLSETokenCache: Codeunit "ADLSE Token Cache";
+        ADLSEUtil: Codeunit "ADLSE Util";
         HttpClient: HttpClient;
         HttpRequestMessage: HttpRequestMessage;
         HttpContent: HttpContent;
         Headers: HttpHeaders;
         HttpResponseMessage: HttpResponseMessage;
+        Json: JsonObject;
         Uri: Text;
         RequestBody: Text;
         ResponseBody: Text;
-        Json: JsonObject;
         ScopeUrlEncoded: Text;
+        ExpiresInSeconds: Integer;
+        HttpRequestFailed: Boolean;
     begin
+        // Return cached token if still valid
+        if ADLSETokenCache.IsTokenValid() then
+            exit(ADLSETokenCache.GetCachedToken());
+
         case ADLSESetup.GetStorageType() of
             ADLSESetup."Storage Type"::"Azure Data Lake":
                 ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation'; // url encoded form of https://storage.azure.com/user_impersonation
@@ -253,7 +261,12 @@ codeunit 82563 "ADLSE Http"
         Headers.Remove('Content-Type');
         Headers.Add('Content-Type', 'application/x-www-form-urlencoded');
 
-        HttpClient.Post(Uri, HttpContent, HttpResponseMessage);
+        HttpRequestFailed := not HttpClient.Post(Uri, HttpContent, HttpResponseMessage);
+        if HttpRequestFailed then begin
+            AuthError := StrSubstNo(HttpRequestFailedErr, GetLastErrorText());
+            exit;
+        end;
+
         HttpContent := HttpResponseMessage.Content();
         HttpContent.ReadAs(ResponseBody);
         if not HttpResponseMessage.IsSuccessStatusCode() then begin
@@ -262,7 +275,12 @@ codeunit 82563 "ADLSE Http"
         end;
 
         Json.ReadFrom(ResponseBody);
-        AccessToken := ADSEUtil.GetTextValueForKeyInJson(Json, 'access_token');
-        // TODO: Store access token in cache, and use it based on expiry date. 
+        AccessToken := ADLSEUtil.GetTextValueForKeyInJson(Json, 'access_token');
+
+        // Cache the token with expiry (subtract 5 minutes for safety margin)
+        // expires_in is in seconds, default to 3600 (1 hour) if not present
+        if not Evaluate(ExpiresInSeconds, ADLSEUtil.GetTextValueForKeyInJson(Json, 'expires_in')) then
+            ExpiresInSeconds := 3600;
+        ADLSETokenCache.SetToken(AccessToken, CurrentDateTime() + (ExpiresInSeconds * 1000) - (5 * 60 * 1000));
     end;
 }
