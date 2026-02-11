@@ -559,12 +559,12 @@ codeunit 82564 "ADLSE Util"
     end;
 
     [IntegrationEvent(false, false)]
-    internal procedure OnAfterCreateCsvHeader(RecordRef: RecordRef; FieldIdList: List of [Integer]; var RecordPayload: Text)
+    local procedure OnAfterCreateCsvHeader(RecordRef: RecordRef; FieldIdList: List of [Integer]; var RecordPayload: Text)
     begin
     end;
 
     [IntegrationEvent(false, false)]
-    internal procedure OnAfterCreateCsvPayload(RecordRef: RecordRef; FieldIdList: List of [Integer]; AddHeaders: Boolean; Deletes: Boolean; var RecordPayload: Text)
+    local procedure OnAfterCreateCsvPayload(RecordRef: RecordRef; FieldIdList: List of [Integer]; AddHeaders: Boolean; Deletes: Boolean; var RecordPayload: Text)
     begin
     end;
 }
