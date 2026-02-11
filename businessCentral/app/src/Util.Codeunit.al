@@ -145,7 +145,7 @@ codeunit 82564 "ADLSE Util"
             exit(AllObjWithCaption."Object Caption");
     end;
 
-    procedure GetDataLakeCompliantTableName(TableID: Integer) TableName: Text
+    internal procedure GetDataLakeCompliantTableName(TableID: Integer) TableName: Text
     var
         ADLSESetup: Record "ADLSE Setup";
         AllObjWithCaption: Record AllObjWithCaption;
