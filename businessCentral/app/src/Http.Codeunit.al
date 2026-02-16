@@ -20,6 +20,7 @@ codeunit 82563 "ADLSE Http"
         OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id', Locked = true;
         BearerTok: Label 'Bearer %1', Comment = '%1: access token', Locked = true;
         AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret', Locked = true;
+        HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error request: %1.', Comment = '%1: error message';
 
     procedure SetMethod(HttpMethodValue: Enum "ADLSE Http Method")
     begin
@@ -110,6 +111,7 @@ codeunit 82563 "ADLSE Http"
         HttpContent: HttpContent;
         HeaderKey: Text;
         HeaderValue: Text;
+        HttpRequestSucceeded: Boolean;
     begin
         ADLSESetup.GetSingleton();
 
@@ -130,32 +132,37 @@ codeunit 82563 "ADLSE Http"
 
         case HttpMethod of
             "ADLSE Http Method"::Get:
-                HttpClient.Get(Url, HttpResponseMessage);
+                HttpRequestSucceeded := HttpClient.Get(Url, HttpResponseMessage);
             "ADLSE Http Method"::Put:
                 begin
                     HttpRequestMessage.Method('PUT');
                     HttpRequestMessage.SetRequestUri(Url);
                     AddContent(HttpContent);
-                    HttpClient.Put(Url, HttpContent, HttpResponseMessage);
+                    HttpRequestSucceeded := HttpClient.Put(Url, HttpContent, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Delete:
-                HttpClient.Delete(Url, HttpResponseMessage);
+                HttpRequestSucceeded := HttpClient.Delete(Url, HttpResponseMessage);
             "ADLSE Http Method"::Patch:
                 begin
                     HttpRequestMessage.Method('PATCH');
                     HttpRequestMessage.SetRequestUri(Url);
                     AddContent(HttpContent);
                     HttpRequestMessage.Content(HttpContent);
-                    HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
+                    HttpRequestSucceeded := HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Head:
                 begin
                     HttpRequestMessage.Method('HEAD');
                     HttpRequestMessage.SetRequestUri(Url);
-                    HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
+                    HttpRequestSucceeded := HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
             else
                 Error(UnsupportedMethodErr, HttpMethod);
+        end;
+
+        if not HttpRequestSucceeded then begin
+            Response := StrSubstNo(HttpRequestFailedErr, GetLastErrorText());
+            exit(false);
         end;
 
         HttpContent := HttpResponseMessage.Content();
@@ -230,6 +237,7 @@ codeunit 82563 "ADLSE Http"
         ResponseBody: Text;
         Json: JsonObject;
         ScopeUrlEncoded: Text;
+        HttpRequestFailed: Boolean;
     begin
         case ADLSESetup.GetStorageType() of
             ADLSESetup."Storage Type"::"Azure Data Lake":
@@ -253,7 +261,12 @@ codeunit 82563 "ADLSE Http"
         Headers.Remove('Content-Type');
         Headers.Add('Content-Type', 'application/x-www-form-urlencoded');
 
-        HttpClient.Post(Uri, HttpContent, HttpResponseMessage);
+        HttpRequestFailed := not HttpClient.Post(Uri, HttpContent, HttpResponseMessage);
+        if HttpRequestFailed then begin
+            AuthError := StrSubstNo(HttpRequestFailedErr, GetLastErrorText());
+            exit;
+        end;
+
         HttpContent := HttpResponseMessage.Content();
         HttpContent.ReadAs(ResponseBody);
         if not HttpResponseMessage.IsSuccessStatusCode() then begin

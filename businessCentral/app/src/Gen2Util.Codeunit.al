@@ -5,7 +5,6 @@ namespace bc2adls;
 using System.Text;
 codeunit 82568 "ADLSE Gen 2 Util"
 {
-    Access = Internal;
     SingleInstance = true;
 
     var
@@ -30,7 +29,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         CouldNotRenameDataBlobErr: Label 'Could not rename blob from %1 to %2: %3', Comment = '%1: source blob path, %2: target blob path, %3 - HTTP response message';
         LatestBlockTagTok: Label '<Latest>%1</Latest>', Comment = '%1: block ID', Locked = true;
 
-    procedure ContainerExists(ContainerPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"): Boolean
+    internal procedure ContainerExists(ContainerPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"): Boolean
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -41,7 +40,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         exit(ADLSEHttp.InvokeRestApi(Response)); // no error
     end;
 
-    procedure CreateContainer(ContainerPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
+    internal procedure CreateContainer(ContainerPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -53,7 +52,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
             Error(CoundNotCreateContainerErr, ContainerPath, Response);
     end;
 
-    procedure GetBlobContent(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; var BlobExists: Boolean) Content: JsonObject
+    internal procedure GetBlobContent(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; var BlobExists: Boolean) Content: JsonObject
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         ContentToken: JsonToken;
@@ -83,7 +82,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
             Error(CouldNotReadDataInBlobErr, BlobPath, Response);
     end;
 
-    procedure GetBlobContentLength(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials") ContentLength: Integer
+    internal procedure GetBlobContentLength(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials") ContentLength: Integer
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -109,7 +108,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         Evaluate(ContentLength, ContentLengthList.Get(1));
     end;
 
-    procedure CreateOrUpdateJsonBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; LeaseID: Text; Body: JsonObject)
+    internal procedure CreateOrUpdateJsonBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; LeaseID: Text; Body: JsonObject)
     var
         BodyAsText: Text;
     begin
@@ -159,13 +158,13 @@ codeunit 82568 "ADLSE Gen 2 Util"
             AddBlockToDataBlob(BlobPathOrg, Body, 0, ADLSECredentials);
     end;
 
-    procedure CreateDataBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
+    internal procedure CreateDataBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
     begin
         CreateBlockBlob(BlobPath, ADLSECredentials, '', '', false);
     end;
 
     // Storage Type - Azure Data Lake Storage
-    procedure AddBlockToDataBlob(BlobPath: Text; Body: Text; ADLSECredentials: Codeunit "ADLSE Credentials") BlockID: Text
+    internal procedure AddBlockToDataBlob(BlobPath: Text; Body: Text; ADLSECredentials: Codeunit "ADLSE Credentials") BlockID: Text
     var
         Base64Convert: Codeunit "Base64 Convert";
         ADLSEHttp: Codeunit "ADLSE Http";
@@ -186,7 +185,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
     end;
 
     // Storage Type - Microsoft Fabric
-    procedure AddBlockToDataBlob(BlobPath: Text; Body: Text; Position: Integer; ADLSECredentials: Codeunit "ADLSE Credentials")
+    internal procedure AddBlockToDataBlob(BlobPath: Text; Body: Text; Position: Integer; ADLSECredentials: Codeunit "ADLSE Credentials")
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -204,7 +203,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
             Error(CouldNotAppendDataToBlobErr, BlobPath, Response);
     end;
 
-    procedure CommitAllBlocksOnDataBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; BlockIDList: List of [Text])
+    internal procedure CommitAllBlocksOnDataBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; BlockIDList: List of [Text])
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -230,7 +229,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
             Error(CouldNotCommitBlocksToDataBlobErr, BlobPath, Response);
     end;
 
-    procedure RenameDataBlob(SourceBlobPath: Text; TargetBlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
+    internal procedure RenameDataBlob(SourceBlobPath: Text; TargetBlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -251,7 +250,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
             Error(CouldNotRenameDataBlobErr, SourceBlobPath, TargetBlobPath, Response);
     end;
 
-    procedure AcquireLease(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; var BlobExists: Boolean) LeaseID: Text
+    internal procedure AcquireLease(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; var BlobExists: Boolean) LeaseID: Text
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -286,7 +285,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         Error(TimedOutWaitingForLockOnBlobErr, BlobPath, AcquireLeaseTimeoutSecondsTxt, Response);
     end;
 
-    procedure ReleaseBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; LeaseID: Text)
+    internal procedure ReleaseBlob(BlobPath: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; LeaseID: Text)
     var
         ADLSEHttp: Codeunit "ADLSE Http";
         Response: Text;
@@ -302,7 +301,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
             Error(CouldNotReleaseLockOnBlobErr, BlobPath, Response);
     end;
 
-    procedure IsMaxBlobFileSize(DataBlobPath: Text; BlobContentLength: Integer; PayloadLength: Integer): Boolean
+    internal procedure IsMaxBlobFileSize(DataBlobPath: Text; BlobContentLength: Integer; PayloadLength: Integer): Boolean
     var
         ADLSESetup: Record "ADLSE Setup";
         BlobTotalContentSize: BigInteger;
@@ -327,12 +326,12 @@ codeunit 82568 "ADLSE Gen 2 Util"
         exit(true);
     end;
 
-    procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
+    internal procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials")
     begin
         RemoveDeltasFromDataLake(ADLSEntityName, ADLSECredentials, false);
     end;
 
-    procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean)
+    internal procedure RemoveDeltasFromDataLake(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSEHttp: Codeunit "ADLSE Http";
@@ -361,7 +360,7 @@ codeunit 82568 "ADLSE Gen 2 Util"
         end;
     end;
 
-    procedure DropTableFromOpenMirroring(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean)
+    internal procedure DropTableFromOpenMirroring(ADLSEntityName: Text; ADLSECredentials: Codeunit "ADLSE Credentials"; AllCompanies: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSEHttp: Codeunit "ADLSE Http";
