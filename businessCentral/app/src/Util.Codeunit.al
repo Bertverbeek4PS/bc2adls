@@ -150,6 +150,7 @@ codeunit 82564 "ADLSE Util"
         ADLSESetup: Record "ADLSE Setup";
         AllObjWithCaption: Record AllObjWithCaption;
         OrigTableName: Text;
+        CompliantTableName: Text;
     begin
         ADLSESetup.GetSingleton();
         if ADLSESetup."Use Table Captions" then
@@ -164,11 +165,15 @@ codeunit 82564 "ADLSE Util"
             else
                 AllObjWithCaption.SetRange("Object Name", OrigTableName);
             if AllObjWithCaption.IsEmpty() then // there is not a duplicate table caption
-                exit(GetDataLakeCompliantName(OrigTableName))
+                CompliantTableName := GetDataLakeCompliantName(OrigTableName)
             else
-                exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(OrigTableName), TableID));
+                CompliantTableName := StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(OrigTableName), TableID);
         end else
-            exit(StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(OrigTableName), TableID));
+            CompliantTableName := StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(OrigTableName), TableID);
+
+        OnAfterGetDataLakeCompliantTableName(TableID, CompliantTableName);
+
+        exit(CompliantTableName);
     end;
 
     internal procedure GetDataLakeCompliantFieldName(TableID: Integer; FieldID: Integer): Text
@@ -575,6 +580,11 @@ codeunit 82564 "ADLSE Util"
 
     [IntegrationEvent(false, false)]
     local procedure OnAfterGetDataLakeCompliantFieldName(FieldRef: FieldRef; var CompliantFieldName: Text)
+    begin
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnAfterGetDataLakeCompliantTableName(TableID: Integer; var CompliantTableName: Text)
     begin
     end;
 }
