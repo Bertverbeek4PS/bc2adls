@@ -31,7 +31,7 @@ codeunit 82562 "ADLSE Communication"
         SingleRecordTooLargeErr: Label 'A single record payload exceeded the max payload size. Please adjust the payload size or reduce the fields to be exported for the record.';
         DeltasFileCsvTok: Label '/deltas/%1/%2.csv', Comment = '%1: Entity, %2: File identifier guid', Locked = true;
         FileCsvTok: Label '/%1/%2.csv', Comment = '%1: Entity, %2: File identifier guid', Locked = true;
-        FileCsvTempTok: Label '/%1/%2.csv.tmp', Comment = '%1: Entity, %2: File identifier guid', Locked = true;
+        FileCsvTempTok: Label '/%1/_%2.csv', Comment = '%1: Entity, %2: File identifier guid', Locked = true;
         ExportOfSchemaNotPerformendTxt: Label 'Please export the schema first before trying to export the data.';
         EntitySchemaChangedErr: Label 'The schema of the table %1 has changed. %2', Comment = '%1 = Entity name, %2 = NotAllowedOnSimultaneousExportTxt';
         CdmSchemaChangedErr: Label 'There may have been a change in the tables to export. %1', Comment = '%1 = NotAllowedOnSimultaneousExportTxt';
@@ -204,6 +204,7 @@ codeunit 82562 "ADLSE Communication"
             FileIdentifer := CreateGuid()
         else begin
             //https://learn.microsoft.com/en-us/fabric/database/mirrored-database/open-mirroring-landing-zone-format#data-file-and-format-in-the-landing-zone
+            ADLSETable.ReadIsolation(IsolationLevel::UpdLock);
             if ADLSETable.Get(TableID) then;
             if ADLSETable.ExportFileNumber = 0 then begin
                 ADLSETable.ExportFileNumber := 1;
@@ -211,6 +212,7 @@ codeunit 82562 "ADLSE Communication"
             end;
             FileIdentiferTxt := Format(ADLSETable.ExportFileNumber);
             FileIdentiferTxt := FileIdentiferTxt.PadLeft(20, '0');
+            Commit(); // Release the UpdLock so other sessions/companies are not blocked during HTTP operations
         end;
 
         if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then begin
@@ -314,7 +316,7 @@ codeunit 82562 "ADLSE Communication"
         ADLSESetup: Record "ADLSE Setup";
     begin
         if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then
-            if DataBlobPath = '' then
+            if (DataBlobPath = '') and (Payload.Length() > 0) then
                 CreateDataBlob();
         FlushPayload();
 

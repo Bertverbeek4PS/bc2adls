@@ -362,4 +362,8 @@ rad.json
 .alcache/
 .altemplates/
 cache_*
-.serena/
+**/.serena/
+*.zip
+*.ps1
+
+
