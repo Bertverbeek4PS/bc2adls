@@ -204,6 +204,7 @@ codeunit 82562 "ADLSE Communication"
             FileIdentifer := CreateGuid()
         else begin
             //https://learn.microsoft.com/en-us/fabric/database/mirrored-database/open-mirroring-landing-zone-format#data-file-and-format-in-the-landing-zone
+            ADLSETable.ReadIsolation(IsolationLevel::UpdLock);
             if ADLSETable.Get(TableID) then;
             if ADLSETable.ExportFileNumber = 0 then begin
                 ADLSETable.ExportFileNumber := 1;
