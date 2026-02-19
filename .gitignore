@@ -363,3 +363,7 @@ rad.json
 .altemplates/
 cache_*
 .serena/
+*.zip
+*.ps1
+
+
