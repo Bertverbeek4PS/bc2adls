@@ -212,6 +212,7 @@ codeunit 82562 "ADLSE Communication"
             end;
             FileIdentiferTxt := Format(ADLSETable.ExportFileNumber);
             FileIdentiferTxt := FileIdentiferTxt.PadLeft(20, '0');
+            Commit(); // Release the UpdLock so other sessions/companies are not blocked during HTTP operations
         end;
 
         if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then begin
