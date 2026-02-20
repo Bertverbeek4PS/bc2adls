@@ -359,14 +359,18 @@ codeunit 82561 "ADLSE Execute"
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEExternalEvents: Codeunit "ADLSE External Events";
         CustomDimensions: Dictionary of [Text, Text];
+        IsLastSession: Boolean;
     begin
         ADLSERun.RegisterEnded(ADLSETable."Table ID", EmitTelemetry, TableCaption);
-        ADLSECurrentSession.Stop(ADLSETable."Table ID", EmitTelemetry, TableCaption);
+        // Atomically delete this session's record and check if any remain.
+        // LockTable serializes concurrent callers so only the truly last
+        // session will see an empty table and fire the notification.
+        IsLastSession := ADLSECurrentSession.StopAndCheckIfLast(ADLSETable."Table ID", EmitTelemetry, TableCaption);
         if EmitTelemetry then begin
             CustomDimensions.Add('Entity', TableCaption);
             ADLSEExecution.Log('ADLSE-037', 'Finished the export process', Verbosity::Normal, CustomDimensions);
         end;
-        Commit(); //To avoid misreading
+        Commit(); // persists changes and releases the table lock
 
         // This export session is soon going to end. Start up a new one from 
         // the stored list of pending tables to export.
@@ -380,9 +384,7 @@ codeunit 82561 "ADLSE Execute"
         // batch. 
         ADLSESessionManager.StartExportFromPendingTables();
 
-
-
-        if not ADLSECurrentSession.AreAnySessionsActive() then begin
+        if IsLastSession then begin
             ADLSESetupRec.GetSingleton();
             ADLSEExternalEvents.OnExportFinished(ADLSESetupRec, ADLSETable);
 

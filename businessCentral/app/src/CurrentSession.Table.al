@@ -92,6 +92,16 @@ table 82565 "ADLSE Current Session"
             ADLSEExecution.Log('ADLSE-039', 'Session ended and was removed', Verbosity::Normal, CustomDimensions);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'rd')]
+    procedure StopAndCheckIfLast(ADLSETableID: Integer; EmitTelemetry: Boolean; TableCaption: Text): Boolean
+    begin
+        Rec.ReadIsolation(IsolationLevel::UpdLock);
+        Stop(ADLSETableID, EmitTelemetry, TableCaption);
+        Rec.Reset();
+        Rec.SetRange("Company Name", CopyStr(CompanyName(), 1, 30));
+        exit(Rec.IsEmpty());
+    end;
+
     procedure CheckForNoActiveSessions()
     begin
         if AreAnySessionsActive() then
