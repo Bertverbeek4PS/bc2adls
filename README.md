@@ -9,23 +9,16 @@ If you want to use the extension in your Business Central environment, you can i
 
 The **bc2adls** tool is used to export incremental data from [Dynamics 365 Business Central](https://dynamics.microsoft.com/en-us/business-central/overview/) (BC) to [Microsoft Fabric ](https://learn.microsoft.com/nl-nl/fabric/get-started/microsoft-fabric-overview) or [Azure Data Lake Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction).
 
+## Documentation
 
-More details:
-- [Installation and configuration of the connection with Azure Data Lake](/.assets/Setup.md)
-- [Executing the export and pipeline](/.assets/Execution.md)
-- [Creating shared metadata tables](/.assets/SharedMetadataTables.md)
-- [Installation and configuration of the connection with Microsoft Fabric](/.assets/SetupFabric.md)
-- [Frequently asked questions](/.assets/FAQs.md)
-- Webinars
-    - [[Jan 2022] Webinar introducing bc2adls](https://www.microsoft.com/en-us/videoplayer/embed/RWSHHG)
-	- [[Apr 2022] Areopa Webinar bc2adls](https://www.youtube.com/watch?v=Fjz9LgviV2Q)
-    - [[Mar 2023] Enhancements to bc2adls - CloudChampion](https://www.cloudchampion.dk/c/dynamics-365-business-central-azure-data-lake/)
-	- [[Jan 2024] Areopa Webinar MS Fabric](https://www.youtube.com/watch?v=sXZkrFtN5oc)
+For detailed documentation, installation guides, and setup instructions, please visit our [Wiki](https://github.com/Bertverbeek4PS/bc2adls/wiki).
 
+## Webinars
 
-## Changelog
-
-This project is constantly receiving new features and fixes. Find a list of all major updates in the [changelog](/.assets/Changelog.md).
+- [[Jan 2022] Webinar introducing bc2adls](https://www.microsoft.com/en-us/videoplayer/embed/RWSHHG)
+- [[Apr 2022] Areopa Webinar bc2adls](https://www.youtube.com/watch?v=Fjz9LgviV2Q)
+- [[Mar 2023] Enhancements to bc2adls - CloudChampion](https://www.cloudchampion.dk/c/dynamics-365-business-central-azure-data-lake/)
+- [[Jan 2024] Areopa Webinar MS Fabric](https://www.youtube.com/watch?v=sXZkrFtN5oc)
 
 ## Testimonials
 
