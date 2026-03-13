@@ -106,7 +106,7 @@ codeunit 82570 "ADLSE Session Manager"
         end;
     end;
 
-    procedure StartExportFromPendingTables()
+    procedure StartExportFromPendingTables() Started: Boolean
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSEExecution: Codeunit "ADLSE Execution";
@@ -120,9 +120,18 @@ codeunit 82570 "ADLSE Session Manager"
             ADLSEExecution.Log('ADLSE-026', 'Export from pending tables starting', Verbosity::Normal, CustomDimensions);
         end;
 
-        // One session freed up. create session from queue
-        if GetFromPendingTables(TableID) then
-            StartExportFromPending(TableID, ADLSESetup."Emit telemetry");
+        // One session freed up. Consume pending entries until either a new
+        // export session is created or the queue is empty.
+        while GetFromPendingTables(TableID) do
+            if StartExportFromPending(TableID, ADLSESetup."Emit telemetry") then
+                exit(true);
+    end;
+
+    procedure HasPendingTables(): Boolean
+    var
+        TableID: Integer;
+    begin
+        exit(GetFromPendingTables(TableID));
     end;
 
     local procedure GetFromPendingTables(var TableID: Integer): Boolean
