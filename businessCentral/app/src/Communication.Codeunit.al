@@ -13,7 +13,7 @@ codeunit 82562 "ADLSE Communication"
         DataBlobPathComplete: Text;
         DataBlobBlockIDs: List of [Text];
         BlobContentLength: Integer;
-        LastRecordOnPayloadTimeStamp: BigInteger;
+        HighestTimeStampOnPayload: BigInteger;
         Payload: TextBuilder;
         LastFlushedTimeStamp: BigInteger;
         NumberOfFlushes: Integer;
@@ -286,7 +286,8 @@ codeunit 82562 "ADLSE Communication"
         LastTimestampExported := LastFlushedTimeStamp;
 
         Payload.Append(RecordPayLoad);
-        LastRecordOnPayloadTimeStamp := RecordTimeStamp;
+        if RecordTimeStamp > HighestTimeStampOnPayload then
+            HighestTimeStampOnPayload := RecordTimeStamp;
     end;
 
     [TryFunction]
@@ -355,9 +356,9 @@ codeunit 82562 "ADLSE Communication"
                 end;
             ADLSESetup."Storage Type"::"Microsoft Fabric", ADLSESetup."Storage Type"::"Open Mirroring":
                 begin
-                  if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then begin
+                    if ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring" then begin
                         DataBlobPath := '';
-                        CreateDataBlob();  
+                        CreateDataBlob();
                     end;
                     ADLSEGen2Util.AddBlockToDataBlob(GetBaseUrl() + DataBlobPath, Payload.ToText(), BlobContentLength, ADLSECredentials);
                     BlobContentLength := ADLSEGen2Util.GetBlobContentLength(GetBaseUrl() + DataBlobPath, ADLSECredentials);
@@ -366,9 +367,9 @@ codeunit 82562 "ADLSE Communication"
                 end;
         end;
 
-        LastFlushedTimeStamp := LastRecordOnPayloadTimeStamp;
+        LastFlushedTimeStamp := HighestTimeStampOnPayload;
         Payload.Clear();
-        LastRecordOnPayloadTimeStamp := 0;
+        HighestTimeStampOnPayload := 0;
         NumberOfFlushes += 1;
 
         ADLSE.OnTableExported(TableID, LastFlushedTimeStamp);
