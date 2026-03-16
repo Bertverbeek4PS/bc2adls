@@ -54,6 +54,8 @@ table 82561 "ADLSE Table"
         {
             Caption = 'Export File Number';
             AllowInCustomizations = AsReadOnly;
+            ObsoleteState = Pending;
+            ObsoleteReason = 'Open Mirroring now uses GUIDs for file names instead of sequential numbering.';
         }
         field(17; "Initial Load Start Date"; Date)
         {
@@ -264,7 +266,6 @@ table 82561 "ADLSE Table"
                 if (ADLSESetup."Delete Table") then
                     ADLSECommunication.ResetTableExport(Rec."Table ID", AllCompanies);
 
-                Rec.ExportFileNumber := 1;
                 Rec.Modify(true);
 
                 OnAfterResetSelected(Rec);
