@@ -111,6 +111,7 @@ codeunit 82563 "ADLSE Http"
         HttpContent: HttpContent;
         HeaderKey: Text;
         HeaderValue: Text;
+        HttpRequestSucceeded: Boolean;
     begin
         ADLSESetup.GetSingleton();
 
@@ -131,32 +132,37 @@ codeunit 82563 "ADLSE Http"
 
         case HttpMethod of
             "ADLSE Http Method"::Get:
-                HttpClient.Get(Url, HttpResponseMessage);
+                HttpRequestSucceeded := HttpClient.Get(Url, HttpResponseMessage);
             "ADLSE Http Method"::Put:
                 begin
                     HttpRequestMessage.Method('PUT');
                     HttpRequestMessage.SetRequestUri(Url);
                     AddContent(HttpContent);
-                    HttpClient.Put(Url, HttpContent, HttpResponseMessage);
+                    HttpRequestSucceeded := HttpClient.Put(Url, HttpContent, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Delete:
-                HttpClient.Delete(Url, HttpResponseMessage);
+                HttpRequestSucceeded := HttpClient.Delete(Url, HttpResponseMessage);
             "ADLSE Http Method"::Patch:
                 begin
                     HttpRequestMessage.Method('PATCH');
                     HttpRequestMessage.SetRequestUri(Url);
                     AddContent(HttpContent);
                     HttpRequestMessage.Content(HttpContent);
-                    HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
+                    HttpRequestSucceeded := HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
             "ADLSE Http Method"::Head:
                 begin
                     HttpRequestMessage.Method('HEAD');
                     HttpRequestMessage.SetRequestUri(Url);
-                    HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
+                    HttpRequestSucceeded := HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
                 end;
             else
                 Error(UnsupportedMethodErr, HttpMethod);
+        end;
+
+        if not HttpRequestSucceeded then begin
+            Response := StrSubstNo(HttpRequestFailedErr, GetLastErrorText());
+            exit(false);
         end;
 
         HttpContent := HttpResponseMessage.Content();

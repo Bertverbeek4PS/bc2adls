@@ -362,4 +362,11 @@ rad.json
 .alcache/
 .altemplates/
 cache_*
+**/.serena/**
+*.zip
+*.ps1
+**/.github/*
 .serena/
+businessCentral/app/.vscode/settings.json
+businessCentral/app/.serena/project.yml
+.serena/project.yml

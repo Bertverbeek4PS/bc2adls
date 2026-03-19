@@ -1,7 +1,18 @@
+## Appsource
 If you want to use the extension in your Business Central environment, you can install it from Microsoft Appsource:
+
 [Microsoft Appsource App](https://marketplace.microsoft.com/en-us/product/dynamics-365-business-central/PUBID.bc2adls01%7CAID.bc2adls%7CPAPPID.7a4530b3-2449-40ad-9779-97f4663ce51f?tab=Overview)
 
 ![](.assets/bc2adls_logo_90x90.png)
+## Nuget Packages
+If you want to use Nuget Packages:
+
+For the appsource packages:
+[Nuget Packages Microsoft Appsource App](https://www.nuget.org/packages/bc2adls.BC2ADLS.7a4530b3-2449-40ad-9779-97f4663ce51f)
+
+For the PTE packages:
+[Nuget Packages PTE App](https://www.nuget.org/packages/Thebc2adlsteam.AzureDataLakeStorageExport.1688530c-452c-4b06-8947-ab4bf5b26053)
+
 # Starting update
 **The original repository "[microsoft/bc2adls](https://github.com/microsoft/bc2adls)" is in read-only mode. But since a lot of partners are using this tool, we want to develop it further as open source software. A special thanks to the creators of this tool: [Soumya Dutta](https://www.linkedin.com/in/soumya-dutta-07813a5/) and [Henri Schulte](https://www.linkedin.com/in/henrischulte/), who put a lot of effort into it!**
 
@@ -9,23 +20,16 @@ If you want to use the extension in your Business Central environment, you can i
 
 The **bc2adls** tool is used to export incremental data from [Dynamics 365 Business Central](https://dynamics.microsoft.com/en-us/business-central/overview/) (BC) to [Microsoft Fabric ](https://learn.microsoft.com/nl-nl/fabric/get-started/microsoft-fabric-overview) or [Azure Data Lake Storage](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-introduction).
 
+## Documentation
 
-More details:
-- [Installation and configuration of the connection with Azure Data Lake](/.assets/Setup.md)
-- [Executing the export and pipeline](/.assets/Execution.md)
-- [Creating shared metadata tables](/.assets/SharedMetadataTables.md)
-- [Installation and configuration of the connection with Microsoft Fabric](/.assets/SetupFabric.md)
-- [Frequently asked questions](/.assets/FAQs.md)
-- Webinars
-    - [[Jan 2022] Webinar introducing bc2adls](https://www.microsoft.com/en-us/videoplayer/embed/RWSHHG)
-	- [[Apr 2022] Areopa Webinar bc2adls](https://www.youtube.com/watch?v=Fjz9LgviV2Q)
-    - [[Mar 2023] Enhancements to bc2adls - CloudChampion](https://www.cloudchampion.dk/c/dynamics-365-business-central-azure-data-lake/)
-	- [[Jan 2024] Areopa Webinar MS Fabric](https://www.youtube.com/watch?v=sXZkrFtN5oc)
+For detailed documentation, installation guides, and setup instructions, please visit our [Wiki](https://github.com/Bertverbeek4PS/bc2adls/wiki).
 
+## Webinars
 
-## Changelog
-
-This project is constantly receiving new features and fixes. Find a list of all major updates in the [changelog](/.assets/Changelog.md).
+- [[Jan 2022] Webinar introducing bc2adls](https://www.microsoft.com/en-us/videoplayer/embed/RWSHHG)
+- [[Apr 2022] Areopa Webinar bc2adls](https://www.youtube.com/watch?v=Fjz9LgviV2Q)
+- [[Mar 2023] Enhancements to bc2adls - CloudChampion](https://www.cloudchampion.dk/c/dynamics-365-business-central-azure-data-lake/)
+- [[Jan 2024] Areopa Webinar MS Fabric](https://www.youtube.com/watch?v=sXZkrFtN5oc)
 
 ## Testimonials
 
