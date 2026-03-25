@@ -17,6 +17,7 @@ codeunit 82563 "ADLSE Http"
         ContentTypeApplicationJsonTok: Label 'application/json', Locked = true;
         ContentTypePlainTextTok: Label 'text/plain; charset=utf-8', Locked = true;
         UnsupportedMethodErr: Label 'Unsupported method: %1', Comment = '%1: http method name';
+        HttpClientRequestsNotAllowedErr: Label 'HTTPClient requests are not allowed for this extension. Please enable ''Allow HttpClient Requests'' in the Extension Management page.';
         OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id', Locked = true;
         BearerTok: Label 'Bearer %1', Comment = '%1: access token', Locked = true;
         AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret', Locked = true;
@@ -113,6 +114,8 @@ codeunit 82563 "ADLSE Http"
         HeaderValue: Text;
         HttpRequestSucceeded: Boolean;
     begin
+        CheckAllowHttpClientRequests();
+
         ADLSESetup.GetSingleton();
 
         HttpClient.SetBaseAddress(Url);
@@ -171,6 +174,19 @@ codeunit 82563 "ADLSE Http"
         HttpResponseMessage.Content().GetHeaders(ResponseContentHeaders);
         Success := HttpResponseMessage.IsSuccessStatusCode();
         StatusCode := HttpResponseMessage.HttpStatusCode();
+    end;
+
+    local procedure CheckAllowHttpClientRequests()
+    var
+        TempHttpClient: HttpClient;
+        TempResponse: HttpResponseMessage;
+    begin
+        // BC validates the "Allow HttpClient Requests" extension setting before any network activity.
+        // An empty URL is intentional: it fails before reaching the network.
+        // If the resulting error mentions the setting, HTTP calls are blocked for this extension.
+        TempHttpClient.Get('', TempResponse);
+        if GetLastErrorText().Contains('Allow HttpClient Requests') then
+            Error(HttpClientRequestsNotAllowedErr);
     end;
 
     local procedure AddContent(var HttpContent: HttpContent)
