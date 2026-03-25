@@ -37,7 +37,7 @@ codeunit 82580 "ADLSE Token Cache"
         exit(ExpiresAt);
     end;
 
-    //[NonDebuggable]
+    [NonDebuggable]
     procedure SetToken(Token: Text; ExpiresAt: DateTime)
     begin
 #pragma warning disable LC0043
