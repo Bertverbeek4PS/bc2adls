@@ -37,14 +37,11 @@ codeunit 82580 "ADLSE Token Cache"
         exit(ExpiresAt);
     end;
 
-    [NonDebuggable]
+    //[NonDebuggable]
     procedure SetToken(Token: Text; ExpiresAt: DateTime)
     begin
 #pragma warning disable LC0043
-        if EncryptionEnabled() and EncryptionKeyExists() then
-            IsolatedStorage.SetEncrypted(AccessTokenKeyNameTok, Token, DataScope::Module)
-        else
-            IsolatedStorage.Set(AccessTokenKeyNameTok, Token, DataScope::Module);
+        IsolatedStorage.Set(AccessTokenKeyNameTok, Token, DataScope::Module);
         IsolatedStorage.Set(TokenExpiresAtKeyNameTok, Format(ExpiresAt, 0, 9), DataScope::Module);
 #pragma warning restore LC0043
     end;
