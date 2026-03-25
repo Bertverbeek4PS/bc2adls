@@ -114,8 +114,6 @@ codeunit 82563 "ADLSE Http"
         HeaderValue: Text;
         HttpRequestSucceeded: Boolean;
     begin
-        CheckAllowHttpClientRequests();
-
         ADLSESetup.GetSingleton();
 
         HttpClient.SetBaseAddress(Url);
@@ -164,6 +162,8 @@ codeunit 82563 "ADLSE Http"
         end;
 
         if not HttpRequestSucceeded then begin
+            if GetLastErrorText().Contains('Allow HttpClient Requests') then
+                Error(HttpClientRequestsNotAllowedErr);
             Response := StrSubstNo(HttpRequestFailedErr, GetLastErrorText());
             exit(false);
         end;
@@ -174,19 +174,6 @@ codeunit 82563 "ADLSE Http"
         HttpResponseMessage.Content().GetHeaders(ResponseContentHeaders);
         Success := HttpResponseMessage.IsSuccessStatusCode();
         StatusCode := HttpResponseMessage.HttpStatusCode();
-    end;
-
-    local procedure CheckAllowHttpClientRequests()
-    var
-        TempHttpClient: HttpClient;
-        TempResponse: HttpResponseMessage;
-    begin
-        // BC validates the "Allow HttpClient Requests" extension setting before any network activity.
-        // An empty URL is intentional: it fails before reaching the network.
-        // If the resulting error mentions the setting, HTTP calls are blocked for this extension.
-        TempHttpClient.Get('', TempResponse);
-        if GetLastErrorText().Contains('Allow HttpClient Requests') then
-            Error(HttpClientRequestsNotAllowedErr);
     end;
 
     local procedure AddContent(var HttpContent: HttpContent)
