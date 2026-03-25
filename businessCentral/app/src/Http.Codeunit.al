@@ -113,6 +113,7 @@ codeunit 82563 "ADLSE Http"
         HeaderKey: Text;
         HeaderValue: Text;
         HttpRequestSucceeded: Boolean;
+        LastErrorText: Text;
     begin
         ADLSESetup.GetSingleton();
 
@@ -162,9 +163,10 @@ codeunit 82563 "ADLSE Http"
         end;
 
         if not HttpRequestSucceeded then begin
-            if GetLastErrorText().Contains('Allow HttpClient Requests') then
+            LastErrorText := GetLastErrorText();
+            if LastErrorText.Contains('Allow HttpClient Requests') then
                 Error(HttpClientRequestsNotAllowedErr);
-            Response := StrSubstNo(HttpRequestFailedErr, GetLastErrorText());
+            Response := StrSubstNo(HttpRequestFailedErr, LastErrorText);
             exit(false);
         end;
 
