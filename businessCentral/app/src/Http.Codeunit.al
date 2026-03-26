@@ -21,6 +21,7 @@ codeunit 82563 "ADLSE Http"
         BearerTok: Label 'Bearer %1', Comment = '%1: access token', Locked = true;
         AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret', Locked = true;
         HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error request: %1.', Comment = '%1: error message';
+        AuthHttpRequestFailedErr: Label 'There was an error while acquiring the authentication token, error request: %1.', Comment = '%1: error message';
 
     procedure SetMethod(HttpMethodValue: Enum "ADLSE Http Method")
     begin
@@ -100,7 +101,6 @@ codeunit 82563 "ADLSE Http"
         Success := InvokeRestApi(Response, StatusCode);
     end;
 
-    [NonDebuggable]
     procedure InvokeRestApi(var Response: Text; var StatusCode: Integer) Success: Boolean
     var
         ADLSESetup: Record "ADLSE Setup";
@@ -161,7 +161,7 @@ codeunit 82563 "ADLSE Http"
         end;
 
         if not HttpRequestSucceeded then begin
-            Response := StrSubstNo(HttpRequestFailedErr, GetLastErrorText());
+            Response := StrSubstNo(HttpRequestFailedErr, HttpResponseMessage.ReasonPhrase());
             exit(false);
         end;
 
@@ -196,7 +196,6 @@ codeunit 82563 "ADLSE Http"
             Headers.Remove('Content-Type');
     end;
 
-    [NonDebuggable]
     local procedure AddAuthorization(HttpClient: HttpClient; var Response: Text) Success: Boolean
     var
         ADLSEUtil: Codeunit "ADLSE Util";
@@ -269,7 +268,7 @@ codeunit 82563 "ADLSE Http"
 
         HttpRequestFailed := not HttpClient.Post(Uri, HttpContent, HttpResponseMessage);
         if HttpRequestFailed then begin
-            AuthError := StrSubstNo(HttpRequestFailedErr, GetLastErrorText());
+            AuthError := StrSubstNo(AuthHttpRequestFailedErr, HttpResponseMessage.ReasonPhrase());
             exit;
         end;
 
