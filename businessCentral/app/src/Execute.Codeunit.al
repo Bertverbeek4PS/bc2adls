@@ -350,6 +350,7 @@ codeunit 82561 "ADLSE Execute"
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEExternalEvents: Codeunit "ADLSE External Events";
+        StartedPendingExport: Boolean;
         CustomDimensions: Dictionary of [Text, Text];
     begin
         ADLSERun.RegisterEnded(ADLSETable."Table ID", EmitTelemetry, TableCaption);
@@ -370,11 +371,11 @@ codeunit 82561 "ADLSE Execute"
         // spawned when the active ones end. This may result in some table 
         // exports being skipped. But they may become active in the next export 
         // batch. 
-        ADLSESessionManager.StartExportFromPendingTables();
+        StartedPendingExport := ADLSESessionManager.StartExportFromPendingTables();
 
 
 
-        if not ADLSECurrentSession.AreAnySessionsActive() then begin
+        if (not StartedPendingExport) and (not ADLSESessionManager.HasPendingTables()) and (not ADLSECurrentSession.AreAnySessionsActive()) then begin
             ADLSESetupRec.GetSingleton();
             ADLSEExternalEvents.OnExportFinished(ADLSESetupRec, ADLSETable);
 
