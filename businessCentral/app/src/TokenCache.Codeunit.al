@@ -40,21 +40,15 @@ codeunit 82580 "ADLSE Token Cache"
     [NonDebuggable]
     procedure SetToken(Token: Text; ExpiresAt: DateTime)
     begin
-        // Guard against concurrent sessions attempting to insert the same key simultaneously.
-        // IsolatedStorage.Set does INSERT when the key is not yet visible in this session,
-        // so a concurrent committed insert by another session causes "record already exists".
-        if not TryWriteToCache(Token, ExpiresAt) then begin
-            ClearCache();
-            if not TryWriteToCache(Token, ExpiresAt) then;
-        end;
-    end;
-
-    [TryFunction]
-    [NonDebuggable]
-    local procedure TryWriteToCache(Token: Text; ExpiresAt: DateTime)
-    begin
+        // Do not write to IsolatedStorage inside a TryFunction.
+        // On BC On-Premises, DisableWriteInsideTryFunctions is True by default,
+        // which blocks database writes (incl. IsolatedStorage) in TryFunction procedures.
+        // See https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-handling-errors-using-try-methods
 #pragma warning disable LC0043
-        IsolatedStorage.Set(AccessTokenKeyNameTok, Token, DataScope::Module);
+        if EncryptionEnabled() and EncryptionKeyExists() then
+            IsolatedStorage.SetEncrypted(AccessTokenKeyNameTok, Token, DataScope::Module)
+        else
+            IsolatedStorage.Set(AccessTokenKeyNameTok, Token, DataScope::Module);
         IsolatedStorage.Set(TokenExpiresAtKeyNameTok, Format(ExpiresAt, 0, 9), DataScope::Module);
 #pragma warning restore LC0043
     end;
