@@ -24,6 +24,9 @@ The **bc2adls** tool is used to export incremental data from [Dynamics 365 Busin
 
 For detailed documentation, installation guides, and setup instructions, please visit our [Wiki](https://github.com/Bertverbeek4PS/bc2adls/wiki).
 
+### On-Premises Note
+On BC On-Premises, the server configuration setting `DisableWriteInsideTryFunctions` is set to `True` by default. This blocks database writes (including IsolatedStorage) inside TryFunction procedures, which can cause token cache errors. If you encounter issues with the token cache, set `DisableWriteInsideTryFunctions` to `False` in your BC server configuration. See [Microsoft documentation on TryFunction behavior](https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-handling-errors-using-try-methods) for details.
+
 ## Webinars
 
 - [[Jan 2022] Webinar introducing bc2adls](https://www.microsoft.com/en-us/videoplayer/embed/RWSHHG)
