@@ -31,6 +31,7 @@ codeunit 82569 "ADLSE Execution"
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Sync Companies", 'r')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'rid')]
     internal procedure StartExport(var AdlseTable: Record "ADLSE Table")
     var
         ADLSESetupRec: Record "ADLSE Setup";
