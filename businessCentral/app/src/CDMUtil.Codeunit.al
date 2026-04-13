@@ -53,14 +53,15 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
     procedure CreateEntityContent(TableID: Integer) Content: JsonObject
     var
         ADLSESetup: Record "ADLSE Setup";
-        FieldTable: Record Field;
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEExecute: Codeunit "ADLSE Execute";
         RecordRef: RecordRef;
+        KeyRef: KeyRef;
         SystemIdFieldRef: FieldRef;
         FieldRef: FieldRef;
         FieldIdList: List of [Integer];
         FieldId: Integer;
+        i: Integer;
         Imports: JsonArray;
         Columns: JsonArray;
         Column: JsonObject;
@@ -72,14 +73,12 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         ADLSESetup.GetSingleton();
 
         if ADLSESetup."Use Primary Key for Mirroring" then begin
-            // Use the table's primary key fields as key columns
-            FieldTable.SetRange(TableNo, TableID);
-            FieldTable.SetRange(IsPartOfPrimaryKey, true);
-            if FieldTable.FindSet() then
-                repeat
-                    FieldRef := RecordRef.Field(FieldTable."No.");
-                    Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
-                until FieldTable.Next() = 0;
+            // Use the table's primary key fields as key columns, preserving declared PK order
+            KeyRef := RecordRef.KeyIndex(1);
+            for i := 1 to KeyRef.FieldCount() do begin
+                FieldRef := KeyRef.FieldIndex(i);
+                Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
+            end;
         end else begin
             // Default: use SystemId as key column
             SystemIdFieldRef := RecordRef.Field(2000000000);

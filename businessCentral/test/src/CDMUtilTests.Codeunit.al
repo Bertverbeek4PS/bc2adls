@@ -410,7 +410,6 @@ codeunit 85569 "ADLSE CDM Util Tests"
         EntityContent: JsonObject;
         Token: JsonToken;
         KeyColumns: JsonArray;
-        JsonText: Text;
     begin
         // [SCENARIO] Open Mirroring CreateEntityContent uses SystemId as keyColumn by default
         // [GIVEN] Open Mirroring setup without PK mirroring enabled
@@ -440,7 +439,6 @@ codeunit 85569 "ADLSE CDM Util Tests"
         EntityContent: JsonObject;
         Token: JsonToken;
         KeyColumns: JsonArray;
-        JsonText: Text;
         HasPKField: Boolean;
         i: Integer;
     begin
@@ -464,7 +462,6 @@ codeunit 85569 "ADLSE CDM Util Tests"
         // [THEN] keyColumns contains the primary key field (Code), not systemId
         EntityContent.Get('keyColumns', Token);
         KeyColumns := Token.AsArray();
-        EntityContent.WriteTo(JsonText);
 
         // Verify systemId is NOT in keyColumns
         HasPKField := false;
@@ -486,7 +483,6 @@ codeunit 85569 "ADLSE CDM Util Tests"
         EntityContent: JsonObject;
         Token: JsonToken;
         KeyColumns: JsonArray;
-        JsonText: Text;
         HasCompanyField: Boolean;
         i: Integer;
     begin
@@ -510,7 +506,6 @@ codeunit 85569 "ADLSE CDM Util Tests"
         // [THEN] keyColumns includes $Company
         EntityContent.Get('keyColumns', Token);
         KeyColumns := Token.AsArray();
-        EntityContent.WriteTo(JsonText);
 
         HasCompanyField := false;
         for i := 0 to KeyColumns.Count() - 1 do begin

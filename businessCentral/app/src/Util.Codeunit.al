@@ -547,14 +547,14 @@ codeunit 82564 "ADLSE Util"
         SystemDateFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
         SystemDateFieldRef.Value(0DT);
 
-        if ADLSEDeletedRecord."Primary Key Values" <> '' then begin
-            PKValues.ReadFrom(ADLSEDeletedRecord."Primary Key Values");
-            foreach FieldNoText in PKValues.Keys() do begin
-                Evaluate(FieldNo, FieldNoText);
-                PKFieldRef := RecordRef.Field(FieldNo);
-                SetFieldRefValueFromText(PKFieldRef, GetTextValueForKeyInJson(PKValues, FieldNoText));
-            end;
-        end;
+        if ADLSEDeletedRecord."Primary Key Values" <> '' then
+            if PKValues.ReadFrom(ADLSEDeletedRecord."Primary Key Values") then
+                foreach FieldNoText in PKValues.Keys() do
+                    if Evaluate(FieldNo, FieldNoText) then
+                        if RecordRef.FieldExist(FieldNo) then begin
+                            PKFieldRef := RecordRef.Field(FieldNo);
+                            SetFieldRefValueFromText(PKFieldRef, GetTextValueForKeyInJson(PKValues, FieldNoText));
+                        end;
     end;
 
     local procedure SetFieldRefValueFromText(var PKFieldRef: FieldRef; TextValue: Text)
@@ -564,15 +564,20 @@ codeunit 82564 "ADLSE Util"
         DecimalValue: Decimal;
         GuidValue: Guid;
         DateValue: Date;
+        DateTimeValue: DateTime;
+        TimeValue: Time;
+        DateFormulaValue: DateFormula;
         BoolValue: Boolean;
     begin
         case PKFieldRef.Type() of
-            PKFieldRef.Type::Integer:
+            PKFieldRef.Type::Integer,
+            PKFieldRef.Type::Option:
                 begin
                     Evaluate(IntValue, TextValue, 9);
                     PKFieldRef.Value(IntValue);
                 end;
-            PKFieldRef.Type::BigInteger:
+            PKFieldRef.Type::BigInteger,
+            PKFieldRef.Type::Duration:
                 begin
                     Evaluate(BigIntValue, TextValue, 9);
                     PKFieldRef.Value(BigIntValue);
@@ -596,6 +601,21 @@ codeunit 82564 "ADLSE Util"
                 begin
                     Evaluate(DateValue, TextValue, 9);
                     PKFieldRef.Value(DateValue);
+                end;
+            PKFieldRef.Type::DateTime:
+                begin
+                    Evaluate(DateTimeValue, TextValue, 9);
+                    PKFieldRef.Value(DateTimeValue);
+                end;
+            PKFieldRef.Type::Time:
+                begin
+                    Evaluate(TimeValue, TextValue, 9);
+                    PKFieldRef.Value(TimeValue);
+                end;
+            PKFieldRef.Type::DateFormula:
+                begin
+                    Evaluate(DateFormulaValue, TextValue, 9);
+                    PKFieldRef.Value(DateFormulaValue);
                 end;
             PKFieldRef.Type::Code,
             PKFieldRef.Type::Text:
