@@ -120,6 +120,61 @@ codeunit 85563 "ADLSE Delete Tests"
         LibraryAssert.TableIsEmpty(Database::"ADLSE Deleted Record");
     end;
 
+    [Test]
+    procedure DeleteARecordWithPKMirroringStoresPrimaryKeyValues()
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        PaymentTerms: Record "Payment Terms";
+        ADLSEDeletedRecord: Record "ADLSE Deleted Record";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        RecordRef: RecordRef;
+        PKFieldRef: FieldRef;
+        PaymentTermGuid: Guid;
+        PKValues: JsonObject;
+        Token: JsonToken;
+    begin
+        // [SCENARIO] When PK mirroring is enabled, deleting a record stores Primary Key Values
+        // and CreateFakeRecordForDeletedAction restores them on the fake record
+        // [GIVEN] Open Mirroring setup with PK mirroring enabled
+        Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Open Mirroring");
+
+        ADLSESetup.GetSingleton();
+        ADLSESetup."Use Primary Key for Mirroring" := true;
+        ADLSESetup.Modify();
+
+        // [GIVEN] Insert a record and set up export
+        InsertPaymentTerms(PaymentTerms);
+        ADLSETable.Add(PaymentTerms.RecordId.TableNo);
+        ADLSELibrarybc2adls.InsertFields();
+        ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Code));
+        ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Description));
+        ADLSELibrarybc2adls.MockCreateExport(PaymentTerms.RecordId.TableNo);
+
+        // [WHEN] a record is deleted
+        DeletePaymentTerms(PaymentTerms, PaymentTermGuid);
+
+        // [THEN] ADLSE Deleted Record has Primary Key Values populated
+        ADLSEDeletedRecord.Reset();
+        ADLSEDeletedRecord.SetRange("Table ID", Database::"Payment Terms");
+        ADLSEDeletedRecord.FindFirst();
+        LibraryAssert.AreNotEqual('', ADLSEDeletedRecord."Primary Key Values", 'Primary Key Values should be populated');
+
+        // [THEN] Primary Key Values JSON contains the Code field value
+        PKValues.ReadFrom(ADLSEDeletedRecord."Primary Key Values");
+        PKValues.Get(Format(PaymentTerms.FieldNo(Code)), Token);
+        LibraryAssert.AreEqual(PaymentTerms.Code, Token.AsValue().AsText(), 'PK value should match the deleted record Code');
+
+        // [THEN] CreateFakeRecordForDeletedAction restores PK fields on the fake record
+        RecordRef.Open(Database::"Payment Terms");
+        RecordRef.Init();
+        ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, RecordRef);
+        PKFieldRef := RecordRef.Field(PaymentTerms.FieldNo(Code));
+        LibraryAssert.AreEqual(PaymentTerms.Code, Format(PKFieldRef.Value()), 'Fake record should have PK Code field restored');
+        RecordRef.Close();
+    end;
+
     local procedure InsertPaymentTerms(var PaymentTerms: Record "Payment Terms")
     begin
         PaymentTerms.Init();
