@@ -407,9 +407,13 @@ codeunit 85569 "ADLSE CDM Util Tests"
     var
         ADLSETable: Record "ADLSE Table";
         ADLSECDMUtil: Codeunit "ADLSE CDM Util";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        RecordRef: RecordRef;
+        SystemIdFieldRef: FieldRef;
         EntityContent: JsonObject;
         Token: JsonToken;
         KeyColumns: JsonArray;
+        ExpectedFieldName: Text;
     begin
         // [SCENARIO] Open Mirroring CreateEntityContent uses SystemId as keyColumn by default
         // [GIVEN] Open Mirroring setup without PK mirroring enabled
@@ -420,6 +424,12 @@ codeunit 85569 "ADLSE CDM Util Tests"
         ADLSELibrarybc2adls.InsertFields();
         ADLSELibrarybc2adls.EnableFields();
 
+        // Get the expected compliant field name for SystemId
+        RecordRef.Open(Database::"Reason Code");
+        SystemIdFieldRef := RecordRef.Field(RecordRef.SystemIdNo());
+        ExpectedFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(SystemIdFieldRef);
+        RecordRef.Close();
+
         // [WHEN] CreateEntityContent is called (Open Mirroring overload)
         EntityContent := ADLSECDMUtil.CreateEntityContent(Database::"Reason Code");
 
@@ -427,7 +437,7 @@ codeunit 85569 "ADLSE CDM Util Tests"
         EntityContent.Get('keyColumns', Token);
         KeyColumns := Token.AsArray();
         KeyColumns.Get(0, Token);
-        LibraryAssert.AreEqual('systemId', Token.AsValue().AsText(), 'First key column should be systemId');
+        LibraryAssert.AreEqual(ExpectedFieldName, Token.AsValue().AsText(), 'First key column should be systemId');
     end;
 
     [Test]
@@ -436,9 +446,15 @@ codeunit 85569 "ADLSE CDM Util Tests"
         ADLSESetup: Record "ADLSE Setup";
         ADLSETable: Record "ADLSE Table";
         ADLSECDMUtil: Codeunit "ADLSE CDM Util";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        RecordRef: RecordRef;
+        KeyRef: KeyRef;
+        SystemIdFieldRef: FieldRef;
         EntityContent: JsonObject;
         Token: JsonToken;
         KeyColumns: JsonArray;
+        ExpectedPKFieldName: Text;
+        SystemIdFieldName: Text;
         HasPKField: Boolean;
         i: Integer;
     begin
@@ -456,22 +472,29 @@ codeunit 85569 "ADLSE CDM Util Tests"
         ADLSELibrarybc2adls.InsertFields();
         ADLSELibrarybc2adls.EnableFields();
 
+        // Get expected compliant field names
+        RecordRef.Open(Database::"Reason Code");
+        KeyRef := RecordRef.KeyIndex(1);
+        ExpectedPKFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(KeyRef.FieldIndex(1));
+        SystemIdFieldRef := RecordRef.Field(RecordRef.SystemIdNo());
+        SystemIdFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(SystemIdFieldRef);
+        RecordRef.Close();
+
         // [WHEN] CreateEntityContent is called (Open Mirroring overload)
         EntityContent := ADLSECDMUtil.CreateEntityContent(Database::"Reason Code");
 
-        // [THEN] keyColumns contains the primary key field (Code), not systemId
+        // [THEN] keyColumns contains the primary key field, not systemId
         EntityContent.Get('keyColumns', Token);
         KeyColumns := Token.AsArray();
 
-        // Verify systemId is NOT in keyColumns
         HasPKField := false;
         for i := 0 to KeyColumns.Count() - 1 do begin
             KeyColumns.Get(i, Token);
-            LibraryAssert.AreNotEqual('systemId', Token.AsValue().AsText(), 'systemId should not be in keyColumns when PK mirroring is enabled');
-            if Token.AsValue().AsText() = 'Code' then
+            LibraryAssert.AreNotEqual(SystemIdFieldName, Token.AsValue().AsText(), 'systemId should not be in keyColumns when PK mirroring is enabled');
+            if Token.AsValue().AsText() = ExpectedPKFieldName then
                 HasPKField := true;
         end;
-        LibraryAssert.IsTrue(HasPKField, 'Primary key field Code should be in keyColumns');
+        LibraryAssert.IsTrue(HasPKField, 'Primary key field should be in keyColumns');
     end;
 
     [Test]

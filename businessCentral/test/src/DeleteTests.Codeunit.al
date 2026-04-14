@@ -124,6 +124,7 @@ codeunit 85563 "ADLSE Delete Tests"
     procedure DeleteARecordWithPKMirroringStoresPrimaryKeyValues()
     var
         ADLSESetup: Record "ADLSE Setup";
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         PaymentTerms: Record "Payment Terms";
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
         ADLSEUtil: Codeunit "ADLSE Util";
@@ -151,6 +152,13 @@ codeunit 85563 "ADLSE Delete Tests"
         ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Code));
         ADLSELibrarybc2adls.EnableField(PaymentTerms.RecordId.TableNo, PaymentTerms.FieldNo(Description));
         ADLSELibrarybc2adls.MockCreateExport(PaymentTerms.RecordId.TableNo);
+
+        // [GIVEN] Create timestamp record so delete tracking knows the table is tracked
+        ADLSETableLastTimestamp.Init();
+        ADLSETableLastTimestamp."Company Name" := CopyStr(CompanyName(), 1, 30);
+        ADLSETableLastTimestamp."Table ID" := PaymentTerms.RecordId.TableNo;
+        if not ADLSETableLastTimestamp.Find() then
+            ADLSETableLastTimestamp.Insert();
 
         // [WHEN] a record is deleted
         DeletePaymentTerms(PaymentTerms, PaymentTermGuid);
