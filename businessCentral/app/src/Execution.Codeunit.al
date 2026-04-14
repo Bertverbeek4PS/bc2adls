@@ -5,6 +5,7 @@ namespace bc2adls;
 using System.Reflection;
 using System.Threading;
 using System.Environment;
+
 codeunit 82569 "ADLSE Execution"
 {
     trigger OnRun()
@@ -44,14 +45,16 @@ codeunit 82569 "ADLSE Execution"
         ADLSEUtil: Codeunit "ADLSE Util";
         Counter: Integer;
         Started: Integer;
+        HasSyncCompanyRecord: Boolean;
     begin
         ADLSESetup.CheckSetup(ADLSESetupRec);
         EmitTelemetry := ADLSESetupRec."Emit telemetry";
         ADLSECurrentSession.CleanupSessions();
 
-        if ADLSESyncCompanies.Get(CompanyName()) then begin// Possible Multi Company export Create session So that is can be stopped.
+        HasSyncCompanyRecord := ADLSESyncCompanies.Get(CompanyName());
+        if HasSyncCompanyRecord then begin // Possible Multi Company export Create session So that is can be stopped.
             ADLSECurrentSession.Start(ADLSESyncCompanies.RecordId.TableNo);
-            Commit(); //To make sure session is stored before starting exports
+            Commit(); // To make sure session is stored before starting exports
         end;
 
         if ADLSESetupRec.GetStorageType() = ADLSESetupRec."Storage Type"::"Azure Data Lake" then //Because Fabric doesn't have do create a container
@@ -73,7 +76,7 @@ codeunit 82569 "ADLSE Execution"
                         Started += 1;
             until ADLSETable.Next() = 0;
 
-        if ADLSESyncCompanies.Get(CompanyName()) then begin
+        if HasSyncCompanyRecord then begin
             Commit(); // End the read-only transaction before deleting
             ADLSECurrentSession.Stop(Database::"ADLSE Sync Companies", EmitTelemetry, ADLSEUtil.GetTableCaption(Database::"ADLSE Sync Companies"));
         end;
