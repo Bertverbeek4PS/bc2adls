@@ -84,6 +84,8 @@ codeunit 82569 "ADLSE Execution"
         Message(ExportStartedTxt, Started, Counter);
         if EmitTelemetry then
             Log('ADLSE-001', StrSubstNo(ExportStartedTxt, Started, Counter), Verbosity::Normal);
+
+        OnAfterStartExport(AdlseTable);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'r')]
@@ -294,5 +296,10 @@ codeunit 82569 "ADLSE Execution"
     local procedure OnBeforeScheduleExport(var Handled: Boolean)
     begin
 
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnAfterStartExport(var ADLSETable: Record "ADLSE Table")
+    begin
     end;
 }
