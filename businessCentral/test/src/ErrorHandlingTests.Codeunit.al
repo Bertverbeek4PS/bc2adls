@@ -269,6 +269,48 @@ codeunit 85575 "ADLSE Error Handling Tests"
     end;
 
     [Test]
+    procedure TestAddTable_PrimaryKeyWithUnsupportedType_ThrowsError()
+    var
+        ADLSETable: Record "ADLSE Table";
+        Field: Record Field;
+        TableMetadata: Record "Table Metadata";
+        FoundTableId: Integer;
+    begin
+        // [SCENARIO] Adding a table whose primary key contains an unsupported
+        // field type (e.g. RecordID, BLOB, Media) is rejected up-front, instead
+        // of being accepted at setup time and failing later during export.
+        // [GIVEN] A normal table whose PK contains a field of an unsupported type
+        Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+
+        Field.SetRange(IsPartOfPrimaryKey, true);
+        Field.SetFilter("No.", '<%1', 2000000000);
+        Field.SetFilter(ObsoleteState, '<>%1', Field.ObsoleteState::Removed);
+        Field.SetFilter(Type, '%1|%2|%3|%4',
+            Field.Type::RecordID,
+            Field.Type::BLOB,
+            Field.Type::Media,
+            Field.Type::MediaSet);
+        if Field.FindSet() then
+            repeat
+                if TableMetadata.Get(Field.TableNo) then
+                    if TableMetadata.TableType = TableMetadata.TableType::Normal then
+                        FoundTableId := Field.TableNo;
+            until (Field.Next() = 0) or (FoundTableId <> 0);
+
+        if FoundTableId = 0 then
+            exit; // No suitable table available in this environment
+
+        // [WHEN] The table is added to the export
+        // [THEN] An error is thrown about the unsupported field type, and the
+        // table is not persisted in ADLSE Table.
+        asserterror ADLSETable.Add(FoundTableId);
+        LibraryAssert.ExpectedError('is not supported');
+        LibraryAssert.IsFalse(ADLSETable.Get(FoundTableId), 'Table must not be added when its primary key contains an unsupported field type.');
+    end;
+
+    [Test]
     procedure TestSchemaChangeDetection_FieldRemoved_ThrowsError()
     var
         ADLSETable: Record "ADLSE Table";

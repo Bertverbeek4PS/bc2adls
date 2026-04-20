@@ -170,6 +170,9 @@ table 82561 "ADLSE Table"
     begin
         if not CheckTableCanBeExportedFrom(TableID) then
             Error(TableCannotBeExportedErr, TableID, GetLastErrorText());
+
+        CheckPrimaryKeyFieldsForExport(TableID);
+
         Rec.Init();
         Rec."Table ID" := TableID;
         Rec.Enabled := true;
@@ -289,14 +292,32 @@ table 82561 "ADLSE Table"
         ADLSEField: Record "ADLSE Field";
         Field: Record Field;
         ADLSESetup: Codeunit "ADLSE Setup";
+        ADLSEUtil: Codeunit "ADLSE Util";
     begin
         ADLSEField.SetRange("Table ID", Rec."Table ID");
         ADLSEField.SetRange(Enabled, true);
         if ADLSEField.FindSet() then
             repeat
                 Field.Get(ADLSEField."Table ID", ADLSEField."Field ID");
+                ADLSEUtil.CheckFieldTypeForExport(Field);
                 ADLSESetup.CheckFieldCanBeExported(Field);
             until ADLSEField.Next() = 0;
+    end;
+
+    local procedure CheckPrimaryKeyFieldsForExport(TableID: Integer)
+    var
+        Field: Record Field;
+        ADLSESetup: Codeunit "ADLSE Setup";
+        ADLSEUtil: Codeunit "ADLSE Util";
+    begin
+        Field.SetRange(TableNo, TableID);
+        Field.SetRange(IsPartOfPrimaryKey, true);
+        Field.SetFilter(ObsoleteState, '<>%1', Field.ObsoleteState::Removed);
+        if Field.FindSet() then
+            repeat
+                ADLSEUtil.CheckFieldTypeForExport(Field);
+                ADLSESetup.CheckFieldCanBeExported(Field);
+            until Field.Next() = 0;
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
