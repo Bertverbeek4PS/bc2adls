@@ -132,6 +132,12 @@ page 82560 "ADLSE Setup"
                 {
                     Importance = Additional;
                 }
+                field("Distinguish Full Incremental"; Rec."Distinguish Full Incremental")
+                {
+                    Importance = Additional;
+                    Visible = AzureDataLake;
+                    Enabled = AzureDataLake;
+                }
             }
 
             group(DataFormatSettings)
