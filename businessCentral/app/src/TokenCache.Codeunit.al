@@ -16,7 +16,7 @@ codeunit 82580 "ADLSE Token Cache"
         Token: SecretText;
     begin
         if not IsolatedStorage.Contains(AccessTokenKeyNameTok, DataScope::Module) then
-            exit('');
+            exit;
 #pragma warning disable LC0043
         IsolatedStorage.Get(AccessTokenKeyNameTok, DataScope::Module, Token);
 #pragma warning restore LC0043
