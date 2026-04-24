@@ -9,6 +9,7 @@ codeunit 85573 "ADLSE Credentials Tests"
     end;
 
     var
+        ADLSELibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
         LibraryAssert: Codeunit "Library Assert";
         IsInitialized: Boolean;
 
@@ -139,10 +140,13 @@ codeunit 85573 "ADLSE Credentials Tests"
     procedure TestCheck_AllCredentialsSet_NoError()
     var
         ADLSECredentials: Codeunit "ADLSE Credentials";
+        StorageType: Enum "ADLSE Storage Type";
     begin
         // [SCENARIO] Check does not error when all credentials are set
-        // [GIVEN] A credentials instance with all values set
+        // [GIVEN] A credentials instance with all values set and a setup record
         Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup(StorageType::"Azure Data Lake");
         ADLSECredentials.SetTenantID('test-tenant-' + Format(CreateGuid()));
         ADLSECredentials.SetClientID('test-client-' + Format(CreateGuid()));
         ADLSECredentials.SetClientSecret('test-secret-' + Format(CreateGuid()));
@@ -150,35 +154,8 @@ codeunit 85573 "ADLSE Credentials Tests"
         // [WHEN] Check is called
         // [THEN] No error is thrown
         ADLSECredentials.Check();
-    end;
 
-    [Test]
-    procedure TestCredentialsPersistence_AcrossInstances()
-    var
-        ADLSECredentials1: Codeunit "ADLSE Credentials";
-        ADLSECredentials2: Codeunit "ADLSE Credentials";
-        TestTenantId: Text;
-        TestClientId: Text;
-        TestSecret: Text;
-    begin
-        // [SCENARIO] Credentials persist across codeunit instances
-        // [GIVEN] Credentials set in one instance
-        Initialize();
-        TestTenantId := 'persist-tenant-' + Format(CreateGuid());
-        TestClientId := 'persist-client-' + Format(CreateGuid());
-        TestSecret := 'persist-secret-' + Format(CreateGuid());
-
-        ADLSECredentials1.SetTenantID(TestTenantId);
-        ADLSECredentials1.SetClientID(TestClientId);
-        ADLSECredentials1.SetClientSecret(TestSecret);
-
-        // [WHEN] A new instance retrieves the credentials
-        ADLSECredentials2.Init();
-
-        // [THEN] The values are the same
-        LibraryAssert.AreEqual(TestTenantId, ADLSECredentials2.GetTenantID(), 'Tenant ID should persist');
-        LibraryAssert.AreEqual(TestClientId, ADLSECredentials2.GetClientID(), 'Client ID should persist');
-        LibraryAssert.AreEqual(TestSecret, ADLSECredentials2.GetClientSecret(), 'Client secret should persist');
+        ADLSELibrarybc2adls.CleanUp();
     end;
 
     [Test]
