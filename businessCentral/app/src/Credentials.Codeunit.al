@@ -17,11 +17,19 @@ codeunit 82565 "ADLSE Credentials"
         [NonDebuggable]
         StorageTenantID: Text;
 
+        [NonDebuggable]
+        ClientCertificate: Text;
+
+        [NonDebuggable]
+        ClientCertificatePassword: Text;
+
         Initialized: Boolean;
         ValueNotFoundErr: Label 'No value found for %1.', Comment = '%1 = name of the key';
         TenantIdKeyNameTok: Label 'adlse-tenant-id', Locked = true;
         ClientIdKeyNameTok: Label 'adlse-client-id', Locked = true;
         ClientSecretKeyNameTok: Label 'adlse-client-secret', Locked = true;
+        ClientCertificateKeyNameTok: Label 'adlse-certificate', Locked = true;
+        ClientCertificatePasswordKeyNameTok: Label 'adlse-certificate-password', Locked = true;
 
     [NonDebuggable]
     procedure Init()
@@ -29,6 +37,8 @@ codeunit 82565 "ADLSE Credentials"
         StorageTenantID := GetSecret(TenantIdKeyNameTok);
         ClientID := GetSecret(ClientIdKeyNameTok);
         ClientSecret := GetSecret(ClientSecretKeyNameTok);
+        ClientCertificate := GetSecret(ClientCertificateKeyNameTok);
+        ClientCertificatePassword := GetSecret(ClientCertificatePasswordKeyNameTok);
         Initialized := true;
     end;
 
@@ -38,11 +48,17 @@ codeunit 82565 "ADLSE Credentials"
     end;
 
     procedure Check()
+    var
+        ADLSESetup: Record "ADLSE Setup";
     begin
         Init();
         CheckValueExists(TenantIdKeyNameTok, StorageTenantID);
         CheckValueExists(ClientIdKeyNameTok, ClientID);
-        CheckValueExists(ClientSecretKeyNameTok, ClientSecret);
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Use Certificate Authentication" then
+            CheckValueExists(ClientCertificateKeyNameTok, ClientCertificate)
+        else
+            CheckValueExists(ClientSecretKeyNameTok, ClientSecret);
     end;
 
     [NonDebuggable]
@@ -97,6 +113,40 @@ codeunit 82565 "ADLSE Credentials"
     end;
 
     [NonDebuggable]
+    procedure GetClientCertificate(): Text
+    begin
+        exit(ClientCertificate);
+    end;
+
+    [NonDebuggable]
+    procedure SetClientCertificate(NewCertificateValue: Text): Text
+    begin
+        ClientCertificate := NewCertificateValue;
+        // Certificates are too large for IsolatedStorage.SetEncrypted; store plain.
+        // The PFX is protected by its own password (stored encrypted separately).
+        SetPlain(ClientCertificateKeyNameTok, NewCertificateValue);
+    end;
+
+    [NonDebuggable]
+    procedure IsClientCertificateSet(): Boolean
+    begin
+        exit(GetClientCertificate() <> '');
+    end;
+
+    [NonDebuggable]
+    procedure GetClientCertificatePassword(): Text
+    begin
+        exit(ClientCertificatePassword);
+    end;
+
+    [NonDebuggable]
+    procedure SetClientCertificatePassword(NewPasswordValue: Text): Text
+    begin
+        ClientCertificatePassword := NewPasswordValue;
+        SetSecret(ClientCertificatePasswordKeyNameTok, NewPasswordValue);
+    end;
+
+    [NonDebuggable]
     local procedure GetSecret(KeyName: Text) Secret: Text
     begin
         if not IsolatedStorage.Contains(KeyName, IsolatedStorageDataScope()) then
@@ -115,6 +165,14 @@ codeunit 82565 "ADLSE Credentials"
             exit;
         end;
         IsolatedStorage.Set(KeyName, Secret, IsolatedStorageDataScope());
+#pragma warning restore LC0043
+    end;
+
+    [NonDebuggable]
+    local procedure SetPlain(KeyName: Text; Value: Text)
+    begin
+#pragma warning disable LC0043
+        IsolatedStorage.Set(KeyName, Value, IsolatedStorageDataScope());
 #pragma warning restore LC0043
     end;
 

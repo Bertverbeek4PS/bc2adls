@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 namespace bc2adls;
+
+using System.Security.Authentication;
 codeunit 82563 "ADLSE Http"
 {
     Access = Internal;
@@ -18,10 +20,12 @@ codeunit 82563 "ADLSE Http"
         ContentTypePlainTextTok: Label 'text/plain; charset=utf-8', Locked = true;
         UnsupportedMethodErr: Label 'Unsupported method: %1', Comment = '%1: http method name';
         OAuthTok: Label 'https://login.microsoftonline.com/%1/oauth2/token', Comment = '%1: tenant id', Locked = true;
+        OAuthAuthorityTok: Label 'https://login.microsoftonline.com/%1', Comment = '%1: tenant id', Locked = true;
         BearerTok: Label 'Bearer %1', Comment = '%1: access token', Locked = true;
         AcquireTokenBodyTok: Label 'resource=%1&scope=%2&client_id=%3&client_secret=%4&grant_type=client_credentials', Comment = '%1: encoded resource url, %2: encoded scope url, %3: client ID, %4: client secret', Locked = true;
         HttpRequestFailedErr: Label 'There was an error while executing the HTTP request, error request: %1.', Comment = '%1: error message';
         AuthHttpRequestFailedErr: Label 'There was an error while acquiring the authentication token, error request: %1.', Comment = '%1: error message';
+        AcquireTokenFailedErr: Label 'Failed to acquire an access token. Verify the credentials configured in the ADLSE Setup.';
 
     procedure SetMethod(HttpMethodValue: Enum "ADLSE Http Method")
     begin
@@ -222,11 +226,17 @@ codeunit 82563 "ADLSE Http"
     end;
 
     [NonDebuggable]
-    local procedure AcquireTokenOAuth2(var AuthError: Text) AccessToken: Text
+    local procedure AcquireTokenOAuth2(var AuthError: Text) AccessToken: SecretText
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETokenCache: Codeunit "ADLSE Token Cache";
         ADLSEUtil: Codeunit "ADLSE Util";
+        OAuth2: Codeunit OAuth2;
+        CertificateSecret: SecretText;
+        CertificatePasswordSecret: SecretText;
+        IdToken: Text;
+        Scopes: List of [Text];
+        OAuthAuthorityUrl: Text;
         HttpClient: HttpClient;
         HttpRequestMessage: HttpRequestMessage;
         HttpContent: HttpContent;
@@ -244,48 +254,72 @@ codeunit 82563 "ADLSE Http"
         if ADLSETokenCache.IsTokenValid() then
             exit(ADLSETokenCache.GetCachedToken());
 
-        case ADLSESetup.GetStorageType() of
-            ADLSESetup."Storage Type"::"Azure Data Lake":
-                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation'; // url encoded form of https://storage.azure.com/user_impersonation
-            ADLSESetup."Storage Type"::"Microsoft Fabric":
-                ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2F.default'; // url encoded form of https://storage.azure.com/.default                
-        end;
+        ADLSESetup.GetSingleton();
+        if ADLSESetup."Use Certificate Authentication" then begin
+            // Certificate auth is always a service principal (client credentials) flow,
+            // which requires the .default scope regardless of storage type.
+            Scopes.Add('https://storage.azure.com/.default');
 
-        Uri := StrSubstNo(OAuthTok, Credentials.GetTenantID());
-        HttpRequestMessage.Method('POST');
-        HttpRequestMessage.SetRequestUri(Uri);
-        RequestBody :=
-        StrSubstNo(
+            OAuthAuthorityUrl := StrSubstNo(OAuthAuthorityTok, Credentials.GetTenantID());
+            CertificateSecret := Credentials.GetClientCertificate();
+            CertificatePasswordSecret := Credentials.GetClientCertificatePassword();
+            OAuth2.AcquireTokensWithCertificate(
+                Credentials.GetClientID(), CertificateSecret, CertificatePasswordSecret,
+                '', OAuthAuthorityUrl, Scopes, AccessToken, IdToken);
+
+            if AccessToken.IsEmpty() then begin
+                AuthError := AcquireTokenFailedErr;
+                exit;
+            end;
+
+            // Cache the token with a default 55-minute window (tokens typically last 1 hour)
+            ADLSETokenCache.SetToken(AccessToken, CurrentDateTime() + (55 * 60 * 1000));
+        end else begin
+            case ADLSESetup.GetStorageType() of
+                ADLSESetup."Storage Type"::"Azure Data Lake":
+                    ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2Fuser_impersonation'; // url encoded form of https://storage.azure.com/user_impersonation
+                ADLSESetup."Storage Type"::"Microsoft Fabric":
+                    ScopeUrlEncoded := 'https%3A%2F%2Fstorage.azure.com%2F.default'; // url encoded form of https://storage.azure.com/.default                
+            end;
+
+            Uri := StrSubstNo(OAuthTok, Credentials.GetTenantID());
+            HttpRequestMessage.Method('POST');
+            HttpRequestMessage.SetRequestUri(Uri);
+
+            RequestBody :=
+                StrSubstNo(
                     AcquireTokenBodyTok,
                     'https%3A%2F%2Fstorage.azure.com%2F', // url encoded form of https://storage.azure.com/
                     ScopeUrlEncoded,
                     Credentials.GetClientID(),
                     Credentials.GetClientSecret());
-        HttpContent.WriteFrom(RequestBody);
-        HttpContent.GetHeaders(Headers);
-        Headers.Remove('Content-Type');
-        Headers.Add('Content-Type', 'application/x-www-form-urlencoded');
 
-        HttpRequestFailed := not HttpClient.Post(Uri, HttpContent, HttpResponseMessage);
-        if HttpRequestFailed then begin
-            AuthError := StrSubstNo(AuthHttpRequestFailedErr, HttpResponseMessage.ReasonPhrase());
-            exit;
+            HttpContent.WriteFrom(RequestBody);
+            HttpContent.GetHeaders(Headers);
+            Headers.Remove('Content-Type');
+            Headers.Add('Content-Type', 'application/x-www-form-urlencoded');
+
+            HttpRequestFailed := not HttpClient.Post(Uri, HttpContent, HttpResponseMessage);
+            if HttpRequestFailed then begin
+                AuthError := StrSubstNo(AuthHttpRequestFailedErr, HttpResponseMessage.ReasonPhrase());
+                exit;
+            end;
+
+            HttpContent := HttpResponseMessage.Content();
+            HttpContent.ReadAs(ResponseBody);
+            if not HttpResponseMessage.IsSuccessStatusCode() then begin
+                AuthError := ResponseBody;
+                exit;
+            end;
+
+            Json.ReadFrom(ResponseBody);
+            AccessToken := ADLSEUtil.GetTextValueForKeyInJson(Json, 'access_token');
+
+            // Cache the token with expiry (subtract 5 minutes for safety margin)
+            // expires_in is in seconds, default to 3600 (1 hour) if not present
+            if not Evaluate(ExpiresInSeconds, ADLSEUtil.GetTextValueForKeyInJson(Json, 'expires_in')) then
+                ExpiresInSeconds := 3600;
+            ADLSETokenCache.SetToken(AccessToken, CurrentDateTime() + (ExpiresInSeconds * 1000) - (5 * 60 * 1000));
         end;
-
-        HttpContent := HttpResponseMessage.Content();
-        HttpContent.ReadAs(ResponseBody);
-        if not HttpResponseMessage.IsSuccessStatusCode() then begin
-            AuthError := ResponseBody;
-            exit;
-        end;
-
-        Json.ReadFrom(ResponseBody);
-        AccessToken := ADLSEUtil.GetTextValueForKeyInJson(Json, 'access_token');
-
-        // Cache the token with expiry (subtract 5 minutes for safety margin)
-        // expires_in is in seconds, default to 3600 (1 hour) if not present
-        if not Evaluate(ExpiresInSeconds, ADLSEUtil.GetTextValueForKeyInJson(Json, 'expires_in')) then
-            ExpiresInSeconds := 3600;
-        ADLSETokenCache.SetToken(AccessToken, CurrentDateTime() + (ExpiresInSeconds * 1000) - (5 * 60 * 1000));
     end;
 }
