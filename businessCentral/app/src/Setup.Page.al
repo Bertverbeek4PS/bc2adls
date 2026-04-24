@@ -95,44 +95,53 @@ page 82560 "ADLSE Setup"
                             CurrPage.Update(true);
                         end;
                     }
-                    field("Client secret"; ClientSecret)
+                    group(SecretAuthGroup)
                     {
-                        Caption = 'Client secret';
-                        ExtendedDatatype = Masked;
-                        ToolTip = 'Specifies the client secret for the Azure App Registration that accesses the storage account.';
+                        ShowCaption = false;
                         Visible = SecretVisible;
 
-                        trigger OnValidate()
-                        begin
-                            ADLSECredentials.SetClientSecret(ClientSecret);
-                            CurrPage.Update(true);
-                        end;
-                    }
-                    field(CertificateUploadStatus; CertificateStatusText)
-                    {
-                        Caption = 'Certificate';
-                        Editable = false;
-                        Visible = CertificateVisible;
-                        ToolTip = 'Specifies the PFX certificate used for OAuth2 authentication. Click to upload a new certificate file (.pfx or .p12).';
+                        field("Client secret"; ClientSecret)
+                        {
+                            Caption = 'Client secret';
+                            ExtendedDatatype = Masked;
+                            ToolTip = 'Specifies the client secret for the Azure App Registration that accesses the storage account.';
 
-                        trigger OnDrillDown()
-                        begin
-                            UploadCertificate();
-                            UpdateCertificateStatus();
-                            CurrPage.Update(false);
-                        end;
+                            trigger OnValidate()
+                            begin
+                                ADLSECredentials.SetClientSecret(ClientSecret);
+                                CurrPage.Update(true);
+                            end;
+                        }
                     }
-                    field(ClientCertificatePassword; ClientCertificatePassword)
+                    group(CertAuthGroup)
                     {
-                        Caption = 'Certificate Password';
-                        ExtendedDatatype = Masked;
-                        ToolTip = 'Specifies the password for the PFX certificate.';
+                        ShowCaption = false;
                         Visible = CertificateVisible;
 
-                        trigger OnValidate()
-                        begin
-                            ADLSECredentials.SetClientCertificatePassword(ClientCertificatePassword);
-                        end;
+                        field(CertificateUploadStatus; CertificateStatusText)
+                        {
+                            Caption = 'Certificate';
+                            Editable = false;
+                            ToolTip = 'Specifies the PFX certificate used for OAuth2 authentication. Click to upload a new certificate file (.pfx or .p12).';
+
+                            trigger OnDrillDown()
+                            begin
+                                UploadCertificate();
+                                UpdateCertificateStatus();
+                                CurrPage.Update(false);
+                            end;
+                        }
+                        field(ClientCertificatePassword; ClientCertificatePassword)
+                        {
+                            Caption = 'Certificate Password';
+                            ExtendedDatatype = Masked;
+                            ToolTip = 'Specifies the password for the PFX certificate.';
+
+                            trigger OnValidate()
+                            begin
+                                ADLSECredentials.SetClientCertificatePassword(ClientCertificatePassword);
+                            end;
+                        }
                     }
                 }
             }
