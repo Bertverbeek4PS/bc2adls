@@ -90,6 +90,7 @@ page 82560 "ADLSE Setup"
 
                         trigger OnValidate()
                         begin
+                            UpdateAuthVisibility();
                             CurrPage.Update(true);
                         end;
                     }
@@ -98,23 +99,25 @@ page 82560 "ADLSE Setup"
                         Caption = 'Client secret';
                         ExtendedDatatype = Masked;
                         ToolTip = 'Specifies the client secret for the Azure App Registration that accesses the storage account.';
-                        Visible = not Rec."Use Certificate Authentication";
+                        Visible = SecretVisible;
 
                         trigger OnValidate()
                         begin
                             ADLSECredentials.SetClientSecret(ClientSecret);
                         end;
                     }
-                    field(ClientCertificate; ClientCertificate)
+                    field(CertificateUploadStatus; CertificateStatusText)
                     {
-                        Caption = 'Certificate (Base64 PFX)';
-                        ExtendedDatatype = Masked;
-                        ToolTip = 'Specifies the Base64-encoded PFX certificate used for OAuth2 authentication.';
-                        Visible = Rec."Use Certificate Authentication";
+                        Caption = 'Certificate';
+                        Editable = false;
+                        Visible = CertificateVisible;
+                        ToolTip = 'Specifies the PFX certificate used for OAuth2 authentication. Click to upload a new certificate file (.pfx or .p12).';
 
-                        trigger OnValidate()
+                        trigger OnDrillDown()
                         begin
-                            ADLSECredentials.SetClientCertificate(ClientCertificate);
+                            UploadCertificate();
+                            UpdateCertificateStatus();
+                            CurrPage.Update(false);
                         end;
                     }
                     field(ClientCertificatePassword; ClientCertificatePassword)
@@ -122,7 +125,7 @@ page 82560 "ADLSE Setup"
                         Caption = 'Certificate Password';
                         ExtendedDatatype = Masked;
                         ToolTip = 'Specifies the password for the PFX certificate.';
-                        Visible = Rec."Use Certificate Authentication";
+                        Visible = CertificateVisible;
 
                         trigger OnValidate()
                         begin
@@ -431,10 +434,11 @@ page 82560 "ADLSE Setup"
 
     var
         FabricOpenMirroring, AzureDataLake : Boolean;
+        CertificateVisible, SecretVisible : Boolean;
         ClientSecretLbl: Label 'Secret not shown';
         ClientIdLbl: Label 'ID not shown';
-        CertificateSetLbl: Label 'Certificate set';
         CertificatePasswordSetLbl: Label 'Password set';
+        CertificateStatusText: Text;
 
     trigger OnInit()
     begin
@@ -445,10 +449,10 @@ page 82560 "ADLSE Setup"
             ClientID := ClientIdLbl;
         if ADLSECredentials.IsClientSecretSet() then
             ClientSecret := ClientSecretLbl;
-        if ADLSECredentials.IsClientCertificateSet() then
-            ClientCertificate := CertificateSetLbl;
         if ADLSECredentials.GetClientCertificatePassword() <> '' then
             ClientCertificatePassword := CertificatePasswordSetLbl;
+        UpdateAuthVisibility();
+        UpdateCertificateStatus();
     end;
 
     trigger OnAfterGetRecord()
@@ -476,12 +480,42 @@ page 82560 "ADLSE Setup"
         [NonDebuggable]
         ClientSecret: Text;
         [NonDebuggable]
-        ClientCertificate: Text;
-        [NonDebuggable]
         ClientCertificatePassword: Text;
         OldLogsExist: Boolean;
         FailureNotificationID: Guid;
         ExportFailureNotificationMsg: Label 'Data from one or more tables failed to export on the last run. Please check the tables below to see the error(s).';
+
+    local procedure UpdateAuthVisibility()
+    begin
+        CertificateVisible := Rec."Use Certificate Authentication";
+        SecretVisible := not Rec."Use Certificate Authentication";
+    end;
+
+    local procedure UpdateCertificateStatus()
+    var
+        NoCertificateLbl: Label 'No certificate (click to upload)';
+        CertificateUploadedLbl: Label 'Certificate uploaded (click to change)';
+    begin
+        if ADLSECredentials.IsClientCertificateSet() then
+            CertificateStatusText := CertificateUploadedLbl
+        else
+            CertificateStatusText := NoCertificateLbl;
+    end;
+
+    [NonDebuggable]
+    local procedure UploadCertificate()
+    var
+        Base64Convert: Codeunit "Base64 Convert";
+        InStr: InStream;
+        CertificateBase64: Text;
+        CertificateFilterTxt: Label 'Certificate Files (*.pfx;*.p12)|*.pfx;*.p12|All Files (*.*)|*.*', Locked = true;
+        FileNotUploadedErr: Label 'Certificate file was not uploaded.';
+    begin
+        if not UploadIntoStream(CertificateFilterTxt, InStr) then
+            Error(FileNotUploadedErr);
+        CertificateBase64 := Base64Convert.ToBase64(InStr);
+        ADLSECredentials.SetClientCertificate(CertificateBase64);
+    end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     local procedure UpdateNotificationIfAnyTableExportFailed()
