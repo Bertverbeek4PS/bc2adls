@@ -256,12 +256,9 @@ codeunit 82563 "ADLSE Http"
 
         ADLSESetup.GetSingleton();
         if ADLSESetup."Use Certificate Authentication" then begin
-            case ADLSESetup.GetStorageType() of
-                ADLSESetup."Storage Type"::"Azure Data Lake":
-                    Scopes.Add('https://storage.azure.com/user_impersonation');
-                ADLSESetup."Storage Type"::"Microsoft Fabric":
-                    Scopes.Add('https://storage.azure.com/.default');
-            end;
+            // Certificate auth is always a service principal (client credentials) flow,
+            // which requires the .default scope regardless of storage type.
+            Scopes.Add('https://storage.azure.com/.default');
 
             OAuthAuthorityUrl := StrSubstNo(OAuthAuthorityTok, Credentials.GetTenantID());
             CertificateSecret := Credentials.GetClientCertificate();
