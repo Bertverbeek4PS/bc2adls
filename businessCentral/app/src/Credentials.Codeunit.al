@@ -151,7 +151,15 @@ codeunit 82565 "ADLSE Credentials"
     begin
         if not IsolatedStorage.Contains(KeyName, IsolatedStorageDataScope()) then
             exit('');
-#pragma warning disable LC0043            
+        if not TryGetSecret(KeyName, Secret) then
+            Secret := '';
+    end;
+
+    [NonDebuggable]
+    [TryFunction]
+    local procedure TryGetSecret(KeyName: Text; var Secret: Text)
+    begin
+#pragma warning disable LC0043
         IsolatedStorage.Get(KeyName, IsolatedStorageDataScope(), Secret);
 #pragma warning restore LC0043
     end;
