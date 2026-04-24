@@ -9,6 +9,7 @@ codeunit 85573 "ADLSE Credentials Tests"
     end;
 
     var
+        ADLSELibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
         LibraryAssert: Codeunit "Library Assert";
         IsInitialized: Boolean;
 
@@ -139,10 +140,13 @@ codeunit 85573 "ADLSE Credentials Tests"
     procedure TestCheck_AllCredentialsSet_NoError()
     var
         ADLSECredentials: Codeunit "ADLSE Credentials";
+        StorageType: Enum "ADLSE Storage Type";
     begin
         // [SCENARIO] Check does not error when all credentials are set
-        // [GIVEN] A credentials instance with all values set
+        // [GIVEN] A credentials instance with all values set and a setup record
         Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup(StorageType::"Azure Data Lake");
         ADLSECredentials.SetTenantID('test-tenant-' + Format(CreateGuid()));
         ADLSECredentials.SetClientID('test-client-' + Format(CreateGuid()));
         ADLSECredentials.SetClientSecret('test-secret-' + Format(CreateGuid()));
@@ -150,6 +154,8 @@ codeunit 85573 "ADLSE Credentials Tests"
         // [WHEN] Check is called
         // [THEN] No error is thrown
         ADLSECredentials.Check();
+
+        ADLSELibrarybc2adls.CleanUp();
     end;
 
     [Test]
