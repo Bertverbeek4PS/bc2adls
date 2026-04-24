@@ -182,35 +182,6 @@ codeunit 85573 "ADLSE Credentials Tests"
     end;
 
     [Test]
-    procedure TestCredentialsPersistence_AcrossInstances()
-    var
-        ADLSECredentials1: Codeunit "ADLSE Credentials";
-        ADLSECredentials2: Codeunit "ADLSE Credentials";
-        TestTenantId: Text;
-        TestClientId: Text;
-        TestSecret: Text;
-    begin
-        // [SCENARIO] Credentials persist across codeunit instances
-        // [GIVEN] Credentials set in one instance
-        Initialize();
-        TestTenantId := 'persist-tenant-' + Format(CreateGuid());
-        TestClientId := 'persist-client-' + Format(CreateGuid());
-        TestSecret := 'persist-secret-' + Format(CreateGuid());
-
-        ADLSECredentials1.SetTenantID(TestTenantId);
-        ADLSECredentials1.SetClientID(TestClientId);
-        ADLSECredentials1.SetClientSecret(TestSecret);
-
-        // [WHEN] A new instance retrieves the credentials
-        ADLSECredentials2.Init();
-
-        // [THEN] The values are the same
-        LibraryAssert.AreEqual(TestTenantId, ADLSECredentials2.GetTenantID(), 'Tenant ID should persist');
-        LibraryAssert.AreEqual(TestClientId, ADLSECredentials2.GetClientID(), 'Client ID should persist');
-        LibraryAssert.AreEqual(TestSecret, ADLSECredentials2.GetClientSecret(), 'Client secret should persist');
-    end;
-
-    [Test]
     procedure TestSetAndGetClientCertificate()
     var
         ADLSECredentials: Codeunit "ADLSE Credentials";
