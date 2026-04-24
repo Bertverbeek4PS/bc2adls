@@ -136,6 +136,12 @@ page 82560 "ADLSE Setup"
                 {
                     Importance = Additional;
                     Editable = FabricOpenMirroring;
+
+                    trigger OnValidate()
+                    begin
+                        if Rec."Use Primary Key for Mirroring" then
+                            Message(UsePrimaryKeyForMirroringResetTablesMsg);
+                    end;
                 }
             }
 
@@ -442,6 +448,7 @@ page 82560 "ADLSE Setup"
         OldLogsExist: Boolean;
         FailureNotificationID: Guid;
         ExportFailureNotificationMsg: Label 'Data from one or more tables failed to export on the last run. Please check the tables below to see the error(s).';
+        UsePrimaryKeyForMirroringResetTablesMsg: Label 'Best practice: after enabling ''Use Primary Key for Mirroring'', reset all tables so the Open Mirroring schema is regenerated with the new key columns.';
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Table", 'r')]
     local procedure UpdateNotificationIfAnyTableExportFailed()
