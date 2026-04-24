@@ -105,6 +105,7 @@ page 82560 "ADLSE Setup"
                         trigger OnValidate()
                         begin
                             ADLSECredentials.SetClientSecret(ClientSecret);
+                            CurrPage.Update(true);
                         end;
                     }
                     field(CertificateUploadStatus; CertificateStatusText)
@@ -468,6 +469,8 @@ page 82560 "ADLSE Setup"
         UpdateNotificationIfAnyTableExportFailed();
         AzureDataLake := Rec."Storage Type" = Rec."Storage Type"::"Azure Data Lake";
         FabricOpenMirroring := Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring";
+        UpdateAuthVisibility();
+        UpdateCertificateStatus();
     end;
 
     var
