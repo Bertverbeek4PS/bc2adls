@@ -229,11 +229,6 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies if the primary key fields of tables should be used as key columns in the Open Mirroring metadata instead of SystemId. Enable this if records are recreated with new SystemIds causing duplicates in the mirrored database.';
             InitValue = false;
 
-            trigger OnValidate()
-            begin
-                if Rec."Schema Exported On" <> 0DT then
-                    Error(ErrorInfo.Create(SchemaAlreadyExportedErr, true));
-            end;
         }
     }
 
