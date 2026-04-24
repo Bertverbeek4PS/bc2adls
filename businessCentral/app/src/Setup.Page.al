@@ -83,15 +83,50 @@ page 82560 "ADLSE Setup"
                             ADLSECredentials.SetClientID(ClientID);
                         end;
                     }
+                    field(UseCertificateAuthentication; Rec."Use Certificate Authentication")
+                    {
+                        Caption = 'Use Certificate Authentication';
+                        ToolTip = 'Specifies whether to use a certificate for OAuth2 authentication instead of a client secret.';
+
+                        trigger OnValidate()
+                        begin
+                            CurrPage.Update(true);
+                        end;
+                    }
                     field("Client secret"; ClientSecret)
                     {
                         Caption = 'Client secret';
                         ExtendedDatatype = Masked;
                         ToolTip = 'Specifies the client secret for the Azure App Registration that accesses the storage account.';
+                        Visible = not Rec."Use Certificate Authentication";
 
                         trigger OnValidate()
                         begin
                             ADLSECredentials.SetClientSecret(ClientSecret);
+                        end;
+                    }
+                    field(ClientCertificate; ClientCertificate)
+                    {
+                        Caption = 'Certificate (Base64 PFX)';
+                        ExtendedDatatype = Masked;
+                        ToolTip = 'Specifies the Base64-encoded PFX certificate used for OAuth2 authentication.';
+                        Visible = Rec."Use Certificate Authentication";
+
+                        trigger OnValidate()
+                        begin
+                            ADLSECredentials.SetClientCertificate(ClientCertificate);
+                        end;
+                    }
+                    field(ClientCertificatePassword; ClientCertificatePassword)
+                    {
+                        Caption = 'Certificate Password';
+                        ExtendedDatatype = Masked;
+                        ToolTip = 'Specifies the password for the PFX certificate.';
+                        Visible = Rec."Use Certificate Authentication";
+
+                        trigger OnValidate()
+                        begin
+                            ADLSECredentials.SetClientCertificatePassword(ClientCertificatePassword);
                         end;
                     }
                 }
@@ -398,6 +433,8 @@ page 82560 "ADLSE Setup"
         FabricOpenMirroring, AzureDataLake : Boolean;
         ClientSecretLbl: Label 'Secret not shown';
         ClientIdLbl: Label 'ID not shown';
+        CertificateSetLbl: Label 'Certificate set';
+        CertificatePasswordSetLbl: Label 'Password set';
 
     trigger OnInit()
     begin
@@ -408,6 +445,10 @@ page 82560 "ADLSE Setup"
             ClientID := ClientIdLbl;
         if ADLSECredentials.IsClientSecretSet() then
             ClientSecret := ClientSecretLbl;
+        if ADLSECredentials.IsClientCertificateSet() then
+            ClientCertificate := CertificateSetLbl;
+        if ADLSECredentials.GetClientCertificatePassword() <> '' then
+            ClientCertificatePassword := CertificatePasswordSetLbl;
     end;
 
     trigger OnAfterGetRecord()
@@ -434,6 +475,10 @@ page 82560 "ADLSE Setup"
         ClientID: Text;
         [NonDebuggable]
         ClientSecret: Text;
+        [NonDebuggable]
+        ClientCertificate: Text;
+        [NonDebuggable]
+        ClientCertificatePassword: Text;
         OldLogsExist: Boolean;
         FailureNotificationID: Guid;
         ExportFailureNotificationMsg: Label 'Data from one or more tables failed to export on the last run. Please check the tables below to see the error(s).';
