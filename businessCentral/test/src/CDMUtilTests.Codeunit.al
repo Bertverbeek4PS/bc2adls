@@ -402,6 +402,143 @@ codeunit 85569 "ADLSE CDM Util Tests"
         LibraryAssert.IsTrue(IsPK, 'Code field should be a primary key field');
     end;
 
+    [Test]
+    procedure TestCreateEntityContent_OpenMirroring_DefaultUsesSystemId()
+    var
+        ADLSETable: Record "ADLSE Table";
+        ADLSECDMUtil: Codeunit "ADLSE CDM Util";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        RecordRef: RecordRef;
+        SystemIdFieldRef: FieldRef;
+        EntityContent: JsonObject;
+        Token: JsonToken;
+        KeyColumns: JsonArray;
+        ExpectedFieldName: Text;
+    begin
+        // [SCENARIO] Open Mirroring CreateEntityContent uses SystemId as keyColumn by default
+        // [GIVEN] Open Mirroring setup without PK mirroring enabled
+        Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Open Mirroring");
+        ADLSETable.Add(Database::"Reason Code");
+        ADLSELibrarybc2adls.InsertFields();
+        ADLSELibrarybc2adls.EnableFields();
+
+        // Get the expected compliant field name for SystemId
+        RecordRef.Open(Database::"Reason Code");
+        SystemIdFieldRef := RecordRef.Field(RecordRef.SystemIdNo());
+        ExpectedFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(SystemIdFieldRef);
+        RecordRef.Close();
+
+        // [WHEN] CreateEntityContent is called (Open Mirroring overload)
+        EntityContent := ADLSECDMUtil.CreateEntityContent(Database::"Reason Code");
+
+        // [THEN] keyColumns contains systemId
+        EntityContent.Get('keyColumns', Token);
+        KeyColumns := Token.AsArray();
+        KeyColumns.Get(0, Token);
+        LibraryAssert.AreEqual(ExpectedFieldName, Token.AsValue().AsText(), 'First key column should be systemId');
+    end;
+
+    [Test]
+    procedure TestCreateEntityContent_OpenMirroring_PKMirroringUsesPrimaryKey()
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
+        ADLSECDMUtil: Codeunit "ADLSE CDM Util";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        RecordRef: RecordRef;
+        KeyRef: KeyRef;
+        SystemIdFieldRef: FieldRef;
+        EntityContent: JsonObject;
+        Token: JsonToken;
+        KeyColumns: JsonArray;
+        ExpectedPKFieldName: Text;
+        SystemIdFieldName: Text;
+        HasPKField: Boolean;
+        i: Integer;
+    begin
+        // [SCENARIO] Open Mirroring CreateEntityContent uses Primary Key fields when PK mirroring is enabled
+        // [GIVEN] Open Mirroring setup with PK mirroring enabled
+        Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Open Mirroring");
+
+        ADLSESetup.GetSingleton();
+        ADLSESetup."Use Primary Key for Mirroring" := true;
+        ADLSESetup.Modify();
+
+        ADLSETable.Add(Database::"Reason Code");
+        ADLSELibrarybc2adls.InsertFields();
+        ADLSELibrarybc2adls.EnableFields();
+
+        // Get expected compliant field names
+        RecordRef.Open(Database::"Reason Code");
+        KeyRef := RecordRef.KeyIndex(1);
+        ExpectedPKFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(KeyRef.FieldIndex(1));
+        SystemIdFieldRef := RecordRef.Field(RecordRef.SystemIdNo());
+        SystemIdFieldName := ADLSEUtil.GetDataLakeCompliantFieldName(SystemIdFieldRef);
+        RecordRef.Close();
+
+        // [WHEN] CreateEntityContent is called (Open Mirroring overload)
+        EntityContent := ADLSECDMUtil.CreateEntityContent(Database::"Reason Code");
+
+        // [THEN] keyColumns contains the primary key field, not systemId
+        EntityContent.Get('keyColumns', Token);
+        KeyColumns := Token.AsArray();
+
+        HasPKField := false;
+        for i := 0 to KeyColumns.Count() - 1 do begin
+            KeyColumns.Get(i, Token);
+            LibraryAssert.AreNotEqual(SystemIdFieldName, Token.AsValue().AsText(), 'systemId should not be in keyColumns when PK mirroring is enabled');
+            if Token.AsValue().AsText() = ExpectedPKFieldName then
+                HasPKField := true;
+        end;
+        LibraryAssert.IsTrue(HasPKField, 'Primary key field should be in keyColumns');
+    end;
+
+    [Test]
+    procedure TestCreateEntityContent_OpenMirroring_PKMirroringIncludesCompanyForPerCompanyTable()
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
+        ADLSECDMUtil: Codeunit "ADLSE CDM Util";
+        EntityContent: JsonObject;
+        Token: JsonToken;
+        KeyColumns: JsonArray;
+        HasCompanyField: Boolean;
+        i: Integer;
+    begin
+        // [SCENARIO] Open Mirroring with PK mirroring includes $Company for per-company tables
+        // [GIVEN] Open Mirroring setup with PK mirroring enabled, using a per-company table
+        Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Open Mirroring");
+
+        ADLSESetup.GetSingleton();
+        ADLSESetup."Use Primary Key for Mirroring" := true;
+        ADLSESetup.Modify();
+
+        ADLSETable.Add(Database::"G/L Entry");
+        ADLSELibrarybc2adls.InsertFields();
+        ADLSELibrarybc2adls.EnableFields();
+
+        // [WHEN] CreateEntityContent is called for a per-company table
+        EntityContent := ADLSECDMUtil.CreateEntityContent(Database::"G/L Entry");
+
+        // [THEN] keyColumns includes $Company
+        EntityContent.Get('keyColumns', Token);
+        KeyColumns := Token.AsArray();
+
+        HasCompanyField := false;
+        for i := 0 to KeyColumns.Count() - 1 do begin
+            KeyColumns.Get(i, Token);
+            if Token.AsValue().AsText() = '$Company' then
+                HasCompanyField := true;
+        end;
+        LibraryAssert.IsTrue(HasCompanyField, '$Company should be in keyColumns for per-company tables');
+    end;
+
     local procedure Initialize()
     var
         LibraryTestInitialize: Codeunit "Library - Test Initialize";

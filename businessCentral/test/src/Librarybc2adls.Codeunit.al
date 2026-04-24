@@ -19,6 +19,9 @@ codeunit 85561 "ADLSE Library - bc2adls"
             ADLSESetup."Storage Type" := "Storage Type"::"Azure Data Lake";
             ADLSESetup.Container := 'bc2adls';
             ADLSESetup."Account Name" := 'bc2adls';
+        end else if "Storage Type" = "Storage Type"::"Open Mirroring" then begin
+            ADLSESetup."Storage Type" := "Storage Type"::"Open Mirroring";
+            ADLSESetup.LandingZone := 'https://bc2adls.fabric.microsoft.com';
         end else begin
             ADLSESetup."Storage Type" := "Storage Type"::"Microsoft Fabric";
             ADLSESetup.Workspace := 'bc2adls';
