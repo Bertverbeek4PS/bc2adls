@@ -122,7 +122,9 @@ codeunit 82565 "ADLSE Credentials"
     procedure SetClientCertificate(NewCertificateValue: Text): Text
     begin
         ClientCertificate := NewCertificateValue;
-        SetSecret(ClientCertificateKeyNameTok, NewCertificateValue);
+        // Certificates are too large for IsolatedStorage.SetEncrypted; store plain.
+        // The PFX is protected by its own password (stored encrypted separately).
+        SetPlain(ClientCertificateKeyNameTok, NewCertificateValue);
     end;
 
     [NonDebuggable]
@@ -163,6 +165,14 @@ codeunit 82565 "ADLSE Credentials"
             exit;
         end;
         IsolatedStorage.Set(KeyName, Secret, IsolatedStorageDataScope());
+#pragma warning restore LC0043
+    end;
+
+    [NonDebuggable]
+    local procedure SetPlain(KeyName: Text; Value: Text)
+    begin
+#pragma warning disable LC0043
+        IsolatedStorage.Set(KeyName, Value, IsolatedStorageDataScope());
 #pragma warning restore LC0043
     end;
 
