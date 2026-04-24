@@ -11,9 +11,9 @@ codeunit 82580 "ADLSE Token Cache"
         TokenExpiresAtKeyNameTok: Label 'adlse-token-expires', Locked = true;
 
     [NonDebuggable]
-    procedure GetCachedToken(): Text
+    procedure GetCachedToken(): SecretText
     var
-        Token: Text;
+        Token: SecretText;
     begin
         if not IsolatedStorage.Contains(AccessTokenKeyNameTok, DataScope::Module) then
             exit('');
@@ -38,17 +38,14 @@ codeunit 82580 "ADLSE Token Cache"
     end;
 
     [NonDebuggable]
-    procedure SetToken(Token: Text; ExpiresAt: DateTime)
+    procedure SetToken(Token: SecretText; ExpiresAt: DateTime)
     begin
-        // Clear any existing cache entries before writing to avoid "record already exists"
-        // errors from concurrent sessions. Deleting first ensures IsolatedStorage.Set always
-        // performs an INSERT on a clean state, which is safe on both SaaS and On-Premises.
         ClearCache();
         WriteToCache(Token, ExpiresAt);
     end;
 
     [NonDebuggable]
-    local procedure WriteToCache(Token: Text; ExpiresAt: DateTime)
+    local procedure WriteToCache(Token: SecretText; ExpiresAt: DateTime)
     begin
 #pragma warning disable LC0043
         IsolatedStorage.Set(AccessTokenKeyNameTok, Token, DataScope::Module);
@@ -58,7 +55,7 @@ codeunit 82580 "ADLSE Token Cache"
 
     procedure IsTokenValid(): Boolean
     begin
-        if GetCachedToken() = '' then
+        if GetCachedToken().IsEmpty() then
             exit(false);
         exit(CurrentDateTime() < GetTokenExpiry());
     end;

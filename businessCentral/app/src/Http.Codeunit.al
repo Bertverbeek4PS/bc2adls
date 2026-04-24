@@ -226,13 +226,12 @@ codeunit 82563 "ADLSE Http"
     end;
 
     [NonDebuggable]
-    local procedure AcquireTokenOAuth2(var AuthError: Text) AccessToken: Text
+    local procedure AcquireTokenOAuth2(var AuthError: Text) AccessToken: SecretText
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETokenCache: Codeunit "ADLSE Token Cache";
         ADLSEUtil: Codeunit "ADLSE Util";
         OAuth2: Codeunit OAuth2;
-        AccessTokenSecret: SecretText;
         CertificateSecret: SecretText;
         CertificatePasswordSecret: SecretText;
         IdToken: Text;
@@ -269,10 +268,9 @@ codeunit 82563 "ADLSE Http"
             CertificatePasswordSecret := Credentials.GetClientCertificatePassword();
             OAuth2.AcquireTokensWithCertificate(
                 Credentials.GetClientID(), CertificateSecret, CertificatePasswordSecret,
-                '', OAuthAuthorityUrl, Scopes, AccessTokenSecret, IdToken);
+                '', OAuthAuthorityUrl, Scopes, AccessToken, IdToken);
 
-            AccessToken := AccessTokenSecret.Unwrap();
-            if AccessToken = '' then begin
+            if AccessToken.IsEmpty() then begin
                 AuthError := AcquireTokenFailedErr;
                 exit;
             end;
