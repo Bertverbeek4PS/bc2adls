@@ -230,6 +230,12 @@ table 82560 "ADLSE Setup"
             InitValue = false;
 
         }
+        field(105; "Use Certificate Authentication"; Boolean)
+        {
+            Caption = 'Use Certificate Authentication';
+            ToolTip = 'Specifies if a certificate will be used for OAuth2 authentication instead of a client secret.';
+            InitValue = false;
+        }
     }
 
     keys

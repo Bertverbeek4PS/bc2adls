@@ -9,6 +9,7 @@ codeunit 85573 "ADLSE Credentials Tests"
     end;
 
     var
+        ADLSELibrarybc2adls: Codeunit "ADLSE Library - bc2adls";
         LibraryAssert: Codeunit "Library Assert";
         IsInitialized: Boolean;
 
@@ -139,10 +140,13 @@ codeunit 85573 "ADLSE Credentials Tests"
     procedure TestCheck_AllCredentialsSet_NoError()
     var
         ADLSECredentials: Codeunit "ADLSE Credentials";
+        StorageType: Enum "ADLSE Storage Type";
     begin
         // [SCENARIO] Check does not error when all credentials are set
-        // [GIVEN] A credentials instance with all values set
+        // [GIVEN] A credentials instance with all values set and a setup record
         Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup(StorageType::"Azure Data Lake");
         ADLSECredentials.SetTenantID('test-tenant-' + Format(CreateGuid()));
         ADLSECredentials.SetClientID('test-client-' + Format(CreateGuid()));
         ADLSECredentials.SetClientSecret('test-secret-' + Format(CreateGuid()));
@@ -150,6 +154,8 @@ codeunit 85573 "ADLSE Credentials Tests"
         // [WHEN] Check is called
         // [THEN] No error is thrown
         ADLSECredentials.Check();
+
+        ADLSELibrarybc2adls.CleanUp();
     end;
 
     [Test]
@@ -179,6 +185,60 @@ codeunit 85573 "ADLSE Credentials Tests"
         LibraryAssert.AreEqual(TestTenantId, ADLSECredentials2.GetTenantID(), 'Tenant ID should persist');
         LibraryAssert.AreEqual(TestClientId, ADLSECredentials2.GetClientID(), 'Client ID should persist');
         LibraryAssert.AreEqual(TestSecret, ADLSECredentials2.GetClientSecret(), 'Client secret should persist');
+    end;
+
+    [Test]
+    procedure TestSetAndGetClientCertificate()
+    var
+        ADLSECredentials: Codeunit "ADLSE Credentials";
+        TestCertificate: Text;
+    begin
+        // [SCENARIO] SetClientCertificate stores and GetClientCertificate retrieves the certificate
+        // [GIVEN] A credentials instance
+        Initialize();
+        TestCertificate := 'test-certificate-base64-' + Format(CreateGuid());
+
+        // [WHEN] SetClientCertificate is called followed by Init and GetClientCertificate
+        ADLSECredentials.SetClientCertificate(TestCertificate);
+        ADLSECredentials.Init();
+
+        // [THEN] The stored value is retrieved
+        LibraryAssert.AreEqual(TestCertificate, ADLSECredentials.GetClientCertificate(), 'Certificate should match');
+    end;
+
+    [Test]
+    procedure TestIsClientCertificateSet_WithValue_ReturnsTrue()
+    var
+        ADLSECredentials: Codeunit "ADLSE Credentials";
+    begin
+        // [SCENARIO] IsClientCertificateSet returns true when certificate is set
+        // [GIVEN] A credentials instance with a certificate set
+        Initialize();
+        ADLSECredentials.SetClientCertificate('test-cert-' + Format(CreateGuid()));
+        ADLSECredentials.Init();
+
+        // [WHEN] IsClientCertificateSet is called
+        // [THEN] Returns true
+        LibraryAssert.IsTrue(ADLSECredentials.IsClientCertificateSet(), 'IsClientCertificateSet should return true');
+    end;
+
+    [Test]
+    procedure TestSetAndGetClientCertificatePassword()
+    var
+        ADLSECredentials: Codeunit "ADLSE Credentials";
+        TestPassword: Text;
+    begin
+        // [SCENARIO] SetClientCertificatePassword stores and GetClientCertificatePassword retrieves the password
+        // [GIVEN] A credentials instance
+        Initialize();
+        TestPassword := 'test-cert-password-' + Format(CreateGuid());
+
+        // [WHEN] SetClientCertificatePassword is called followed by Init and GetClientCertificatePassword
+        ADLSECredentials.SetClientCertificatePassword(TestPassword);
+        ADLSECredentials.Init();
+
+        // [THEN] The stored value is retrieved
+        LibraryAssert.AreEqual(TestPassword, ADLSECredentials.GetClientCertificatePassword(), 'Certificate password should match');
     end;
 
     local procedure Initialize()

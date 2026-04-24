@@ -5,6 +5,7 @@ namespace bc2adls;
 using System.Reflection;
 using System.Threading;
 using System.Environment;
+
 codeunit 82569 "ADLSE Execution"
 {
     trigger OnRun()
@@ -41,16 +42,19 @@ codeunit 82569 "ADLSE Execution"
         ADLSECommunication: Codeunit "ADLSE Communication";
         ADLSESessionManager: Codeunit "ADLSE Session Manager";
         ADLSEExternalEvents: Codeunit "ADLSE External Events";
+        ADLSEUtil: Codeunit "ADLSE Util";
         Counter: Integer;
         Started: Integer;
+        HasSyncCompanyRecord: Boolean;
     begin
         ADLSESetup.CheckSetup(ADLSESetupRec);
         EmitTelemetry := ADLSESetupRec."Emit telemetry";
         ADLSECurrentSession.CleanupSessions();
 
-        if ADLSESyncCompanies.Get(CompanyName()) then begin// Possible Multi Company export Create session So that is can be stopped.
+        HasSyncCompanyRecord := ADLSESyncCompanies.Get(CompanyName());
+        if HasSyncCompanyRecord then begin // Possible Multi Company export Create session So that is can be stopped.
             ADLSECurrentSession.Start(ADLSESyncCompanies.RecordId.TableNo);
-            Commit(); //To make sure session is stored before starting exports
+            Commit(); // To make sure session is stored before starting exports
         end;
 
         if ADLSESetupRec.GetStorageType() = ADLSESetupRec."Storage Type"::"Azure Data Lake" then //Because Fabric doesn't have do create a container
@@ -72,9 +76,16 @@ codeunit 82569 "ADLSE Execution"
                         Started += 1;
             until ADLSETable.Next() = 0;
 
+        if HasSyncCompanyRecord then begin
+            Commit(); // End the read-only transaction before deleting
+            ADLSECurrentSession.Stop(Database::"ADLSE Sync Companies", EmitTelemetry, ADLSEUtil.GetTableCaption(Database::"ADLSE Sync Companies"));
+        end;
+
         Message(ExportStartedTxt, Started, Counter);
         if EmitTelemetry then
             Log('ADLSE-001', StrSubstNo(ExportStartedTxt, Started, Counter), Verbosity::Normal);
+
+        OnAfterStartExport(AdlseTable);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Setup", 'r')]
@@ -285,5 +296,10 @@ codeunit 82569 "ADLSE Execution"
     local procedure OnBeforeScheduleExport(var Handled: Boolean)
     begin
 
+    end;
+
+    [IntegrationEvent(false, false)]
+    local procedure OnAfterStartExport(var ADLSETable: Record "ADLSE Table")
+    begin
     end;
 }
