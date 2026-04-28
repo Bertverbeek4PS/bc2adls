@@ -112,6 +112,8 @@ table 82560 "ADLSE Setup"
             var
                 ValidGuid: Guid;
             begin
+                if Rec."Storage Type"::"Open Mirroring" then 
+                    exit;
                 if not Evaluate(ValidGuid, Rec.Workspace) then
                     if (StrLen(Rec.Workspace) < 3) or (StrLen(Rec.Workspace) > 24)
                         or TextCharactersOtherThan(Rec.Workspace, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_')
@@ -127,6 +129,8 @@ table 82560 "ADLSE Setup"
             var
                 ValidGuid: Guid;
             begin
+                if Rec."Storage Type"::"Open Mirroring" then
+                    exit;    
                 if not Evaluate(ValidGuid, Rec.Lakehouse) then
                     if (StrLen(Rec.Lakehouse) < 3) or (StrLen(Rec.Lakehouse) > 24)
                         or TextCharactersOtherThan(Rec.Lakehouse, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_')
