@@ -56,34 +56,51 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         ADLSEUtil: Codeunit "ADLSE Util";
         ADLSEExecute: Codeunit "ADLSE Execute";
         RecordRef: RecordRef;
+        KeyRef: KeyRef;
         SystemIdFieldRef: FieldRef;
         FieldRef: FieldRef;
         FieldIdList: List of [Integer];
         FieldId: Integer;
+        i: Integer;
         Imports: JsonArray;
         Columns: JsonArray;
         Column: JsonObject;
         SchemaDefinition: JsonObject;
     begin
-        //Must be systemId and $Company because of the deleted record table
         RecordRef.Open(TableID);
         FieldIdList := ADLSEExecute.CreateFieldListForTable(TableID);
 
-        SystemIdFieldRef := RecordRef.Field(2000000000);
-        Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(SystemIdFieldRef));
+        ADLSESetup.GetSingleton();
+
+        if ADLSESetup."Use Primary Key for Mirroring" then begin
+            // Use the table's primary key fields as key columns, preserving declared PK order
+            KeyRef := RecordRef.KeyIndex(1);
+            for i := 1 to KeyRef.FieldCount() do begin
+                FieldRef := KeyRef.FieldIndex(i);
+                Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
+            end;
+        end else begin
+            // Default: use SystemId as key column
+            SystemIdFieldRef := RecordRef.Field(RecordRef.SystemIdNo());
+            Imports.Add(ADLSEUtil.GetDataLakeCompliantFieldName(SystemIdFieldRef));
+        end;
         if ADLSEUtil.IsTablePerCompany(TableID) then
             Imports.Add(this.GetCompanyFieldName());
         Content.Add('keyColumns', Imports);
         Content.Add('fileDetectionStrategy', 'LastUpdateTimeFileDetection');
 
-        ADLSESetup.GetSingleton();
         foreach FieldId in FieldIdList do begin
             FieldRef := RecordRef.Field(FieldId);
             Clear(Column);
             Column.Add('Name', ADLSEUtil.GetDataLakeCompliantFieldName(FieldRef));
             Column.Add('DataType', GetOpenMirrorDataFormat(FieldRef.Type()));
-            if (FieldRef.Number() <> RecordRef.SystemIdNo()) then
-                Column.Add('IsNullable', true);
+            if ADLSESetup."Use Primary Key for Mirroring" then begin
+                if not IsPrimaryKeyField(TableID, FieldId) then
+                    Column.Add('IsNullable', true);
+            end else begin
+                if (FieldRef.Number() <> RecordRef.SystemIdNo()) then
+                    Column.Add('IsNullable', true);
+            end;
             Columns.Add(Column);
         end;
 

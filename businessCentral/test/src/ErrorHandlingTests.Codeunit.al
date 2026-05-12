@@ -269,6 +269,61 @@ codeunit 85575 "ADLSE Error Handling Tests"
     end;
 
     [Test]
+    [HandlerFunctions('MessageHandler')]
+    procedure TestAddTable_PrimaryKeyWithUnsupportedType_SkipsFieldAndShowsMessage()
+    var
+        ADLSETable: Record "ADLSE Table";
+        ADLSEField: Record "ADLSE Field";
+        Field: Record Field;
+        TableMetadata: Record "Table Metadata";
+        FoundTableId: Integer;
+        SkippedFieldNo: Integer;
+    begin
+        // [SCENARIO] Adding a table whose primary key contains a field of an
+        // unsupported type (e.g. RecordID, BLOB, Media) should not error.
+        // The unsupported PK field is skipped, the table is still added, and a
+        // message is shown to the user.
+        // [GIVEN] A normal table whose PK contains a field of an unsupported type
+        Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Azure Data Lake");
+
+        Field.SetRange(IsPartOfPrimaryKey, true);
+        Field.SetFilter("No.", '<%1', 2000000000);
+        Field.SetFilter(ObsoleteState, '<>%1', Field.ObsoleteState::Removed);
+        Field.SetFilter(Type, '%1|%2|%3|%4',
+            Field.Type::RecordID,
+            Field.Type::BLOB,
+            Field.Type::Media,
+            Field.Type::MediaSet);
+        if Field.FindSet() then
+            repeat
+                if TableMetadata.Get(Field.TableNo) then
+                    if TableMetadata.TableType = TableMetadata.TableType::Normal then begin
+                        FoundTableId := Field.TableNo;
+                        SkippedFieldNo := Field."No.";
+                    end;
+            until (Field.Next() = 0) or (FoundTableId <> 0);
+
+        if FoundTableId = 0 then
+            exit; // No suitable table available in this environment
+
+        // [WHEN] The table is added to the export
+        ADLSETable.Add(FoundTableId);
+
+        // [THEN] The table is persisted, but the unsupported PK field is not
+        // added to ADLSE Field. (A message is also shown via the handler.)
+        LibraryAssert.IsTrue(ADLSETable.Get(FoundTableId), 'Table must be added even when its primary key contains an unsupported field type.');
+        LibraryAssert.IsFalse(ADLSEField.Get(FoundTableId, SkippedFieldNo), 'Unsupported primary key field must not be added to ADLSE Field.');
+    end;
+
+    [MessageHandler]
+    procedure MessageHandler(Message: Text[1024])
+    begin
+        // Captures the "skipped primary key fields" message raised by ADLSE Table.Add.
+    end;
+
+    [Test]
     procedure TestSchemaChangeDetection_FieldRemoved_ThrowsError()
     var
         ADLSETable: Record "ADLSE Table";

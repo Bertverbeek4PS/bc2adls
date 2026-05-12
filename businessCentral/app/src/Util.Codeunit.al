@@ -532,6 +532,10 @@ codeunit 82564 "ADLSE Util"
         TimestampFieldRef: FieldRef;
         SystemIdFieldRef: FieldRef;
         SystemDateFieldRef: FieldRef;
+        PKFieldRef: FieldRef;
+        PKValues: JsonObject;
+        FieldNoText: Text;
+        FieldNo: Integer;
     begin
         TimestampFieldRef := RecordRef.Field(0);
         TimestampFieldRef.Value(ADLSEDeletedRecord."Deletion Timestamp");
@@ -542,6 +546,93 @@ codeunit 82564 "ADLSE Util"
         SystemDateFieldRef.Value(0DT);
         SystemDateFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
         SystemDateFieldRef.Value(0DT);
+
+        if ADLSEDeletedRecord."Primary Key Values" <> '' then
+            if PKValues.ReadFrom(ADLSEDeletedRecord."Primary Key Values") then
+                foreach FieldNoText in PKValues.Keys() do
+                    if Evaluate(FieldNo, FieldNoText) then
+                        if RecordRef.FieldExist(FieldNo) then begin
+                            PKFieldRef := RecordRef.Field(FieldNo);
+                            SetFieldRefValueFromText(PKFieldRef, GetTextValueForKeyInJson(PKValues, FieldNoText));
+                        end;
+    end;
+
+    local procedure SetFieldRefValueFromText(var PKFieldRef: FieldRef; TextValue: Text): Boolean
+    var
+        IntValue: Integer;
+        BigIntValue: BigInteger;
+        DecimalValue: Decimal;
+        GuidValue: Guid;
+        DateValue: Date;
+        DateTimeValue: DateTime;
+        TimeValue: Time;
+        DateFormulaValue: DateFormula;
+        BoolValue: Boolean;
+    begin
+        case PKFieldRef.Type() of
+            PKFieldRef.Type::Integer,
+            PKFieldRef.Type::Option:
+                begin
+                    if not Evaluate(IntValue, TextValue, 9) then
+                        exit(false);
+                    PKFieldRef.Value(IntValue);
+                end;
+            PKFieldRef.Type::BigInteger,
+            PKFieldRef.Type::Duration:
+                begin
+                    if not Evaluate(BigIntValue, TextValue, 9) then
+                        exit(false);
+                    PKFieldRef.Value(BigIntValue);
+                end;
+            PKFieldRef.Type::Decimal:
+                begin
+                    if not Evaluate(DecimalValue, TextValue, 9) then
+                        exit(false);
+                    PKFieldRef.Value(DecimalValue);
+                end;
+            PKFieldRef.Type::Boolean:
+                begin
+                    if not Evaluate(BoolValue, TextValue, 9) then
+                        exit(false);
+                    PKFieldRef.Value(BoolValue);
+                end;
+            PKFieldRef.Type::Guid:
+                begin
+                    if not Evaluate(GuidValue, TextValue) then
+                        exit(false);
+                    PKFieldRef.Value(GuidValue);
+                end;
+            PKFieldRef.Type::Date:
+                begin
+                    if not Evaluate(DateValue, TextValue, 9) then
+                        exit(false);
+                    PKFieldRef.Value(DateValue);
+                end;
+            PKFieldRef.Type::DateTime:
+                begin
+                    if not Evaluate(DateTimeValue, TextValue, 9) then
+                        exit(false);
+                    PKFieldRef.Value(DateTimeValue);
+                end;
+            PKFieldRef.Type::Time:
+                begin
+                    if not Evaluate(TimeValue, TextValue, 9) then
+                        exit(false);
+                    PKFieldRef.Value(TimeValue);
+                end;
+            PKFieldRef.Type::DateFormula:
+                begin
+                    if not Evaluate(DateFormulaValue, TextValue, 9) then
+                        exit(false);
+                    PKFieldRef.Value(DateFormulaValue);
+                end;
+            PKFieldRef.Type::Code,
+            PKFieldRef.Type::Text:
+                PKFieldRef.Value(TextValue);
+            else
+                exit(false);
+        end;
+        exit(true);
     end;
 
     internal procedure GetTextValueForKeyInJson(Object: JsonObject; "Key": Text): Text

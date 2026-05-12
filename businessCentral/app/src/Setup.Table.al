@@ -223,7 +223,20 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies if you want to export the closing date column in G/L Entries.';
             InitValue = false;
         }
-        field(105; "Distinguish Full Incremental"; Boolean)
+        field(85; "Use Primary Key for Mirroring"; Boolean)
+        {
+            Caption = 'Use Primary Key for Mirroring';
+            ToolTip = 'Specifies if the primary key fields of tables should be used as key columns in the Open Mirroring metadata instead of SystemId. Enable this if records are recreated with new SystemIds causing duplicates in the mirrored database.';
+            InitValue = false;
+
+        }
+        field(105; "Use Certificate Authentication"; Boolean)
+        {
+            Caption = 'Use Certificate Authentication';
+            ToolTip = 'Specifies if a certificate will be used for OAuth2 authentication instead of a client secret.';
+            InitValue = false;
+        }
+        field(110; "Distinguish Full Incremental"; Boolean)
         {
             Caption = 'Distinguish full and incremental exports';
             ToolTip = 'Specifies whether the generated CSV file names in Azure Data Lake should be suffixed with _full or _incremental, so that downstream pipelines can differentiate between a full export (first run, or first run after a reset) and an incremental export. Only applies to the Azure Data Lake storage type.';

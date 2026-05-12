@@ -152,6 +152,7 @@ table 82561 "ADLSE Table"
         StoppedByUserLbl: Label 'Session stopped by user.';
         InvalidFieldNotificationSent: List of [Integer];
         InvalidFieldConfiguredMsg: Label 'The following fields have been incorrectly enabled for exports in the table %1: %2', Comment = '%1 = table name; %2 = List of invalid field names';
+        SkippedPrimaryKeyFieldsMsg: Label 'The following primary key fields of table %1 have an unsupported type and have been skipped from the export: %2. The exported data may be incomplete.', Comment = '%1 = table name; %2 = list of skipped field names';
         WarnOfSchemaChangeQst: Label 'Data may have been exported from this table before. Changing the export schema now may cause unexpected side- effects. You may reset the table first so all the data shall be exported afresh. Do you still wish to continue?';
 
     internal procedure FieldsChosen(): Integer
@@ -167,16 +168,22 @@ table 82561 "ADLSE Table"
     internal procedure Add(TableID: Integer)
     var
         ADLSEExternalEvents: Codeunit "ADLSE External Events";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        SkippedFields: List of [Text];
     begin
         if not CheckTableCanBeExportedFrom(TableID) then
             Error(TableCannotBeExportedErr, TableID, GetLastErrorText());
+
         Rec.Init();
         Rec."Table ID" := TableID;
         Rec.Enabled := true;
         Rec.Insert(true);
 
-        AddPrimaryKeyFields();
+        AddPrimaryKeyFields(SkippedFields);
         ADLSEExternalEvents.OnAddTable(Rec);
+
+        if SkippedFields.Count() > 0 then
+            Message(SkippedPrimaryKeyFieldsMsg, ADLSEUtil.GetTableCaption(TableID), ADLSEUtil.Concatenate(SkippedFields));
     end;
 
     [TryFunction]
@@ -289,12 +296,14 @@ table 82561 "ADLSE Table"
         ADLSEField: Record "ADLSE Field";
         Field: Record Field;
         ADLSESetup: Codeunit "ADLSE Setup";
+        ADLSEUtil: Codeunit "ADLSE Util";
     begin
         ADLSEField.SetRange("Table ID", Rec."Table ID");
         ADLSEField.SetRange(Enabled, true);
         if ADLSEField.FindSet() then
             repeat
                 Field.Get(ADLSEField."Table ID", ADLSEField."Field ID");
+                ADLSEUtil.CheckFieldTypeForExport(Field);
                 ADLSESetup.CheckFieldCanBeExported(Field);
             until ADLSEField.Next() = 0;
     end;
@@ -389,22 +398,40 @@ table 82561 "ADLSE Table"
         Run.CancelRun(Rec."Table ID");
     end;
 
-    local procedure AddPrimaryKeyFields()
+    local procedure AddPrimaryKeyFields(var SkippedFields: List of [Text])
     var
         Field: Record Field;
         ADLSEField: Record "ADLSE Field";
+        ADLSEField2: Record "ADLSE Field";
     begin
         Field.SetRange(TableNo, Rec."Table ID");
         Field.SetRange(IsPartOfPrimaryKey, true);
         if Field.Findset() then
             repeat
-                if not ADLSEField.Get(Rec."Table ID", Field."No.") then begin
-                    ADLSEField."Table ID" := Field.TableNo;
-                    ADLSEField."Field ID" := Field."No.";
-                    ADLSEField.Enabled := true;
-                    ADLSEField.Insert();
+                if IsFieldSupportedForExport(Field) then begin
+                    if not ADLSEField.Get(Rec."Table ID", Field."No.") then begin
+                        ADLSEField."Table ID" := Field.TableNo;
+                        ADLSEField."Field ID" := Field."No.";
+                        ADLSEField.Enabled := true;
+                        ADLSEField.Insert();
+                    end;
+                end else begin
+                    SkippedFields.Add(Field."Field Caption");
+                    // Also remove a previously-enabled-but-now-unsupported PK row, if any
+                    if ADLSEField2.Get(Rec."Table ID", Field."No.") then
+                        ADLSEField2.Delete(false);
                 end;
             until Field.Next() = 0;
+    end;
+
+    [TryFunction]
+    local procedure IsFieldSupportedForExport(Field: Record Field)
+    var
+        ADLSESetup: Codeunit "ADLSE Setup";
+        ADLSEUtil: Codeunit "ADLSE Util";
+    begin
+        ADLSEUtil.CheckFieldTypeForExport(Field);
+        ADLSESetup.CheckFieldCanBeExported(Field);
     end;
 
     local procedure UpsertAllTableIds(Rowmarker: Integer)
