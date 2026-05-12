@@ -99,8 +99,29 @@ table 82560 "ADLSE Setup"
 
             trigger OnValidate()
             begin
-                if Rec."Storage Type" = Rec."Storage Type"::"Open Mirroring" then
+                if Rec."Storage Type" = "ADLSE Storage Type"::"Open Mirroring" then
                     Rec."Delete Table" := true;
+                case Rec."Storage Type" of
+                    "ADLSE Storage Type"::"Azure Data Lake":
+                        begin
+                            Rec.Workspace := '';
+                            Rec.Lakehouse := '';
+                            Rec.LandingZone := '';
+                        end;
+                    "ADLSE Storage Type"::"Microsoft Fabric":
+                        begin
+                            Rec.LandingZone := '';
+                            Rec.Container := '';
+                            Rec."Account Name" := '';
+                        end;
+                    "ADLSE Storage Type"::"Open Mirroring":
+                        begin
+                            Rec.Workspace := '';
+                            Rec.Lakehouse := '';
+                            Rec.Container := '';
+                            Rec."Account Name" := '';
+                        end;
+                end;
             end;
         }
 
