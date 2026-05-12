@@ -199,6 +199,12 @@ page 82560 "ADLSE Setup"
                         ADLSETable.ResetSelected();
                     end;
                 }
+                field("Distinguish Full Incremental"; Rec."Distinguish Full Incremental")
+                {
+                    Importance = Additional;
+                    Visible = AzureDataLake;
+                    Enabled = AzureDataLake;
+                }
             }
 
             group(DataFormatSettings)

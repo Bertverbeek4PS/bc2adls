@@ -236,6 +236,13 @@ table 82560 "ADLSE Setup"
             ToolTip = 'Specifies if a certificate will be used for OAuth2 authentication instead of a client secret.';
             InitValue = false;
         }
+        field(110; "Distinguish Full Incremental"; Boolean)
+        {
+            Caption = 'Distinguish full and incremental exports';
+            ToolTip = 'Specifies whether the generated CSV file names in Azure Data Lake should be suffixed with _full or _incremental, so that downstream pipelines can differentiate between a full export (first run, or first run after a reset) and an incremental export. Only applies to the Azure Data Lake storage type.';
+            InitValue = false;
+            DataClassification = SystemMetadata;
+        }
     }
 
     keys
