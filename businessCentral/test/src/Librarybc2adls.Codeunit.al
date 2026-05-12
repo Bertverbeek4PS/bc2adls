@@ -33,11 +33,23 @@ codeunit 85561 "ADLSE Library - bc2adls"
     procedure InsertTable(): Integer
     var
         AllObjWithCaption: Record AllObjWithCaption;
+        TableMetadata: Record "Table Metadata";
         RandonInt: Integer;
     begin
+        // Only pick Normal tables — buffer/temp tables are rejected by ADLSETable.Add
         AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
+        if AllObjWithCaption.FindSet() then
+            repeat
+                if TableMetadata.Get(AllObjWithCaption."Object ID") then
+                    if TableMetadata.TableType <> TableMetadata.TableType::Normal then
+                        AllObjWithCaption.Mark(false)
+                    else
+                        AllObjWithCaption.Mark(true);
+            until AllObjWithCaption.Next() = 0;
+        AllObjWithCaption.MarkedOnly(true);
         RandonInt := LibraryRandom.RandIntInRange(1, AllObjWithCaption.Count());
-        AllObjWithCaption.next(RandonInt);
+        AllObjWithCaption.FindFirst();
+        AllObjWithCaption.Next(RandonInt - 1);
         ADLSETable.Add(AllObjWithCaption."Object ID");
         exit(AllObjWithCaption."Object ID");
     end;
