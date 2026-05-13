@@ -381,6 +381,8 @@ codeunit 82561 "ADLSE Execute"
             if EmitTelemetry then
                 ADLSEExecution.Log('ADLSE-041', 'All exports are finished', Verbosity::Normal);
         end;
+
+        OnAfterSetStateFinished(ADLSETable, TableCaption);
     end;
 
     procedure UpdateInProgressTableTimestamp(var Rec: Record "ADLSE Table"; LastTimestamp: BigInteger; Deletes: Boolean)
@@ -463,4 +465,8 @@ codeunit 82561 "ADLSE Execute"
         ADLSECommunication.UpdateCdmJsons(EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
     end;
 
+    [IntegrationEvent(false, false)]
+    internal procedure OnAfterSetStateFinished(var ADLSETable: Record "ADLSE Table"; TableCaption: Text)
+    begin
+    end;
 }
