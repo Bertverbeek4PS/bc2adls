@@ -3,7 +3,6 @@
 namespace bc2adls;
 codeunit 82561 "ADLSE Execute"
 {
-    Access = Internal;
     TableNo = "ADLSE Table";
     Permissions = tabledata "ADLSE Table" = rm;
 
@@ -127,7 +126,7 @@ codeunit 82561 "ADLSE Execute"
         ExportTableDeletes(TableID, ADLSECommunicationDeletions, DeletedLastEntryNo, DidUpserts);
     end;
 
-    procedure UpdatedRecordsExist(TableID: Integer; UpdatedLastTimeStamp: BigInteger): Boolean
+    internal procedure UpdatedRecordsExist(TableID: Integer; UpdatedLastTimeStamp: BigInteger): Boolean
     var
         ADLSESeekData: Report "ADLSE Seek Data";
         RecordRef: RecordRef;
@@ -238,7 +237,7 @@ codeunit 82561 "ADLSE Execute"
             ADLSEExecution.Log('ADLSE-009', 'Updated records exported', Verbosity::Normal);
     end;
 
-    procedure DeletedRecordsExist(TableID: Integer; DeletedLastEntryNo: BigInteger): Boolean
+    internal procedure DeletedRecordsExist(TableID: Integer; DeletedLastEntryNo: BigInteger): Boolean
     var
         ADLSEDeletedRecord: Record "ADLSE Deleted Record";
         ADLSESeekData: Report "ADLSE Seek Data";
@@ -308,7 +307,7 @@ codeunit 82561 "ADLSE Execute"
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Deleted Record", 'rd')]
-    procedure FixDeletedRecordThatAreInTable(var ADLSEDeletedRecord: Record "ADLSE Deleted Record")
+    internal procedure FixDeletedRecordThatAreInTable(var ADLSEDeletedRecord: Record "ADLSE Deleted Record")
     var
         RecordRef: RecordRef;
     begin
@@ -328,7 +327,7 @@ codeunit 82561 "ADLSE Execute"
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Field", 'r')]
-    procedure CreateFieldListForTable(TableID: Integer) FieldIdList: List of [Integer]
+    internal procedure CreateFieldListForTable(TableID: Integer) FieldIdList: List of [Integer]
     var
         ADLSEField: Record "ADLSE Field";
         ADLSEUtil: Codeunit "ADLSE Util";
@@ -381,9 +380,11 @@ codeunit 82561 "ADLSE Execute"
             if EmitTelemetry then
                 ADLSEExecution.Log('ADLSE-041', 'All exports are finished', Verbosity::Normal);
         end;
+
+        OnAfterSetStateFinished(ADLSETable, TableCaption);
     end;
 
-    procedure UpdateInProgressTableTimestamp(var Rec: Record "ADLSE Table"; LastTimestamp: BigInteger; Deletes: Boolean)
+    internal procedure UpdateInProgressTableTimestamp(var Rec: Record "ADLSE Table"; LastTimestamp: BigInteger; Deletes: Boolean)
     var
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
         ADLSEExecution: Codeunit "ADLSE Execution";
@@ -420,7 +421,7 @@ codeunit 82561 "ADLSE Execute"
         Commit(); // to save the last time stamps into the database.
     end;
 
-    procedure ExportSchema(tableId: Integer)
+    internal procedure ExportSchema(tableId: Integer)
     var
         ADLSESetup: Record "ADLSE Setup";
         ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
@@ -463,4 +464,8 @@ codeunit 82561 "ADLSE Execute"
         ADLSECommunication.UpdateCdmJsons(EntityJsonNeedsUpdate, ManifestJsonsNeedsUpdate);
     end;
 
+    [IntegrationEvent(false, false)]
+    internal procedure OnAfterSetStateFinished(var ADLSETable: Record "ADLSE Table"; TableCaption: Text)
+    begin
+    end;
 }
