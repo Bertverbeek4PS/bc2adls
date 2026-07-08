@@ -63,11 +63,24 @@ table 82565 "ADLSE Current Session"
         InsertFailedErr: Label 'Could not start the export as there is already an active export running for the table %1. If this is not so, please stop all exports and try again.', Comment = '%1 = table caption';
         CouldNotStopSessionErr: Label 'Could not delete the export table session %1 for table on company %2.', Comment = '%1: session id, %2: company name';
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'i')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'id')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Run", 'rm')]
     procedure Start(ADLSETableID: Integer)
     var
         ADLSEUtil: Codeunit "ADLSE Util";
     begin
+        if Rec.Get(ADLSETableID, CompanyName()) then begin
+            if IsSessionActive() then
+                Error(InsertFailedErr, ADLSEUtil.GetTableCaption(ADLSETableID));
+
+            // The session that owned this entry ended abnormally (e.g. terminated by the
+            // platform) without cleaning up after itself, leaving this table permanently
+            // stuck. Self-heal by clearing the stale entry and failing the export run it
+            // left hanging, so this export can proceed instead of erroring out forever.
+            CancelStaleRun(ADLSETableID);
+            Rec.Delete(false);
+        end;
+
         Rec.Init();
         Rec."Table ID" := ADLSETableID;
         Rec."Session ID" := SessionId();
@@ -75,6 +88,19 @@ table 82565 "ADLSE Current Session"
         Rec."Company Name" := CopyStr(CompanyName(), 1, 30);
         if not Rec.Insert(true) then
             Error(InsertFailedErr, ADLSEUtil.GetTableCaption(ADLSETableID));
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Run", 'rm')]
+    local procedure CancelStaleRun(ADLSETableID: Integer)
+    var
+        ADLSERun: Record "ADLSE Run";
+        Status: Enum "ADLSE Run State";
+        StartedTime: DateTime;
+        ErrorIfAny: Text[2048];
+    begin
+        ADLSERun.GetLastRunDetails(ADLSETableID, Status, StartedTime, ErrorIfAny);
+        if Status = "ADLSE Run State"::InProcess then
+            ADLSERun.CancelRun(ADLSETableID);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::"ADLSE Current Session", 'rd')]
