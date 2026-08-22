@@ -167,17 +167,27 @@ codeunit 82561 "ADLSE Execute"
     end;
 
     local procedure SetFilterForUpdates(TableID: Integer; UpdatedLastTimeStamp: BigInteger; SkipTimestampSorting: Boolean; var RecordRef: RecordRef; var TimeStampFieldRef: FieldRef)
+    var
+        ADLSETable: Record "ADLSE Table";
+        ModifiedAtFieldRef: FieldRef;
     begin
         RecordRef.Open(TableID);
         if not SkipTimestampSorting then
             RecordRef.SetView(TimestampAscendingSortViewTxt);
         TimeStampFieldRef := RecordRef.Field(0); // 0 is the TimeStamp field
         TimeStampFieldRef.SetFilter('>%1', UpdatedLastTimeStamp);
+
+        // Bound this run to the current initial-load batch, so large tables can be caught up in date-bounded deltas.
+        if ADLSETable.Get(TableID) and (ADLSETable."Initial Load End Date" <> 0D) then begin
+            ModifiedAtFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
+            ModifiedAtFieldRef.SetFilter('<=%1', CreateDateTime(ADLSETable."Initial Load End Date", 235959T));
+        end;
     end;
 
     local procedure ExportTableUpdates(TableID: Integer; FieldIdList: List of [Integer]; ADLSECommunication: Codeunit "ADLSE Communication"; var UpdatedLastTimeStamp: BigInteger; var DidUpserts: Boolean; DoFinish: Boolean)
     var
         ADLSESetup: Record "ADLSE Setup";
+        ADLSETable: Record "ADLSE Table";
         ADLSESeekData: Report "ADLSE Seek Data";
         ADLSEExecution: Codeunit "ADLSE Execution";
         ADLSEUtil: Codeunit "ADLSE Util";
@@ -264,6 +274,14 @@ codeunit 82561 "ADLSE Execute"
             if ErrorMessage.Message() <> '' then
                 Error(ErrorMessage);
         end;
+
+        // Current initial-load batch is fully exported; clear the bound so the next run can be set to the following batch.
+        if ADLSETable.Get(TableID) and (ADLSETable."Initial Load End Date" <> 0D) and (not DidUpserts or NoMoreToCollect) then begin
+            ADLSETable."Initial Load End Date" := 0D;
+            ADLSETable.Modify();
+            Commit();
+        end;
+
         if EmitTelemetry then
             ADLSEExecution.Log('ADLSE-009', 'Updated records exported', Verbosity::Normal);
     end;
