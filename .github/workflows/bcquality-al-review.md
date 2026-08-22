@@ -54,6 +54,7 @@ safe-outputs:
   add-comment:
     max: 1
     hide-older-comments: true
+    github-token: ${{ secrets.GH_AW_WRITE_TOKEN }}
 ---
 
 <steps>
