@@ -17,7 +17,9 @@ codeunit 82570 "ADLSE Session Manager"
     procedure StartExport(TableID: Integer; EmitTelemetry: Boolean): Boolean
     begin
         // if the last run failed, ensure that you run again, even though there may be no data differences.
-        exit(StartExport(TableID, false, LastRunFailed(TableID, EmitTelemetry), EmitTelemetry));
+        // Also force the very first run for Open Mirroring, since an empty table would otherwise never get a session
+        // (DataChangesExist stays false forever), and would never receive its initial (header-only) snapshot file.
+        exit(StartExport(TableID, false, LastRunFailed(TableID, EmitTelemetry) or NeverRunOnOpenMirroring(TableID), EmitTelemetry));
     end;
 
     local procedure StartExportFromPending(TableID: Integer; EmitTelemetry: Boolean): Boolean
@@ -106,6 +108,22 @@ codeunit 82570 "ADLSE Session Manager"
             CustomDimensions.Add('Entity', ADLSEUtil.GetTableCaption(TableID));
             ADLSEExecution.Log('ADLSE-027', 'Last run failed.', Verbosity::Normal, CustomDimensions);
         end;
+    end;
+
+    local procedure NeverRunOnOpenMirroring(TableID: Integer): Boolean
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSERun: Record "ADLSE Run";
+        Status: Enum "ADLSE Run State";
+        StartedAt: DateTime;
+        Error: Text[2048];
+    begin
+        ADLSESetup.GetSingleton();
+        if ADLSESetup.GetStorageType() <> ADLSESetup."Storage Type"::"Open Mirroring" then
+            exit(false);
+
+        ADLSERun.GetLastRunDetails(TableID, Status, StartedAt, Error);
+        exit(Status = "ADLSE Run State"::None);
     end;
 
     procedure StartExportFromPendingTables()

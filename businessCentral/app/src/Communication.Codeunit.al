@@ -335,6 +335,19 @@ codeunit 82562 "ADLSE Communication"
         LastDeletedEntryNoExported := LastFlushedDeletedEntryNo;
     end;
 
+    [TryFunction]
+    procedure TryExportEmptyFullLoad()
+    var
+        ADLSEUtil: Codeunit "ADLSE Util";
+        RecordRef: RecordRef;
+    begin
+        // Writes a header-only CSV so Fabric Open Mirroring receives a snapshot file even for tables without records.
+        ClearLastError();
+        RecordRef.Open(TableID);
+        Payload.Append(ADLSEUtil.CreateCsvHeader(RecordRef, FieldIdList));
+        FlushPayload();
+    end;
+
     local procedure Finish() LastTimestampExported: BigInteger
     var
         ADLSESetup: Record "ADLSE Setup";
