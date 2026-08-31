@@ -178,9 +178,10 @@ codeunit 82561 "ADLSE Execute"
         TimeStampFieldRef.SetFilter('>%1', UpdatedLastTimeStamp);
 
         // Bound this run to the current initial-load batch, so large tables can be caught up in date-bounded deltas.
+        // Records with no tracked SystemModifiedAt (legacy data predating that system field) must still be included.
         if ADLSETable.Get(TableID) and (ADLSETable."Initial Load End Date" <> 0D) then begin
             ModifiedAtFieldRef := RecordRef.Field(RecordRef.SystemModifiedAtNo());
-            ModifiedAtFieldRef.SetFilter('<=%1', CreateDateTime(ADLSETable."Initial Load End Date", 235959T));
+            ModifiedAtFieldRef.SetFilter('<=%1|%2', CreateDateTime(ADLSETable."Initial Load End Date", 235959T), 0DT);
         end;
     end;
 
