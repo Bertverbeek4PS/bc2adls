@@ -208,7 +208,7 @@ table 82564 "ADLSE Table Last Timestamp"
             Rec."Deleted Last Entry No." := Timestamp;
     end;
 
-    local procedure GetCompanyNameToLookFor(TableID: Integer): Text
+    internal procedure GetCompanyNameToLookFor(TableID: Integer): Text
     var
         ADLSEUtil: Codeunit "ADLSE Util";
     begin

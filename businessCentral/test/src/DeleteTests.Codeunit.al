@@ -183,6 +183,33 @@ codeunit 85563 "ADLSE Delete Tests"
         RecordRef.Close();
     end;
 
+    [Test]
+    [HandlerFunctions('MessageHandler')]
+    procedure ResetSelectedClearsTimestampForNonPerCompanyTableInOpenMirroring()
+    var
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+    begin
+        // [SCENARIO 576] For a non-DataPerCompany table (e.g. User) in Open Mirroring, ResetSelected(false)
+        // (the path used by the API "Reset" action) must clear the last-timestamp record, which is stored
+        // under a blank company name, not the current company.
+        // [GIVEN] Open Mirroring setup
+        Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup("Storage Type"::"Open Mirroring");
+
+        // [GIVEN] The User table (non-per-company) is added for export and has a last exported timestamp
+        ADLSETable.Add(Database::User);
+        ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Database::User, 123456789);
+        LibraryAssert.IsTrue(ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(Database::User), 'Last timestamp should exist before reset');
+
+        // [WHEN] ResetSelected is called without AllCompanies (the API "Reset" action default)
+        ADLSETable.Get(Database::User);
+        ADLSETable.ResetSelected();
+
+        // [THEN] The last-timestamp record for the table is cleared
+        LibraryAssert.IsFalse(ADLSETableLastTimestamp.ExistsUpdatedLastTimestamp(Database::User), 'Last timestamp should be cleared after reset');
+    end;
+
     local procedure InsertPaymentTerms(var PaymentTerms: Record "Payment Terms")
     begin
         PaymentTerms.Init();
