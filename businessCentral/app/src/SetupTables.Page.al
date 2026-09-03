@@ -122,6 +122,11 @@ page 82561 "ADLSE Setup Tables"
                     Caption = 'Initial Load Start Date';
                     ApplicationArea = All;
                 }
+                field("Initial Load End Date"; Rec."Initial Load End Date")
+                {
+                    Caption = 'Initial Load End Date';
+                    ApplicationArea = All;
+                }
             }
         }
     }
