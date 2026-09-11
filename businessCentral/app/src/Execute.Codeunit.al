@@ -153,6 +153,16 @@ codeunit 82561 "ADLSE Execute"
             ADLSECommunicationDeletions.Init(TableID, FieldIdList, DeletedLastEntryNo, EmitTelemetry);
             // entity has been already checked above
             ExportTableDeletes(TableID, ADLSECommunicationDeletions, DeletedLastEntryNo, DidUpserts, DidDeletes, true);
+
+            // A table that is empty on its initial export never produces a CSV file, so Fabric Open Mirroring never
+            // sees it leave the "Snapshotting" state and eventually marks it as failed. Write a header-only file instead.
+            if (ADLSESetup.GetStorageType() = ADLSESetup."Storage Type"::"Open Mirroring")
+                and (UpdatedLastTimeStamp = 0) and not DidUpserts and not DidDeletes
+            then
+                if not ADLSECommunication.TryExportEmptyFullLoad() then begin
+                    ErrorMessage.Message := StrSubstNo('%1%2', GetLastErrorText(), GetLastErrorCallStack());
+                    Error(ErrorMessage);
+                end;
         end;
     end;
 
