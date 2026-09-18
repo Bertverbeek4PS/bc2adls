@@ -148,7 +148,6 @@ codeunit 82564 "ADLSE Util"
     internal procedure GetDataLakeCompliantTableName(TableID: Integer): Text
     var
         ADLSESetup: Record "ADLSE Setup";
-        AllObjWithCaption: Record AllObjWithCaption;
         OrigTableName: Text;
         CompliantTableName: Text;
     begin
@@ -158,22 +157,37 @@ codeunit 82564 "ADLSE Util"
         else
             OrigTableName := GetTableName(TableID);
         if ADLSESetup."Use IDs for Duplicates Only" then begin
-            AllObjWithCaption.SetRange("Object Type", AllObjWithCaption."Object Type"::Table);
-            AllObjWithCaption.SetFilter("Object ID", '<>%1', TableID);
-            if ADLSESetup."Use Table Captions" then
-                AllObjWithCaption.SetRange("Object Caption", OrigTableName)
+            if HasDuplicateTableNameInExportList(TableID, OrigTableName, ADLSESetup."Use Table Captions") then
+                CompliantTableName := StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(OrigTableName), TableID)
             else
-                AllObjWithCaption.SetRange("Object Name", OrigTableName);
-            if AllObjWithCaption.IsEmpty() then // there is not a duplicate table caption
-                CompliantTableName := GetDataLakeCompliantName(OrigTableName)
-            else
-                CompliantTableName := StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(OrigTableName), TableID);
+                CompliantTableName := GetDataLakeCompliantName(OrigTableName);
         end else
             CompliantTableName := StrSubstNo(ConcatNameIdTok, GetDataLakeCompliantName(OrigTableName), TableID);
 
         OnAfterGetDataLakeCompliantTableName(TableID, CompliantTableName);
 
         exit(CompliantTableName);
+    end;
+
+    // checks for a name/caption clash only among the tables that are actually enabled for export, not every table in the system
+    local procedure HasDuplicateTableNameInExportList(TableID: Integer; OrigTableName: Text; UseTableCaptions: Boolean): Boolean
+    var
+        ADLSETable: Record "ADLSE Table";
+        AllObjWithCaption: Record AllObjWithCaption;
+    begin
+        ADLSETable.SetRange(Enabled, true);
+        ADLSETable.SetFilter("Table ID", '<>%1', TableID);
+        if ADLSETable.FindSet() then
+            repeat
+                if AllObjWithCaption.Get(AllObjWithCaption."Object Type"::Table, ADLSETable."Table ID") then
+                    if UseTableCaptions then begin
+                        if AllObjWithCaption."Object Caption" = OrigTableName then
+                            exit(true);
+                    end else
+                        if AllObjWithCaption."Object Name" = OrigTableName then
+                            exit(true);
+            until ADLSETable.Next() = 0;
+        exit(false);
     end;
 
     internal procedure GetDataLakeCompliantFieldName(TableID: Integer; FieldID: Integer): Text
