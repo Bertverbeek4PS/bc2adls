@@ -365,7 +365,7 @@ codeunit 82566 "ADLSE CDM Util" // Refer Common Data Model https://docs.microsof
         end;
     end;
 
-    local procedure GetCDMAttributeDetails(FieldType: FieldType; var DataFormat: Text; var AppliedTraits: JsonArray)
+    internal procedure GetCDMAttributeDetails(FieldType: FieldType; var DataFormat: Text; var AppliedTraits: JsonArray)
     begin
         DataFormat := '';
         Clear(AppliedTraits);

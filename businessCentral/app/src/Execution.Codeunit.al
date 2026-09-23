@@ -206,6 +206,65 @@ codeunit 82569 "ADLSE Execution"
         end;
     end;
 
+    internal procedure ScheduleExportApi()
+    var
+        JobQueueEntry: Record "Job Queue Entry";
+        ADLSEScheduleTaskAssignment: Report "ADLSE Schedule Task Assignment";
+    begin
+        ScheduleTaskFilter(JobQueueEntry);
+
+        if JobQueueEntry.FindFirst() then
+            exit;
+        ADLSEScheduleTaskAssignment.CreateJobQueueEntry(JobQueueEntry);
+        SetInitData(JobQueueEntry);
+    end;
+
+    internal procedure SetOnHold()
+    var
+        JobQueueEntry: Record "Job Queue Entry";
+    begin
+        ScheduleTaskFilter(JobQueueEntry);
+
+        if JobQueueEntry.FindFirst() then
+            JobQueueEntry.SetStatus(JobQueueEntry.Status::"On Hold");
+    end;
+
+    internal procedure Restart()
+    var
+        JobQueueEntry: Record "Job Queue Entry";
+    begin
+        ScheduleTaskFilter(JobQueueEntry);
+
+        if JobQueueEntry.FindFirst() then
+            JobQueueEntry.Restart();
+    end;
+
+    local procedure ScheduleTaskFilter(var JobQueueEntry: Record "Job Queue Entry")
+    begin
+        //JobQueueEntry.SetFilter("User ID", UserId());
+        JobQueueEntry.SetRange("Object Type to Run", JobQueueEntry."Object Type to Run"::Report);
+        JobQueueEntry.SetRange("Object ID to Run", Report::"ADLSE Schedule Task Assignment");
+        JobQueueEntry.SetCurrentKey(SystemCreatedAt);
+        JobQueueEntry.SetAscending(SystemCreatedAt, false);
+    end;
+
+    local procedure SetInitData(var JobQueueEntry: Record "Job Queue Entry")
+    begin
+        JobQueueEntry.Description := 'Schedule Export';
+        JobQueueEntry."No. of Minutes between Runs" := 30;
+        JobQueueEntry.Validate("Run on Mondays", true);
+        JobQueueEntry.Validate("Run on Tuesdays", true);
+        JobQueueEntry.Validate("Run on Wednesdays", true);
+        JobQueueEntry.Validate("Run on Thursdays", true);
+        JobQueueEntry.Validate("Run on Fridays", true);
+        JobQueueEntry.Validate("Run on Saturdays", true);
+        JobQueueEntry.Validate("Run on Sundays", true);
+
+        JobQueueEntry.Validate("Earliest Start Date/Time", CurrentDateTime());
+
+        JobQueueEntry.Modify(true);
+    end;
+
     internal procedure ScheduleMultiExport()
     var
         JobQueueEntry: Record "Job Queue Entry";

@@ -113,6 +113,33 @@ page 82572 "ADLSE Setup API v12"
         SetActionResponse(ActionContext, Rec."SystemId");
     end;
 
+    [ServiceEnabled]
+    procedure ScheduleExport(var ActionContext: WebServiceActionContext)
+    var
+        ADLSEExecution: Codeunit "ADLSE Execution";
+    begin
+        ADLSEExecution.ScheduleExportApi();
+        SetActionResponse(ActionContext, Rec."SystemId");
+    end;
+
+    [ServiceEnabled]
+    procedure SetOnHold(var ActionContext: WebServiceActionContext)
+    var
+        ADLSEExecution: Codeunit "ADLSE Execution";
+    begin
+        ADLSEExecution.SetOnHold();
+        SetActionResponse(ActionContext, Rec."SystemId");
+    end;
+
+    [ServiceEnabled]
+    procedure Restart(var ActionContext: WebServiceActionContext)
+    var
+        ADLSEExecution: Codeunit "ADLSE Execution";
+    begin
+        ADLSEExecution.Restart();
+        SetActionResponse(ActionContext, Rec."SystemId");
+    end;
+
     local procedure SetActionResponse(var ActionContext: WebServiceActionContext; AdlsId: Guid)
     var
     begin
