@@ -21,6 +21,8 @@ permissionset 82563 "ADLSE - API"
                   page "ADLSE Field API v12" = X,
                   page "ADLSE CurrentSession API" = X,
                   page "ADLSE Run API v12" = X,
+                  page "ADLSE All Field API v12" = X,
+                  page "ADLSE All Table API v12" = X,
                   codeunit "ADLSE External Events Helper" = X,
                   codeunit "ADLSE External Events" = X;
 }
