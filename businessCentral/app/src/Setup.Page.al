@@ -201,8 +201,8 @@ page 82560 "ADLSE Setup"
                 }
                 field("Soft Delete Open Mirroring"; Rec."Soft Delete Open Mirroring")
                 {
+                    ApplicationArea = All;
                     Importance = Additional;
-                    Visible = FabricOpenMirroring;
                     Editable = FabricOpenMirroring;
                 }
                 field("Distinguish Full Incremental"; Rec."Distinguish Full Incremental")
