@@ -199,6 +199,12 @@ page 82560 "ADLSE Setup"
                         ADLSETable.ResetSelected();
                     end;
                 }
+                field("Soft Delete Open Mirroring"; Rec."Soft Delete Open Mirroring")
+                {
+                    Importance = Additional;
+                    Visible = FabricOpenMirroring;
+                    Editable = FabricOpenMirroring;
+                }
                 field("Distinguish Full Incremental"; Rec."Distinguish Full Incremental")
                 {
                     Importance = Additional;
