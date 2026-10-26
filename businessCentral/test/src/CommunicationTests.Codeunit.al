@@ -279,6 +279,71 @@ codeunit 85572 "ADLSE Communication Tests"
         // [THEN] No error occurs
     end;
 
+    [Test]
+    procedure DeletionChunksInFabricHaveOneHeaderPerFile()
+    begin
+        VerifyDeletionChunks("Storage Type"::"Microsoft Fabric", false);
+    end;
+
+    [Test]
+    procedure DeletionChunksInDataLakeHaveOneHeaderPerFile()
+    begin
+        VerifyDeletionChunks("Storage Type"::"Azure Data Lake", false);
+    end;
+
+    [Test]
+    procedure DeletionRolloverInFabricDoesNotDuplicateHeader()
+    begin
+        VerifyDeletionChunks("Storage Type"::"Microsoft Fabric", true);
+    end;
+
+    local procedure VerifyDeletionChunks(StorageType: Enum "ADLSE Storage Type"; RollOver: Boolean)
+    var
+        ADLSETable: Record "ADLSE Table";
+        ADLSECommunication: Codeunit "ADLSE Communication";
+        ADLSEExecute: Codeunit "ADLSE Execute";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        ADLSEGen2UtilMockExtended: Codeunit "ADLSE Gen 2 Util Mock Extended";
+        RecordRef: RecordRef;
+        FieldIdList: List of [Integer];
+        Bodies: List of [Text];
+        LastTimestampExported: BigInteger;
+        ExpectedRows: Text;
+        ExpectedHeader: Text;
+    begin
+        Initialize();
+        ADLSELibrarybc2adls.CleanUp();
+        ADLSELibrarybc2adls.CreateAdlseSetup(StorageType);
+        ADLSETable.Add(Database::"Reason Code");
+        ADLSELibrarybc2adls.InsertFields();
+        ADLSELibrarybc2adls.EnableFields();
+        FieldIdList := ADLSEExecute.CreateFieldListForTable(Database::"Reason Code");
+        RecordRef.Open(Database::"Reason Code");
+        ExpectedHeader := ADLSEUtil.CreateCsvHeader(RecordRef, FieldIdList);
+        ExpectedRows := ADLSEUtil.CreateCsvPayload(RecordRef, FieldIdList, false, true);
+        Session.BindSubscription(ADLSEGen2UtilMockExtended);
+        ADLSECommunication.Init(Database::"Reason Code", FieldIdList, 0, false);
+        LibraryAssert.IsTrue(ADLSECommunication.TryCollectAndSendRecord(RecordRef, 1, LastTimestampExported, true), GetLastErrorText());
+        if RollOver then
+            ADLSEGen2UtilMockExtended.SetBlobContentLength(2147483646 - StrLen(ExpectedHeader) - StrLen(ExpectedRows));
+        LibraryAssert.IsTrue(ADLSECommunication.TryFinish(LastTimestampExported), GetLastErrorText());
+        LibraryAssert.AreEqual(1, LastTimestampExported, 'The first flushed deletion checkpoint must be returned');
+        LibraryAssert.IsTrue(ADLSECommunication.TryCollectAndSendRecord(RecordRef, 2, LastTimestampExported, true), GetLastErrorText());
+        LibraryAssert.IsTrue(ADLSECommunication.TryCollectAndSendRecord(RecordRef, 3, LastTimestampExported, true), GetLastErrorText());
+        LibraryAssert.IsTrue(ADLSECommunication.TryFinish(LastTimestampExported), GetLastErrorText());
+        Session.UnbindSubscription(ADLSEGen2UtilMockExtended);
+        RecordRef.Close();
+
+        Bodies := ADLSEGen2UtilMockExtended.GetBodies();
+        LibraryAssert.AreEqual(2, Bodies.Count(), 'Both deletion chunks must be written');
+        LibraryAssert.AreEqual(ExpectedHeader + ExpectedRows, Bodies.Get(1), 'The first file must start with exactly one header');
+        ExpectedRows += ExpectedRows;
+        if RollOver then
+            ExpectedRows := ExpectedHeader + ExpectedRows;
+        LibraryAssert.AreEqual(ExpectedRows, Bodies.Get(2), 'Only a new file may receive another header');
+        LibraryAssert.AreEqual(3, LastTimestampExported, 'The last flushed deletion checkpoint must be returned');
+    end;
+
     local procedure Initialize()
     var
         LibraryTestInitialize: Codeunit "Library - Test Initialize";

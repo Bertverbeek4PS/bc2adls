@@ -129,6 +129,115 @@ codeunit 85566 "ADLSE Export Tests"
         LibraryAssert.AreEqual(2, i, 'The payload should exist of only two lines');
     end;
 
+    [Test]
+    procedure ExportOnlyDeletesToFabric()
+    begin
+        VerifyDeletionOnlyExport("Storage Type"::"Microsoft Fabric");
+    end;
+
+    [Test]
+    procedure ExportOnlyDeletesToDataLake()
+    begin
+        VerifyDeletionOnlyExport("Storage Type"::"Azure Data Lake");
+    end;
+
+    [Test]
+    procedure FailedDeletionCollectionDoesNotAdvanceProgress()
+    var
+        ADLSESetup: Record "ADLSE Setup";
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+        ADLSERun: Record "ADLSE Run";
+        ADLSEDeletedRecord: Record "ADLSE Deleted Record";
+        ADLSEExecute: Codeunit "ADLSE Execute";
+        ADLSEGen2UtilMockExtended: Codeunit "ADLSE Gen 2 Util Mock Extended";
+    begin
+        PrepareDeletionOnlyExport("Storage Type"::"Microsoft Fabric", ADLSEDeletedRecord, ADLSEGen2UtilMockExtended);
+        ADLSESetup.GetSingleton();
+        ADLSESetup.MaxPayloadSizeMiB := 0;
+        ADLSESetup.Modify();
+
+        Session.BindSubscription(ADLSEGen2UtilMockExtended);
+        ADLSEExecute.Run(ADLSETable);
+        Session.UnbindSubscription(ADLSEGen2UtilMockExtended);
+
+        ADLSERun.SetRange("Table ID", ADLSETable."Table ID");
+        ADLSERun.FindLast();
+        LibraryAssert.AreEqual(ADLSERun.State::Failed, ADLSERun.State, 'An unsent deletion must fail the run');
+        LibraryAssert.IsTrue(ADLSERun.Error.Contains('A single record payload exceeded'), 'The collection error must be preserved');
+        LibraryAssert.AreEqual(0, ADLSETableLastTimestamp.GetDeletedLastEntryNo(ADLSETable."Table ID"), 'Unsent deletions must not be marked as exported');
+        LibraryAssert.AreEqual(0, ADLSEGen2UtilMockExtended.GetBodies().Count(), 'No deletion payload should be sent');
+    end;
+
+    local procedure VerifyDeletionOnlyExport(StorageType: Enum "ADLSE Storage Type")
+    var
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+        ADLSEDeletedRecord: Record "ADLSE Deleted Record";
+        ADLSERun: Record "ADLSE Run";
+        ADLSEExecute: Codeunit "ADLSE Execute";
+        ADLSEUtil: Codeunit "ADLSE Util";
+        ADLSEGen2UtilMockExtended: Codeunit "ADLSE Gen 2 Util Mock Extended";
+        RecordRef: RecordRef;
+        FieldIdList: List of [Integer];
+        ExpectedPayload: Text;
+    begin
+        PrepareDeletionOnlyExport(StorageType, ADLSEDeletedRecord, ADLSEGen2UtilMockExtended);
+        FieldIdList := ADLSEExecute.CreateFieldListForTable(Database::"Reason Code");
+        RecordRef.Open(Database::"Reason Code");
+        ADLSEUtil.CreateFakeRecordForDeletedAction(ADLSEDeletedRecord, RecordRef);
+        ExpectedPayload := ADLSEUtil.CreateCsvPayload(RecordRef, FieldIdList, true, true);
+        RecordRef.Close();
+
+        Session.BindSubscription(ADLSEGen2UtilMockExtended);
+        ADLSEExecute.Run(ADLSETable);
+        Session.UnbindSubscription(ADLSEGen2UtilMockExtended);
+
+        LibraryAssert.AreEqual(ExpectedPayload, ADLSEGen2UtilMockExtended.GetBody(), 'A deletion-only export must contain exactly one header and the deletion row');
+        LibraryAssert.AreEqual(ADLSEDeletedRecord."Entry No.", ADLSETableLastTimestamp.GetDeletedLastEntryNo(Database::"Reason Code"), 'Successfully exported deletions must advance their checkpoint');
+        LibraryAssert.AreEqual(1, ADLSETableLastTimestamp.GetUpdatedLastTimestamp(Database::"Reason Code"), 'A deletion-only export must preserve the upsert checkpoint');
+        ADLSERun.SetRange("Table ID", ADLSETable."Table ID");
+        ADLSERun.FindLast();
+        LibraryAssert.AreEqual(ADLSERun.State::Success, ADLSERun.State, 'The deletion-only export must finish successfully');
+
+        Clear(ADLSEExecute);
+        Session.BindSubscription(ADLSEGen2UtilMockExtended);
+        ADLSEExecute.Run(ADLSETable);
+        Session.UnbindSubscription(ADLSEGen2UtilMockExtended);
+        LibraryAssert.AreEqual(1, ADLSEGen2UtilMockExtended.GetBodies().Count(), 'The next run must not re-export processed deletions');
+    end;
+
+    local procedure PrepareDeletionOnlyExport(StorageType: Enum "ADLSE Storage Type"; var ADLSEDeletedRecord: Record "ADLSE Deleted Record"; var ADLSEGen2UtilMockExtended: Codeunit "ADLSE Gen 2 Util Mock Extended")
+    var
+        ADLSETableLastTimestamp: Record "ADLSE Table Last Timestamp";
+        ReasonCode: Record "Reason Code";
+        ADLSESessionManager: Codeunit "ADLSE Session Manager";
+        EntityBlobPath: Text;
+    begin
+        Initialize();
+        ADLSLibrarybc2adls.CleanUp();
+        ADLSESessionManager.SavePendingTables('');
+        ADLSLibrarybc2adls.CreateAdlseSetup(StorageType);
+        ReasonCode.DeleteAll(false);
+        ADLSEDeletedRecord.DeleteAll();
+        ADLSETable.Add(Database::"Reason Code");
+        ADLSLibrarybc2adls.InsertFields();
+        ADLSLibrarybc2adls.EnableFields();
+        ADLSETableLastTimestamp.SaveUpdatedLastTimestamp(Database::"Reason Code", 1);
+
+        ADLSEDeletedRecord.Init();
+        ADLSEDeletedRecord."Table ID" := Database::"Reason Code";
+        ADLSEDeletedRecord."System ID" := CreateGuid();
+        ADLSEDeletedRecord."Deletion Timestamp" := 2;
+        ADLSEDeletedRecord.Insert();
+
+        if StorageType = "Storage Type"::"Microsoft Fabric" then
+            EntityBlobPath := 'https://onelake.dfs.fabric.microsoft.com/bc2adls/bc2adls.Lakehouse/Files/'
+        else
+            EntityBlobPath := 'https://bc2adls.blob.core.windows.net/bc2adls/';
+        ADLSEGen2UtilMockExtended.SetBlobExists(true);
+        ADLSEGen2UtilMockExtended.AddContent(EntityBlobPath + 'ReasonCode-231.cdm.json', ADLSLibrarybc2adls.GetExpectedEntityJson(Database::"Reason Code"));
+        ADLSEGen2UtilMockExtended.AddContent(EntityBlobPath + 'data.manifest.cdm.json', ADLSLibrarybc2adls.GetExpectedManifestJson(Database::"Reason Code"));
+    end;
+
     local procedure Initialize()
     var
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
