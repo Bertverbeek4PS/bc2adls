@@ -6,6 +6,7 @@ codeunit 85568 "ADLSE Gen 2 Util Mock Extended"
         _blobExists: Boolean;
         _contents: Dictionary of [Text, Text];
         _body: Text;
+        _bodies: List of [Text];
         _simulateFailure: Boolean;
         _failureMessage: Text;
         _containerExists: Boolean;
@@ -39,6 +40,8 @@ codeunit 85568 "ADLSE Gen 2 Util Mock Extended"
             Error(_failureMessage);
 
         _createdBlobs.Add(BlobPath);
+        if not IsJson then
+            _blobContentLength := 0;
         _containerCreated := true;
         IsHandled := true;
     end;
@@ -57,6 +60,7 @@ codeunit 85568 "ADLSE Gen 2 Util Mock Extended"
             Error(_failureMessage);
 
         _body := Body;
+        _bodies.Add(Body);
         _blobContentLength += StrLen(Body);
         IsHandled := true;
     end;
@@ -89,6 +93,11 @@ codeunit 85568 "ADLSE Gen 2 Util Mock Extended"
     procedure GetBody(): Text
     begin
         exit(_body);
+    end;
+
+    procedure GetBodies(): List of [Text]
+    begin
+        exit(_bodies);
     end;
 
     procedure SetSimulateFailure(Failure: Boolean; Message: Text)
@@ -149,6 +158,7 @@ codeunit 85568 "ADLSE Gen 2 Util Mock Extended"
         Clear(_blobExists);
         Clear(_contents);
         Clear(_body);
+        Clear(_bodies);
         Clear(_simulateFailure);
         Clear(_failureMessage);
         Clear(_containerExists);
