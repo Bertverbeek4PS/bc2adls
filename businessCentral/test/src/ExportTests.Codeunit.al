@@ -164,7 +164,7 @@ codeunit 85566 "ADLSE Export Tests"
         ADLSERun.FindLast();
         LibraryAssert.AreEqual(ADLSERun.State::Failed, ADLSERun.State, 'An unsent deletion must fail the run');
         LibraryAssert.IsTrue(ADLSERun.Error.Contains('A single record payload exceeded'), 'The collection error must be preserved');
-        LibraryAssert.AreEqual(0, ADLSETableLastTimestamp.GetDeletedLastEntryNo(ADLSETable."Table ID"), 'Unsent deletions must not be marked as exported');
+        LibraryAssert.AreEqual(0L, ADLSETableLastTimestamp.GetDeletedLastEntryNo(ADLSETable."Table ID"), 'Unsent deletions must not be marked as exported');
         LibraryAssert.AreEqual(0, ADLSEGen2UtilMockExtended.GetBodies().Count(), 'No deletion payload should be sent');
     end;
 
@@ -179,6 +179,7 @@ codeunit 85566 "ADLSE Export Tests"
         RecordRef: RecordRef;
         FieldIdList: List of [Integer];
         ExpectedPayload: Text;
+        ExpectedDeletedEntryNo: BigInteger;
     begin
         PrepareDeletionOnlyExport(StorageType, ADLSEDeletedRecord, ADLSEGen2UtilMockExtended);
         FieldIdList := ADLSEExecute.CreateFieldListForTable(Database::"Reason Code");
@@ -192,8 +193,9 @@ codeunit 85566 "ADLSE Export Tests"
         Session.UnbindSubscription(ADLSEGen2UtilMockExtended);
 
         LibraryAssert.AreEqual(ExpectedPayload, ADLSEGen2UtilMockExtended.GetBody(), 'A deletion-only export must contain exactly one header and the deletion row');
-        LibraryAssert.AreEqual(ADLSEDeletedRecord."Entry No.", ADLSETableLastTimestamp.GetDeletedLastEntryNo(Database::"Reason Code"), 'Successfully exported deletions must advance their checkpoint');
-        LibraryAssert.AreEqual(1, ADLSETableLastTimestamp.GetUpdatedLastTimestamp(Database::"Reason Code"), 'A deletion-only export must preserve the upsert checkpoint');
+        ExpectedDeletedEntryNo := ADLSEDeletedRecord."Entry No.";
+        LibraryAssert.AreEqual(ExpectedDeletedEntryNo, ADLSETableLastTimestamp.GetDeletedLastEntryNo(Database::"Reason Code"), 'Successfully exported deletions must advance their checkpoint');
+        LibraryAssert.AreEqual(1L, ADLSETableLastTimestamp.GetUpdatedLastTimestamp(Database::"Reason Code"), 'A deletion-only export must preserve the upsert checkpoint');
         ADLSERun.SetRange("Table ID", ADLSETable."Table ID");
         ADLSERun.FindLast();
         LibraryAssert.AreEqual(ADLSERun.State::Success, ADLSERun.State, 'The deletion-only export must finish successfully');

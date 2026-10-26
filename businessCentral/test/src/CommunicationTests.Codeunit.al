@@ -327,7 +327,7 @@ codeunit 85572 "ADLSE Communication Tests"
         if RollOver then
             ADLSEGen2UtilMockExtended.SetBlobContentLength(2147483646 - StrLen(ExpectedHeader) - StrLen(ExpectedRows));
         LibraryAssert.IsTrue(ADLSECommunication.TryFinish(LastTimestampExported), GetLastErrorText());
-        LibraryAssert.AreEqual(1, LastTimestampExported, 'The first flushed deletion checkpoint must be returned');
+        LibraryAssert.AreEqual(1L, LastTimestampExported, 'The first flushed deletion checkpoint must be returned');
         LibraryAssert.IsTrue(ADLSECommunication.TryCollectAndSendRecord(RecordRef, 2, LastTimestampExported, true), GetLastErrorText());
         LibraryAssert.IsTrue(ADLSECommunication.TryCollectAndSendRecord(RecordRef, 3, LastTimestampExported, true), GetLastErrorText());
         LibraryAssert.IsTrue(ADLSECommunication.TryFinish(LastTimestampExported), GetLastErrorText());
@@ -341,7 +341,7 @@ codeunit 85572 "ADLSE Communication Tests"
         if RollOver then
             ExpectedRows := ExpectedHeader + ExpectedRows;
         LibraryAssert.AreEqual(ExpectedRows, Bodies.Get(2), 'Only a new file may receive another header');
-        LibraryAssert.AreEqual(3, LastTimestampExported, 'The last flushed deletion checkpoint must be returned');
+        LibraryAssert.AreEqual(3L, LastTimestampExported, 'The last flushed deletion checkpoint must be returned');
     end;
 
     local procedure Initialize()
