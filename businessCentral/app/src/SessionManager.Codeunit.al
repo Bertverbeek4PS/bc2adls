@@ -184,7 +184,8 @@ codeunit 82570 "ADLSE Session Manager"
         Result: Text;
     begin
 #pragma warning disable LC0043
-        IsolatedStorage.Get(PendingTablesKeyTxt, DataScope::Company, Result);
+        if not IsolatedStorage.Get(PendingTablesKeyTxt, DataScope::Company, Result) then
+            Result := '';
         exit(DeConcatenate(Result));
 #pragma warning restore LC0043
     end;
