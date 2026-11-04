@@ -460,6 +460,9 @@ codeunit 82564 "ADLSE Util"
         if ADLSESetup."Delivered DateTime" then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetDeliveredDateTimeFieldName()));
 
+        if (ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring") and ADLSESetup."Soft Delete Open Mirroring" then
+            Payload.Append(StrSubstNo(CommaPrefixedTok, ADLSECDMUtil.GetSystemDeletedFieldName()));
+
         if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
             Payload.Append(StrSubstNo(CommaPrefixedTok, RowMarkerTok));
 
@@ -515,10 +518,19 @@ codeunit 82564 "ADLSE Util"
         if ADLSESetup."Delivered DateTime" then
             Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertDateTimeToText(CurrDateTime)));
 
-        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
+        // Soft delete: keep the deleted row in the mirror, flagged via the $SystemDeleted column, instead of a hard delete.
+        // The $SystemDeleted column is only present (and only emitted) for Open Mirroring when the setting is enabled.
+        if (ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring") and ADLSESetup."Soft Delete Open Mirroring" then
             if Deletes then
+                Payload.Append(StrSubstNo(CommaPrefixedTok, ConvertDateTimeToText(CurrentDateTime())))
+            else
+                Payload.Append(StrSubstNo(CommaPrefixedTok, ''));
+
+        if ADLSESetup."Storage Type" = ADLSESetup."Storage Type"::"Open Mirroring" then
+            if Deletes and not ADLSESetup."Soft Delete Open Mirroring" then
                 Payload.Append(StrSubstNo(CommaPrefixedTok, '2'))
             else
+                // Soft delete emits the deleted row as an upsert so Open Mirroring keeps it in the table.
                 Payload.Append(StrSubstNo(CommaPrefixedTok, '4'));
         //https://learn.microsoft.com/en-us/fabric/database/mirrored-database/open-mirroring-landing-zone-format#data-file-and-format-in-the-landing-zone
         // 0- 	Insert

@@ -268,6 +268,21 @@ table 82560 "ADLSE Setup"
             InitValue = false;
             DataClassification = SystemMetadata;
         }
+        field(115; "Soft Delete Open Mirroring"; Boolean)
+        {
+            Caption = 'Soft delete (Open Mirroring)';
+            ToolTip = 'Specifies that deleted records are exported to Microsoft Fabric Open Mirroring as an upsert carrying a filled $SystemDeleted timestamp column, instead of a hard delete. This keeps the deleted row in the mirrored table so downstream consumers (e.g. a data warehouse) can detect the deletion. Only applies to the Microsoft Fabric - Open Mirroring storage type. Changing this alters the exported table schema, so the affected tables must be reset and re-mirrored.';
+            InitValue = false;
+            DataClassification = SystemMetadata;
+
+            trigger OnValidate()
+            begin
+                if Rec."Soft Delete Open Mirroring" and (Rec."Storage Type" <> Rec."Storage Type"::"Open Mirroring") then
+                    Error(SoftDeleteOnlyOpenMirroringErr);
+                if Rec."Schema Exported On" <> 0DT then
+                    Error(ErrorInfo.Create(SchemaAlreadyExportedErr, true));
+            end;
+        }
     }
 
     keys
@@ -299,6 +314,7 @@ table 82560 "ADLSE Setup"
         SchemaAlreadyExportedErr: Label 'Schema already exported. Please perform the action "clear schema export date" before changing the schema.';
         MaximumRetriesErr: Label 'Please enter a value that is equal or smaller than 10 for the maximum retries.';
         NoSchemaExportedErr: Label 'No schema has been exported yet. Please export schema first before exporting the data.';
+        SoftDeleteOnlyOpenMirroringErr: Label 'Soft delete is only supported for the Microsoft Fabric - Open Mirroring storage type.';
 
     local procedure TextCharactersOtherThan(String: Text; CharString: Text): Boolean
     var
