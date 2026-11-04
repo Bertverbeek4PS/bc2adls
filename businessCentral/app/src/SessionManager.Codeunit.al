@@ -10,8 +10,14 @@ codeunit 82570 "ADLSE Session Manager"
         ConcatendatedStringLbl: Label '%1,%2', Locked = true;
 
     procedure Init()
+    var
+        PendingTables: Text;
     begin
-        SavePendingTables('');
+#pragma warning disable LC0043
+        if IsolatedStorage.Get(PendingTablesKeyTxt, DataScope::Company, PendingTables) then
+            if PendingTables <> '' then
+                SavePendingTables('');
+#pragma warning restore LC0043
     end;
 
     procedure StartExport(TableID: Integer; EmitTelemetry: Boolean): Boolean
